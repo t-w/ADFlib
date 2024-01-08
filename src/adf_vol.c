@@ -245,26 +245,27 @@ PREFIX struct AdfVolume * adfMount ( struct AdfDevice * const dev,
             return NULL;
         }
 
+        if ( root.bmFlag != BM_VALID ) {
+            adfEnv.wFct ( "adfMount : bitmap marked invalid in root block, "
+                          " cannot mount %s read-write", vol->volName );
+            adfUnMount ( vol );
+            return NULL;
+        }
+
         RETCODE rc = adfBitmapAllocate ( vol );
         if ( rc != RC_OK ) {
             adfEnv.wFct ( "adfMount : adfBitmapAllocate() returned error %d, "
-                          "mounting read-only (failsafe)", rc );
-            vol->readOnly = TRUE;
-        } else if ( root.bmFlag == BM_VALID )
-        {
-            rc = adfReadBitmap ( vol, &root );
-            if ( rc != RC_OK ) {
-                adfEnv.wFct ( "adfMount : adfReadBitmap() returned error %d, "
-                              "mounting read-only (failsafe)", rc );
-                vol->readOnly = TRUE;
-            }
-        } else {
-            rc = adfReconstructBitmap ( vol, &root );
-            if ( rc != RC_OK ) {
-                adfEnv.wFct ( "adfMount : adfReconstructBitmap() returned error %d, "
-                              "mounting read-only (failsafe)", rc );
-                vol->readOnly = TRUE;
-            }
+                          "cannot mount read-write", rc );
+            adfUnMount ( vol );
+            return NULL;
+        }
+
+        rc = adfReadBitmap ( vol, &root );
+        if ( rc != RC_OK ) {
+            adfEnv.wFct ( "adfMount : adfReadBitmap() returned error %d, "
+                          "cannot mount read-write", rc );
+            adfUnMount ( vol );
+            return NULL;
         }
     }
 
