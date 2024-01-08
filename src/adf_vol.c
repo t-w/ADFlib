@@ -164,15 +164,15 @@ void adfVolumeInfo ( struct AdfVolume * const vol )
 
 
 /*
- * adfMount
+ * adfMountReadOnly
  *
  * 
  */
-PREFIX struct AdfVolume * adfMount ( struct AdfDevice * const dev,
-                                     const int                nPart,
-                                     const AdfAccessMode      mode )
+//PREFIX
+static struct AdfVolume * adfMountReadOnly ( struct AdfDevice * const dev,
+                                             const int                nPart )
 {
-    struct bRootBlock root;
+    //struct bRootBlock root;
     struct bBootBlock boot;
     struct AdfVolume * vol;
 
@@ -200,29 +200,57 @@ PREFIX struct AdfVolume * adfMount ( struct AdfDevice * const dev,
     else
         vol->datablockSize = 488;
 
-    if (dev->readOnly /*|| isDIRCACHE(vol->dosType)*/)
-        vol->readOnly = TRUE;
-    else
-        vol->readOnly = ( mode != ADF_ACCESS_MODE_READWRITE );
-	   	
+    vol->readOnly = TRUE;
+
+    /* do we need to check reading root block here (for read-only) ???
     if ( adfReadRootBlock ( vol, (uint32_t) vol->rootBlock, &root ) != RC_OK ) {
         adfEnv.eFct ( "adfMount : invalid RootBlock, sector %u", vol->rootBlock );
         vol->mounted = FALSE;
         return NULL;
-    }
+    } */
 
-    if ( vol->readOnly ) {
-        vol->bitmap.size = 0;
-        vol->bitmap.blocks = NULL;
-        vol->bitmap.table = NULL;
-    } else {
+    vol->bitmap.size = 0;
+    vol->bitmap.blocks = NULL;
+    vol->bitmap.table = NULL;
+
+    vol->curDirPtr = vol->rootBlock;
+
+/*printf("blockSize=%d\n",vol->blockSize);*/
+
+    return( vol );
+}
+
+
+/*
+ * adfMount
+ *
+ *
+ */
+PREFIX struct AdfVolume * adfMount ( struct AdfDevice * const dev,
+                                     const int                nPart,
+                                     const AdfAccessMode      mode )
+{
+    struct AdfVolume * vol = adfMountReadOnly ( dev, nPart );
+    if ( vol == NULL )
+        return vol;
+
+    if ( ! dev->readOnly )
+        vol->readOnly = ( mode != ADF_ACCESS_MODE_READWRITE );
+
+    if ( ! vol->readOnly ) {
+        struct bRootBlock root;
+        if ( adfReadRootBlock ( vol, (uint32_t) vol->rootBlock, &root ) != RC_OK ) {
+            adfEnv.eFct ( "adfMount : invalid RootBlock, sector %u", vol->rootBlock );
+            vol->mounted = FALSE;
+            return NULL;
+        }
+
         RETCODE rc = adfBitmapAllocate ( vol );
         if ( rc != RC_OK ) {
             adfEnv.wFct ( "adfMount : adfBitmapAllocate() returned error %d, "
                           "mounting read-only (failsafe)", rc );
             vol->readOnly = TRUE;
-        } else if ( root.bmFlag == BM_VALID ||
-                    vol->readOnly == TRUE )
+        } else if ( root.bmFlag == BM_VALID )
         {
             rc = adfReadBitmap ( vol, &root );
             if ( rc != RC_OK ) {
@@ -239,10 +267,6 @@ PREFIX struct AdfVolume * adfMount ( struct AdfDevice * const dev,
             }
         }
     }
-
-    vol->curDirPtr = vol->rootBlock;
-
-/*printf("blockSize=%d\n",vol->blockSize);*/
 
     return( vol );
 }
