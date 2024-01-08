@@ -211,26 +211,32 @@ PREFIX struct AdfVolume * adfMount ( struct AdfDevice * const dev,
         return NULL;
     }
 
-    RETCODE rc = adfBitmapAllocate ( vol );
-    if ( rc != RC_OK ) {
+    if ( vol->readOnly ) {
+        vol->bitmap.size = 0;
+        vol->bitmap.blocks = NULL;
+        vol->bitmap.table = NULL;
+    } else {
+        RETCODE rc = adfBitmapAllocate ( vol );
+        if ( rc != RC_OK ) {
             adfEnv.wFct ( "adfMount : adfBitmapAllocate() returned error %d, "
                           "mounting read-only (failsafe)", rc );
             vol->readOnly = TRUE;
-    } else if ( root.bmFlag == BM_VALID ||
-                vol->readOnly == TRUE )
-    {
-        rc = adfReadBitmap ( vol, &root );
-        if ( rc != RC_OK ) {
-            adfEnv.wFct ( "adfMount : adfReadBitmap() returned error %d, "
-                          "mounting read-only (failsafe)", rc );
-            vol->readOnly = TRUE;
-        }
-    } else {
-        rc = adfReconstructBitmap ( vol, &root );
-        if ( rc != RC_OK ) {
-            adfEnv.wFct ( "adfMount : adfReconstructBitmap() returned error %d, "
-                          "mounting read-only (failsafe)", rc );
-            vol->readOnly = TRUE;
+        } else if ( root.bmFlag == BM_VALID ||
+                    vol->readOnly == TRUE )
+        {
+            rc = adfReadBitmap ( vol, &root );
+            if ( rc != RC_OK ) {
+                adfEnv.wFct ( "adfMount : adfReadBitmap() returned error %d, "
+                              "mounting read-only (failsafe)", rc );
+                vol->readOnly = TRUE;
+            }
+        } else {
+            rc = adfReconstructBitmap ( vol, &root );
+            if ( rc != RC_OK ) {
+                adfEnv.wFct ( "adfMount : adfReconstructBitmap() returned error %d, "
+                              "mounting read-only (failsafe)", rc );
+                vol->readOnly = TRUE;
+            }
         }
     }
 
@@ -256,10 +262,10 @@ void adfUnMount ( struct AdfVolume * const vol )
         return;
     }
 
-    adfFreeBitmap(vol);
+    if ( vol->bitmap.blocks != NULL )
+        adfFreeBitmap ( vol );
 
     vol->mounted = FALSE;
-	
 }
 
 
