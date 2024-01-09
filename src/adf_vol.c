@@ -486,6 +486,14 @@ RETCODE adfVolReconstructBitmap ( struct AdfVolume * const vol )
                           "error %d, cannot rebuild the bitmap", rc );
             return rc;
         }
+
+        rc = adfReadBitmap ( vol, &root );
+        if ( rc != RC_OK ) {
+            adfEnv.eFct ( "adfMount : adfReadBitmap() returned error %d, "
+                          "cannot mount read-write", rc );
+            adfFreeBitmap ( vol );
+            return rc;
+        }
     }
 
     //printf ("root block read, name %s\n", root.diskName );
