@@ -242,32 +242,37 @@ static RETCODE adfRemountReadWrite ( struct AdfVolume * vol )
         return RC_ERROR;
     }
 
-    struct bRootBlock root;
-    RETCODE rc = adfReadRootBlock ( vol, (uint32_t) vol->rootBlock, &root );
-    if ( rc != RC_OK ) {
-        adfEnv.eFct ( "adfMount : invalid RootBlock, sector %u", vol->rootBlock );
-        return rc;
-    }
+    // allocate only if not already allocated (ie. if executed on a volume
+    // mounted read-only, but rebuilding the bitmap was called, then
+    // the bitmap is already allocated and reconstructed)
+    if ( vol->bitmap.blocks == NULL ) {
+        struct bRootBlock root;
+        RETCODE rc = adfReadRootBlock ( vol, (uint32_t) vol->rootBlock, &root );
+        if ( rc != RC_OK ) {
+            adfEnv.eFct ( "adfMount : invalid RootBlock, sector %u", vol->rootBlock );
+            return rc;
+        }
 
-    if ( root.bmFlag != BM_VALID ) {
-        adfEnv.eFct ( "adfMount : bitmap marked invalid in root block, "
-                      "cannot mount %s read-write", vol->volName );
-        return RC_ERROR;
-    }
+        if ( root.bmFlag != BM_VALID ) {
+            adfEnv.eFct ( "adfMount : bitmap marked invalid in root block, "
+                          "cannot mount %s read-write", vol->volName );
+            return RC_ERROR;
+        }
 
-    rc = adfBitmapAllocate ( vol );
-    if ( rc != RC_OK ) {
-        adfEnv.eFct ( "adfMount : adfBitmapAllocate() returned error %d, "
-                      "cannot mount read-write", rc );
-        return rc;
-    }
+        rc = adfBitmapAllocate ( vol );
+        if ( rc != RC_OK ) {
+            adfEnv.eFct ( "adfMount : adfBitmapAllocate() returned error %d, "
+                          "cannot mount read-write", rc );
+            return rc;
+        }
 
-    rc = adfReadBitmap ( vol, &root );
-    if ( rc != RC_OK ) {
-        adfEnv.eFct ( "adfMount : adfReadBitmap() returned error %d, "
-                      "cannot mount read-write", rc );
-        adfFreeBitmap ( vol );
-        return rc;
+        rc = adfReadBitmap ( vol, &root );
+        if ( rc != RC_OK ) {
+            adfEnv.eFct ( "adfMount : adfReadBitmap() returned error %d, "
+                          "cannot mount read-write", rc );
+            adfFreeBitmap ( vol );
+            return rc;
+        }
     }
 
     vol->readOnly = FALSE;
@@ -462,8 +467,25 @@ RETCODE adfVolReconstructBitmap ( struct AdfVolume * const vol )
                       vol->rootBlock );
         return rc;
     }
+
+    // allocate only if not already allocated (ie. if executed on a volume
+    // already mounted read-write, the bitmap is already allocated and read)
+    if ( vol->bitmap.blocks == NULL ) {
+        rc = adfBitmapAllocate ( vol );
+        if ( rc != RC_OK ) {
+            adfEnv.eFct ( "adfVolReconstructBitmap : adfBitmapAllocate() returned "
+                          "error %d, cannot rebuild the bitmap", rc );
+            return rc;
+        }
+    }
+
     //printf ("root block read, name %s\n", root.diskName );
-    return adfReconstructBitmap ( vol, &root );
+
+    rc = adfReconstructBitmap ( vol, &root );
+    if ( rc != RC_OK )
+        adfFreeBitmap ( vol );
+
+    return rc;
 }
 
 
