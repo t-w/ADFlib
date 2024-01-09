@@ -75,7 +75,7 @@ int main ( const int          argc,
 
     /* mount the original image */
     struct AdfDevice * const devOrig = adfMountDev ( adfOrig,
-                                                     ADF_ACCESS_MODE_READONLY );
+                                                     ADF_ACCESS_MODE_READWRITE );
     if ( devOrig == NULL ) {
         log_error ( stderr, "can't mount device %s\n", adfOrig );
         error_status = TRUE;
@@ -83,7 +83,7 @@ int main ( const int          argc,
     }
 
     struct AdfVolume * const volOrig = adfMount ( devOrig, 0,
-                                                  ADF_ACCESS_MODE_READONLY );
+                                                  ADF_ACCESS_MODE_READWRITE );
     if ( volOrig == NULL ) {
         log_error ( stderr, "can't mount volume %d\n", 0 );
         error_status = TRUE;
@@ -101,8 +101,8 @@ int main ( const int          argc,
         goto umount_vol_orig;
     }
 
-    struct AdfVolume * const volUpdate = adfMount ( devUpdate, 0,
-                                                    ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * volUpdate = adfMount ( devUpdate, 0,
+                                              ADF_ACCESS_MODE_READONLY );
     if ( volUpdate == NULL ) {
         log_error ( stderr, "can't mount volume %d\n", 0 );
         error_status = TRUE;
@@ -117,6 +117,24 @@ int main ( const int          argc,
             stderr, "error reconstructing block allocation bitmap, volume %d\n", 0 );
         error_status = TRUE;
         goto umount_vol_updated;
+    }
+
+    rc = adfRemountReadWrite ( volUpdate );
+    if ( rc != RC_OK ) {
+        log_error (
+            stderr, "error remounting read-write, volume %d\n", 0 );
+        error_status = TRUE;
+        goto umount_vol_updated;
+    }
+
+    adfUnMount ( volUpdate );
+
+    volUpdate = adfMount ( devUpdate, 0,
+                           ADF_ACCESS_MODE_READWRITE );
+    if ( volUpdate == NULL ) {
+        log_error ( stderr, "can't mount volume %d\n", 0 );
+        error_status = TRUE;
+        goto umount_dev_updated;
     }
 
     /* compare the original and reconstructed */
