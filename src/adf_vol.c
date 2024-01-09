@@ -266,6 +266,7 @@ static RETCODE adfRemountReadWrite ( struct AdfVolume * vol )
     if ( rc != RC_OK ) {
         adfEnv.eFct ( "adfMount : adfReadBitmap() returned error %d, "
                       "cannot mount read-write", rc );
+        adfFreeBitmap ( vol );
         return rc;
     }
 
