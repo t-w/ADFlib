@@ -273,6 +273,15 @@ static RETCODE adfRemountReadWrite ( struct AdfVolume * vol )
             adfFreeBitmap ( vol );
             return rc;
         }
+    } else {
+        // the volume's bitmap was rebuilt in memory, so it must be written
+        // to the volume when entering read-write mode
+        vol->readOnly = FALSE;
+        RETCODE rc = adfUpdateBitmap ( vol );
+        if ( rc != RC_OK ) {
+            vol->readOnly = TRUE;
+            return rc;
+        }
     }
 
     vol->readOnly = FALSE;
