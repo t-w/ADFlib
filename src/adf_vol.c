@@ -225,7 +225,7 @@ static struct AdfVolume * adfMountReadOnly ( struct AdfDevice * const dev,
  *
  *
  */
-static RETCODE adfRemountReadWrite ( struct AdfVolume * vol )
+PREFIX RETCODE adfRemountReadWrite ( struct AdfVolume * vol )
 {
     if ( vol == NULL )
         return RC_ERROR;
