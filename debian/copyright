@@ -1,5 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: libadf
+Upstream-Name: ADFlib
+Upstream-Contact: Laurent Clévy <laurent.clevy@club-internet.fr>
 Source: https://github.com/lclevy/ADFlib
 
 Files: *
