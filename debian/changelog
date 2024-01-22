@@ -1,5 +1,66 @@
-libadf (0.8.0-1) unstable; urgency=medium
+unadf (0.8.0+ds-1) unstable; urgency=medium
 
-  * Initial packaging of version 0.8.0 for Debian.
+  * New maintainer. (Closes: 661461)
+  * New upstream version.
 
- -- Tomasz Wolak <tomas.wolak@gmail.com>  Mon, 26 Jun 2023 20:01:05 +0100
+ -- Tomasz Wolak <tomas.wolak@gmail.com>  Mon, 22 Jan 2024 13:05:55 +0100
+
+unadf (0.7.11a-4) unstable; urgency=high
+
+  * Orphan package with security issues.
+  * Tuomas Räsänene discoveried two security issues (Closes: #838248):
+    - CVE-2016-1243: stack buffer overflow caused by blindly trusting on
+    pathname lengths of archived files.
+    - CVE-2016-1244: execution of unsanitized input.
+  * Standards-Version: 3.9.8
+
+ -- Luciano Bello <luciano@debian.org>  Sat, 24 Sep 2016 11:43:06 -0400
+
+unadf (0.7.11a-3) unstable; urgency=low
+
+  * QA upload.
+  * Updated debian/rules:
+    - now dh is used instead of direct dh_* commands
+    - fixed FTBFS because of invalid clean section (Closes: #676065)
+  * Updated debian/unadf.1: fixed lintian note hyphen-used-as-minus-sign.
+  * Added file debian/patches/add-hardening-flags-in-compiler-options.
+  * Added debian/unadf.doc-base:
+    fixed lintian note possible-documentation-but-no-doc-base-registration.
+  * Updated debian/control:
+    ixed lintian note extended-description-is-probably-too-short.
+  * Updated debian/copyright:
+    file was updated in according to Copyright format 1.0.
+  * Deleted debian/source/options.
+  * Added debian/watch.
+
+ -- Boris Pek <tehnick-8@mail.ru>  Tue, 19 Jun 2012 23:26:34 +0300
+
+unadf (0.7.11a-2) unstable; urgency=low
+
+  [ Axel Beckert ]
+  * QA Upload of orphaned package (cf. #661461)
+  * Set QA Group as Maintainer. (Closes: #675221)
+  * Add patch to make it work on 64 bit architectures (Closes: #458129)
+  * Add Homepage field
+  * Ignore .depend files modified by built system
+  * Fix lintian warnings:
+    + copyright-refers-to-symlink-license
+    + copyright-with-old-dh-make-debian-copyright
+  * Reword long description
+  
+  [ Gürkan Sengün ]
+  * Added debian/source/format, switch to format 3.0 (quilt)
+  * Bump standards version to 3.9.3.
+  * Bump debhelper version to 8.
+  * debian/rules: updated.
+
+ -- Axel Beckert <abe@debian.org>  Sun, 03 Jun 2012 04:49:22 +0200
+
+unadf (0.7.11a-1) unstable; urgency=low
+
+  * Initial release. (Closes: #148007)
+    - Added Win32/ to includes of defendian.h.
+    - Removed double */ comment typo.
+  * Rebuilt the tarball (zip file unpacks to ./)
+
+ -- Gürkan Sengün <gurkan@linuks.mine.nu>  Sun,  7 Jan 2007 15:02:25 +0100
