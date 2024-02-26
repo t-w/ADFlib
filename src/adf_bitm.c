@@ -724,6 +724,12 @@ RETCODE adfWriteNewBitmap ( struct AdfVolume * const vol )
     SECTNUM *bitExtBlock;
     SECTNUM *sectList;
 
+    struct AdfRootBlock root;
+    RETCODE rc = adfReadRootBlock ( vol, (uint32_t) vol->rootBlock, &root );
+    if ( rc != RC_OK ) {
+        return rc;
+    }
+
     sectList = (SECTNUM *) malloc ( sizeof(SECTNUM) * (unsigned) vol->bitmap.size );
     if (!sectList) {
 		(*adfEnv.eFct)("adfCreateBitmap : sectList");
@@ -733,13 +739,6 @@ RETCODE adfWriteNewBitmap ( struct AdfVolume * const vol )
     if ( ! adfGetFreeBlocks ( vol, (int) vol->bitmap.size, sectList ) ) {
         free(sectList);
         return RC_VOLFULL;
-    }
-
-    struct AdfRootBlock root;
-    RETCODE rc = adfReadRootBlock ( vol, (uint32_t) vol->rootBlock, &root );
-    if ( rc != RC_OK ) {
-        free(sectList);
-        return rc;
     }
 
     unsigned n = min( vol->bitmap.size, (uint32_t) ADF_BM_PAGES_ROOT_SIZE );
