@@ -50,6 +50,9 @@ RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
     SECTNUM nSect;
     int32_t i;
 
+    fileBlocks->data = NULL;
+    fileBlocks->extens = NULL;
+
     fileBlocks->header = entry->headerKey;
     adfFileRealSize( entry->byteSize, vol->datablockSize, 
         &(fileBlocks->nbData), &(fileBlocks->nbExtens) );
@@ -100,14 +103,13 @@ RETCODE adfFreeFileBlocks ( struct AdfVolume * const          vol,
     struct AdfFileBlocks fileBlocks;
 
     RETCODE rc = adfGetFileBlocks ( vol, entry, &fileBlocks );
-    if ( rc != RC_OK )
-        return rc;
-
-    for(i=0; i<fileBlocks.nbData; i++) {
-        adfSetBlockFree(vol, fileBlocks.data[i]);
-    }
-    for(i=0; i<fileBlocks.nbExtens; i++) {
-        adfSetBlockFree(vol, fileBlocks.extens[i]);
+    if ( rc == RC_OK ) {
+        for(i=0; i<fileBlocks.nbData; i++) {
+            adfSetBlockFree(vol, fileBlocks.data[i]);
+        }
+        for(i=0; i<fileBlocks.nbExtens; i++) {
+            adfSetBlockFree(vol, fileBlocks.extens[i]);
+        }
     }
 
     free(fileBlocks.data);
