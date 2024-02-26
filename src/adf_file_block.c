@@ -83,8 +83,10 @@ RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
             fileBlocks->data[n++] = extBlock.dataBlocks[ ADF_MAX_DATABLK - 1 - i ];
         nSect = extBlock.extension;
     }
-    if ( (fileBlocks->nbExtens+fileBlocks->nbData) != (n+m) )
-        (*adfEnv.wFct)("adfGetFileBlocks : less blocks than expected");
+    if ( (n != fileBlocks->nbData) || (m != fileBlocks->nbExtens) ) {
+        (*adfEnv.wFct)("adfGetFileBlocks : not as many blocks as expected");
+        return RC_ERROR;
+    }
 
     return RC_OK;
 }
