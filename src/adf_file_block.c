@@ -64,6 +64,10 @@ RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
         return RC_MALLOC;
     }
 
+    if ((fileBlocks->nbExtens == 0) && (entry->extension != 0)) {
+        (*adfEnv.eFct)("adfGetFileBlocks : invalid sizes");
+        return RC_MALLOC;
+    }
     fileBlocks->extens = (SECTNUM *)
         malloc ( (unsigned) fileBlocks->nbExtens * sizeof(SECTNUM) );
     if (!fileBlocks->extens) {
