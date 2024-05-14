@@ -96,6 +96,18 @@ AM_CONDITIONAL([NATIVE_GENERIC], [test x${NATIVE_DIR} = xgeneric])
 AM_CONDITIONAL([NATIVE_LINUX],   [test x${NATIVE_DIR} = xlinux])
 AM_CONDITIONAL([NATIVE_WIN32],   [test x${NATIVE_DIR} = xwin32])
 
+# Enable/disabke experimental salvage features
+AC_ARG_ENABLE([salvage_dircache],
+              [  --enable-salvage-dircache    Enable salvage on volumes with dircache (EXPERIMENTAL!)],
+              [case "${enableval}" in
+                yes) salvage_dircache=true ;;
+                no)  salvage_dircache=false ;;
+                *) AC_MSG_ERROR([bad value ${enableval} for --enable-salvage-dircache]) ;;
+               esac],
+              [salvage_dircache=false])
+
+AM_CONDITIONAL([SALVAGE_DIRCACHE], [test x$salvage_dircache = xtrue])
+echo "Salvage on dircache: ${salvage_dircache}"
 
 # Checks for programs.
 AC_PROG_CC
