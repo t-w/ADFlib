@@ -17,7 +17,7 @@ jobs:
     - name: install prereq.
       run:
         sudo apt-get update &&
-        sudo apt-get install -y check devscripts debhelper
+        sudo apt-get install -y check devscripts debhelper build-essential
     - name: debuild
       run: util/deb_build.sh
     - name: list packages
