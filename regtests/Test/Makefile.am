@@ -37,6 +37,7 @@ check_PROGRAMS = \
 	readonly \
 	rename \
 	rename2 \
+	test_update_datasize_ofs \
 	undel \
 	undel2
 
@@ -69,7 +70,10 @@ dist_check_SCRIPTS = \
 	undel.sh \
 	undel2.sh
 
-TESTS = floppy.sh bigdev.sh
+TESTS = \
+    floppy.sh \
+    bigdev.sh \
+    test_update_datasize_ofs
 
 ADFLIBS = $(top_builddir)/src/libadf.la
 
@@ -200,3 +204,7 @@ bitmap_read_segfault_DEPENDENCIES = $(top_builddir)/src/libadf.la
 bitmap_recreate_SOURCES = bitmap_recreate.c
 bitmap_recreate_LDADD = $(ADFLIBS)
 bitmap_recreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+test_update_datasize_ofs_SOURCES = test_update_datasize_ofs.c
+test_update_datasize_ofs_LDADD = $(ADFLIBS)
+test_update_datasize_ofs_DEPENDENCIES = $(top_builddir)/src/libadf.la
