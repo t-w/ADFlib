@@ -211,9 +211,19 @@ Other things of the scheme may be used/adapted as needed (hotfixes for released 
 and such, very likely release branch(es) will also appear).
 
 
-## Projects using ADFlib
+## Related projects
 
-[`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
+### Projects using ADFlib
+- [`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
 to mount and access ADF images in read/write mode.
-[`patool`](https://pypi.org/project/patool/) - an archive file manager written
+- [`patool`](https://pypi.org/project/patool/) - an archive file manager written
 in Python.
+- [AdfView](http://www.viksoe.dk/adfview/) Windows shell extension
+
+### Bindings and ports to other languages
+- [pyadf](https://sourceforge.net/projects/pyadf/) Python binding (for older versions)
+- [adflib in Rust](https://github.com/vschwaberow/adflib) adflib
+
+### Other
+- [adfExplorer in R](https://github.com/pepijn-devries/adfExplorer)
+- [affs Linux kernel module](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/filesystems/affs.rst)
