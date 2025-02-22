@@ -107,6 +107,9 @@ TARGET_LINK_LIBRARIES ( bitmap_read_segfault adf )
 add_executable ( bitmap_recreate bitmap_recreate.c )
 TARGET_LINK_LIBRARIES ( bitmap_recreate adf )
 
+add_executable ( test_update_datasize_ofs test_update_datasize_ofs.c )
+TARGET_LINK_LIBRARIES ( test_update_datasize_ofs adf )
+
 
 foreach ( a_file
     floppy.sh
@@ -163,3 +166,4 @@ file (
 
 add_test ( floppy.sh ${BASH_PROGRAM} floppy.sh )
 add_test ( bigdev.sh ${BASH_PROGRAM} bigdev.sh )
+add_test ( test_update_datasize_ofs test_update_datasize_ofs )
