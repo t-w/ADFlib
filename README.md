@@ -1,13 +1,29 @@
+```
+      _/_/    _/_/_/    _/_/_/_/  _/  _/  _/
+   _/    _/  _/    _/  _/        _/      _/_/_/
+  _/_/_/_/  _/    _/  _/_/_/    _/  _/  _/    _/
+ _/    _/  _/    _/  _/        _/  _/  _/    _/
+_/    _/  _/_/_/    _/        _/  _/  _/_/_/
 
-# ADFlib (Amiga Disk File library)
-
-## Introduction
+Amiga Disk File library
+```
 
 The `ADFlib` is a free, portable and open implementation of the Amiga filesystem.
 
-The initial release was in 1999.
+The library is written in portable C (currently C99).
 
-It supports:
+The origins of the library reaches late 1990s, when the initial version
+was designed and developed by Laurent Clévy on his Amiga 1200 (with
+a big-endian CPU: MC68EC020 14MHz).
+
+Recent versions were built and tested in a CI system (GitHub Actions)
+on Linux (Debian, Ubuntu), Windows (MSVC, CygWin and MSYS2) and MacOs.
+
+It should be possible to build on (or cross-compile for) other systems.
+
+
+## Features
+The library supports:
 - floppy and hard disk images ("dumps")
 - mount, unmount, create a device image (an adf file) or a volume (a partition
   inside a device)
@@ -24,17 +40,8 @@ Untested and/or experimental support exists for:
 - UAE hardfiles
 - undel files and directories
 
-It is written in portable C.
-
-The current version was built and tested in the CI system (GitHub Actions)
-on Linux (Debian 11 and 12, Ubuntu), Windows (build with MSVC, CygWin
-and MSYS2) and MacOs.
-
-It should be possible to build on (or cross-compile for) other systems.
-
 
 ## Command-line utilities
-
 The `examples/` directory contains few useful command-line utilities
 (as well as examples of the library usage).
 
@@ -114,7 +121,6 @@ See INSTALL file.
 
 
 ## Files
-
 - `AUTHORS` : Contributors
 - `README.md` : The file you are reading
 - `ChangeLog` : updates in subsequent versions
