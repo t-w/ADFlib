@@ -1,0 +1,59 @@
+name: autotools-cygwin
+
+on:
+  push:
+    branches: [ "master", "devel",
+      "citest",
+      "citest-autotools",
+      "citest-autotools-cygwin" ]
+    tags:
+      - '**'
+  pull_request:
+    branches: [ "master", "devel" ]
+
+jobs:
+  cygwin:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: C:\cygwin\bin\bash.exe '{0}'
+#    env:
+#      SHELLOPTS: igncr
+    steps:
+    - name: setup git (eol)
+#      shell: powershell
+      shell: cmd
+      run: |
+        git config --global core.autocrlf false
+#        git config --global core.eol lf
+    - uses: actions/checkout@v4
+    - uses: cygwin/cygwin-install-action@v4
+      with:
+        site: https://sunsite.icm.edu.pl/pub/cygnus/cygwin/
+        packages: autoconf automake check diffutils findutils gcc-core grep gzip libtool make sed tar
+    - name: autogen
+      run: ./autogen.sh
+    - name: configure
+      run: ./configure --prefix=/tmp/adflib
+    - name: make
+      run: make
+    - name: make check
+      run: make check
+    - name: make distcheck
+      run: make distcheck
+    - name: make install
+      run: make install
+    - name: check installation
+      run: find /tmp/adflib -iname '*adf*'
+    - name: test installed command-line utils
+      run: ./examples/tests/test-all-examples.sh /tmp/adflib/bin
+    - name: store logs from failed tests
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cygwin_autotools_native_logs_failed_tests
+        path: |
+          examples/tests/*.log
+          regtests/Test/*.log
+          tests/*.log
+#          C:\cygwin\var\log\setup.log.full
