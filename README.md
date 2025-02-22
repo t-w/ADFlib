@@ -1,24 +1,29 @@
+```
+      _/_/    _/_/_/    _/_/_/_/  _/  _/  _/
+   _/    _/  _/    _/  _/        _/      _/_/_/
+  _/_/_/_/  _/    _/  _/_/_/    _/  _/  _/    _/
+ _/    _/  _/    _/  _/        _/  _/  _/    _/
+_/    _/  _/_/_/    _/        _/  _/  _/_/_/
 
-## Important notes about the repo(!!!)
-
-1. The development of the project is moved from
-   [the Laurent Clévy's ADFlib repo](https://github.com/lclevy/ADFlib)
-   to [the new one](https://github.com/t-w/ADFlib). So for getting future
-   releases as well as the lastest development code,
-   the new repository should be used.
-
-2. Please read the 'Contributing' section before submitting any PRs.
-
-
-# ADFlib (Amiga Disk File library)
-
-## Introduction
+Amiga Disk File library
+```
 
 The `ADFlib` is a free, portable and open implementation of the Amiga filesystem.
 
-The initial release was in 1999.
+The library is written in portable C (currently C99).
 
-It supports:
+The origins of the library reaches late 1990s, when the initial version
+was designed and developed by Laurent Clévy on his Amiga 1200 (with
+a big-endian CPU: MC68EC020 14MHz).
+
+Recent versions were built and tested in a CI system (GitHub Actions)
+on Linux (Debian, Ubuntu), Windows (MSVC, CygWin and MSYS2) and MacOs.
+
+It should be possible to build on (or cross-compile for) other systems.
+
+
+## Features
+The library supports:
 - floppy and hard disk images ("dumps")
 - mount, unmount, create a device image (an adf file) or a volume (a partition
   inside a device)
@@ -35,17 +40,8 @@ Untested and/or experimental support exists for:
 - UAE hardfiles
 - undel files and directories
 
-It is written in portable C.
-
-The current version was built and tested in the CI system (GitHub Actions)
-on Linux (Debian 11 and 12, Ubuntu), Windows (build with MSVC, CygWin
-and MSYS2) and MacOs.
-
-It should be possible to build on (or cross-compile for) other systems.
-
 
 ## Command-line utilities
-
 The `examples/` directory contains few useful command-line utilities
 (as well as examples of the library usage).
 
@@ -125,7 +121,6 @@ See INSTALL file.
 
 
 ## Files
-
 - `AUTHORS` : Contributors
 - `README.md` : The file you are reading
 - `ChangeLog` : updates in subsequent versions
@@ -201,15 +196,9 @@ Have fun anyway !
 
 
 ## Contributing
-Please note that the code development has moved to
-[the new repo](https://github.com/t-w/ADFlib), while
-[the old one](https://github.com/lclevy/ADFlib) remains updated
-but only with the released versions.
-
 If you encountered a problem, please review
-[the existing issues in the old](https://github.com/lclevy/ADFlib/issues) and
-[in the new repo](https://github.com/t-w/ADFlib/issues), and,
-if the problem you have is not already there, open a new one (in the new repo!).
+[the existing issues](https://github.com/adflib/ADFlib/issues) and,
+if the problem you have is not already there, open a new one.
 
 For bugfixes and/or new things - please open a _Pull Request_ to the `devel`
 branch (not the `master`).
@@ -228,9 +217,19 @@ Other things of the scheme may be used/adapted as needed (hotfixes for released 
 and such, very likely release branch(es) will also appear).
 
 
-## Projects using ADFlib
+## Related projects
 
-[`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
+### Projects using ADFlib
+- [`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
 to mount and access ADF images in read/write mode.
-[`patool`](https://pypi.org/project/patool/) - an archive file manager written
+- [`patool`](https://pypi.org/project/patool/) - an archive file manager written
 in Python.
+- [AdfView](https://www.viksoe.dk/code/adfview.htm) - Windows shell extension
+
+### Bindings and ports to other languages
+- [pyadf](https://sourceforge.net/projects/pyadf/) - Python bindings (for older versions)
+- [adflib in Rust](https://github.com/vschwaberow/adflib)
+
+### Other
+- [adfExplorer in R](https://github.com/pepijn-devries/adfExplorer)
+- [affs Linux kernel module](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/filesystems/affs.rst)
