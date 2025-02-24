@@ -224,7 +224,10 @@ and such, very likely release branch(es) will also appear).
 to mount and access ADF images in read/write mode.
 - [`patool`](https://pypi.org/project/patool/) - an archive file manager written
 in Python.
+#### Older projects (possibly not maintained)
 - [AdfView](https://www.viksoe.dk/code/adfview.htm) - Windows shell extension
+- [AdfOpus](https://adfopus.sourceforge.net/) - Windows file management tool for ADF
+  ADF files.
 
 ### Bindings and ports to other languages
 - [pyadf](https://sourceforge.net/projects/pyadf/) - Python bindings (for older versions)
