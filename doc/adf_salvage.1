@@ -20,8 +20,8 @@ along with the position (as sector/block number) of their file header blocks.
 The undelete can be performed by adding the list of positions of the file header
 blocks of the deleted files to the command.
 .SH WARNING
-PLEASE NOTE THAT THIS IS AN EXPERIMENTAL UTILITY, USE IT ON A COPY NOT
-THE ORIGINAL DEVICE! (ESPECIALLY IF THE FILESYSTEM USES DIRCACHE!).
+PLEASE NOTE THAT THIS IS AN EXPERIMENTAL UTILITY, USE IT ON A COPY, NOT ON
+THE ORIGINAL FILE/DEVICE! (ESPECIALLY IF THE FILESYSTEM USES DIRCACHE!).
 .
 .SH OPTIONS
 A summary of the options.
@@ -44,12 +44,12 @@ Specify volume/partition number (counting from 0), default: 0
 Shows list of deleted entries (files, directories) on the volume 0 of mydisk.adf
 .RE
 
-\fBadf_salvage -v -p 1 mydisk.adf 884 1000\fR
+\fBadf_salvage -p 1 mydisk.adf 884 1000\fR
 .RS
-Undeletes files which file header blocks are at the specified sectors of
-the second volume/partition (the first is 0), the sectors number should be
-taken listing the deleted entried (running this withouht any sector numbers).
-More verbose during the operation.
+Undeletes the files which file header blocks are at the specified sectors
+(884 and 1000) of the second volume/partition (the first is 0). The sector numbers
+should be taken from the list of deleted entried (by running this utility without
+providing any sector numbers).
 .RE
 
 .SH SEE ALSO
