@@ -20,7 +20,8 @@ jobs:
         shell: msys2 '{0}'
     steps:
     - uses: actions/checkout@v4
-    - uses: msys2/setup-msys2@v2.22.0
+# https://github.com/msys2/setup-msys2
+    - uses: msys2/setup-msys2@v2
       with:
         update: true
         install: autotools diffutils mingw-w64-x86_64-check mingw-w64-x86_64-toolchain
