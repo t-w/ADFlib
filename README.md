@@ -220,19 +220,25 @@ and such, very likely release branch(es) will also appear).
 ## Related projects
 
 ### Projects using ADFlib
+- [adfExplorer in R](https://github.com/pepijn-devries/adfExplorer)
 - [`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
 to mount and access ADF images in read/write mode.
 - [`patool`](https://pypi.org/project/patool/) - an archive file manager written
 in Python.
+
 #### Older projects (possibly not maintained)
 - [AdfView](https://www.viksoe.dk/code/adfview.htm) - Windows shell extension
 - [AdfOpus](https://adfopus.sourceforge.net/) - Windows file management tool for ADF
   ADF files.
-
-### Bindings and ports to other languages
 - [pyadf](https://sourceforge.net/projects/pyadf/) - Python bindings (for older versions)
+  - note that this is neither
+    [scripting framework for multiscale quantum chemistry](https://onlinelibrary.wiley.com/doi/full/10.1002/jcc.21810)
+	([on GitHub](https://github.com/chjacob-tubs/pyadf-releases))
+    nor [a Python library to help with Atlassian Document Format](https://github.com/tamus-cyber/pyadf)
+	(what a popular name this is...)
+
+### Ports to other languages
 - [adflib in Rust](https://github.com/vschwaberow/adflib)
 
 ### Other
-- [adfExplorer in R](https://github.com/pepijn-devries/adfExplorer)
 - [affs Linux kernel module](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/filesystems/affs.rst)
