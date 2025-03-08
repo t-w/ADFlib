@@ -151,23 +151,23 @@ ADF_RETCODE adfGetCacheEntry ( const struct AdfDirCacheBlock * const dirc,
 /*printf("p=%d\n",ptr);*/
 
 #ifdef LITT_ENDIAN
-    cEntry->header = swapLong(dirc->records+ptr);
-    cEntry->size = swapLong(dirc->records+ptr+4);
-    cEntry->protect = swapLong(dirc->records+ptr+8);
-    cEntry->days = swapShort(dirc->records+ptr+16);
-    cEntry->mins = swapShort(dirc->records+ptr+18);
-    cEntry->ticks = swapShort(dirc->records+ptr+20);
+    cEntry->header  = swapLong(  dirc->records + ptr );
+    cEntry->size    = swapLong(  dirc->records + ptr + 4 );
+    cEntry->protect = swapLong(  dirc->records + ptr + 8 );
+    cEntry->days    = swapShort( dirc->records + ptr + 16 );
+    cEntry->mins    = swapShort( dirc->records + ptr + 18 );
+    cEntry->ticks   = swapShort( dirc->records + ptr + 20 );
 #else
-    cEntry->header = Long(dirc->records+ptr);
-    cEntry->size = Long(dirc->records+ptr+4);
-    cEntry->protect = Long(dirc->records+ptr+8);
-    cEntry->days = Short(dirc->records+ptr+16);
-    cEntry->mins = Short(dirc->records+ptr+18);
-    cEntry->ticks = Short(dirc->records+ptr+20);
+    cEntry->header  = Long(  dirc->records + ptr );
+    cEntry->size    = Long(  dirc->records + ptr + 4 );
+    cEntry->protect = Long(  dirc->records + ptr + 8 );
+    cEntry->days    = Short( dirc->records + ptr + 16 );
+    cEntry->mins    = Short( dirc->records + ptr + 18 );
+    cEntry->ticks   = Short( dirc->records + ptr + 20 );
 #endif
-    cEntry->type =(signed char) dirc->records[ptr+22];
+    cEntry->type = (signed char) dirc->records[ ptr + 22 ];
 
-    cEntry->nLen = dirc->records[ptr+23];
+    cEntry->nLen = dirc->records[ ptr + 23 ];
 /*    cEntry->name = (char*)malloc(sizeof(char)*(cEntry->nLen+1));
     if (!cEntry->name)
          return;
@@ -179,29 +179,32 @@ ADF_RETCODE adfGetCacheEntry ( const struct AdfDirCacheBlock * const dirc,
     }
     if ( ( ptr + 24 + cEntry->nLen ) > ADF_LOGICAL_BLOCK_SIZE )
         return ADF_RC_ERROR;
-    memcpy(cEntry->name, dirc->records+ptr+24, cEntry->nLen);
-    cEntry->name[(int)(cEntry->nLen)]='\0';
+    memcpy( cEntry->name, dirc->records + ptr + 24, cEntry->nLen );
+    cEntry->name[ (int) cEntry->nLen ] = '\0';
 
-    cEntry->cLen = dirc->records[ptr+24+cEntry->nLen];
+    cEntry->cLen = dirc->records[ ptr + 24 + cEntry->nLen ];
     if ( cEntry->cLen > ADF_MAX_COMMENT_LEN )
         return ADF_RC_ERROR;
     if ( ptr + 24 + cEntry->nLen + 1 + cEntry->cLen > ADF_LOGICAL_BLOCK_SIZE )
         return ADF_RC_ERROR;
-    if (cEntry->cLen>0) {
+    if ( cEntry->cLen > 0 ) {
 /*        cEntry->comm =(char*)malloc(sizeof(char)*(cEntry->cLen+1));
         if (!cEntry->comm) {
             free( cEntry->name ); cEntry->name=NULL;
             return;
         }
-*/        memcpy(cEntry->comm,dirc->records+ptr+24+cEntry->nLen+1,cEntry->cLen);
+*/
+        memcpy( cEntry->comm,
+                dirc->records + ptr + 24 + cEntry->nLen + 1,
+                cEntry->cLen );
     }
-        cEntry->comm[(int)(cEntry->cLen)]='\0';
+    cEntry->comm[ (int) cEntry->cLen ] = '\0';
 /*printf("cEntry->nLen %d cEntry->cLen %d %s\n",cEntry->nLen,cEntry->cLen,cEntry->name);*/
-    *p  = ptr+24+cEntry->nLen+1+cEntry->cLen;
+    *p = ptr + 24 + cEntry->nLen + 1 + cEntry->cLen;
 
     /* the starting offset of each record must be even (68000 constraint) */
-    if ((*p%2)!=0)
-        *p=(*p)+1;
+    if ( ( *p % 2 ) != 0 )
+        *p = (*p) + 1;
 
     return ADF_RC_OK;
 }
