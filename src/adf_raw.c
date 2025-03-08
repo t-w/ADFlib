@@ -299,13 +299,13 @@ uint32_t adfNormalSum ( const uint8_t * const buf,
     uint32_t newsum;
     int i;
 
-    newsum=0L;
-    for(i=0; i < (bufLen/4); i++)
-        if ( i != (offset/4) )       /* old chksum */
-            newsum+=Long(buf+i*4);
+    newsum = 0L;
+    for ( i = 0; i < bufLen / 4; i++ )
+        if ( i != offset / 4 )       /* old chksum */
+            newsum += Long( buf + i * 4 );
     newsum = (uint32_t) ( - (int32_t) newsum );	/* WARNING */
 
-    return(newsum);
+    return newsum;
 }
 
 /*
@@ -314,13 +314,13 @@ uint32_t adfNormalSum ( const uint8_t * const buf,
  */
 uint32_t adfBitmapSum ( const uint8_t * const buf )
 {
-	uint32_t newSum;
-	int i;
+    uint32_t newSum;
+    int i;
 	
-	newSum = 0L;
-	for(i=1; i<128; i++)
-		newSum-=Long(buf+i*4);
-	return(newSum);
+    newSum = 0L;
+    for ( i = 1; i < 128; i++ )
+        newSum -= Long( buf + i * 4 );
+    return newSum;
 }
 
 
@@ -333,18 +333,18 @@ uint32_t adfBootSum ( const uint8_t * const buf )
     uint32_t d, newSum;
     int i;
 	
-    newSum=0L;
-    for(i=0; i<256; i++) {
-        if (i!=1) {
-            d = Long(buf+i*4);
-            if ( (0xffffffffU-newSum)<d )
+    newSum = 0L;
+    for ( i = 0; i < 256; i++ ) {
+        if ( i != 1 ) {
+            d = Long( buf + i * 4 );
+            if ( ( 0xffffffffU - newSum ) < d )
                 newSum++;
-            newSum+=d;
+            newSum += d;
         }
     }
     newSum = ~newSum;	/* not */
 
-    return(newSum);
+    return newSum;
 }
 
 uint32_t adfBootSum2 ( const uint8_t * const buf )
@@ -353,16 +353,16 @@ uint32_t adfBootSum2 ( const uint8_t * const buf )
 
     newSum = 0L;
     for ( unsigned i = 0; i < 1024 / sizeof(uint32_t) ; i++ ) {
-        if (i!=1) {
+        if ( i != 1 ) {
             prevsum = newSum;
-            newSum += Long(buf+i*4);
-            if (newSum < prevsum)
+            newSum += Long( buf + i * 4 );
+            if ( newSum < prevsum )
                 newSum++;
         }
     }
     newSum = ~newSum;	/* not */
 
-    return(newSum);
+    return newSum;
 }
 
 
