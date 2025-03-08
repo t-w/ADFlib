@@ -87,11 +87,11 @@ void adfSwapEndian ( uint8_t * const buf,
         for ( int j = 0 ; j < swapTable[type][i] ; j++ )  {
             switch ( swapTable[type][i + 1] ) {
             case SW_LONG:
-                *(uint32_t*)(buf + p) = Long(buf + p);
+                *(uint32_t *)( buf + p ) = swapLong( buf + p );
                 p += 4;
                 break;
             case SW_SHORT:
-                *(uint32_t*)(buf + p) = Short(buf + p);
+                *(uint16_t *)( buf + p ) = swapShort( buf + p );
                 p += 2;
                 break;
             case SW_CHAR:
@@ -302,7 +302,7 @@ uint32_t adfNormalSum ( const uint8_t * const buf,
     newsum = 0L;
     for ( i = 0; i < bufLen / 4; i++ )
         if ( i != offset / 4 )       /* old chksum */
-            newsum += Long( buf + i * 4 );
+            newsum += swapLong( buf + i * 4 );
     newsum = (uint32_t) ( - (int32_t) newsum );	/* WARNING */
 
     return newsum;
@@ -319,7 +319,7 @@ uint32_t adfBitmapSum ( const uint8_t * const buf )
 	
     newSum = 0L;
     for ( i = 1; i < 128; i++ )
-        newSum -= Long( buf + i * 4 );
+        newSum -= swapLong( buf + i * 4 );
     return newSum;
 }
 
@@ -336,7 +336,7 @@ uint32_t adfBootSum ( const uint8_t * const buf )
     newSum = 0L;
     for ( i = 0; i < 256; i++ ) {
         if ( i != 1 ) {
-            d = Long( buf + i * 4 );
+            d = swapLong( buf + i * 4 );
             if ( ( 0xffffffffU - newSum ) < d )
                 newSum++;
             newSum += d;
@@ -355,7 +355,7 @@ uint32_t adfBootSum2 ( const uint8_t * const buf )
     for ( unsigned i = 0; i < 1024 / sizeof(uint32_t) ; i++ ) {
         if ( i != 1 ) {
             prevsum = newSum;
-            newSum += Long( buf + i * 4 );
+            newSum += swapLong( buf + i * 4 );
             if ( newSum < prevsum )
                 newSum++;
         }

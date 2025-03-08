@@ -200,7 +200,7 @@ void dumpBlock ( const uint8_t * const buf )
     for ( i = 0; i < 32; i++ ) {
         printf( "%5x ", i * 16 );
         for ( j = 0; j < 4; j++ ) {
-            printf( "%08x ", Long( buf + j * 4 + i * 16 ) );
+            printf( "%08x ", swapLong( buf + j * 4 + i * 16 ) );
         }
         printf("    ");
         for ( j = 0; j < 16; j++ )
