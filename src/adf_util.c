@@ -195,19 +195,22 @@ void adfTime2AmigaTime ( struct DateTime dt,
  */
 void dumpBlock ( const uint8_t * const buf )
 {
-	int i, j;
+    int i, j;
 
-	for(i=0; i<32; i++) {
-		printf("%5x ",i*16);
-        for (j=0; j<4; j++) {
-			printf("%08x ",Long(buf+j*4+i*16));
-		}
+    for ( i = 0; i < 32; i++ ) {
+        printf( "%5x ", i * 16 );
+        for ( j = 0; j < 4; j++ ) {
+            printf( "%08x ", Long( buf + j * 4 + i * 16 ) );
+        }
         printf("    ");
-        for (j=0; j<16; j++)
-            if (buf[i*16+j]<32 || buf[i*16+j]>127)
+        for ( j = 0; j < 16; j++ )
+            if ( buf[ i * 16 + j ] < 32 ||
+                 buf[ i * 16 + j ] > 127 )
+            {
                 putchar('.');
-            else
-                putchar(buf[i*16+j]);
+            } else {
+                putchar( buf[ i * 16 + j ] );
+            }
         putchar('\n');
     }
 }
