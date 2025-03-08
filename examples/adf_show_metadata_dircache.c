@@ -91,9 +91,12 @@ static void show_dircache_block( const struct AdfDirCacheBlock * const  block )
     int recordOffset = 0;
     struct AdfCacheEntry cEntry;
     for ( int i = 0 ; i < block->recordsNb ; i++ ) {
-        adfGetCacheEntry ( block, &recordOffset, &cEntry );
+        if ( adfGetCacheEntry( block, &recordOffset, &cEntry ) != ADF_RC_OK ) {
+            fprintf( stderr,"\nDirCache record %d: error getting entry.\n", i );
+            continue;
+        }
 
-        printf( "\nDirCache record %u:\n", i );
+        printf( "\nDirCache record %d:\n", i );
         show_dircache_block_record( &cEntry );
     }    
 }
