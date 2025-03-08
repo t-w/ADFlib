@@ -29,7 +29,7 @@
 #include "adf_show_metadata_volume.h"
 
 #include "adf_show_metadata_common.h"
-
+#include "adf_show_metadata_dircache.h"
 
 static void show_bmpages ( struct AdfVolume * const vol,
                            const struct AdfRootBlock * const rblock );
@@ -59,6 +59,8 @@ void show_volume_metadata ( struct AdfVolume * const vol )
     show_rootblock ( &rblock );
 
     show_bmpages ( vol, &rblock );
+
+    show_dircache_metadata( vol, rblock.extension );
 }
 
 

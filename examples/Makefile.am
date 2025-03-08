@@ -87,6 +87,8 @@ adf_show_metadata_SOURCES = adf_show_metadata.c \
   adf_show_metadata_common.h \
   adf_show_metadata_dir.c \
   adf_show_metadata_dir.h \
+  adf_show_metadata_dircache.c \
+  adf_show_metadata_dircache.h \
   adf_show_metadata_file.c \
   adf_show_metadata_file.h \
   adf_show_metadata_volume.c \

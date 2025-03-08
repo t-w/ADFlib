@@ -2,6 +2,7 @@
 #include "adf_show_metadata_dir.h"
 
 #include "adf_show_metadata_common.h"
+#include "adf_show_metadata_dircache.h"
 
 #include <adf_dir.h>
 #include <stdio.h>
@@ -86,5 +87,7 @@ void show_directory_metadata ( struct AdfVolume * const vol,
         );
 
     show_hashtable ( ( const uint32_t * const ) dir_block.hashTable );
+
+    show_dircache_metadata( vol, dir_block.extension );
 }
 
