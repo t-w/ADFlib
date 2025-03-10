@@ -42,6 +42,9 @@ static void show_dircache_block_record( const struct AdfCacheEntry * const  cEnt
 void show_dircache_metadata ( struct AdfVolume * const  vol,
                               ADF_SECTNUM               dircache_blocknum )
 {
+    if ( ! adfVolHasDIRCACHE( vol ) )
+        return;
+
     struct AdfDirCacheBlock dcblock;
 
     for ( unsigned i = 0;
