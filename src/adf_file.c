@@ -432,6 +432,9 @@ ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
 
     ADF_RETCODE rc = ADF_RC_OK;
 
+    //
+    // write current ext. block
+    //
     if (file->currentExt) {
         rc = adfWriteFileExtBlock ( file->volume,
                                     file->currentExt->headerKey,
@@ -445,6 +448,9 @@ ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
         }
     }
 
+    //
+    // update (OFS header, if the case) and write the current data block
+    //
     if ( file->fileHdr->byteSize > 0 &&
          file->currentData != NULL &&
          file->curDataPtr != 0 )
@@ -467,6 +473,10 @@ ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
         }
     }
 
+    //
+    // update and write file header block
+    //
+
 /*printf("pos=%ld\n",file->pos);*/
     adfTime2AmigaTime ( adfGiveCurrentTime(),
                         &(file->fileHdr->days),
@@ -482,6 +492,9 @@ ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
         return rc;
     }
 
+    //
+    // update dircache
+    //
     if ( adfVolHasDIRCACHE ( file->volume ) ) {
 /*printf("parent=%ld\n",file->fileHdr->parent);*/
         struct AdfEntryBlock parent;
@@ -500,6 +513,9 @@ ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
         }
     }
 
+    //
+    // update bitmap
+    //
     rc = adfUpdateBitmap ( file->volume );
     if ( rc != ADF_RC_OK ) {
         adfEnv.eFct ( "adfFlushfile : error updating volume bitmap" );
