@@ -1235,7 +1235,7 @@ ADF_RETCODE adfFileCreateNextBlock ( struct AdfFile * const file )
         for ( unsigned i = 0 ; i < blockSize ; i++ )
             data->data[i]=0;
         data->seqNum = file->nDataBlock+1;
-        data->dataSize = blockSize;
+        data->dataSize = 0;
         data->nextData = 0L;
         data->headerKey = file->fileHdr->headerKey;
     }
