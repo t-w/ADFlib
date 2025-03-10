@@ -7,7 +7,7 @@ Build-Depends: dh-autoreconf,
                debhelper-compat (= 13),
                autotools-dev
 Standards-Version: 4.6.2
-Homepage: https://github.com/lclevy/ADFlib
+Homepage: https://github.com/adflib/ADFlib
 Vcs-Git: https://salsa.debian.org/debian/unadf.git
 Vcs-Browser: https://salsa.debian.org/debian/unadf
 

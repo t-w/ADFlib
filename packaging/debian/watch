@@ -1,2 +1,2 @@
 version=4
-https://github.com/lclevy/ADFlib.git refs/tags/v([\d\.]+)
+https://github.com/adflib/ADFlib.git refs/tags/v([\d\.]+)

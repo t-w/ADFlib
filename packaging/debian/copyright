@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: ADFlib
-Upstream-Contact: Laurent Clévy <laurent.clevy@club-internet.fr>
-Source: https://github.com/lclevy/ADFlib
+Upstream-Contact: Tomasz Wolak <tomas.wolak@gmail.com>
+Source: https://github.com/adflib/ADFlib
 
 Files: *
 Copyright: 1999-2024 Laurent Clévy (laurent.clevy@club-internet.fr)

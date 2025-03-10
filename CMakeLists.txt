@@ -8,7 +8,7 @@ set ( ADFLIB_DATE 2024-05-16 )
 project ( adflib
     VERSION      ${ADFLIB_VERSION}
     DESCRIPTION  "A free, portable and open implementation of the Amiga filesystem"
-    HOMEPAGE_URL "https://gitlab.com/lclevy/ADFlib"
+    HOMEPAGE_URL "https://gitlab.com/adflib/ADFlib"
     LANGUAGES    C
 )
 

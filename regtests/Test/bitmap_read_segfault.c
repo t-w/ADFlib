@@ -4,7 +4,7 @@
  * ie. non-zero records beyond expected (fixed) size
  *
  * more details:
- * https://github.com/lclevy/ADFlib/issues/63
+ * https://github.com/adflib/ADFlib/issues/63
  */
 
 

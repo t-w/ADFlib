@@ -171,7 +171,7 @@ ADF_RETCODE adfReadBitmap ( struct AdfVolume * const          vol,
                root->bmPages[i] != 0 ) ||
              ( i == vol->bitmap.size ) );
 
-    // some images fail on this, https://github.com/lclevy/ADFlib/issues/63
+    // some images fail on this, https://github.com/adflib/ADFlib/issues/63
     //   assert ( ( i == vol->bitmap.size && root->bmPages[i] == 0 ) ||
     //            ( i < vol->bitmap.size ) );
 
@@ -200,7 +200,7 @@ ADF_RETCODE adfReadBitmap ( struct AdfVolume * const          vol,
     }
 
     /* check for erratic (?) (non-zero) entries in bmpages beyond the expected size,
-       more info:  https://github.com/lclevy/ADFlib/issues/63 */
+       more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
     for ( uint32_t i2 = i ; i2 < ADF_BM_PAGES_ROOT_SIZE ; i2++ ) {
         if ( root->bmPages[i2] != 0 )
@@ -247,7 +247,7 @@ ADF_RETCODE adfReadBitmap ( struct AdfVolume * const          vol,
 
         /* check for erratic (?) (non-zero) entries in bmpages beyond
            the expected size,
-           more info:  https://github.com/lclevy/ADFlib/issues/63 */
+           more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
         for ( uint32_t i2 = i ; i2 < BM_PAGES_EXT_SIZE ; i2++ ) {
             if ( bmExt.bmPages[i2] != 0 )
@@ -317,7 +317,7 @@ ADF_RETCODE adfReconstructBitmap ( struct AdfVolume * const          vol,
                root->bmPages[i] != 0 ) ||
              ( i == vol->bitmap.size ) );
 
-    // some images fail on this, https://github.com/lclevy/ADFlib/issues/63
+    // some images fail on this, https://github.com/adflib/ADFlib/issues/63
     //   assert ( ( i == vol->bitmap.size && root->bmPages[i] == 0 ) ||
     //            ( i < vol->bitmap.size ) );
 
@@ -346,7 +346,7 @@ ADF_RETCODE adfReconstructBitmap ( struct AdfVolume * const          vol,
     }
 
     /* check for erratic (?) (non-zero) entries in bmpages beyond the expected size,
-       more info:  https://github.com/lclevy/ADFlib/issues/63 */
+       more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
     for ( uint32_t i2 = i ; i2 < ADF_BM_PAGES_ROOT_SIZE ; i2++ ) {
         if ( root->bmPages[i2] != 0 )
@@ -394,7 +394,7 @@ ADF_RETCODE adfReconstructBitmap ( struct AdfVolume * const          vol,
         }
 
         /* check for erratic (?) (non-zero) entries in bmpages beyond the expected size,
-           more info:  https://github.com/lclevy/ADFlib/issues/63 */
+           more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
         for ( uint32_t i2 = i ; i2 < BM_PAGES_EXT_SIZE ; i2++ ) {
             if ( bmExtBlock.bmPages[i2] != 0 )

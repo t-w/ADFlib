@@ -1,7 +1,7 @@
 
 //
 // regr. test for the issue:
-//   https://github.com/lclevy/ADFlib/issues/9
+//   https://github.com/adflib/ADFlib/issues/9
 //
 
 #include "adflib.h"

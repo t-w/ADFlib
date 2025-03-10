@@ -11,7 +11,7 @@
  * block allocation bitmap (which should not be changed by the enforced update).
  *
  * More details on bitmap issues:
- * https://github.com/lclevy/ADFlib/issues/63
+ * https://github.com/adflib/ADFlib/issues/63
  */
 
 
