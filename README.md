@@ -171,7 +171,7 @@ is a new and potentially harmul feature so do not experiment on a unique
 copy of an ADF image with your precious data. Do it on a copy (and report
 if any issues are encountered).
 
-Update: The notice above is especially actual that it was discovered that
+Update: The notice above is especially actual as it was discovered that
 the version `0.8.0` and earlier **do not rebuild the block allocation bitmap
 for volumes where it is marked invalid**. In short, this means that if the bitmap
 is really incorrect, writing to such volume may lead to data loss/corruption
@@ -179,6 +179,18 @@ is really incorrect, writing to such volume may lead to data loss/corruption
 Because of this, it is strongly advised to **UPDATE TO THE LATEST VERSION**.
 
 (See also TODO and BUGS).
+
+### DirCache
+Dircache is an existing but somewhat exotic feature of the FFS.
+Until now, I haven't encountered any disk image with this enabled. The only
+one with dircache set on the volume is one of the test floppies for the ADFlib
+(testffs.adf)...
+
+While dircache support is implemented in ADFlib (at least, to certain extent),
+so far, there are no tests of dircache. As such, assume that this feature is
+practically **not tested**.
+While it can be used rather safely in read-only mode, be very careful with
+write mode using a volume with dircache enabled.
 
 
 ## The API documentation in doc/

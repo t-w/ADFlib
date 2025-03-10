@@ -51,6 +51,10 @@ To do and/or consider (no particular order):
   automatically in CI, it rather should be done on a VM or some special box
   dedicated for such purpose.
 
+* Test dircache
+
+  So far, there are no "real" images available (only testffs.adf in ADFlib...)
+  and, hence, no real need for testing this. But should be done at some point.
 
 * Review and update the API
 
