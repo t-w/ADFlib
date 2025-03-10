@@ -49,9 +49,9 @@ struct AdfCacheEntry {
 };
 
 
-ADF_RETCODE adfGetCacheEntry ( const struct AdfDirCacheBlock * const dirc,
-                               int * const                           p,
-                               struct AdfCacheEntry * const          cEntry );
+ADF_PREFIX ADF_RETCODE adfGetCacheEntry( const struct AdfDirCacheBlock * const dirc,
+                                         int * const                           p,
+                                         struct AdfCacheEntry * const          cEntry );
 
 int adfPutCacheEntry ( struct AdfDirCacheBlock * const    dirc,
                        const int * const                  p,
@@ -78,9 +78,9 @@ ADF_RETCODE adfDelFromCache ( struct AdfVolume * const           vol,
                               const struct AdfEntryBlock * const parent,
                               const ADF_SECTNUM                  headerKey );
 
-ADF_RETCODE adfReadDirCBlock ( struct AdfVolume * const        vol,
-                               const ADF_SECTNUM               nSect,
-                               struct AdfDirCacheBlock * const dirc );
+ADF_PREFIX ADF_RETCODE adfReadDirCBlock( struct AdfVolume * const        vol,
+                                         const ADF_SECTNUM               nSect,
+                                         struct AdfDirCacheBlock * const dirc );
 
 ADF_RETCODE adfWriteDirCBlock ( struct AdfVolume * const        vol,
                                 const int32_t                   nSect,
