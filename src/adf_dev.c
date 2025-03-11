@@ -37,49 +37,49 @@
 #include <string.h>
 
 
-static ADF_RETCODE adfDevSetCalculatedGeometry_ ( struct AdfDevice * const dev );
-static bool adfDevIsGeometryValid_ ( const struct AdfDevice * const dev );
+static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev );
+static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev );
 
 
-struct AdfDevice * adfDevCreate ( const char * const driverName,
-                                  const char * const name,
-                                  const uint32_t     cylinders,
-                                  const uint32_t     heads,
-                                  const uint32_t     sectors )
+struct AdfDevice * adfDevCreate(  const char * const  driverName,
+                                  const char * const  name,
+                                  const uint32_t      cylinders,
+                                  const uint32_t      heads,
+                                  const uint32_t      sectors )
 {
-    const struct AdfDeviceDriver * const driver = adfGetDeviceDriverByName ( driverName );
+    const struct AdfDeviceDriver * const  driver = adfGetDeviceDriverByName( driverName );
     if ( driver == NULL || driver->createDev == NULL )
         return NULL;
-    return driver->createDev ( name, cylinders, heads, sectors );
+    return driver->createDev( name, cylinders, heads, sectors );
 }
 
 
-static struct AdfDevice *
-    adfDevOpenWithDrv_ ( const struct AdfDeviceDriver * const driver,
-                         const char * const  name,
-                         const AdfAccessMode mode )
+static struct AdfDevice * adfDevOpenWithDrv_(
+    const struct AdfDeviceDriver * const  driver,
+    const char * const                    name,
+    const AdfAccessMode                   mode )
 {
     if ( driver == NULL || driver->openDev == NULL )
         return NULL;
 
-    struct AdfDevice * const dev = driver->openDev ( name, mode );
+    struct AdfDevice * const  dev = driver->openDev( name, mode );
     if ( dev == NULL )
         return NULL;
 
-    dev->devType = adfDevType ( dev );
+    dev->devType = adfDevType( dev );
 
     if ( ! dev->drv->isNative() ) {
-        if ( adfDevSetCalculatedGeometry_ ( dev ) != ADF_RC_OK ) {
-            dev->drv->closeDev ( dev );
+        if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
+            dev->drv->closeDev( dev );
             return NULL;
         }
     }
 
-    if ( ! adfDevIsGeometryValid_ ( dev ) ) {
-        adfEnv.eFct ( "adfDevOpen : invalid geometry: cyliders %u, "
-                      "heads: %u, sectors: %u, size: %u, device: %s",
-                      dev->cylinders, dev->heads, dev->sectors, dev->size, dev->name );
-        dev->drv->closeDev ( dev );
+    if ( ! adfDevIsGeometryValid_( dev ) ) {
+        adfEnv.eFct( "adfDevOpen : invalid geometry: cyliders %u, "
+                     "heads: %u, sectors: %u, size: %u, device: %s",
+                     dev->cylinders, dev->heads, dev->sectors, dev->size, dev->name );
+        dev->drv->closeDev( dev );
         return NULL;
     }
 
@@ -141,16 +141,16 @@ static struct AdfDevice *
 }
 
 
-struct AdfDevice * adfDevOpen ( const char * const  name,
-                                const AdfAccessMode mode )
+struct AdfDevice * adfDevOpen( const char * const   name,
+                               const AdfAccessMode  mode )
 {
     return adfDevOpenWithDrv_ ( adfGetDeviceDriverByDevName ( name ), name, mode );
 }
 
 
-struct AdfDevice * adfDevOpenWithDriver ( const char * const  driverName,
-                                          const char * const  name,
-                                          const AdfAccessMode mode )
+struct AdfDevice * adfDevOpenWithDriver( const char * const   driverName,
+                                         const char * const   name,
+                                         const AdfAccessMode  mode )
 {
     return adfDevOpenWithDrv_ ( adfGetDeviceDriverByName ( driverName ), name, mode );
 }
@@ -162,7 +162,7 @@ struct AdfDevice * adfDevOpenWithDriver ( const char * const  driverName,
  *
  * Closes/releases an opened device.
  */
-void adfDevClose ( struct AdfDevice * const dev )
+void adfDevClose( struct AdfDevice * const  dev )
 {
     if ( dev == NULL )
         return;
@@ -180,7 +180,7 @@ void adfDevClose ( struct AdfDevice * const dev )
  * returns the type of a device
  * only based of the field 'dev->size'
  */
-int adfDevType ( const struct AdfDevice * const dev )
+int adfDevType( const struct AdfDevice * const  dev )
 {
     if( (dev->size==512*11*2*80) ||		/* BV */
         (dev->size==512*11*2*81) ||		/* BV */
@@ -206,7 +206,7 @@ int adfDevType ( const struct AdfDevice * const dev )
  *
  * can be used before adfVolCreate() or adfVolMount()
  */
-void adfDevInfo ( const struct AdfDevice * const dev )
+void adfDevInfo( const struct AdfDevice * const  dev )
 {
     const char * devTypeInfo = NULL;
     switch ( dev->devType ) {
@@ -263,7 +263,7 @@ void adfDevInfo ( const struct AdfDevice * const dev )
  *
  * adfInitDevice() must fill dev->size !
  */
-ADF_RETCODE adfDevMount ( struct AdfDevice * const dev )
+ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
 {
     if ( dev == NULL )
         return ADF_RC_ERROR;
@@ -316,7 +316,7 @@ ADF_RETCODE adfDevMount ( struct AdfDevice * const dev )
  * adfDevUnMount
  *
  */
-void adfDevUnMount ( struct AdfDevice * const dev )
+void adfDevUnMount( struct AdfDevice * const  dev )
 {
     if ( ! dev->mounted )
         return;
@@ -337,10 +337,10 @@ void adfDevUnMount ( struct AdfDevice * const dev )
 }
 
 
-ADF_RETCODE adfDevReadBlock ( struct AdfDevice * const dev,
-                              const uint32_t           pSect,
-                              const uint32_t           size,
-                              uint8_t * const          buf )
+ADF_RETCODE adfDevReadBlock( struct AdfDevice * const  dev,
+                             const uint32_t            pSect,
+                             const uint32_t            size,
+                             uint8_t * const           buf )
 {
 /*  printf("pSect R =%ld\n",pSect);
     ADF_RETCODE rc = dev->drv->readSector ( dev, pSect, size, buf );
@@ -351,17 +351,17 @@ ADF_RETCODE adfDevReadBlock ( struct AdfDevice * const dev,
 }
 
 
-ADF_RETCODE adfDevWriteBlock ( struct AdfDevice * const dev,
-                               const uint32_t           pSect,
-                               const uint32_t           size,
-                               const uint8_t * const    buf )
+ADF_RETCODE adfDevWriteBlock( struct AdfDevice * const  dev,
+                              const uint32_t            pSect,
+                              const uint32_t            size,
+                              const uint8_t * const     buf )
 {
 /*printf("nativ=%d\n",dev->isNativeDev);*/
     return dev->drv->writeSector ( dev, pSect, size, buf );
 }
 
 
-static ADF_RETCODE adfDevSetCalculatedGeometry_ ( struct AdfDevice * const dev )
+static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
 {
     /* set geometry (based on already set size) */
     switch ( dev->devType ) {
@@ -403,7 +403,7 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_ ( struct AdfDevice * const dev )
 }
 
 
-static bool adfDevIsGeometryValid_ ( const struct AdfDevice * const dev )
+static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev )
 {
     return ( dev->cylinders > 0 &&
              dev->heads > 0    &&
