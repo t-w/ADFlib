@@ -33,25 +33,30 @@
 /* ----- FILE ----- */
 
 struct AdfFile {
-    struct AdfVolume *        volume;
+    struct AdfVolume *
+                 volume;
 
-    struct AdfFileHeaderBlock * fileHdr;
-    void *                      currentData;
-    struct AdfFileExtBlock *    currentExt;
+    struct AdfFileHeaderBlock *
+                 fileHdr;
 
-    unsigned    nDataBlock;  /* current data block number */
-    ADF_SECTNUM curDataPtr;  /* sector number of current data block;
-                                if == 0 -> data in the buffer (currentData) is
-                                           invalid (eg. block not read correctly) */
-    uint32_t pos;
+    void *       currentData;
 
-    unsigned posInDataBlk;
-    unsigned posInExtBlk;
+    struct AdfFileExtBlock *
+                 currentExt;
 
-    bool     modeRead,
-             modeWrite;
+    unsigned     nDataBlock;  /* current data block number */
+    ADF_SECTNUM  curDataPtr;  /* sector number of current data block;
+                                 if == 0 -> data in the buffer (currentData) is
+                                            invalid (eg. block not read correctly) */
+    uint32_t     pos;
 
-    bool     currentDataBlockChanged;
+    unsigned     posInDataBlk;
+    unsigned     posInExtBlk;
+
+    bool         modeRead,
+                 modeWrite;
+
+    bool         currentDataBlockChanged;
 };
 
 
