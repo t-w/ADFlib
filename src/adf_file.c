@@ -43,31 +43,26 @@
 #include <string.h>
 
 
-static ADF_RETCODE adfFileReadNextBlock ( struct AdfFile * const file );
-static ADF_RETCODE adfFileCreateNextBlock ( struct AdfFile * const file );
-static unsigned adfFileWriteFilled ( struct AdfFile * const file,
-                                     const uint8_t          fillValue,
-                                     uint32_t               size );
+static ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file );
+static ADF_RETCODE adfFileCreateNextBlock( struct AdfFile * const  file );
 
-static ADF_RETCODE adfFileSeekStart_ ( struct AdfFile * const file );
-static ADF_RETCODE adfFileSeekEOF_ ( struct AdfFile * const file );
-static ADF_RETCODE adfFileSeekOFS_ ( struct AdfFile * const file,
-                                     uint32_t               pos );
-static ADF_RETCODE adfFileSeekExt_ ( struct AdfFile * const file,
-                                     uint32_t               pos );
+static unsigned adfFileWriteFilled( struct AdfFile * const  file,
+                                    const uint8_t           fillValue,
+                                    uint32_t                size );
+
+static ADF_RETCODE adfFileSeekStart_( struct AdfFile * const  file );
+static ADF_RETCODE adfFileSeekEOF_( struct AdfFile * const  file );
+static ADF_RETCODE adfFileSeekOFS_( struct AdfFile * const  file,
+                                    uint32_t                pos );
+static ADF_RETCODE adfFileSeekExt_( struct AdfFile * const  file,
+                                    uint32_t                pos );
 
 // debugging
 //#define DEBUG_ADF_FILE
-
 #ifdef DEBUG_ADF_FILE
-
-static void show_File ( const struct AdfFile * const file );
-
-static void showAdfFileHeaderBlock (
-    const struct AdfFileHeaderBlock * const block );
-
-static void showAdfFileExtBlock (
-    const struct AdfFileExtBlock * const block );
+static void show_File( const struct AdfFile * const  file );
+static void showAdfFileHeaderBlock( const struct AdfFileHeaderBlock * const  block );
+static void showAdfFileExtBlock( const struct AdfFileExtBlock * const  block );
 #endif
 
 
@@ -82,9 +77,9 @@ static void showAdfFileExtBlock (
  * adfFileOpen
  *
  */
-struct AdfFile * adfFileOpen ( struct AdfVolume * const vol,
-                               const char * const       name,
-                               const AdfFileMode        mode )
+struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
+                              const char * const        name,
+                              const AdfFileMode         mode )
 {
     if ( ! vol ) {
         adfEnv.eFct ( "adfFileOpen : vol is NULL" );
@@ -233,7 +228,7 @@ adfOpenFile_error:
  * adfCloseFile
  *
  */
-void adfFileClose ( struct AdfFile * file )
+void adfFileClose( struct AdfFile *  file )
 {
     if (file==0)
         return;
@@ -258,9 +253,9 @@ void adfFileClose ( struct AdfFile * file )
  * adfReadFile
  *
  */
-uint32_t adfFileRead ( struct AdfFile * const file,
-                       uint32_t               n,
-                       uint8_t * const        buffer )
+uint32_t adfFileRead( struct AdfFile * const  file,
+                      uint32_t                n,
+                      uint8_t * const         buffer )
 {
     if ( ( ! file->modeRead ) ||
          n == 0 ||
@@ -314,9 +309,9 @@ uint32_t adfFileRead ( struct AdfFile * const file,
  * adfWriteFile
  *
  */
-uint32_t adfFileWrite ( struct AdfFile * const file,
-                        const uint32_t         n,
-                        const uint8_t * const  buffer )
+uint32_t adfFileWrite( struct AdfFile * const  file,
+                       const uint32_t          n,
+                       const uint8_t * const   buffer )
 {
     if ( ! file->modeWrite )
         return 0; // ADF_RC_ERROR;
@@ -393,8 +388,8 @@ uint32_t adfFileWrite ( struct AdfFile * const file,
 
 //#define TEST_OFS_SEEK 1
 
-ADF_RETCODE adfFileSeek ( struct AdfFile * const file,
-                          const uint32_t         pos )
+ADF_RETCODE adfFileSeek( struct AdfFile * const  file,
+                         const uint32_t          pos )
 {
     if ( file->pos == pos  && file->curDataPtr != 0 )
         return ADF_RC_OK;
@@ -472,8 +467,8 @@ ADF_RETCODE adfFileSeek ( struct AdfFile * const file,
  *  5. update block allocation bitmap (adfUpdateBitmap())
  */
 
-ADF_RETCODE adfFileTruncate ( struct AdfFile * const file,
-                              const uint32_t         fileSizeNew )
+ADF_RETCODE adfFileTruncate( struct AdfFile * const  file,
+                             const uint32_t          fileSizeNew )
 {
     if ( ! file->modeWrite )
         return ADF_RC_ERROR;
@@ -601,7 +596,7 @@ ADF_RETCODE adfFileTruncate ( struct AdfFile * const file,
  * adfFileFlush
  *
  */
-ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
+ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
 {
     if ( ! file->modeWrite )
         return ADF_RC_OK;
@@ -713,7 +708,7 @@ ADF_RETCODE adfFileFlush ( struct AdfFile * const file )
  * adfReadNextFileBlock
  *
  */
-ADF_RETCODE adfFileReadNextBlock ( struct AdfFile * const file )
+ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
 {
     ADF_RETCODE rc = ADF_RC_OK;
 
@@ -800,7 +795,7 @@ ADF_RETCODE adfFileReadNextBlock ( struct AdfFile * const file )
  * adfCreateNextFileBlock
  *
  */
-ADF_RETCODE adfFileCreateNextBlock ( struct AdfFile * const file )
+ADF_RETCODE adfFileCreateNextBlock( struct AdfFile * const  file )
 {
 /*puts("adfCreateNextFileBlock");*/
     unsigned int blockSize = file->volume->datablockSize;
@@ -902,9 +897,9 @@ ADF_RETCODE adfFileCreateNextBlock ( struct AdfFile * const file )
  * adfReadFileExtBlockN
  *
  */
-ADF_RETCODE adfFileReadExtBlockN ( const struct AdfFile * const   file,
-                                   const int32_t                  extBlock,
-                                   struct AdfFileExtBlock * const fext )
+ADF_RETCODE adfFileReadExtBlockN( const struct AdfFile * const    file,
+                                  const int32_t                   extBlock,
+                                  struct AdfFileExtBlock * const  fext )
 {
     // check if the given extBlock index is valid
     const int nExtBlocks = (int) adfFileSize2Extblocks ( file->fileHdr->byteSize,
@@ -946,11 +941,11 @@ ADF_RETCODE adfFileReadExtBlockN ( const struct AdfFile * const   file,
  * adfFilePos2DataBlock
  *
  */
-int32_t adfFilePos2DataBlock( const unsigned   pos,
-                              const unsigned   blockSize,
-                              unsigned * const posInExtBlk,
-                              unsigned * const posInDataBlk,
-                              unsigned * const curDataN )
+int32_t adfFilePos2DataBlock( const unsigned    pos,
+                              const unsigned    blockSize,
+                              unsigned * const  posInExtBlk,
+                              unsigned * const  posInDataBlk,
+                              unsigned * const  curDataN )
 {
     *posInDataBlk = pos % blockSize;   // offset in the data block
     *curDataN     = pos / blockSize;   // index of the data block
@@ -983,7 +978,7 @@ int32_t adfFilePos2DataBlock( const unsigned   pos,
  *
  */
 
-static ADF_RETCODE adfFileSeekStart_ ( struct AdfFile * const file )
+static ADF_RETCODE adfFileSeekStart_( struct AdfFile * const  file )
 {
     file->pos = 0;
     file->posInExtBlk = 0;
@@ -1002,7 +997,7 @@ static ADF_RETCODE adfFileSeekStart_ ( struct AdfFile * const file )
     return rc;
 }
 
-static ADF_RETCODE adfFileSeekEOF_ ( struct AdfFile * const file )
+static ADF_RETCODE adfFileSeekEOF_( struct AdfFile * const  file )
 {
     if ( file->fileHdr->byteSize == 0 )
         return adfFileSeekStart_ ( file );
@@ -1025,8 +1020,8 @@ static ADF_RETCODE adfFileSeekEOF_ ( struct AdfFile * const file )
 }
 
 
-static ADF_RETCODE adfFileSeekOFS_ ( struct AdfFile * const file,
-                                     uint32_t               pos )
+static ADF_RETCODE adfFileSeekOFS_( struct AdfFile * const  file,
+                                    uint32_t                pos )
 {
     adfFileSeekStart_ ( file );
 
@@ -1059,8 +1054,8 @@ static ADF_RETCODE adfFileSeekOFS_ ( struct AdfFile * const file,
 }
 
 
-static ADF_RETCODE adfFileSeekExt_ ( struct AdfFile * const file,
-                                     uint32_t               pos )
+static ADF_RETCODE adfFileSeekExt_( struct AdfFile * const  file,
+                                    uint32_t                pos )
 {
     file->pos = min ( pos, file->fileHdr->byteSize );
 
@@ -1125,9 +1120,9 @@ static ADF_RETCODE adfFileSeekExt_ ( struct AdfFile * const file,
  * adfFileWriteFilled
  *
  */
-unsigned adfFileWriteFilled ( struct AdfFile * const file,
-                              const uint8_t          fillValue,
-                              uint32_t               size )
+unsigned adfFileWriteFilled( struct AdfFile * const  file,
+                             const uint8_t           fillValue,
+                             uint32_t                size )
 {
     const unsigned BUFSIZE = 4096;
     uint8_t * const buffer = malloc ( BUFSIZE );
@@ -1155,7 +1150,7 @@ unsigned adfFileWriteFilled ( struct AdfFile * const file,
  * adfFileTruncateGetBlocksToRemove
  *
  */
-ADF_RETCODE adfFileTruncateGetBlocksToRemove (
+ADF_RETCODE adfFileTruncateGetBlocksToRemove(
     const struct AdfFile * const     file,
     const uint32_t                   fileSizeNew,
     struct AdfVectorSectors * const  blocksToRemove )
@@ -1362,7 +1357,7 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove (
 
 #ifdef DEBUG_ADF_FILE
 
-static void show_File ( const struct AdfFile * const file )
+static void show_File( const struct AdfFile * const  file )
 {
     printf ( "\nstruct File:\n"
              //"volume:\t0x%x
@@ -1393,8 +1388,7 @@ static void show_File ( const struct AdfFile * const file )
              file->writeMode );
 }
 
-static void showAdfFileHeaderBlock (
-    const struct AdfFileHeaderBlock * const block )
+static void showAdfFileHeaderBlock( const struct AdfFileHeaderBlock * const  block )
 {
     printf ( "\nAdfFileHeaderBlock:\n"
              "  type:\t\t%d\n"
@@ -1453,8 +1447,7 @@ static void showAdfFileHeaderBlock (
              block->secType );	/* == -3 */
 }
 
-static void showAdfFileExtBlock (
-    const struct AdfFileExtBlock * const block )
+static void showAdfFileExtBlock( const struct AdfFileExtBlock * const  block )
 {
     printf ( "\nAdfFileExtBlock:\n"
              "  type:\t\t0x%x\t\t%u\n"
