@@ -701,7 +701,7 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
 
 /*****************************************************************************
  *
- * Private ? (lower-level) functions
+ * Private and lower-level functions
  *
  *****************************************************************************/
 
@@ -710,7 +710,7 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
  * adfReadNextFileBlock
  *
  */
-ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
+static ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
 {
     ADF_RETCODE rc = ADF_RC_OK;
 
@@ -798,7 +798,7 @@ ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
  * adfCreateNextFileBlock
  *
  */
-ADF_RETCODE adfFileCreateNextBlock( struct AdfFile * const  file )
+static ADF_RETCODE adfFileCreateNextBlock( struct AdfFile * const  file )
 {
 /*puts("adfCreateNextFileBlock");*/
     unsigned int blockSize = file->volume->datablockSize;
