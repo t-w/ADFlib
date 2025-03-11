@@ -37,9 +37,20 @@
 #include <string.h>
 
 
+static struct AdfDevice * adfDevOpenWithDrv_(
+    const struct AdfDeviceDriver * const  driver,
+    const char * const                    name,
+    const AdfAccessMode                   mode );
+
 static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev );
 static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev );
 
+
+/*****************************************************************************
+ *
+ * Public functions
+ *
+ *****************************************************************************/
 
 struct AdfDevice * adfDevCreate(  const char * const  driverName,
                                   const char * const  name,
@@ -51,93 +62,6 @@ struct AdfDevice * adfDevCreate(  const char * const  driverName,
     if ( driver == NULL || driver->createDev == NULL )
         return NULL;
     return driver->createDev( name, cylinders, heads, sectors );
-}
-
-
-static struct AdfDevice * adfDevOpenWithDrv_(
-    const struct AdfDeviceDriver * const  driver,
-    const char * const                    name,
-    const AdfAccessMode                   mode )
-{
-    if ( driver == NULL || driver->openDev == NULL )
-        return NULL;
-
-    struct AdfDevice * const  dev = driver->openDev( name, mode );
-    if ( dev == NULL )
-        return NULL;
-
-    dev->devType = adfDevType( dev );
-
-    if ( ! dev->drv->isNative() ) {
-        if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
-            dev->drv->closeDev( dev );
-            return NULL;
-        }
-    }
-
-    if ( ! adfDevIsGeometryValid_( dev ) ) {
-        adfEnv.eFct( "adfDevOpen : invalid geometry: cyliders %u, "
-                     "heads: %u, sectors: %u, size: %u, device: %s",
-                     dev->cylinders, dev->heads, dev->sectors, dev->size, dev->name );
-        dev->drv->closeDev( dev );
-        return NULL;
-    }
-
-    if ( dev->devType == ADF_DEVTYPE_HARDDISK ) {
-        struct AdfRDSKblock rdsk;
-        ADF_RETCODE rc = adfDevReadBlock ( dev, 0, sizeof(struct AdfRDSKblock),
-                                           (uint8_t *) &rdsk );
-        if ( rc != ADF_RC_OK ) {
-            dev->drv->closeDev ( dev );
-            return NULL;
-        }
-
-        if ( strncmp ( (char *) &rdsk, "RDSK", 4 ) == 0 ) {
-            rc = adfReadRDSKblock ( dev, &rdsk );
-            if ( rc == ADF_RC_OK ) {
-                /* rigid block loaded -> check geometry */
-                //if ( ! adfDevIsRDSKGeometryValid_ ( dev, &rdsk ) ) {
-                if  ( dev->cylinders != rdsk.cylinders ||
-                      dev->heads     != rdsk.heads     ||
-                      dev->sectors   != rdsk.sectors )
-                {
-                    adfEnv.wFct (
-                        "adfDevOpen : using geometry from Rigid Block, "
-                        "different than detected/calculated(!):\n"
-                        "                detected                rdsk block\n"
-                        " cyliders:      %8u                  %8u\n"
-                        " heads:         %8u                  %8u\n"
-                        " sectors:       %8u                  %8u\n"
-                        " size:        %10llu                %10llu",
-                        dev->cylinders, rdsk.cylinders,
-                        dev->heads,     rdsk.heads,
-                        dev->sectors,   rdsk.sectors,
-                        dev->size,
-                        (long long unsigned) rdsk.cylinders *
-                        (long long unsigned) rdsk.heads *
-                        (long long unsigned) rdsk.sectors * 512LLU );
-                    dev->cylinders = rdsk.cylinders;
-                    dev->heads     = rdsk.heads;
-                    dev->sectors   = rdsk.sectors;
-                    if ( ! adfDevIsGeometryValid_ ( dev ) ) {
-                        adfEnv.eFct ( "adfDevOpen : invalid geometry: cyliders %u, "
-                                      "heads: %u, sectors: %u, size: %u, device: %s",
-                                      dev->cylinders, dev->heads, dev->sectors,
-                                      dev->size, dev->name );
-                        dev->drv->closeDev ( dev );
-                        return NULL;
-                    }
-                }
-            } else {
-                adfEnv.wFct ( "adfDevOpen : RDSK block exists but could not be read, device: %s",
-                              dev->name );
-                //dev->drv->closeDev ( dev );
-                //return NULL;
-            }
-        }
-    }
-
-    return dev;
 }
 
 
@@ -154,7 +78,6 @@ struct AdfDevice * adfDevOpenWithDriver( const char * const   driverName,
 {
     return adfDevOpenWithDrv_ ( adfGetDeviceDriverByName ( driverName ), name, mode );
 }
-
 
 
 /*
@@ -358,6 +281,99 @@ ADF_RETCODE adfDevWriteBlock( struct AdfDevice * const  dev,
 {
 /*printf("nativ=%d\n",dev->isNativeDev);*/
     return dev->drv->writeSector ( dev, pSect, size, buf );
+}
+
+
+/*****************************************************************************
+ *
+ * Private / lower-level functions
+ *
+ *****************************************************************************/
+
+static struct AdfDevice * adfDevOpenWithDrv_(
+    const struct AdfDeviceDriver * const  driver,
+    const char * const                    name,
+    const AdfAccessMode                   mode )
+{
+    if ( driver == NULL || driver->openDev == NULL )
+        return NULL;
+
+    struct AdfDevice * const  dev = driver->openDev( name, mode );
+    if ( dev == NULL )
+        return NULL;
+
+    dev->devType = adfDevType( dev );
+
+    if ( ! dev->drv->isNative() ) {
+        if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
+            dev->drv->closeDev( dev );
+            return NULL;
+        }
+    }
+
+    if ( ! adfDevIsGeometryValid_( dev ) ) {
+        adfEnv.eFct( "adfDevOpen : invalid geometry: cyliders %u, "
+                     "heads: %u, sectors: %u, size: %u, device: %s",
+                     dev->cylinders, dev->heads, dev->sectors, dev->size, dev->name );
+        dev->drv->closeDev( dev );
+        return NULL;
+    }
+
+    if ( dev->devType == ADF_DEVTYPE_HARDDISK ) {
+        struct AdfRDSKblock rdsk;
+        ADF_RETCODE rc = adfDevReadBlock ( dev, 0, sizeof(struct AdfRDSKblock),
+                                           (uint8_t *) &rdsk );
+        if ( rc != ADF_RC_OK ) {
+            dev->drv->closeDev ( dev );
+            return NULL;
+        }
+
+        if ( strncmp ( (char *) &rdsk, "RDSK", 4 ) == 0 ) {
+            rc = adfReadRDSKblock ( dev, &rdsk );
+            if ( rc == ADF_RC_OK ) {
+                /* rigid block loaded -> check geometry */
+                //if ( ! adfDevIsRDSKGeometryValid_ ( dev, &rdsk ) ) {
+                if  ( dev->cylinders != rdsk.cylinders ||
+                      dev->heads     != rdsk.heads     ||
+                      dev->sectors   != rdsk.sectors )
+                {
+                    adfEnv.wFct (
+                        "adfDevOpen : using geometry from Rigid Block, "
+                        "different than detected/calculated(!):\n"
+                        "                detected                rdsk block\n"
+                        " cyliders:      %8u                  %8u\n"
+                        " heads:         %8u                  %8u\n"
+                        " sectors:       %8u                  %8u\n"
+                        " size:        %10llu                %10llu",
+                        dev->cylinders, rdsk.cylinders,
+                        dev->heads,     rdsk.heads,
+                        dev->sectors,   rdsk.sectors,
+                        dev->size,
+                        (long long unsigned) rdsk.cylinders *
+                        (long long unsigned) rdsk.heads *
+                        (long long unsigned) rdsk.sectors * 512LLU );
+                    dev->cylinders = rdsk.cylinders;
+                    dev->heads     = rdsk.heads;
+                    dev->sectors   = rdsk.sectors;
+                    if ( ! adfDevIsGeometryValid_ ( dev ) ) {
+                        adfEnv.eFct ( "adfDevOpen : invalid geometry: cyliders %u, "
+                                      "heads: %u, sectors: %u, size: %u, device: %s",
+                                      dev->cylinders, dev->heads, dev->sectors,
+                                      dev->size, dev->name );
+                        dev->drv->closeDev ( dev );
+                        return NULL;
+                    }
+                }
+            } else {
+                adfEnv.wFct ( "adfDevOpen : RDSK block exists but could not be read, device: %s",
+                              dev->name );
+                //dev->drv->closeDev ( dev );
+                //return NULL;
+            }
+        }
+    }
+
+    return dev;
 }
 
 
