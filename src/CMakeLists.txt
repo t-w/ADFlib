@@ -73,6 +73,7 @@ add_library ( adf
   adf_file_block.h
   adf_file.c
   adf_file.h
+  adf_file_util.c
   adf_file_util.h
   adf_link.c
   adf_link.h

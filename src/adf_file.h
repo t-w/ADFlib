@@ -113,12 +113,6 @@ ADF_PREFIX ADF_RETCODE adfFileFlush( struct AdfFile * const  file );
  * Low-level API
  *****************************************************************************/
 
-ADF_PREFIX int32_t adfFilePos2DataBlock( const unsigned    pos,
-                                         const unsigned    blockSize,
-                                         unsigned * const  posInExtBlk,
-                                         unsigned * const  posInDataBlk,
-                                         unsigned * const  curDataN );
-
 ADF_PREFIX ADF_RETCODE adfFileReadExtBlockN(
     const struct AdfFile * const    file,
     const int32_t                   extBlock,

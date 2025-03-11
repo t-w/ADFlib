@@ -29,6 +29,7 @@ libadf_la_SOURCES = \
     adf_env.c \
     adf_file_block.c \
     adf_file.c \
+    adf_file_util.c \
     adf_link.c \
     adf_link.h \
     adf_raw.c \

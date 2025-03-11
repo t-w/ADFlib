@@ -23,6 +23,7 @@
 
 #include "adf_show_metadata_file.h"
 
+#include <adf_file_util.h>
 #include <stdio.h>
 #include <string.h>
 

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 //#include "adflib.h"
-#include "adf_file.h"
+#include "adf_file_util.h"
 
 
 START_TEST ( test_check_framework )

@@ -3,11 +3,18 @@
 #define ADF_FILE_UTIL_H
 
 #include "adf_blk.h"
+#include "adf_prefix.h"
 
 #ifndef NDEBUG
 #define NDEBUG
 #endif
 #include <assert.h>
+
+ADF_PREFIX int32_t adfFilePos2DataBlock( const unsigned    pos,
+                                         const unsigned    blockSize,
+                                         unsigned * const  posInExtBlk,
+                                         unsigned * const  posInDataBlk,
+                                         unsigned * const  curDataN );
 
 static inline unsigned adfFilePos2datablockIndex ( unsigned pos,
                                                    unsigned blocksize )
