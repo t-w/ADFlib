@@ -471,76 +471,87 @@ ADF_RETCODE adfVolWriteBlock( struct AdfVolume * const  vol,
  * adfVolGetFsStr
  *
  */
-char * adfVolGetFsStr( const struct AdfVolume * const  vol )
+const char * adfVolGetFsStr( const struct AdfVolume * const  vol )
 {
     return ( adfVolIsOFS( vol ) ? "OFS" :
              adfVolIsFFS( vol ) ? "FFS" :
              adfVolIsPFS( vol ) ? "PFS" : "???" );
 }
 
+
+#define VOLINFO_SIZE 1024
+static char volInfo[ VOLINFO_SIZE + 1 ];
+
 /*
- * adfVolInfo
+ * adfVolGetInfo
  *
  */
-void adfVolInfo( struct AdfVolume * const  vol )
+const char * adfVolGetInfo( struct AdfVolume * const  vol )
 {
     struct AdfRootBlock root;
-    char diskName[ 35 ];
-    int days, month, year;
-
     if ( adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root ) != ADF_RC_OK )
         return;
 
+    char diskName[ 35 ];
     memset( diskName, 0, 35 );
     memcpy( diskName, root.diskName, root.nameLen );
 
-    printf( "\nADF volume info:\n  Name:\t\t%-30s\n", vol->volName );
-    printf( "  Type:\t\t" );
+    #define TYPE_INFO_SIZE 64
+    char typeInfo[ TYPE_INFO_SIZE ];
     switch ( vol->dev->devType ) {
     case ADF_DEVTYPE_FLOPDD:
-        printf( "Floppy Double Density, 880 KBytes\n" );
+        snprintf( typeInfo, TYPE_INFO_SIZE, "Floppy Double Density, 880 KBytes\n" );
         break;
     case ADF_DEVTYPE_FLOPHD:
-        printf( "Floppy High Density, 1760 KBytes\n" );
+        snprintf( typeInfo, TYPE_INFO_SIZE, "Floppy High Density, 1760 KBytes\n" );
         break;
     case ADF_DEVTYPE_HARDDISK:
-        printf( "Hard Disk partition, %3.1f KBytes\n",
+        snprintf( typeInfo, TYPE_INFO_SIZE, "Hard Disk partition, %3.1f KBytes\n",
                 ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
         break;
     case ADF_DEVTYPE_HARDFILE:
-        printf( "HardFile : %3.1f KBytes\n",
+        snprintf( typeInfo, TYPE_INFO_SIZE, "HardFile : %3.1f KBytes\n",
                 ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
         break;
     default:
-        printf( "Unknown devType!\n" );
+        snprintf( typeInfo, TYPE_INFO_SIZE, "Unknown devType!\n" );
     }
-    printf( "  Filesystem:\t%s %s %s\n",
-            adfVolIsFFS( vol ) ? "FFS" : "OFS",
-            adfVolHasINTL( vol ) ? "INTL " : "",
-            adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "" );
 
-    printf( "  Free blocks:\t%d\n", adfCountFreeBlocks( vol ) );
-    printf( "  R/W:\t\t%s\n", vol->readOnly ? "Read only" : "Read/Write" );
+    int cDays, cMonth, cYear,
+        aDays, aMonth, aYear,
+        mDays, mMonth, mYear;
+    adfDays2Date( root.coDays, &cYear, &cMonth, &cDays );
+    adfDays2Date( root.days,   &aYear, &aMonth, &aDays );
+    adfDays2Date( root.cDays,  &mYear, &mMonth, &mDays );
 
-    /* created */
-    adfDays2Date( root.coDays, &year, &month, &days );
-    printf( "  Created:\t%d/%02d/%02d %d:%02d:%02d\n",
-            days, month, year,
-            root.coMins / 60,
-            root.coMins % 60,
-            root.coTicks / 50 );
+    snprintf( volInfo, VOLINFO_SIZE,
+              "\nADF volume info:\n  Name:\t\t%-30s\n"
+              "  Type:\t\t%s"
+              "  Filesystem:\t%s %s %s\n"
+              "  Free blocks:\t%d\n"
+              "  R/W:\t\t%s\n"
+              "  Created:\t%d/%02d/%02d %d:%02d:%02d\n"
+              "  Last access:\t%d/%02d/%02d %d:%02d:%02d"
+              "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
+              vol->volName, // diskName ?
+              typeInfo,
+              adfVolIsFFS( vol ) ? "FFS" : "OFS",
+              adfVolHasINTL( vol ) ? "INTL " : "",
+              adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
+              adfCountFreeBlocks( vol ),
+              vol->readOnly ? "Read only" : "Read/Write",
+              cDays, cMonth, cYear,
+              root.coMins / 60,
+              root.coMins % 60,
+              root.coTicks / 50,
+              aDays, aMonth, aYear,
+              root.mins / 60,
+              root.mins % 60,
+              root.ticks / 50,
+              mDays, mMonth, mYear,
+              root.cMins / 60,
+              root.cMins % 60,
+              root.cTicks / 50 );
 
-    adfDays2Date( root.days, &year, &month, &days );
-    printf( "  Last access:\t%d/%02d/%02d %d:%02d:%02d",
-            days, month, year,
-            root.mins / 60,
-            root.mins % 60,
-            root.ticks / 50 );
-
-    adfDays2Date( root.cDays, &year, &month, &days );
-    printf( "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
-            days, month, year,
-            root.cMins / 60,
-            root.cMins % 60,
-            root.cTicks / 50 );
+    return volInfo;
 }

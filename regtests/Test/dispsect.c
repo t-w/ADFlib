@@ -75,11 +75,11 @@ int main(int argc, char *argv[])
     adfFileClose ( fic );
 
     puts("\ncreate file_1a");
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
     puts("\ncreate dir_5u");
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {
@@ -90,11 +90,11 @@ int main(int argc, char *argv[])
 
     puts("\nremove file_1a");
     adfRemoveEntry(vol,vol->curDirPtr,"file_1a");
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     adfRemoveEntry(vol,vol->curDirPtr,"dir_5u");
     puts("\nremove dir_5u");
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     cell = list = adfGetDelEnt(vol);
     while(cell) {
@@ -110,11 +110,11 @@ int main(int argc, char *argv[])
 
     adfUndelEntry(vol,vol->curDirPtr,883); // file_1a
     puts("\nundel file_1a");
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     adfUndelEntry(vol,vol->curDirPtr,885); // dir_5u
     puts("\nundel dir_5u");
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {

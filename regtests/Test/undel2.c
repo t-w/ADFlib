@@ -80,11 +80,11 @@ int main ( const int          argc,
         cell = cell->next;
     }
     adfFreeDirList(list);
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     printf ( "\nremove %s", fileToRecover );
     adfRemoveEntry(vol,vol->curDirPtr, fileToRecover );
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     cell = list = adfGetDelEnt(vol);
     if (cell)
@@ -119,7 +119,7 @@ int main ( const int          argc,
         goto clean_up_volume;
     }
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {

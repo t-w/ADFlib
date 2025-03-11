@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfVolInfo(vol);
-    adfVolInfo(vol2);
+    printf( "%s", adfVolGetInfo( vol ) );
+    printf( "%s", adfVolGetInfo( vol2 ) );
 
     adfVolUnMount(vol);
     adfVolUnMount(vol2);

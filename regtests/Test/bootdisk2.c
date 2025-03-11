@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     adfVolInstallBootBlock ( vol, bootcode );
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     adfVolUnMount ( vol );
     adfUnMountDev(hd);

@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
     adfDevInfo(hd);
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
 
     cell = list = adfGetDirEnt(vol,vol->curDirPtr);

@@ -40,7 +40,7 @@ static void show_bmpages_array ( const int32_t * const bmpages,
 
 void show_volume_metadata ( struct AdfVolume * const vol )
 {
-    adfVolInfo ( vol );
+    printf( "%s", adfVolGetInfo( vol ) );
 
     struct AdfBootBlock bblock;
     if ( adfReadBootBlock ( vol, &bblock ) != ADF_RC_OK ) {

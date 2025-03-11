@@ -136,7 +136,7 @@ int test_hlink_read ( reading_test_t * test_data )
     }
 
 #if TEST_VERBOSITY > 0
-    //adfVolInfo ( vol );
+    //printf( "%s", adfVolGetInfo ( vol ) );
 #endif
 
     int status = 0;

@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     adfVolInstallBootBlock ( vol, bootcode );
     fclose(boot);
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

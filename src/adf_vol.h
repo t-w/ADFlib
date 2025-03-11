@@ -103,8 +103,8 @@ ADF_PREFIX ADF_RETCODE adfVolWriteBlock( struct AdfVolume * const  vol,
                                          const uint32_t            nSect,
                                          const uint8_t * const     buf );
 
-ADF_PREFIX char * adfVolGetFsStr( const struct AdfVolume * const  vol );
-ADF_PREFIX void adfVolInfo( struct AdfVolume * const  vol );
+ADF_PREFIX const char * adfVolGetFsStr( const struct AdfVolume * const  vol );
+ADF_PREFIX const char * adfVolGetInfo( struct AdfVolume * const  vol );
 
 
 static inline uint32_t adfVolGetSizeInBlocks( const struct AdfVolume * const  vol )

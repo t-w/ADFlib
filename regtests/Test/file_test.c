@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     file = adfFileOpen ( vol, "mod.and.distantcall", ADF_FILE_MODE_READ );
     if (!file) return 1;
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     file = adfFileOpen ( vol, "moon.gif", ADF_FILE_MODE_READ );
     if (!file) return 1;

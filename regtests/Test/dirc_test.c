@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfVolInfo(vol);
+    printf( "%s", adfVolGetInfo( vol ) );
 
     cell = list = adfGetDirEnt(vol,vol->curDirPtr);
     while(cell) {
