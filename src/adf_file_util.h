@@ -56,4 +56,9 @@ static inline unsigned adfFileSize2Blocks( const unsigned  fsize,
     return data_blocks + ext_blocks + 1;   // +1 for the file header block
 }
 
+ADF_PREFIX uint32_t adfFileRealSize( const uint32_t    size,
+                                     const unsigned    blockSize,
+                                     uint32_t * const  dataN,
+                                     uint32_t * const  extN );
+
 #endif  /* ADF_FILE_UTIL_H */

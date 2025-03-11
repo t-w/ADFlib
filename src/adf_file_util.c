@@ -35,3 +35,39 @@ int32_t adfFilePos2DataBlock( const unsigned    pos,
         return (int32_t) extBlock;
     }
 }
+
+
+/*
+ * adfFileRealSize
+ *
+ * Compute and return real number of block used by one file
+ * Compute number of datablocks and file extension blocks
+ *
+ */
+uint32_t adfFileRealSize( const uint32_t    size,
+                          const unsigned    blockSize,
+                          uint32_t * const  dataN,
+                          uint32_t * const  extN )
+{
+    uint32_t data, ext;
+
+   /*--- number of data blocks ---*/
+    data = size / blockSize;
+    if ( size % blockSize )
+        data++;
+
+    /*--- number of header extension blocks ---*/
+    ext = 0;
+    if ( data > ADF_MAX_DATABLK ) {
+        ext = ( data - ADF_MAX_DATABLK ) / ADF_MAX_DATABLK;
+        if ( ( data - ADF_MAX_DATABLK ) % ADF_MAX_DATABLK )
+            ext++;
+    }
+
+    if ( dataN )
+        *dataN = data;
+    if ( extN )
+        *extN = ext;
+
+    return ( ext + data + 1 );
+}
