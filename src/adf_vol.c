@@ -50,116 +50,139 @@ uint32_t bitMask[ 32 ] = {
     0x1000000, 0x2000000, 0x4000000, 0x8000000,
     0x10000000, 0x20000000, 0x40000000, 0x80000000 };
 
-
-ADF_RETCODE adfVolInstallBootBlock( struct AdfVolume * const  vol,
-                                    const uint8_t * const     code )
+/*
+ * adfVolCreate
+ *
+ *
+ */
+struct AdfVolume * adfVolCreate( struct AdfDevice * const  dev,
+                                 const uint32_t            start,
+                                 const uint32_t            len,
+                                 const char * const        volName,
+                                 const uint8_t             volType )
 {
-    int i;
+/*    struct AdfDirCacheBlock dirc;*/
+    ADF_SECTNUM blkList[2];
+
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 0 );
+
+    struct AdfVolume * const vol = (struct AdfVolume *) malloc( sizeof(struct AdfVolume) );
+    if ( ! vol ) {
+        adfEnv.eFct( "adfVolCreate : malloc vol" );
+        return NULL;
+    }
+
+    vol->dev        = dev;
+    vol->firstBlock = (int32_t)( dev->heads * dev->sectors * start );
+    vol->lastBlock  = vol->firstBlock + (int32_t)( dev->heads * dev->sectors * len ) - 1;
+    vol->blockSize  = 512;
+    vol->rootBlock  = adfVolCalcRootBlk( vol );
+
+/*printf("first=%ld last=%ld root=%ld\n",vol->firstBlock,
+ vol->lastBlock, vol->rootBlock);
+*/
+    vol->curDirPtr = vol->rootBlock;
+    vol->readOnly  = dev->readOnly;
+    vol->mounted   = true;
+    vol->volName   = strndup( volName,
+                              min( strlen( volName ),
+                                   (unsigned) ADF_MAX_NAME_LEN ) );
+    if ( vol->volName == NULL ) {
+        adfEnv.eFct( "adfVolCreate : malloc volName" );
+        free( vol );
+        return NULL;
+    }
+
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 25 );
+
+    strncpy( vol->fs.id, "DOS", 3 );
+    vol->fs.id[ 3 ] = '\0';
+    vol->fs.type    = volType;
+
     struct AdfBootBlock boot;
-
-    if ( vol->dev->devType != ADF_DEVTYPE_FLOPDD &&
-         vol->dev->devType != ADF_DEVTYPE_FLOPHD )
-    {
-        return ADF_RC_ERROR;
+    memset( &boot, 0, 1024 );
+    //strncpy ( boot.dosType, "DOS", 3 ); /// done in adfWriteBootBlock
+    boot.dosType[ 3 ] = (char) volType;
+/*printf("first=%d last=%d\n", vol->firstBlock, vol->lastBlock);
+printf("name=%s root=%d\n", vol->volName, vol->rootBlock);
+*/
+    if ( adfWriteBootBlock( vol, &boot ) != ADF_RC_OK ) {
+        free( vol->volName );
+        free( vol );
+        return NULL;
     }
 
-    ADF_RETCODE rc = adfReadBootBlock( vol, &boot );
-    if ( rc != ADF_RC_OK )
-        return rc;
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 20 );
 
-    boot.rootBlock = 880;
-    for ( i = 0; i < 1024 - 12; i++ )         /* bootcode */
-        boot.data[ i ] = code[ i + 12 ];
+    if ( adfCreateBitmap( vol ) != ADF_RC_OK ) {
+        free( vol->volName );
+        free( vol );
+        return NULL;
+    }
 
-    rc = adfWriteBootBlock( vol, &boot );
-    if ( rc != ADF_RC_OK )
-        return rc;
-
-    vol->bootCode = true;
-
-    return ADF_RC_OK;
-}
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 40 );
 
 
-/*
- * adfVolIsSectNumValid
- *
- */
-bool adfVolIsSectNumValid( const struct AdfVolume * const  vol,
-                           const ADF_SECTNUM               nSect )
-{
-    return ( nSect >= 0 &&
-             nSect <= vol->lastBlock - vol->firstBlock );
-}	
+/*for(i=0; i<127; i++)
+printf("%3d %x, ",i,vol->bitmapTable[0]->map[i]);
+*/
+    if ( adfDosFsHasDIRCACHE( volType ) )
+        adfGetFreeBlocks( vol, 2, blkList );
+    else
+        adfGetFreeBlocks( vol, 1, blkList );
 
 
-/*
- * adfVolInfo
- *
- */
-void adfVolInfo( struct AdfVolume * const  vol )
-{
+/*printf("[0]=%d [1]=%d\n",blkList[0],blkList[1]);*/
+
     struct AdfRootBlock root;
-    char diskName[ 35 ];
-    int days, month, year;
-	
-    if ( adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root ) != ADF_RC_OK )
-        return;
-	
-    memset( diskName, 0, 35 );
-    memcpy( diskName, root.diskName, root.nameLen );
-	
-    printf( "\nADF volume info:\n  Name:\t\t%-30s\n", vol->volName );
-    printf( "  Type:\t\t" );
-    switch ( vol->dev->devType ) {
-    case ADF_DEVTYPE_FLOPDD:
-        printf( "Floppy Double Density, 880 KBytes\n" );
-        break;
-    case ADF_DEVTYPE_FLOPHD:
-        printf( "Floppy High Density, 1760 KBytes\n" );
-        break;
-    case ADF_DEVTYPE_HARDDISK:
-        printf( "Hard Disk partition, %3.1f KBytes\n",
-                ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
-        break;
-    case ADF_DEVTYPE_HARDFILE:
-        printf( "HardFile : %3.1f KBytes\n",
-                ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
-        break;
-    default:
-        printf( "Unknown devType!\n" );
+    memset( &root, 0, ADF_LOGICAL_BLOCK_SIZE );
+
+    root.nameLen = (uint8_t) strlen( vol->volName );
+    memcpy( root.diskName, volName, root.nameLen );
+    adfTime2AmigaTime( adfGiveCurrentTime(), &root.coDays, &root.coMins,
+                       &root.coTicks );
+
+    /* dircache block */
+    if ( adfDosFsHasDIRCACHE( volType ) ) {
+        root.extension = 0L;
+        root.secType   = ADF_ST_ROOT; /* needed by adfCreateEmptyCache() */
+        adfCreateEmptyCache( vol, (struct AdfEntryBlock *) &root, blkList[ 1 ] );
     }
-    printf( "  Filesystem:\t%s %s %s\n",
-            adfVolIsFFS( vol ) ? "FFS" : "OFS",
-            adfVolHasINTL( vol ) ? "INTL " : "",
-            adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "" );
 
-    printf( "  Free blocks:\t%d\n", adfCountFreeBlocks( vol ) );
-    printf( "  R/W:\t\t%s\n", vol->readOnly ? "Read only" : "Read/Write" );
- 	
-    /* created */
-    adfDays2Date( root.coDays, &year, &month, &days );
-    printf( "  Created:\t%d/%02d/%02d %d:%02d:%02d\n",
-            days, month, year,
-            root.coMins / 60,
-            root.coMins % 60,
-            root.coTicks / 50 );
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 60 );
 
-    adfDays2Date( root.days, &year, &month, &days );
-    printf( "  Last access:\t%d/%02d/%02d %d:%02d:%02d",
-            days, month, year,
-            root.mins / 60,
-            root.mins % 60,
-            root.ticks / 50 );
+    if ( adfWriteRootBlock( vol, (uint32_t) blkList[ 0 ], &root ) != ADF_RC_OK ) {
+        free( vol->volName );
+        free( vol );
+        return NULL;
+    }
 
-    adfDays2Date( root.cDays, &year, &month, &days );
-    printf( "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
-            days, month, year,
-            root.cMins / 60,
-            root.cMins % 60,
-            root.cTicks / 50 );
+   /* fills root->bmPages[] and writes filled bitmapExtBlocks */
+    if ( adfWriteNewBitmap( vol ) != ADF_RC_OK )
+        return NULL;
+
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 80 );
+
+    if ( adfUpdateBitmap( vol ) != ADF_RC_OK )
+        return NULL;
+
+    if ( adfEnv.useProgressBar )
+        adfEnv.progressBar( 100 );
+/*printf("free blocks %ld\n",adfCountFreeBlocks(vol));*/
+
+    /* will be managed by adfMount() later */
+    adfFreeBitmap( vol );
+
+    vol->mounted = false;
+
+    return vol;
 }
-
 
 /*
  * adfVolMount
@@ -272,7 +295,6 @@ struct AdfVolume * adfVolMount( struct AdfDevice * const  dev,
     return vol;
 }
 
-
 /*
  * adfVolRemount
  *
@@ -304,15 +326,12 @@ ADF_RETCODE adfVolRemount( struct AdfVolume *   vol,
     return ADF_RC_OK;
 }
 
-
-
 /*
-*
-* adfVolUnMount
-*
-* free bitmap structures
-* free current dir
-*/
+ * adfVolUnMount
+ *
+ * free bitmap structures
+ * free current dir
+ */
 void adfVolUnMount( struct AdfVolume * const  vol )
 {
     if ( ! vol ) {
@@ -325,144 +344,49 @@ void adfVolUnMount( struct AdfVolume * const  vol )
     vol->mounted = false;
 }
 
-
-
 /*
- * adfVolCreate
+ * adfVolInstallBootBlock
  *
- * 
  */
-struct AdfVolume * adfVolCreate( struct AdfDevice * const  dev,
-                                 const uint32_t            start,
-                                 const uint32_t            len,
-                                 const char * const        volName,
-                                 const uint8_t             volType )
+ADF_RETCODE adfVolInstallBootBlock( struct AdfVolume * const  vol,
+                                    const uint8_t * const     code )
 {
-/*    struct AdfDirCacheBlock dirc;*/
-    ADF_SECTNUM blkList[2];
-
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 0 );
-
-    struct AdfVolume * const vol = (struct AdfVolume *) malloc( sizeof(struct AdfVolume) );
-    if ( ! vol ) {
-        adfEnv.eFct( "adfVolCreate : malloc vol" );
-        return NULL;
-    }
-	
-    vol->dev        = dev;
-    vol->firstBlock = (int32_t)( dev->heads * dev->sectors * start );
-    vol->lastBlock  = vol->firstBlock + (int32_t)( dev->heads * dev->sectors * len ) - 1;
-    vol->blockSize  = 512;
-    vol->rootBlock  = adfVolCalcRootBlk( vol );
-
-/*printf("first=%ld last=%ld root=%ld\n",vol->firstBlock,
- vol->lastBlock, vol->rootBlock);
-*/
-    vol->curDirPtr = vol->rootBlock;
-    vol->readOnly  = dev->readOnly;
-    vol->mounted   = true;
-    vol->volName   = strndup( volName,
-                              min( strlen( volName ),
-                                   (unsigned) ADF_MAX_NAME_LEN ) );
-    if ( vol->volName == NULL ) {
-        adfEnv.eFct( "adfVolCreate : malloc volName" );
-        free( vol );
-        return NULL;
-    }
-
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 25 );
-
-    strncpy( vol->fs.id, "DOS", 3 );
-    vol->fs.id[ 3 ] = '\0';
-    vol->fs.type    = volType;
-
+    int i;
     struct AdfBootBlock boot;
-    memset( &boot, 0, 1024 );
-    //strncpy ( boot.dosType, "DOS", 3 ); /// done in adfWriteBootBlock
-    boot.dosType[ 3 ] = (char) volType;
-/*printf("first=%d last=%d\n", vol->firstBlock, vol->lastBlock);
-printf("name=%s root=%d\n", vol->volName, vol->rootBlock);
-*/
-    if ( adfWriteBootBlock( vol, &boot ) != ADF_RC_OK ) {
-        free( vol->volName );
-        free( vol );
-        return NULL;
+
+    if ( vol->dev->devType != ADF_DEVTYPE_FLOPDD &&
+         vol->dev->devType != ADF_DEVTYPE_FLOPHD )
+    {
+        return ADF_RC_ERROR;
     }
 
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 20 );
+    ADF_RETCODE rc = adfReadBootBlock( vol, &boot );
+    if ( rc != ADF_RC_OK )
+        return rc;
 
-    if ( adfCreateBitmap( vol ) != ADF_RC_OK ) {
-        free( vol->volName );
-        free( vol );
-        return NULL;
-    }
+    boot.rootBlock = 880;
+    for ( i = 0; i < 1024 - 12; i++ )         /* bootcode */
+        boot.data[ i ] = code[ i + 12 ];
 
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 40 );
+    rc = adfWriteBootBlock( vol, &boot );
+    if ( rc != ADF_RC_OK )
+        return rc;
 
+    vol->bootCode = true;
 
-/*for(i=0; i<127; i++)
-printf("%3d %x, ",i,vol->bitmapTable[0]->map[i]);
-*/
-    if ( adfDosFsHasDIRCACHE( volType ) )
-        adfGetFreeBlocks( vol, 2, blkList );
-    else
-        adfGetFreeBlocks( vol, 1, blkList );
-
-
-/*printf("[0]=%d [1]=%d\n",blkList[0],blkList[1]);*/
-
-    struct AdfRootBlock root;
-    memset( &root, 0, ADF_LOGICAL_BLOCK_SIZE );
-
-    root.nameLen = (uint8_t) strlen( vol->volName );
-    memcpy( root.diskName, volName, root.nameLen );
-    adfTime2AmigaTime( adfGiveCurrentTime(), &root.coDays, &root.coMins,
-                       &root.coTicks );
-
-    /* dircache block */
-    if ( adfDosFsHasDIRCACHE( volType ) ) {
-        root.extension = 0L;
-        root.secType   = ADF_ST_ROOT; /* needed by adfCreateEmptyCache() */
-        adfCreateEmptyCache( vol, (struct AdfEntryBlock *) &root, blkList[ 1 ] );
-    }
-
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 60 );
-
-    if ( adfWriteRootBlock( vol, (uint32_t) blkList[ 0 ], &root ) != ADF_RC_OK ) {
-        free( vol->volName );
-        free( vol );
-        return NULL;
-    }
-
-   /* fills root->bmPages[] and writes filled bitmapExtBlocks */
-    if ( adfWriteNewBitmap( vol ) != ADF_RC_OK )
-        return NULL;
-
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 80 );
-
-    if ( adfUpdateBitmap( vol ) != ADF_RC_OK )
-        return NULL;
-
-    if ( adfEnv.useProgressBar )
-        adfEnv.progressBar( 100 );
-/*printf("free blocks %ld\n",adfCountFreeBlocks(vol));*/
-
-    /* will be managed by adfMount() later */
-    adfFreeBitmap( vol );
-
-    vol->mounted = false;
-
-    return vol;
+    return ADF_RC_OK;
 }
 
-
-/*-----*/
+/*
+ * adfVolIsSectNumValid
+ *
+ */
+bool adfVolIsSectNumValid( const struct AdfVolume * const  vol,
+                           const ADF_SECTNUM               nSect )
+{
+    return ( nSect >= 0 &&
+             nSect <= vol->lastBlock - vol->firstBlock );
+}
 
 /*
  * adfVolReadBlock
@@ -504,7 +428,6 @@ ADF_RETCODE adfVolReadBlock( struct AdfVolume * const  vol,
     return rc;
 }
 
-
 /*
  * adfVolWriteBlock
  *
@@ -544,10 +467,80 @@ ADF_RETCODE adfVolWriteBlock( struct AdfVolume * const  vol,
     return rc;
 }
 
-
+/*
+ * adfVolGetFsStr
+ *
+ */
 char * adfVolGetFsStr( const struct AdfVolume * const  vol )
 {
     return ( adfVolIsOFS( vol ) ? "OFS" :
              adfVolIsFFS( vol ) ? "FFS" :
              adfVolIsPFS( vol ) ? "PFS" : "???" );
+}
+
+/*
+ * adfVolInfo
+ *
+ */
+void adfVolInfo( struct AdfVolume * const  vol )
+{
+    struct AdfRootBlock root;
+    char diskName[ 35 ];
+    int days, month, year;
+
+    if ( adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root ) != ADF_RC_OK )
+        return;
+
+    memset( diskName, 0, 35 );
+    memcpy( diskName, root.diskName, root.nameLen );
+
+    printf( "\nADF volume info:\n  Name:\t\t%-30s\n", vol->volName );
+    printf( "  Type:\t\t" );
+    switch ( vol->dev->devType ) {
+    case ADF_DEVTYPE_FLOPDD:
+        printf( "Floppy Double Density, 880 KBytes\n" );
+        break;
+    case ADF_DEVTYPE_FLOPHD:
+        printf( "Floppy High Density, 1760 KBytes\n" );
+        break;
+    case ADF_DEVTYPE_HARDDISK:
+        printf( "Hard Disk partition, %3.1f KBytes\n",
+                ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
+        break;
+    case ADF_DEVTYPE_HARDFILE:
+        printf( "HardFile : %3.1f KBytes\n",
+                ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
+        break;
+    default:
+        printf( "Unknown devType!\n" );
+    }
+    printf( "  Filesystem:\t%s %s %s\n",
+            adfVolIsFFS( vol ) ? "FFS" : "OFS",
+            adfVolHasINTL( vol ) ? "INTL " : "",
+            adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "" );
+
+    printf( "  Free blocks:\t%d\n", adfCountFreeBlocks( vol ) );
+    printf( "  R/W:\t\t%s\n", vol->readOnly ? "Read only" : "Read/Write" );
+
+    /* created */
+    adfDays2Date( root.coDays, &year, &month, &days );
+    printf( "  Created:\t%d/%02d/%02d %d:%02d:%02d\n",
+            days, month, year,
+            root.coMins / 60,
+            root.coMins % 60,
+            root.coTicks / 50 );
+
+    adfDays2Date( root.days, &year, &month, &days );
+    printf( "  Last access:\t%d/%02d/%02d %d:%02d:%02d",
+            days, month, year,
+            root.mins / 60,
+            root.mins % 60,
+            root.ticks / 50 );
+
+    adfDays2Date( root.cDays, &year, &month, &days );
+    printf( "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
+            days, month, year,
+            root.cMins / 60,
+            root.cMins % 60,
+            root.cTicks / 50 );
 }
