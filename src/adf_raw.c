@@ -31,12 +31,8 @@
 #include "adf_env.h"
 #include "adf_util.h"
 
-#include <string.h>
-
-#ifndef NDEBUG
-#define NDEBUG
-#endif
 #include <assert.h>
+#include <string.h>
 
 #define SW_LONG  4
 #define SW_SHORT 2

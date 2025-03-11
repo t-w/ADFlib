@@ -38,6 +38,7 @@
 #include "adf_str.h"
 #include "adf_util.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -67,14 +68,8 @@ static void showAdfFileHeaderBlock (
 
 static void showAdfFileExtBlock (
     const struct AdfFileExtBlock * const block );
-
-#else
-#ifndef NDEBUG
-#define NDEBUG
-#endif
 #endif
 
-#include <assert.h>
 
 /*****************************************************************************
  *
