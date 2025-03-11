@@ -26,12 +26,12 @@ typedef struct test_data_s {
 
 int test_floppy_datasize_ofs ( test_data_t * const tdata );
 
-/*int verify_file_data ( struct AdfVolume * const vol,
+int verify_file_data ( struct AdfVolume * const vol,
                        char * const             filename,
                        unsigned char * const    buffer,
                        const unsigned           bytes_written,
                        const int                max_errors );
-*/
+
 int verify_file_metadata_ofs ( struct AdfVolume * const vol,
                                char * const             filename,
                                const unsigned           bytes_written,
@@ -155,8 +155,8 @@ int test_floppy_datasize_ofs ( test_data_t * const tdata )
         status++;
     }
 
-    //status += verify_file_data ( vol, tdata->filename, tdata->buffer,
-    //                             bytes_written, tdata->max_errors );
+    status += verify_file_data ( vol, tdata->filename, tdata->buffer,
+                                 bytes_written, tdata->max_errors );
 
     //if ( adfVolIsOFS( vol ) ) {
     status += verify_file_metadata_ofs( vol, tdata->filename,
@@ -174,7 +174,7 @@ int test_floppy_datasize_ofs ( test_data_t * const tdata )
     return status;
 }
 
-/*
+
 int verify_file_data ( struct AdfVolume * const vol,
                        char * const             filename,
                        unsigned char * const    buffer,
@@ -223,7 +223,7 @@ int verify_file_data ( struct AdfVolume * const vol,
 
     return nerrors;
 }
-*/
+
 
 int verify_file_metadata_ofs ( struct AdfVolume * const vol,
                                char * const             filename,
