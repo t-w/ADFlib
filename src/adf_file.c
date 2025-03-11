@@ -82,24 +82,24 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
                               const AdfFileMode         mode )
 {
     if ( ! vol ) {
-        adfEnv.eFct ( "adfFileOpen : vol is NULL" );
+        adfEnv.eFct( "%s: vol is NULL", __func__ );
         return NULL;
     }
 
     if ( ! name ) {
-        adfEnv.eFct ( "adfFileOpen : name is NULL" );
+        adfEnv.eFct( "%s: name is NULL", __func__ );
         return NULL;
     }
 
     const bool modeRead  = ( mode & ADF_FILE_MODE_READ );
     const bool modeWrite = ( mode & ADF_FILE_MODE_WRITE );
     if ( ! ( modeRead || modeWrite ) ) {
-        adfEnv.eFct ( "adfFileOpen : Incorrect mode '0x%0x' (%d)", mode, mode );
+        adfEnv.eFct( "%s: Incorrect mode '0x%0x' (%d)", __func__, mode, mode );
         return NULL;
     }
 
     if ( modeWrite && vol->dev->readOnly ) {
-        (*adfEnv.wFct)("adfFileOpen : device is mounted 'read only'");
+        adfEnv.wFct( "%s: device is mounted 'read only'", __func__ );
         return NULL;
     }
 
@@ -111,18 +111,18 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
         ( adfNameToEntryBlk ( vol, parent.hashTable, name, &entry, NULL ) != -1 );
 
     if ( modeRead && ( ! modeWrite ) && ( ! fileAlreadyExists ) ) {
-        adfEnv.wFct ( "adfFileOpen : file \"%s\" not found.", name );
+        adfEnv.wFct( "%s: file \"%s\" not found.", __func__, name );
 /*fprintf(stdout,"filename %s %d, parent =%d\n",name,strlen(name),vol->curDirPtr);*/
         return NULL;
     }
 
     if ( modeRead && adfAccHasR ( entry.access ) ) {
-        adfEnv.wFct ( "adfFileOpen : read access denied to '%s'", name );
+        adfEnv.wFct( "%s: read access denied to '%s'", __func__, name );
         return NULL;
     }
 
     if ( fileAlreadyExists && modeWrite && adfAccHasW ( entry.access ) ) {
-        adfEnv.wFct ( "adfFileOpen : write access denied to '%s'", name );
+        adfEnv.wFct( "%s: write access denied to '%s'", __func__, name );
         return NULL;
     }
 
@@ -130,8 +130,8 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
          entry.secType != ADF_ST_FILE &&
          entry.secType != ADF_ST_LFILE )
     {
-        adfEnv.wFct ( "adfFileOpen : '%s' is not a file (or a hardlink to a file)",
-                      name );
+        adfEnv.wFct( "%s: '%s' is not a file (or a hardlink to a file)",
+                     __func__, name );
         return NULL;
     }
 
@@ -153,21 +153,21 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
 
     struct AdfFile * file = (struct AdfFile *) malloc ( sizeof(struct AdfFile) );
     if ( file == NULL ) {
-        adfEnv.eFct ( "adfFileOpen : malloc" );
+        adfEnv.eFct( "%s: malloc", __func__ );
         return NULL;
     }
 
     file->fileHdr = (struct AdfFileHeaderBlock *)
         malloc ( sizeof(struct AdfFileHeaderBlock) );
     if ( file->fileHdr == NULL ) {
-        adfEnv.eFct ( "adfFileOpen : malloc" );
+        adfEnv.eFct( "%s: malloc", __func__ );
         free ( file );
         return NULL;
     }
 
     file->currentData = malloc ( 512 * sizeof(uint8_t) );
     if ( file->currentData == NULL ) {
-        adfEnv.eFct ( "adfFileOpen : malloc" );
+        adfEnv.eFct( "%s: malloc", __func__ );
         free ( file->fileHdr );
         free ( file );
         return NULL;
@@ -188,8 +188,8 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
         /* read-only mode */
         memcpy ( file->fileHdr, &entry, sizeof ( struct AdfFileHeaderBlock ) );
         if ( adfFileSeek ( file, 0 ) != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfFileOpen : error seeking pos. %d, file: %s",
-                          0, file->fileHdr->fileName );
+            adfEnv.eFct( "%s: error seeking pos. %d, file: %s",
+                         __func__, 0, file->fileHdr->fileName );
             goto adfOpenFile_error;
         }
     }
@@ -199,16 +199,16 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
             memcpy ( file->fileHdr, &entry, sizeof ( struct AdfFileHeaderBlock ) );
             unsigned seekpos = 0; //( mode_append ? file->fileHdr->byteSize : 0 );
             if ( adfFileSeek ( file, seekpos ) != ADF_RC_OK ) {
-                adfEnv.eFct ( "adfFileOpen : error seeking pos. %d, file: %s",
-                              seekpos, file->fileHdr->fileName );
+                adfEnv.eFct( "%s: error seeking pos. %d, file: %s",
+                             __func__, seekpos, file->fileHdr->fileName );
                 goto adfOpenFile_error;
             }
         } else {
             // a new file
             memset ( file->fileHdr, 0, 512 );
             if ( adfCreateFile ( vol, vol->curDirPtr, name, file->fileHdr ) != ADF_RC_OK ) {
-                adfEnv.eFct ( "adfFileOpen : error creating file: %s",
-                              file->fileHdr->fileName );
+                adfEnv.eFct( "%s: error creating file: %s",
+                             __func__, file->fileHdr->fileName );
                 goto adfOpenFile_error;
             }
         }
@@ -283,9 +283,10 @@ uint32_t adfFileRead( struct AdfFile * const  file,
         if ( file->posInDataBlk == blockSize ) {
             ADF_RETCODE rc = adfFileReadNextBlock ( file );
             if ( rc != ADF_RC_OK ) {
-                adfEnv.eFct ( "adfReadFile : error reading next data block, "
-                              "file '%s', pos %d, data block %d",
-                              file->fileHdr->fileName, file->pos, file->nDataBlock );
+                adfEnv.eFct( "%s: error reading next data block, "
+                             "file '%s', pos %d, data block %d",
+                             __func__, file->fileHdr->fileName,
+                             file->pos, file->nDataBlock );
                 file->curDataPtr = 0;  // invalidate data ptr
                 return bytesRead;
             }
@@ -336,7 +337,7 @@ uint32_t adfFileWrite( struct AdfFile * const  file,
                 file->currentDataBlockChanged = false;
                 if ( rc != ADF_RC_OK ) {
                     /* bug found by Rikard */
-                    adfEnv.wFct ( "adfWritefile : no more free sectors available" );
+                    adfEnv.wFct( "%s: no more free sectors available", __func__ );
                     //file->curDataPtr = 0; // invalidate data ptr
                     return bytesWritten;
                 }
@@ -353,9 +354,10 @@ uint32_t adfFileWrite( struct AdfFile * const  file,
                 // - and read the next block
                 ADF_RETCODE rc = adfFileReadNextBlock ( file );
                 if ( rc != ADF_RC_OK ) {
-                    adfEnv.eFct ( "adfWriteFile : error reading next data block, "
-                                  "file '%s', pos %d, data block %d",
-                                  file->fileHdr->fileName, file->pos, file->nDataBlock );
+                    adfEnv.eFct( "%s: error reading next data block, "
+                                 "file '%s', pos %d, data block %d",
+                                 __func__, file->fileHdr->fileName,
+                                 file->pos, file->nDataBlock );
                     file->curDataPtr = 0;  // invalidate data ptr
                     return bytesWritten;
                 }
@@ -430,9 +432,9 @@ ADF_RETCODE adfFileSeek( struct AdfFile * const  file,
 
     ADF_RETCODE status = adfFileSeekExt_ ( file, pos );
     if ( status != ADF_RC_OK && adfVolIsOFS ( file->volume ) ) {
-        adfEnv.wFct ( "adfFileSeek: seeking using ext blocks failed, fallback"
-                      " to the OFS alt. way (traversing data blocks), "
-                      "file '%s'", file->fileHdr->fileName );
+        adfEnv.wFct( "%s: seeking using ext blocks failed, fallback"
+                     " to the OFS alt. way (traversing data blocks), "
+                     "file '%s'", __func__, file->fileHdr->fileName );
         status = adfFileSeekOFS_ ( file, pos );
     }
     return status;
@@ -611,10 +613,10 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
                                     file->currentExt->headerKey,
                                     file->currentExt );
         if ( rc != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfFlushfile : error writing ext block 0x%x (%d), file '%s'",
-                          file->currentExt->headerKey,
-                          file->currentExt->headerKey,
-                          file->fileHdr->fileName );
+            adfEnv.eFct( "%s: error writing ext block 0x%x (%d), file '%s'",
+                         __func__, file->currentExt->headerKey,
+                         file->currentExt->headerKey,
+                         file->fileHdr->fileName );
             return rc;
         }
     }
@@ -637,9 +639,9 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
                                  file->curDataPtr,
                                  file->currentData );
         if ( rc != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfFlushFile : error writing data block 0x%x (%u), file '%s'",
-                          file->curDataPtr, file->curDataPtr,
-                          file->fileHdr->fileName );
+            adfEnv.eFct( "%s: error writing data block 0x%x (%u), file '%s'",
+                         __func__, file->curDataPtr, file->curDataPtr,
+                         file->fileHdr->fileName );
             return rc;
         }
     }
@@ -658,8 +660,8 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
                                 file->fileHdr->headerKey,
                                 file->fileHdr );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfFlushfile : error writing file header block %d",
-                      file->fileHdr->headerKey );
+        adfEnv.eFct( "%s: error writing file header block %d",
+                     __func__, file->fileHdr->headerKey );
         return rc;
     }
 
@@ -671,15 +673,15 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
         struct AdfEntryBlock parent;
         rc = adfReadEntryBlock ( file->volume, file->fileHdr->parent, &parent );
         if ( rc != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfFlushfile : error reading entry block %d",
-                          file->fileHdr->parent );
+            adfEnv.eFct( "%s: error reading entry block %d",
+                         __func__, file->fileHdr->parent );
             return rc;
         }
 
         rc = adfUpdateCache ( file->volume, &parent,
                               (struct AdfEntryBlock *) file->fileHdr, false );
         if ( rc != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfFlushfile : error updating cache" );
+            adfEnv.eFct( "%s: error updating cache", __func__ );
             return rc;
         }
     }
@@ -689,7 +691,7 @@ ADF_RETCODE adfFileFlush( struct AdfFile * const  file )
     //
     rc = adfUpdateBitmap ( file->volume );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfFlushfile : error updating volume bitmap" );
+        adfEnv.eFct( "%s: error updating volume bitmap", __func__ );
         return rc;
     }
 
@@ -731,7 +733,7 @@ ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
                     file->currentExt = (struct AdfFileExtBlock *)
                         malloc ( sizeof(struct AdfFileExtBlock) );
                     if ( file->currentExt == NULL ) {
-                        adfEnv.eFct ("adfReadNextFileBlock : malloc");
+                        adfEnv.eFct( "%s: malloc", __func__ );
                         return ADF_RC_MALLOC;
                     }
                 }
@@ -740,8 +742,8 @@ ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
                                            file->fileHdr->extension,
                                            file->currentExt );
                 if ( rc != ADF_RC_OK ) {
-                    adfEnv.eFct ( "adfReadNextFileBlock : error reading ext block %d",
-                                  file->fileHdr->extension );
+                    adfEnv.eFct( "%s: error reading ext block %d",
+                                 __func__, file->fileHdr->extension );
                     return rc;
                 }
 
@@ -753,8 +755,8 @@ ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
                                            file->currentExt->extension,
                                            file->currentExt );
                 if ( rc != ADF_RC_OK ) {
-                    adfEnv.eFct ( "adfReadNextFileBlock : error reading ext block %d",
-                                  file->currentExt->extension );
+                    adfEnv.eFct( "%s: error reading ext block %d",
+                                 __func__, file->currentExt->extension );
                     return rc;
                 }
 
@@ -766,22 +768,23 @@ ADF_RETCODE adfFileReadNextBlock( struct AdfFile * const  file )
     }
 
     if ( nSect < 2 ) {
-        adfEnv.eFct ( "adfReadNextFileBlock : invalid data block address %u ( 0x%x ), "
-                      "data block %u, file '%s'",
-                      nSect, nSect, file->nDataBlock, file->fileHdr->fileName );
+        adfEnv.eFct( "%s: invalid data block address %u ( 0x%x ), "
+                     "data block %u, file '%s'",
+                     __func__, nSect, nSect,
+                     file->nDataBlock, file->fileHdr->fileName );
         //printBacktrace();
         return ADF_RC_ERROR;
     }
 
     rc = adfReadDataBlock ( file->volume, nSect, file->currentData );
     if ( rc != ADF_RC_OK )
-        adfEnv.eFct ( "adfReadNextFileBlock : error reading data block %d / %d, file '%s'",
-                       file->nDataBlock, nSect, file->fileHdr->fileName );
+        adfEnv.eFct( "%s: error reading data block %d / %d, file '%s'",
+                     __func__, file->nDataBlock, nSect, file->fileHdr->fileName );
 
     if ( adfVolIsOFS ( file->volume ) &&
          data->seqNum != file->nDataBlock + 1 )
     {
-        (*adfEnv.wFct)("adfReadNextFileBlock : seqnum incorrect");
+        adfEnv.wFct( "%s: seqnum incorrect", __func__ );
     }
 
     file->curDataPtr = nSect;
@@ -826,7 +829,7 @@ ADF_RETCODE adfFileCreateNextBlock( struct AdfFile * const  file )
                     malloc ( sizeof(struct AdfFileExtBlock) );
                 if (!file->currentExt) {
                     adfSetBlockFree(file->volume, extSect);
-                    (*adfEnv.eFct)("adfCreateNextFileBlock : malloc");
+                    adfEnv.eFct( "%s: malloc", __func__ );
                     return ADF_RC_MALLOC;
                 }
                 file->fileHdr->extension = extSect;
@@ -907,8 +910,8 @@ ADF_RETCODE adfFileReadExtBlockN( const struct AdfFile * const    file,
     if ( extBlock < 0 ||
          extBlock > nExtBlocks - 1 )
     {
-        adfEnv.eFct ( "adfReadFileExtBlockN: invalid ext block %d, file '%s' has %d ext. blocks.",
-                      extBlock, file->fileHdr->fileName, nExtBlocks );
+        adfEnv.eFct( "%s: invalid ext block %d, file '%s' has %d ext. blocks.",
+                     __func__, extBlock, file->fileHdr->fileName, nExtBlocks );
         return ADF_RC_BLOCKOUTOFRANGE;
     }
 
@@ -918,8 +921,8 @@ ADF_RETCODE adfFileReadExtBlockN( const struct AdfFile * const    file,
     int32_t i = -1;
     while ( i < extBlock && nSect != 0 ) {
         if ( adfReadFileExtBlock ( file->volume, nSect, fext ) != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfReadFileExtBlockN: error reading ext block %d, file '%s'",
-                          nSect, file->fileHdr->fileName );
+            adfEnv.eFct( "%s: error reading ext block %d, file '%s'",
+                         __func__, nSect, file->fileHdr->fileName );
             return ADF_RC_BLOCKREAD;
         }
 #ifdef DEBUG_ADF_FILE
@@ -929,8 +932,8 @@ ADF_RETCODE adfFileReadExtBlockN( const struct AdfFile * const    file,
         i++;
     }
     if ( i != extBlock ) {
-        adfEnv.eFct ( "adfReadFileExtBlockN: error reading ext block %d, file '%s'",
-                      extBlock, file->fileHdr->fileName );
+        adfEnv.eFct( "%s: error reading ext block %d, file '%s'",
+                     __func__, extBlock, file->fileHdr->fileName );
         return ADF_RC_BLOCKREAD;
     }
     return ADF_RC_OK;
@@ -1042,8 +1045,8 @@ static ADF_RETCODE adfFileSeekOFS_( struct AdfFile * const  file,
         file->posInDataBlk += size;
         if ( file->posInDataBlk == blockSize && offset < pos ) {
             if ( adfFileReadNextBlock ( file ) != ADF_RC_OK ) {
-                adfEnv.eFct ( "adfFileSeekOFS: error reading next data block, pos %d",
-                              file->pos );
+                adfEnv.eFct( "%s: error reading next data block, pos %d",
+                             __func__, file->pos );
                 file->curDataPtr = 0;  // invalidate data ptr
                 return ADF_RC_ERROR;
             }
@@ -1076,15 +1079,15 @@ static ADF_RETCODE adfFileSeekExt_( struct AdfFile * const  file,
             file->currentExt = ( struct AdfFileExtBlock * )
                 malloc ( sizeof ( struct AdfFileExtBlock ) );
             if ( ! file->currentExt ) {
-                (*adfEnv.eFct)( "adfFileSeekExt : malloc" );
+                adfEnv.eFct( "%s: malloc", __func__ );
                 file->curDataPtr = 0;  // invalidate data ptr
                 return ADF_RC_MALLOC;
             }
         }
 
         if ( adfFileReadExtBlockN ( file, extBlock, file->currentExt ) != ADF_RC_OK )  {
-            adfEnv.eFct ( "adfFileSeekExt: error reading ext block 0x%x(%d), file '%s'",
-                          extBlock, extBlock, file->fileHdr->fileName );
+            adfEnv.eFct( "%s: error reading ext block 0x%x(%d), file '%s'",
+                         __func__, extBlock, extBlock, file->fileHdr->fileName );
             file->curDataPtr = 0;  // invalidate data ptr
             return ADF_RC_ERROR;
         }
@@ -1096,8 +1099,8 @@ static ADF_RETCODE adfFileSeekExt_( struct AdfFile * const  file,
 
     if ( file->curDataPtr < 2 ) {
         // a data block can never be at 0-1 (bootblock)
-        adfEnv.eFct ( "adfFileSeekExt: invalid data block address (%u), pos %u, file '%s'",
-                      file->curDataPtr, file->pos, file->fileHdr->fileName );
+        adfEnv.eFct( "%s: invalid data block address (%u), pos %u, file '%s'",
+                     __func__, file->curDataPtr, file->pos, file->fileHdr->fileName );
         return ADF_RC_ERROR;
     }
 
@@ -1105,8 +1108,8 @@ static ADF_RETCODE adfFileSeekExt_( struct AdfFile * const  file,
                                         file->curDataPtr,
                                         file->currentData );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfFileSeekExt: error reading data block %d, file '%s'",
-                      file->curDataPtr, file->fileHdr->fileName );
+        adfEnv.eFct( "%s: error reading data block %d, file '%s'",
+                     __func__, file->curDataPtr, file->fileHdr->fileName );
         file->curDataPtr = 0;  // invalidate data ptr
     }
 
@@ -1342,8 +1345,8 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove(
     if ( blocksCount != blocksToRemove->nItems ) {
 #ifdef DEBUG_ADF_FILE
         fprintf ( stderr,
-                  "Error: blocksCount %u != blocksToRemove->len %u, datablocksCount %u\n",
-                 blocksCount, blocksToRemove->len, dataBlocksCount );
+                  "%s error: blocksCount %u != blocksToRemove->len %u, datablocksCount %u\n",
+                  __func__, blocksCount, blocksToRemove->len, dataBlocksCount );
         fflush ( stderr );
 #endif
         adfVectorFree ( ( struct AdfVector * const ) blocksToRemove );
