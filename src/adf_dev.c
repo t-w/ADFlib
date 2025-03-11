@@ -52,6 +52,10 @@ static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev );
  *
  *****************************************************************************/
 
+/*
+ * adfDevCreate
+ *
+ */
 struct AdfDevice * adfDevCreate(  const char * const  driverName,
                                   const char * const  name,
                                   const uint32_t      cylinders,
@@ -65,18 +69,25 @@ struct AdfDevice * adfDevCreate(  const char * const  driverName,
 }
 
 
+/*
+ * adfDevOpen
+ *
+ */
 struct AdfDevice * adfDevOpen( const char * const   name,
                                const AdfAccessMode  mode )
 {
-    return adfDevOpenWithDrv_ ( adfGetDeviceDriverByDevName ( name ), name, mode );
+    return adfDevOpenWithDrv_( adfGetDeviceDriverByDevName( name ), name, mode );
 }
 
-
+/*
+ * adfDevOpenWithDriver
+ *
+ */
 struct AdfDevice * adfDevOpenWithDriver( const char * const   driverName,
                                          const char * const   name,
                                          const AdfAccessMode  mode )
 {
-    return adfDevOpenWithDrv_ ( adfGetDeviceDriverByName ( driverName ), name, mode );
+    return adfDevOpenWithDrv_( adfGetDeviceDriverByName( driverName ), name, mode );
 }
 
 
@@ -91,9 +102,9 @@ void adfDevClose( struct AdfDevice * const  dev )
         return;
 
     if ( dev->mounted )
-        adfDevUnMount ( dev );
+        adfDevUnMount( dev );
 
-    dev->drv->closeDev ( dev );
+    dev->drv->closeDev( dev );
 }
 
 
@@ -105,18 +116,18 @@ void adfDevClose( struct AdfDevice * const  dev )
  */
 int adfDevType( const struct AdfDevice * const  dev )
 {
-    if( (dev->size==512*11*2*80) ||		/* BV */
-        (dev->size==512*11*2*81) ||		/* BV */
-        (dev->size==512*11*2*82) || 	/* BV */
-        (dev->size==512*11*2*83) )		/* BV */
+    if ( ( dev->size == 512 * 11 * 2 * 80 ) ||		/* BV */
+         ( dev->size == 512 * 11 * 2 * 81 ) ||		/* BV */
+         ( dev->size == 512 * 11 * 2 * 82 ) || 	/* BV */
+         ( dev->size == 512 * 11 * 2 * 83 ) )		/* BV */
         return ADF_DEVTYPE_FLOPDD;
-    else if (dev->size==512*22*2*80)
+    else if ( dev->size == 512 * 22 * 2 * 80 )
         return ADF_DEVTYPE_FLOPHD;
-    else if (dev->size>512*22*2*80)
+    else if ( dev->size > 512 * 22 * 2 * 80 )
         return ADF_DEVTYPE_HARDDISK;
     else {
         (*adfEnv.eFct)("adfDevType : unknown device type");
-        return(-1);
+        return -1;
     }
 }
 
@@ -149,28 +160,28 @@ void adfDevInfo( const struct AdfDevice * const  dev )
         devTypeInfo = "unknown device type!";
     }
 
-    printf ( "\nADF device info:\n  Type:\t\t%s\n  Driver:\t%s\n",
-             devTypeInfo, dev->drv->name );
+    printf( "\nADF device info:\n  Type:\t\t%s\n  Driver:\t%s\n",
+            devTypeInfo, dev->drv->name );
 
-    printf ( "  Geometry:\n"
-             "    Cylinders\t%d\n"
-             "    Heads\t%d\n"
-             "    Sectors\t%d\n\n",
-             dev->cylinders, dev->heads, dev->sectors );
+    printf( "  Geometry:\n"
+            "    Cylinders\t%d\n"
+            "    Heads\t%d\n"
+            "    Sectors\t%d\n\n",
+            dev->cylinders, dev->heads, dev->sectors );
 
-    printf ( "  Volumes:\t%d%s\n", dev->nVol,
-             dev->nVol > 0 ? "\n   idx  first bl.     last bl.    filesystem    name" : "" );
+    printf( "  Volumes:\t%d%s\n", dev->nVol,
+            dev->nVol > 0 ? "\n   idx  first bl.     last bl.    filesystem    name" : "" );
 
     for ( int i = 0 ; i < dev->nVol ; i++ ) {
         const struct AdfVolume * const vol = dev->volList[i];
-        const char * const fstype = ( adfVolIsDosFS ( vol ) ) ?
-            ( adfVolIsOFS ( vol ) ? "OFS" : "FFS" ) : "???";
-        printf ( "    %2d  %9d    %9d    %s(%s)      \"%s\"", i,
-                 vol->firstBlock,
-                 vol->lastBlock,
-                 adfVolIsFsValid (vol) ? vol->fs.id : "???",
-                 fstype,
-                 vol->volName ? vol->volName : "" );
+        const char * const fstype = ( adfVolIsDosFS( vol ) ) ?
+            ( adfVolIsOFS( vol ) ? "OFS" : "FFS" ) : "???";
+        printf( "    %2d  %9d    %9d    %s(%s)      \"%s\"", i,
+                vol->firstBlock,
+                vol->lastBlock,
+                adfVolIsFsValid(vol) ? vol->fs.id : "???",
+                fstype,
+                vol->volName ? vol->volName : "" );
         if ( vol->mounted )
             printf("    mounted");
         putchar('\n');
@@ -206,18 +217,18 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
     case ADF_DEVTYPE_HARDDISK:
     case ADF_DEVTYPE_HARDFILE: {
         uint8_t buf[512];
-        rc = adfDevReadBlock ( dev, 0, 512, buf );
+        rc = adfDevReadBlock( dev, 0, 512, buf );
         if ( rc != ADF_RC_OK ) {
-            adfEnv.eFct ( "adfMountDev : reading block 0 of %s failed", dev->name );
+            adfEnv.eFct( "adfMountDev : reading block 0 of %s failed", dev->name );
             return rc;
         }
 
-        if ( strncmp ( "RDSK", (char *) buf, 4 ) == 0 ) {
+        if ( strncmp( "RDSK", (char *) buf, 4 ) == 0 ) {
             dev->devType = ADF_DEVTYPE_HARDDISK;
-            rc = adfMountHd ( dev );
+            rc = adfMountHd( dev );
         } else {
             dev->devType = ADF_DEVTYPE_HARDFILE;
-            rc = adfMountHdFile ( dev );
+            rc = adfMountHdFile( dev );
         }
 
         if ( rc != ADF_RC_OK )
@@ -233,7 +244,6 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
     dev->mounted = true;
     return ADF_RC_OK;
 }
-
 
 /*
  * adfDevUnMount
@@ -259,7 +269,10 @@ void adfDevUnMount( struct AdfDevice * const  dev )
     dev->mounted = false;
 }
 
-
+/*
+ * adfDevReadBlock
+ *
+ */
 ADF_RETCODE adfDevReadBlock( struct AdfDevice * const  dev,
                              const uint32_t            pSect,
                              const uint32_t            size,
@@ -270,17 +283,20 @@ ADF_RETCODE adfDevReadBlock( struct AdfDevice * const  dev,
     printf("rc=%ld\n",rc);
     return rc;
 */
-    return dev->drv->readSector ( dev, pSect, size, buf );
+    return dev->drv->readSector( dev, pSect, size, buf );
 }
 
-
+/*
+ * adfDevWriteBlock
+ *
+ */
 ADF_RETCODE adfDevWriteBlock( struct AdfDevice * const  dev,
                               const uint32_t            pSect,
                               const uint32_t            size,
                               const uint8_t * const     buf )
 {
 /*printf("nativ=%d\n",dev->isNativeDev);*/
-    return dev->drv->writeSector ( dev, pSect, size, buf );
+    return dev->drv->writeSector( dev, pSect, size, buf );
 }
 
 
@@ -321,15 +337,15 @@ static struct AdfDevice * adfDevOpenWithDrv_(
 
     if ( dev->devType == ADF_DEVTYPE_HARDDISK ) {
         struct AdfRDSKblock rdsk;
-        ADF_RETCODE rc = adfDevReadBlock ( dev, 0, sizeof(struct AdfRDSKblock),
-                                           (uint8_t *) &rdsk );
+        ADF_RETCODE rc = adfDevReadBlock( dev, 0, sizeof(struct AdfRDSKblock),
+                                          (uint8_t *) &rdsk );
         if ( rc != ADF_RC_OK ) {
-            dev->drv->closeDev ( dev );
+            dev->drv->closeDev( dev );
             return NULL;
         }
 
-        if ( strncmp ( (char *) &rdsk, "RDSK", 4 ) == 0 ) {
-            rc = adfReadRDSKblock ( dev, &rdsk );
+        if ( strncmp( (char *) &rdsk, "RDSK", 4 ) == 0 ) {
+            rc = adfReadRDSKblock( dev, &rdsk );
             if ( rc == ADF_RC_OK ) {
                 /* rigid block loaded -> check geometry */
                 //if ( ! adfDevIsRDSKGeometryValid_ ( dev, &rdsk ) ) {
@@ -337,7 +353,7 @@ static struct AdfDevice * adfDevOpenWithDrv_(
                       dev->heads     != rdsk.heads     ||
                       dev->sectors   != rdsk.sectors )
                 {
-                    adfEnv.wFct (
+                    adfEnv.wFct(
                         "adfDevOpen : using geometry from Rigid Block, "
                         "different than detected/calculated(!):\n"
                         "                detected                rdsk block\n"
@@ -355,18 +371,18 @@ static struct AdfDevice * adfDevOpenWithDrv_(
                     dev->cylinders = rdsk.cylinders;
                     dev->heads     = rdsk.heads;
                     dev->sectors   = rdsk.sectors;
-                    if ( ! adfDevIsGeometryValid_ ( dev ) ) {
-                        adfEnv.eFct ( "adfDevOpen : invalid geometry: cyliders %u, "
-                                      "heads: %u, sectors: %u, size: %u, device: %s",
-                                      dev->cylinders, dev->heads, dev->sectors,
-                                      dev->size, dev->name );
-                        dev->drv->closeDev ( dev );
+                    if ( ! adfDevIsGeometryValid_( dev ) ) {
+                        adfEnv.eFct( "adfDevOpen : invalid geometry: cyliders %u, "
+                                     "heads: %u, sectors: %u, size: %u, device: %s",
+                                     dev->cylinders, dev->heads, dev->sectors,
+                                     dev->size, dev->name );
+                        dev->drv->closeDev( dev );
                         return NULL;
                     }
                 }
             } else {
-                adfEnv.wFct ( "adfDevOpen : RDSK block exists but could not be read, device: %s",
-                              dev->name );
+                adfEnv.wFct( "adfDevOpen : RDSK block exists but could not be read, device: %s",
+                             dev->name );
                 //dev->drv->closeDev ( dev );
                 //return NULL;
             }
@@ -386,7 +402,7 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
         dev->sectors   = 11;
         dev->cylinders = dev->size / ( dev->heads * dev->sectors * 512 );
         if ( dev->cylinders < 80 || dev->cylinders > 83 ) {
-            adfEnv.eFct ( "adfDevSetCalculatedGeometry_: invalid size %u", dev->size );
+            adfEnv.eFct( "adfDevSetCalculatedGeometry_: invalid size %u", dev->size );
             return ADF_RC_ERROR;
         }
         break;
@@ -396,7 +412,7 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
         dev->sectors   = 22;
         dev->cylinders = dev->size / ( dev->heads * dev->sectors * 512 );
         if ( dev->cylinders != 80 ) {
-            adfEnv.eFct ( "adfDevSetCalculatedGeometry_: invalid size %u", dev->size );
+            adfEnv.eFct( "adfDevSetCalculatedGeometry_: invalid size %u", dev->size );
             return ADF_RC_ERROR;
         }
         break;
@@ -412,7 +428,7 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
         break;
 
     default:
-        adfEnv.eFct ( "adfDevSetCalculatedGeometry_: invalid dev type %d", dev->devType );
+        adfEnv.eFct( "adfDevSetCalculatedGeometry_: invalid dev type %d", dev->devType );
         return ADF_RC_ERROR;
     }
     return ADF_RC_OK;
