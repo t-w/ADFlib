@@ -10,16 +10,16 @@ nobase_dist_doc_DATA = \
 	FAQ/adf_info.html \
 	FAQ/adf_info.txt \
 	FAQ/adf_info_V0_9.txt \
-	api_device.html \
-	api_dir.html \
-	api_env.html \
-	api_file.html \
-	api_index.html \
-	api_native.html \
-	api_salv.html \
-	api_volume.html \
-	API.txt \
-	version0.7.9d_gary.txt
+	API/api_device.html \
+	API/api_dir.html \
+	API/api_env.html \
+	API/api_file.html \
+	API/api_index.html \
+	API/api_native.html \
+	API/api_salv.html \
+	API/api_volume.html \
+	API/API.txt \
+	legacy/version0.7.9d_gary.txt
 
 dist_man_MANS = \
 	adf_bitmap.1 \
