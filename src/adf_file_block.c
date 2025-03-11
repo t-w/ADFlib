@@ -70,11 +70,11 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
     const int32_t dblocksInHeader = min( fileBlocks->data.nItems,
                                          (unsigned) ADF_MAX_DATABLK );
     if ( dblocksInHeader != entry->highSeq ) {
-        adfEnv.eFct( "adfGetFileBlocks : inconsistent data in the File Header block "
+        adfEnv.eFct( "%s: inconsistent data in the File Header block "
                      "0x%x (%d, file name: %s), "
                      "highSeq value should be the number of data blocks in the file header, "
                      "while:  calculated (expected) %d != file header highSeq %d",
-                     entry->headerKey, entry->headerKey, entry->fileName,
+                     __func__, entry->headerKey, entry->headerKey, entry->fileName,
                      dblocksInHeader, entry->highSeq );
         return ADF_RC_ERROR;
     }
@@ -82,7 +82,7 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
     /* add data blocks from file header block */
     status = adfVectorAllocate( (struct AdfVector *) &fileBlocks->data );
     if ( status != ADF_RC_OK ) {
-        (*adfEnv.eFct)("adfGetFileBlocks : malloc");
+        adfEnv.eFct( "%s: malloc", __func__ );
         return ADF_RC_MALLOC;
     }
 
@@ -98,7 +98,7 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
 
         status = adfVectorAllocate( (struct AdfVector *) &fileBlocks->extens );
         if ( status != ADF_RC_OK ) {
-            (*adfEnv.eFct)("adfGetFileBlocks : malloc");
+            adfEnv.eFct( "%s: malloc", __func__ );
             status = ADF_RC_MALLOC;
             goto adfGetFileBlocks_error;
         }
@@ -121,15 +121,17 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
     }
 
     if ( nDataBlocks != fileBlocks->data.nItems ) {
-        adfEnv.eFct( "adfGetFileBlocks : invalid number of data blocks: "
-                     "expected %d != retrieved %d", fileBlocks->data.nItems, nDataBlocks );
+        adfEnv.eFct( "%s: invalid number of data blocks: "
+                     "expected %d != retrieved %d", __func__,
+                     fileBlocks->data.nItems, nDataBlocks );
         status = ADF_RC_ERROR;
         goto adfGetFileBlocks_error;
     }
 
     if ( nExtBlocks != fileBlocks->extens.nItems ) {
-        adfEnv.eFct( "adfGetFileBlocks : invalid number of ext. blocks: "
-                     "expected %d != retrieved %d", fileBlocks->extens.nItems, nExtBlocks );
+        adfEnv.eFct( "%s: invalid number of ext. blocks: "
+                     "expected %d != retrieved %d", __func__,
+                     fileBlocks->extens.nItems, nExtBlocks );
         status = ADF_RC_ERROR;
         goto adfGetFileBlocks_error;
     }
@@ -206,7 +208,7 @@ ADF_RETCODE adfReadDataBlock( struct AdfVolume * const  vol,
 {
     if ( nSect < 1 ) {
         // ie. block 0 is volume's bootblock - cannot be a data block
-        adfEnv.eFct( "adfReadDataBlock : error, '%d' cannot be a data block", nSect );
+        adfEnv.eFct( "%s: error, '%d' cannot be a data block", __func__, nSect );
         return ADF_RC_ERROR;
     }
 
@@ -214,8 +216,8 @@ ADF_RETCODE adfReadDataBlock( struct AdfVolume * const  vol,
 
     ADF_RETCODE rc = adfVolReadBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct( "adfReadDataBlock: error reading block %d, volume '%s'",
-                     nSect, vol->volName );
+        adfEnv.eFct( "%s: error reading block %d, volume '%s'",
+                     __func__, nSect, vol->volName );
         return rc;
     }
 
@@ -231,28 +233,33 @@ ADF_RETCODE adfReadDataBlock( struct AdfVolume * const  vol,
         const uint32_t checksumCalculated =
             adfNormalSum( buf, 20, sizeof(struct AdfOFSDataBlock) );
         if ( dBlock->checkSum != checksumCalculated ) {
-            const char msg[] = "adfReadDataBlock : invalid checksum 0x%x != 0x%x (calculated)"
+            const char msg[] = "%s: invalid checksum 0x%x != 0x%x (calculated)"
                 ", block %d, volume '%s'";
             if ( adfEnv.ignoreChecksumErrors ) {
-                adfEnv.wFct( msg, dBlock->checkSum, checksumCalculated, nSect, vol->volName );
+                adfEnv.wFct( msg, __func__, dBlock->checkSum, checksumCalculated,
+                             nSect, vol->volName );
             } else {
-                adfEnv.eFct( msg, dBlock->checkSum, checksumCalculated, nSect, vol->volName );
+                adfEnv.eFct( msg, __func__, dBlock->checkSum, checksumCalculated,
+                             nSect, vol->volName );
                 return ADF_RC_BLOCKSUM;
             }
         }
 
         if ( dBlock->type != ADF_T_DATA )
-            adfEnv.wFct( "adfReadDataBlock : id ADF_T_DATA not found, block %d, volume '%s'",
-                         nSect, vol->volName );
+            adfEnv.wFct( "%s: id ADF_T_DATA not found, block %d, volume '%s'",
+                         __func__, nSect, vol->volName );
+
         if ( dBlock->dataSize > 488 )
-            adfEnv.wFct( "adfReadDataBlock : dataSize (0x%x / %u) incorrect, block %d, volume '%s'",
-                         dBlock->dataSize, dBlock->dataSize, nSect, vol->volName );
+            adfEnv.wFct( "%s: dataSize (0x%x / %u) incorrect, block %d, volume '%s'",
+                         __func__, dBlock->dataSize, dBlock->dataSize, nSect, vol->volName );
+
         if ( ! adfVolIsSectNumValid ( vol, dBlock->headerKey ) )
-            adfEnv.wFct( "adfReadDataBlock : headerKey (0x%x / %u) out of range, block %d, volume '%s'",
-                         dBlock->headerKey, dBlock->headerKey, nSect, vol->volName );
+            adfEnv.wFct( "%s: headerKey (0x%x / %u) out of range, block %d, volume '%s'",
+                         __func__, dBlock->headerKey, dBlock->headerKey, nSect, vol->volName );
+
         if ( ! adfVolIsSectNumValid ( vol, dBlock->nextData ) )
-            adfEnv.wFct( "adfReadDataBlock : nextData out of range, block %d, volume '%s'",
-                         nSect, vol->volName );
+            adfEnv.wFct( "%s: nextData out of range, block %d, volume '%s'",
+                         __func__, nSect, vol->volName );
     }
 
     return rc;
@@ -269,8 +276,7 @@ ADF_RETCODE adfWriteDataBlock( struct AdfVolume * const  vol,
 {
     if ( nSect < 1 ) {
         // ie. block 0 is volume's bootblock - cannot be a data block
-        adfEnv.eFct( "adfWriteDataBlock : error, '%d' cannot be a data block",
-                     nSect );
+        adfEnv.eFct( "%s: error, '%d' cannot be a data block", __func__, nSect );
         return ADF_RC_ERROR;
     }
 
@@ -292,8 +298,8 @@ ADF_RETCODE adfWriteDataBlock( struct AdfVolume * const  vol,
         rc = adfVolWriteBlock( vol, (uint32_t) nSect, data );
     }
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct( "adfWriteDataBlock: error writing block %d, volume '%s'",
-                     nSect, vol->volName );
+        adfEnv.eFct( "%s: error writing block %d, volume '%s'",
+                     __func__, nSect, vol->volName );
     }
 /*printf("adfWriteDataBlock %ld\n",nSect);*/
 
@@ -312,8 +318,8 @@ ADF_RETCODE adfReadFileExtBlock( struct AdfVolume * const        vol,
     uint8_t buf[ sizeof(struct AdfFileExtBlock) ];
     ADF_RETCODE rc = adfVolReadBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct( "adfReadFileExtBlock: error reading block %d, volume '%s'",
-                     nSect, vol->volName );
+        adfEnv.eFct( "%s: error reading block %d, volume '%s'",
+                     __func__, nSect, vol->volName );
         return rc;
     }
 /*printf("read fext=%d\n",nSect);*/
@@ -325,31 +331,41 @@ ADF_RETCODE adfReadFileExtBlock( struct AdfVolume * const        vol,
     const uint32_t checksumCalculated =
         adfNormalSum( buf, 20, sizeof(struct AdfFileExtBlock) );
     if ( fext->checkSum != checksumCalculated ) {
-        const char msg[] = "adfReadFileExtBlock : invalid checksum 0x%x != 0x%x (calculated)"
+        const char msg[] = "%s: invalid checksum 0x%x != 0x%x (calculated)"
             ", block %d, volume '%s'";
         if ( adfEnv.ignoreChecksumErrors ) {
-            adfEnv.wFct( msg, fext->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.wFct( msg, __func__, fext->checkSum, checksumCalculated,
+                         nSect, vol->volName );
         } else {
-            adfEnv.eFct( msg, fext->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.eFct( msg, __func__, fext->checkSum, checksumCalculated,
+                         nSect, vol->volName );
             return ADF_RC_BLOCKSUM;
         }
     }
 
     if ( fext->type != ADF_T_LIST )
-        adfEnv.wFct( "adfReadFileExtBlock : type ADF_T_LIST not found" );
+        adfEnv.wFct( "%s: type ADF_T_LIST not found", __func__ );
+
     if ( fext->secType != ADF_ST_FILE )
-        adfEnv.wFct( "adfReadFileExtBlock : sectype ADF_ST_FILE not found" );
+        adfEnv.wFct( "%s: sectype ADF_ST_FILE not found", __func__ );
+
     if ( fext->headerKey != nSect )
-        (*adfEnv.wFct)("adfReadFileExtBlock : headerKey!=nSect");
+        adfEnv.wFct( "%s: headerKey!=nSect", __func__ );
+
     if ( fext->highSeq < 0 ||
          fext->highSeq > ADF_MAX_DATABLK )
     {
-        (*adfEnv.wFct)("adfReadFileExtBlock : highSeq out of range");
+        adfEnv.wFct("%s: highSeq out of range", __func__ );
     }
+
     if ( ! adfVolIsSectNumValid( vol, fext->parent ) )
-        (*adfEnv.wFct)("adfReadFileExtBlock : parent out of range");
-    if ( fext->extension != 0 && ! adfVolIsSectNumValid( vol, fext->extension ) )
-        (*adfEnv.wFct)("adfReadFileExtBlock : extension out of range");
+        adfEnv.wFct( "%s: parent out of range", __func__ );
+
+    if ( fext->extension != 0 &&
+         ! adfVolIsSectNumValid( vol, fext->extension ) )
+    {
+        adfEnv.wFct( "%s: extension out of range", __func__ );
+    }
 
     return rc;
 }
@@ -381,8 +397,8 @@ ADF_RETCODE adfWriteFileExtBlock( struct AdfVolume * const        vol,
 
     ADF_RETCODE rc = adfVolWriteBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct( "adfWriteFileExtBlock: error wriding block %d, volume '%s'",
-                     nSect, vol->volName );
+        adfEnv.eFct( "%s: error wriding block %d, volume '%s'",
+                     __func__, nSect, vol->volName );
     }
 
     return rc;
