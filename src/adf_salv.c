@@ -175,14 +175,14 @@ ADF_RETCODE adfCheckParent( struct AdfVolume *  vol,
                             ADF_SECTNUM         pSect )
 {
     if ( adfIsBlockFree( vol, pSect ) ) {
-        (*adfEnv.wFct)("adfCheckParent : parent doesn't exists");
+        adfEnv.wFct( "%s: parent doesn't exists", __func__ );
         return ADF_RC_ERROR;
     }
 
     struct GenBlock * const block =
         (struct GenBlock *) malloc( sizeof(struct GenBlock) );
     if ( block == NULL ) {
-        (*adfEnv.wFct)("adfCheckParent : malloc failed");
+        adfEnv.wFct( "%s: malloc failed", __func__ );
         return ADF_RC_ERROR;
     }
     block->name = NULL;
@@ -192,8 +192,9 @@ ADF_RETCODE adfCheckParent( struct AdfVolume *  vol,
     if ( rc == ADF_RC_OK ) {
         if ( block->type != ADF_T_HEADER ||
            ( block->secType != ADF_ST_DIR &&
-             block->secType != ADF_ST_ROOT ) ) {
-            (*adfEnv.wFct)("adfCheckParent : parent secType is incorrect");
+             block->secType != ADF_ST_ROOT ) )
+        {
+            adfEnv.wFct("%s: parent secType is incorrect", __func__ );
             rc = ADF_RC_ERROR;
         }
     }
@@ -222,7 +223,7 @@ ADF_RETCODE adfUndelDir( struct AdfVolume *    vol,
         return rc;
 
     if ( pSect != entry->parent ) {
-        (*adfEnv.wFct)("adfUndelDir : the given parent sector isn't the entry parent");
+        adfEnv.wFct("%s: the given parent sector isn't the entry parent", __func__ );
         return ADF_RC_ERROR;
     }
 
@@ -281,9 +282,9 @@ ADF_RETCODE adfUndelFile( struct AdfVolume *           vol,
 #endif
 
     if ( adfVolHasDIRCACHE( vol ) ) {
-        adfEnv.eFct( "adfUndelFile: salvage on volumes with dircache "
+        adfEnv.eFct( "%s: salvage on volumes with dircache "
                      "not supported (volume %s)",
-                     nSect, entry->headerKey );
+                     __func__, nSect, entry->headerKey );
         return ADF_RC_ERROR;
     }
 #else
@@ -298,8 +299,8 @@ ADF_RETCODE adfUndelFile( struct AdfVolume *           vol,
 
     /* check if the headerKey is consistent with file header block number */
     if ( nSect != entry->headerKey ) {
-        adfEnv.eFct( "adfUndelFile: entry block %d != entry->headerKey %d",
-                     nSect, entry->headerKey );
+        adfEnv.eFct( "%s: entry block %d != entry->headerKey %d",
+                     __func__, nSect, entry->headerKey );
         return ADF_RC_ERROR;
     }
 
@@ -309,7 +310,7 @@ ADF_RETCODE adfUndelFile( struct AdfVolume *           vol,
         return rc;
 
     if ( pSect != entry->parent ) {
-        (*adfEnv.wFct)("adfUndelFile : the given parent sector isn't the entry parent");
+        adfEnv.wFct( "%s: the given parent sector isn't the entry parent", __func__ );
         return ADF_RC_ERROR;
     }
 
@@ -447,18 +448,21 @@ ADF_RETCODE adfCheckFile( struct AdfVolume * const                 vol,
                 goto adfCheckFile_free;
 
             if ( dataBlock.headerKey != fileBlocks.header )
-                (*adfEnv.wFct)("adfCheckFile : headerKey incorrect");
+                adfEnv.wFct( "%s: headerKey incorrect", __func__ );
+
             if ( dataBlock.seqNum != (unsigned) n + 1 )
-                (*adfEnv.wFct)("adfCheckFile : seqNum incorrect");
+                adfEnv.wFct( "%s: seqNum incorrect", __func__ );
+
             if ( n < fileBlocks.data.nItems - 1 ) {
                 if ( dataBlock.nextData != fileBlocks.data.sectors[ n + 1 ] )
-                    (*adfEnv.wFct)("adfCheckFile : nextData incorrect");
+                    adfEnv.wFct( "%s: nextData incorrect", __func__ );
+
                 if ( dataBlock.dataSize != vol->datablockSize )
-                    (*adfEnv.wFct)("adfCheckFile : dataSize incorrect");
+                    adfEnv.wFct( "%s: dataSize incorrect", __func__ );
             }
             else { /* last datablock */
                 if ( dataBlock.nextData != 0 )
-                    (*adfEnv.wFct)("adfCheckFile : nextData incorrect");
+                    adfEnv.wFct( "%s: nextData incorrect", __func__ );
             }
         }
     }
@@ -470,14 +474,15 @@ ADF_RETCODE adfCheckFile( struct AdfVolume * const                 vol,
             goto adfCheckFile_free;
 
         if ( extBlock.parent != file->headerKey )
-            (*adfEnv.wFct)("adfCheckFile : extBlock parent incorrect");
+            adfEnv.wFct( "%s: extBlock parent incorrect", __func__ );
+
         if ( n < fileBlocks.extens.nItems - 1 ) {
             if ( extBlock.extension != fileBlocks.extens.sectors[ n + 1 ] )
-                (*adfEnv.wFct)("adfCheckFile : nextData incorrect");
+                adfEnv.wFct( "%s: nextData incorrect", __func__ );
         }
         else
             if ( extBlock.extension != 0 )
-                (*adfEnv.wFct)("adfCheckFile : nextData incorrect");
+                adfEnv.wFct( "%s: nextData incorrect", __func__ );
     }
 
 adfCheckFile_free:
@@ -527,7 +532,7 @@ ADF_RETCODE adfCheckEntry( struct AdfVolume * const  vol,
         rc = adfCheckDir( vol, nSect, (struct AdfDirBlock *) &entry, level );
         break;
     default:
-/*        printf("adfCheckEntry : not supported\n");*/		/* BV */
+/*        printf("%s: not supported\n", __func__ );*/		/* BV */
         rc = ADF_RC_ERROR;
     }
 
