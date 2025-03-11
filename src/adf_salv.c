@@ -273,7 +273,7 @@ ADF_RETCODE adfUndelFile ( struct AdfVolume *          vol,
        For safety: not allowing doing salvage for volumes with dircache. */
 #ifndef ADFLIB_ENABLE_SALVAGE_DIRCACHE
 
-#ifdef _MSC_VER_
+#ifdef _MSC_VER
 #pragma message "ADFLIB_ENABLE_SALVAGE_DIRCACHE disabled"
 #else
 #warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE disabled"
@@ -287,7 +287,7 @@ ADF_RETCODE adfUndelFile ( struct AdfVolume *          vol,
     }
 #else
 
-#ifdef _MSC_VER_
+#ifdef _MSC_VER
 #pragma message "ADFLIB_ENABLE_SALVAGE_DIRCACHE enabled"
 #else
 #warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE enabled"
