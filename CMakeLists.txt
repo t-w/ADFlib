@@ -120,9 +120,9 @@ endif()
 option ( ADFLIB_ENABLE_NATIVE_DEV "Enable real native devices" OFF )
 
 option ( ADFLIB_ENABLE_SALVAGE_DIRCACHE
-         "Allow file undelete on volumes with dircache (EXPERIMENTAL)" OFF )
+         "Allow file undelete on volumes with dircache (EXPERIMENTAL)" ON )
 if ( ADFLIB_ENABLE_SALVAGE_DIRCACHE )
-  message ( STATUS "Enabling salvage for volumes with dircache." )
+  message ( STATUS "Enabling salvage for volumes with dircache (EXPERIMENTAL)." )
   add_definitions ( -DADFLIB_ENABLE_SALVAGE_DIRCACHE )
 else()
   message ( STATUS "Disabling salvage for volumes with dircache." )
