@@ -46,92 +46,93 @@
  * adfRenameEntry
  *
  */ 
-ADF_RETCODE adfRenameEntry ( struct AdfVolume * const vol,
-                             const ADF_SECTNUM        pSect,
-                             const char * const       oldName,
-                             const ADF_SECTNUM        nPSect,
-                             const char * const       newName )
+ADF_RETCODE adfRenameEntry( struct AdfVolume * const  vol,
+                            const ADF_SECTNUM         pSect,
+                            const char * const        oldName,
+                            const ADF_SECTNUM         nPSect,
+                            const char * const        newName )
 {
     struct AdfEntryBlock parent, previous, entry, nParent;
     char name2[ ADF_MAX_NAME_LEN + 1 ],
          name3[ ADF_MAX_NAME_LEN + 1 ];
 
     if ( pSect == nPSect  &&
-         strcmp ( oldName, newName ) == 0 )
+         strcmp( oldName, newName ) == 0 )
     {
         return ADF_RC_OK;
     }
     
-    bool intl = adfVolHasINTL ( vol ) || adfVolHasDIRCACHE ( vol );
+    bool intl = adfVolHasINTL( vol ) ||
+                adfVolHasDIRCACHE( vol );
     unsigned len = (unsigned) strlen ( newName );
-    adfStrToUpper ( (uint8_t *) name2, (uint8_t*) newName, len, intl );
-    adfStrToUpper ( (uint8_t *) name3, (uint8_t*) oldName, (unsigned) strlen(oldName), intl );
+    adfStrToUpper( (uint8_t *) name2, (uint8_t*) newName, len, intl );
+    adfStrToUpper( (uint8_t *) name3, (uint8_t*) oldName, (unsigned) strlen(oldName), intl );
     /* newName == oldName ? */
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, pSect, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, pSect, &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    unsigned hashValueO = adfGetHashValue ( (uint8_t *) oldName, intl );
+    unsigned hashValueO = adfGetHashValue( (uint8_t *) oldName, intl );
 
     ADF_SECTNUM prevSect = -1;
     const ADF_SECTNUM nSect =
-        adfNameToEntryBlk ( vol, parent.hashTable, oldName, &entry, &prevSect );
-    if (nSect==-1) {
-        adfEnv.wFct ( "adfRenameEntry : entry '%s' not found", oldName );
+        adfNameToEntryBlk( vol, parent.hashTable, oldName, &entry, &prevSect );
+    if ( nSect == -1 ) {
+        adfEnv.wFct( "adfRenameEntry : entry '%s' not found", oldName );
         return ADF_RC_ERROR;
     }
 
     /* change name and parent dir */
-    entry.nameLen = (uint8_t) min ( 31u, strlen ( newName ) );
-    memcpy(entry.name, newName, entry.nameLen);
+    entry.nameLen = (uint8_t) min ( 31u, strlen( newName ) );
+    memcpy( entry.name, newName, entry.nameLen );
     entry.parent = nPSect;
     const ADF_SECTNUM tmpSect = entry.nextSameHash;
 
     entry.nextSameHash = 0;
-    rc = adfWriteEntryBlock ( vol, nSect, &entry );
+    rc = adfWriteEntryBlock( vol, nSect, &entry );
     if ( rc != ADF_RC_OK )
         return rc;
 
     /* del from the oldname list */
 
     /* in hashTable */
-    if (prevSect==0) {
-        parent.hashTable[hashValueO] = tmpSect;
+    if ( prevSect == 0 ) {
+        parent.hashTable[ hashValueO ] = tmpSect;
     }
     else {
         /* in linked list */
-        rc = adfReadEntryBlock ( vol, prevSect, &previous );
+        rc = adfReadEntryBlock( vol, prevSect, &previous );
         if ( rc != ADF_RC_OK )
             return rc;
         /* entry.nextSameHash (tmpSect) could be == 0 */
         previous.nextSameHash = tmpSect;
-        rc = adfWriteEntryBlock ( vol, prevSect, &previous );
+        rc = adfWriteEntryBlock( vol, prevSect, &previous );
         if ( rc != ADF_RC_OK )
             return rc;
     }
 
     // update old parent's ctime and write its block
-    adfTime2AmigaTime ( adfGiveCurrentTime(),
-                        &parent.days,
-                        &parent.mins,
-                        &parent.ticks );
+    adfTime2AmigaTime( adfGiveCurrentTime(),
+                       &parent.days,
+                       &parent.mins,
+                       &parent.ticks );
 
     if ( parent.secType == ADF_ST_ROOT )
-        rc = adfWriteRootBlock ( vol, (uint32_t) pSect, (struct AdfRootBlock*) &parent );
+        rc = adfWriteRootBlock( vol, (uint32_t) pSect, (struct AdfRootBlock*) &parent );
     else
-        rc = adfWriteDirBlock ( vol, pSect, (struct AdfDirBlock*) &parent );
+        rc = adfWriteDirBlock( vol, pSect, (struct AdfDirBlock*) &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    rc = adfReadEntryBlock ( vol, nPSect, &nParent );
+    rc = adfReadEntryBlock( vol, nPSect, &nParent );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    unsigned hashValueN = adfGetHashValue ( (uint8_t * ) newName, intl );
+    unsigned hashValueN = adfGetHashValue( (uint8_t * ) newName, intl );
     ADF_SECTNUM nSect2 = nParent.hashTable[ hashValueN ];
     /* no list */
-    if (nSect2==0) {
+    if ( nSect2 == 0 ) {
         nParent.hashTable[ hashValueN ] = nSect;
     }
     else {
@@ -140,29 +141,29 @@ ADF_RETCODE adfRenameEntry ( struct AdfVolume * const vol,
                    * name2 == newName
                    */
         do {
-            rc = adfReadEntryBlock ( vol, nSect2, &previous );
+            rc = adfReadEntryBlock( vol, nSect2, &previous );
             if ( rc != ADF_RC_OK )
                 return rc;
-            if (previous.nameLen==len) {
-                adfStrToUpper ( (uint8_t *) name3,
-                                (uint8_t *) previous.name,
-                                previous.nameLen, intl );
-                if (strncmp(name3,name2,len)==0) {
+            if ( previous.nameLen == len ) {
+                adfStrToUpper( (uint8_t *) name3,
+                               (uint8_t *) previous.name,
+                               previous.nameLen, intl );
+                if ( strncmp( name3, name2, len ) == 0 ) {
                     (*adfEnv.wFct)("adfRenameEntry : entry already exists");
                     return ADF_RC_ERROR;
                 }
             }
             nSect2 = previous.nextSameHash;
 /*printf("sect=%ld\n",nSect2);*/
-        }while(nSect2!=0);
+        } while ( nSect2 != 0 );
         
         previous.nextSameHash = nSect;
         if ( previous.secType == ADF_ST_DIR )
-            rc = adfWriteDirBlock ( vol, previous.headerKey, 
-                                    (struct AdfDirBlock *) &previous );
+            rc = adfWriteDirBlock( vol, previous.headerKey, 
+                                   (struct AdfDirBlock *) &previous );
         else if ( previous.secType == ADF_ST_FILE )
-            rc = adfWriteFileHdrBlock ( vol, previous.headerKey,
-                                        (struct AdfFileHeaderBlock *) &previous );
+            rc = adfWriteFileHdrBlock( vol, previous.headerKey,
+                                       (struct AdfFileHeaderBlock *) &previous );
         else {
             (*adfEnv.wFct)("adfRenameEntry : unknown entry type");
             rc = ADF_RC_ERROR;
@@ -172,29 +173,29 @@ ADF_RETCODE adfRenameEntry ( struct AdfVolume * const vol,
     }
 
     // update new parent's time and write its block
-    adfTime2AmigaTime ( adfGiveCurrentTime(),
-                        &nParent.days,
-                        &nParent.mins,
-                        &nParent.ticks );
+    adfTime2AmigaTime( adfGiveCurrentTime(),
+                       &nParent.days,
+                       &nParent.mins,
+                       &nParent.ticks );
 
     if ( nParent.secType == ADF_ST_ROOT )
-        rc = adfWriteRootBlock ( vol, (uint32_t) nPSect, (struct AdfRootBlock*) &nParent );
+        rc = adfWriteRootBlock( vol, (uint32_t) nPSect, (struct AdfRootBlock *) &nParent );
     else
-        rc = adfWriteDirBlock ( vol, nPSect, (struct AdfDirBlock*) &nParent );
+        rc = adfWriteDirBlock( vol, nPSect, (struct AdfDirBlock *) &nParent );
     if ( rc != ADF_RC_OK )
         return rc;
 
     // update dircache
-    if ( adfVolHasDIRCACHE ( vol ) ) {
-        if (pSect==nPSect) {
-            rc = adfUpdateCache ( vol, &parent,
-                                  (struct AdfEntryBlock *) &entry, true );
+    if ( adfVolHasDIRCACHE( vol ) ) {
+        if ( pSect == nPSect ) {
+            rc = adfUpdateCache( vol, &parent,
+                                 (struct AdfEntryBlock *) &entry, true );
         }
         else {
-            rc = adfDelFromCache ( vol, &parent, entry.headerKey );
+            rc = adfDelFromCache( vol, &parent, entry.headerKey );
             if ( rc != ADF_RC_OK )
                 return rc;
-            rc = adfAddInCache ( vol, &nParent, &entry );
+            rc = adfAddInCache( vol, &nParent, &entry );
         }
     }
 /*
@@ -209,23 +210,23 @@ ADF_RETCODE adfRenameEntry ( struct AdfVolume * const vol,
  * adfRemoveEntry
  *
  */
-ADF_RETCODE adfRemoveEntry ( struct AdfVolume * const vol,
-                             const ADF_SECTNUM        pSect,
-                             const char * const       name )
+ADF_RETCODE adfRemoveEntry( struct AdfVolume * const  vol,
+                            const ADF_SECTNUM         pSect,
+                            const char * const        name )
 {
     struct AdfEntryBlock parent, previous, entry;
     char buf[200];
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, pSect, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, pSect, &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
     ADF_SECTNUM nSect2;
     const ADF_SECTNUM nSect =
-        adfNameToEntryBlk ( vol, parent.hashTable, name, &entry, &nSect2 );
-    if (nSect==-1) {
-      sprintf(buf, "adfRemoveEntry : entry '%s' not found", name);
-        (*adfEnv.wFct)(buf);
+        adfNameToEntryBlk( vol, parent.hashTable, name, &entry, &nSect2 );
+    if ( nSect == -1 ) {
+      sprintf( buf, "adfRemoveEntry : entry '%s' not found", name );
+        (*adfEnv.wFct)( buf );
         return ADF_RC_ERROR;
     }
     /* if it is a directory, is it empty ? */
@@ -239,43 +240,44 @@ ADF_RETCODE adfRemoveEntry ( struct AdfVolume * const vol,
 /*    printf("name=%s  nSect2=%ld\n",name, nSect2);*/
 
     /* in parent hashTable */
-    if (nSect2==0) {
-        bool intl = adfVolHasINTL ( vol ) || adfVolHasDIRCACHE ( vol );
-        unsigned hashVal = adfGetHashValue ( (uint8_t *) name, intl );
+    if ( nSect2 == 0 ) {
+        bool intl = adfVolHasINTL( vol ) ||
+                    adfVolHasDIRCACHE( vol );
+        unsigned hashVal = adfGetHashValue( (uint8_t *) name, intl );
 /*printf("hashTable=%d nexthash=%d\n",parent.hashTable[hashVal],
  entry.nextSameHash);*/
-        parent.hashTable[hashVal] = entry.nextSameHash;
-        rc = adfWriteEntryBlock ( vol, pSect, &parent );
+        parent.hashTable[ hashVal ] = entry.nextSameHash;
+        rc = adfWriteEntryBlock( vol, pSect, &parent );
         if ( rc != ADF_RC_OK )
             return rc;
     }
     /* in linked list */
     else {
-        rc = adfReadEntryBlock ( vol, nSect2, &previous );
+        rc = adfReadEntryBlock( vol, nSect2, &previous );
         if ( rc != ADF_RC_OK )
             return rc;
         previous.nextSameHash = entry.nextSameHash;
-        rc = adfWriteEntryBlock ( vol, nSect2, &previous );
+        rc = adfWriteEntryBlock( vol, nSect2, &previous );
         if ( rc != ADF_RC_OK )
             return rc;
     }
 
     if ( entry.secType == ADF_ST_FILE ) {
-        rc = adfFreeFileBlocks ( vol, (struct AdfFileHeaderBlock*) &entry );
+        rc = adfFreeFileBlocks( vol, (struct AdfFileHeaderBlock*) &entry );
         if ( rc != ADF_RC_OK )
             return rc;
-    	adfSetBlockFree(vol, nSect); //marks the FileHeaderBlock as free in BitmapBlock
-    	if (adfEnv.useNotify)
-             adfEnv.notifyFct ( pSect, ADF_ST_FILE );
+        adfSetBlockFree( vol, nSect ); //marks the FileHeaderBlock as free in BitmapBlock
+        if ( adfEnv.useNotify )
+             adfEnv.notifyFct( pSect, ADF_ST_FILE );
     }
     else if ( entry.secType == ADF_ST_DIR ) {
-        adfSetBlockFree(vol, nSect);
+        adfSetBlockFree( vol, nSect );
         /* free dir cache block : the directory must be empty, so there's only one cache block */
-        if ( adfVolHasDIRCACHE ( vol ) )
-            adfSetBlockFree(vol, entry.extension);
+        if ( adfVolHasDIRCACHE( vol ) )
+            adfSetBlockFree( vol, entry.extension );
 
-        if (adfEnv.useNotify)
-            adfEnv.notifyFct ( pSect, ADF_ST_DIR );
+        if ( adfEnv.useNotify )
+            adfEnv.notifyFct( pSect, ADF_ST_DIR );
     }
     else {
       sprintf(buf, "adfRemoveEntry : secType %d not supported", entry.secType);
@@ -283,13 +285,13 @@ ADF_RETCODE adfRemoveEntry ( struct AdfVolume * const vol,
         return ADF_RC_ERROR;
     }
 
-    if ( adfVolHasDIRCACHE ( vol ) ) {
-        rc = adfDelFromCache ( vol, &parent, entry.headerKey );
+    if ( adfVolHasDIRCACHE( vol ) ) {
+        rc = adfDelFromCache( vol, &parent, entry.headerKey );
         if ( rc != ADF_RC_OK )
             return rc;
     }
 
-    rc = adfUpdateBitmap ( vol );
+    rc = adfUpdateBitmap( vol );
 
     return rc;
 }
@@ -299,34 +301,35 @@ ADF_RETCODE adfRemoveEntry ( struct AdfVolume * const vol,
  * adfSetEntryComment
  *
  */
-ADF_RETCODE adfSetEntryComment ( struct AdfVolume * const vol,
-                                 const ADF_SECTNUM        parSect,
-                                 const char * const       name,
-                                 const char * const       newCmt )
+ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
+                                const ADF_SECTNUM         parSect,
+                                const char * const        name,
+                                const char * const        newCmt )
 {
     struct AdfEntryBlock parent, entry;
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, parSect, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, parSect, &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
     const ADF_SECTNUM nSect =
-        adfNameToEntryBlk ( vol, parent.hashTable, name, &entry, NULL );
-    if (nSect==-1) {
+        adfNameToEntryBlk( vol, parent.hashTable, name, &entry, NULL );
+    if ( nSect == -1 ) {
         (*adfEnv.wFct)("adfSetEntryComment : entry not found");
         return ADF_RC_ERROR;
     }
 
-    entry.commLen = (uint8_t) min ( (unsigned) ADF_MAX_COMMENT_LEN, strlen ( newCmt ) );
-    memcpy(entry.comment, newCmt, entry.commLen);
+    entry.commLen = (uint8_t) min( (unsigned) ADF_MAX_COMMENT_LEN,
+                                   strlen ( newCmt ) );
+    memcpy( entry.comment, newCmt, entry.commLen );
 
     if ( entry.secType == ADF_ST_DIR ) {
-        rc = adfWriteDirBlock ( vol, nSect, (struct AdfDirBlock*) &entry );
+        rc = adfWriteDirBlock( vol, nSect, (struct AdfDirBlock*) &entry );
         if ( rc != ADF_RC_OK )
             return rc;
     }
     else if ( entry.secType == ADF_ST_FILE ) {
-        rc = adfWriteFileHdrBlock ( vol, nSect, (struct AdfFileHeaderBlock *) &entry );
+        rc = adfWriteFileHdrBlock( vol, nSect, (struct AdfFileHeaderBlock *) &entry );
         if ( rc != ADF_RC_OK )
             return rc;
     }
@@ -335,8 +338,8 @@ ADF_RETCODE adfSetEntryComment ( struct AdfVolume * const vol,
         // abort here?
     }
 
-    if ( adfVolHasDIRCACHE ( vol ) )
-        rc = adfUpdateCache ( vol, &parent, (struct AdfEntryBlock *) &entry, true );
+    if ( adfVolHasDIRCACHE( vol ) )
+        rc = adfUpdateCache( vol, &parent, (struct AdfEntryBlock *) &entry, true );
 
     return rc;
 }
@@ -346,32 +349,32 @@ ADF_RETCODE adfSetEntryComment ( struct AdfVolume * const vol,
  * adfSetEntryAccess
  *
  */
-ADF_RETCODE adfSetEntryAccess ( struct AdfVolume * const vol,
-                                const ADF_SECTNUM        parSect,
-                                const char * const       name,
-                                const int32_t            newAcc )
+ADF_RETCODE adfSetEntryAccess( struct AdfVolume * const  vol,
+                               const ADF_SECTNUM         parSect,
+                               const char * const        name,
+                               const int32_t             newAcc )
 {
     struct AdfEntryBlock parent, entry;
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, parSect, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, parSect, &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
     const ADF_SECTNUM
-        nSect = adfNameToEntryBlk ( vol, parent.hashTable, name, &entry, NULL );
-    if (nSect==-1) {
+        nSect = adfNameToEntryBlk( vol, parent.hashTable, name, &entry, NULL );
+    if ( nSect == -1 ) {
         (*adfEnv.wFct)("adfSetEntryAccess : entry not found");
         return ADF_RC_ERROR;
     }
 
     entry.access = newAcc;
     if ( entry.secType == ADF_ST_DIR ) {
-        rc = adfWriteDirBlock ( vol, nSect, (struct AdfDirBlock *) &entry );
+        rc = adfWriteDirBlock( vol, nSect, (struct AdfDirBlock *) &entry );
         if ( rc != ADF_RC_OK )
             return rc;
     }
     else if ( entry.secType == ADF_ST_FILE) {
-        adfWriteFileHdrBlock ( vol, nSect, (struct AdfFileHeaderBlock *) &entry );
+        adfWriteFileHdrBlock( vol, nSect, (struct AdfFileHeaderBlock *) &entry );
         if ( rc != ADF_RC_OK )
             return rc;
     }
@@ -380,8 +383,8 @@ ADF_RETCODE adfSetEntryAccess ( struct AdfVolume * const vol,
         // abort here?
     }
 
-    if ( adfVolHasDIRCACHE ( vol ) )
-        rc = adfUpdateCache ( vol, &parent, (struct AdfEntryBlock *) &entry, false );
+    if ( adfVolHasDIRCACHE( vol ) )
+        rc = adfUpdateCache( vol, &parent, (struct AdfEntryBlock *) &entry, false );
 
     return rc;
 }
@@ -391,10 +394,10 @@ ADF_RETCODE adfSetEntryAccess ( struct AdfVolume * const vol,
  * isDirEmpty
  *
  */
-bool isDirEmpty ( const struct AdfDirBlock * const dir )
+bool isDirEmpty( const struct AdfDirBlock * const  dir )
 {
     for ( int i = 0 ; i < ADF_HT_SIZE ; i++ )
-        if (dir->hashTable[i]!=0)
+        if ( dir->hashTable[ i ] != 0 )
            return false;
     return true;
 }
@@ -404,18 +407,18 @@ bool isDirEmpty ( const struct AdfDirBlock * const dir )
  * adfFreeDirList
  *
  */
-void adfFreeDirList ( struct AdfList * const list )
+void adfFreeDirList( struct AdfList * const  list )
 {
     struct AdfList *root, *cell;
 
     root = cell = list;
-    while(cell!=NULL) {
-        adfFreeEntry(cell->content);
-        if (cell->subdir!=NULL)
-            adfFreeDirList(cell->subdir);
+    while ( cell != NULL ) {
+        adfFreeEntry( cell->content );
+        if ( cell->subdir != NULL )
+            adfFreeDirList( cell->subdir );
         cell = cell->next;
     }
-    adfListFree ( root );
+    adfListFree( root );
 }
 
 
@@ -423,84 +426,86 @@ void adfFreeDirList ( struct AdfList * const list )
  * adfGetRDirEnt
  *
  */
-struct AdfList * adfGetRDirEnt ( struct AdfVolume * const vol,
-                                 const ADF_SECTNUM        nSect,
-                                 const bool               recurs )
+struct AdfList * adfGetRDirEnt( struct AdfVolume * const  vol,
+                                const ADF_SECTNUM         nSect,
+                                const bool                recurs )
 {
     struct AdfList *cell, *head;
     struct AdfEntry * entry;
     int32_t *hashTable;
     struct AdfEntryBlock parent, entryBlk;
 
-    if ( adfEnv.useDirCache && adfVolHasDIRCACHE ( vol ) )
-        return (adfGetDirEntCache(vol, nSect, recurs ));
+    if ( adfEnv.useDirCache && adfVolHasDIRCACHE( vol ) )
+        return adfGetDirEntCache( vol, nSect, recurs );
 
-    if (adfReadEntryBlock(vol,nSect,&parent)!=ADF_RC_OK)
-		return NULL;
+    if ( adfReadEntryBlock( vol, nSect, &parent ) != ADF_RC_OK )
+        return NULL;
 
     hashTable = parent.hashTable;
     cell = head = NULL;
     for ( int i = 0 ; i < ADF_HT_SIZE ; i++ ) {
-        if (hashTable[i]!=0) {
-             entry = ( struct AdfEntry * ) malloc ( sizeof ( struct AdfEntry ) );
-             if (!entry) {
-                 adfFreeDirList(head);
+        if ( hashTable[ i ] != 0 ) {
+             entry = ( struct AdfEntry * ) malloc( sizeof(struct AdfEntry) );
+             if ( ! entry ) {
+                 adfFreeDirList( head );
 				 (*adfEnv.eFct)("adfGetDirEnt : malloc");
                  return NULL;
              }
-             if (adfReadEntryBlock(vol, hashTable[i], &entryBlk)!=ADF_RC_OK) {
-                 free(entry);
-                 adfFreeDirList(head);
+             if ( adfReadEntryBlock( vol, hashTable[ i ], &entryBlk ) != ADF_RC_OK ) {
+                 free( entry );
+                 adfFreeDirList( head );
                  return NULL;
              }
-             if (adfEntBlock2Entry(&entryBlk, entry)!=ADF_RC_OK) {
-                 free(entry);
-                 adfFreeDirList(head);
+             if ( adfEntBlock2Entry( &entryBlk, entry ) != ADF_RC_OK ) {
+                 free( entry );
+                 adfFreeDirList( head );
                  return NULL;
              }
-             entry->sector = hashTable[i];
+             entry->sector = hashTable[ i ];
 	
-             if (head==NULL)
-                 head = cell = adfListNewCell ( NULL, (void *) entry );
+             if ( head == NULL )
+                 head = cell = adfListNewCell( NULL, (void *) entry );
              else
-                 cell = adfListNewCell ( cell, (void *) entry );
-             if (cell==NULL) {
-                 free(entry);
-                 adfFreeDirList(head); return NULL;
+                 cell = adfListNewCell( cell, (void *) entry );
+             if ( cell == NULL ) {
+                 free( entry );
+                 adfFreeDirList( head );
+                 return NULL;
              }
 
              if ( recurs && entry->type == ADF_ST_DIR )
-                 cell->subdir = adfGetRDirEnt(vol,entry->sector,recurs);
+                 cell->subdir = adfGetRDirEnt( vol, entry->sector, recurs );
 
              /* same hashcode linked list */
              ADF_SECTNUM nextSector = entryBlk.nextSameHash;
-             while( nextSector!=0 ) {
-                 entry = ( struct AdfEntry * ) malloc ( sizeof ( struct AdfEntry ) );
-                 if (!entry) {
-                     adfFreeDirList(head);
+             while ( nextSector != 0 ) {
+                 entry = ( struct AdfEntry * ) malloc( sizeof(struct AdfEntry) );
+                 if ( ! entry ) {
+                     adfFreeDirList( head );
 					 (*adfEnv.eFct)("adfGetDirEnt : malloc");
                      return NULL;
                  }
-                 if (adfReadEntryBlock(vol, nextSector, &entryBlk)!=ADF_RC_OK) {
-                     free(entry);
-                     adfFreeDirList(head);
+                 if ( adfReadEntryBlock( vol, nextSector, &entryBlk ) != ADF_RC_OK ) {
+                     free( entry );
+                     adfFreeDirList( head );
                      return NULL;
                  }
 
-                 if (adfEntBlock2Entry(&entryBlk, entry)!=ADF_RC_OK) {
-                     free(entry);
-                     adfFreeDirList(head);
+                 if ( adfEntBlock2Entry( &entryBlk, entry ) != ADF_RC_OK ) {
+                     free( entry );
+                     adfFreeDirList( head );
                      return NULL;
                  }
                  entry->sector = nextSector;
 	
-                 cell = adfListNewCell ( cell, (void *) entry );
-                 if (cell==NULL) {
-                     adfFreeDirList(head); return NULL;
+                 cell = adfListNewCell( cell, (void *) entry );
+                 if ( cell == NULL ) {
+                     adfFreeDirList( head );
+                     return NULL;
                  }
 				 
                  if ( recurs && entry->type == ADF_ST_DIR )
-                     cell->subdir = adfGetRDirEnt(vol,entry->sector,recurs);
+                     cell->subdir = adfGetRDirEnt( vol, entry->sector, recurs );
 				 
                  nextSector = entryBlk.nextSameHash;
              }
@@ -518,10 +523,10 @@ struct AdfList * adfGetRDirEnt ( struct AdfVolume * const vol,
  * adfGetDirEnt
  *
  */
-struct AdfList * adfGetDirEnt ( struct AdfVolume * const vol,
-                                const ADF_SECTNUM        nSect )
+struct AdfList * adfGetDirEnt( struct AdfVolume * const  vol,
+                               const ADF_SECTNUM         nSect )
 {
-    return adfGetRDirEnt ( vol, nSect, false );
+    return adfGetRDirEnt( vol, nSect, false );
 }
 
 
@@ -529,15 +534,15 @@ struct AdfList * adfGetDirEnt ( struct AdfVolume * const vol,
  * adfFreeEntry
  *
  */
-void adfFreeEntry ( struct AdfEntry * const entry )
+void adfFreeEntry( struct AdfEntry * const  entry )
 {
-    if (entry==NULL)
+    if ( entry == NULL )
        return;
-    if (entry->name)
-        free(entry->name);
-    if (entry->comment)
-        free(entry->comment);
-    free(entry);    
+    if ( entry->name )
+        free( entry->name );
+    if ( entry->comment )
+        free( entry->comment );
+    free( entry );
 }
 
 
@@ -545,19 +550,19 @@ void adfFreeEntry ( struct AdfEntry * const entry )
  * adfDirCountEntries
  *
  */
-int adfDirCountEntries ( struct AdfVolume * const vol,
-                         const ADF_SECTNUM        dirPtr )
+int adfDirCountEntries( struct AdfVolume * const  vol,
+                        const ADF_SECTNUM         dirPtr )
 {
     struct AdfList *list, *cell;
 
     int nentries = 0;
-    cell = list = adfGetDirEnt ( vol, dirPtr );
+    cell = list = adfGetDirEnt( vol, dirPtr );
     while ( cell ) {
         //adfEntryPrint ( cell->content );
         cell = cell->next;
         nentries++;
     }
-    adfFreeDirList ( list );
+    adfFreeDirList( list );
     return nentries;
 }
 
@@ -566,10 +571,9 @@ int adfDirCountEntries ( struct AdfVolume * const vol,
  * adfToRootDir
  *
  */
-ADF_RETCODE adfToRootDir ( struct AdfVolume * const vol )
+ADF_RETCODE adfToRootDir( struct AdfVolume * const  vol )
 {
     vol->curDirPtr = vol->rootBlock;
-
     return ADF_RC_OK;
 }
 
@@ -578,21 +582,21 @@ ADF_RETCODE adfToRootDir ( struct AdfVolume * const vol )
  * adfChangeDir
  *
  */
-ADF_RETCODE adfChangeDir ( struct AdfVolume * const vol,
-                           const char * const       name )
+ADF_RETCODE adfChangeDir( struct AdfVolume * const  vol,
+                          const char * const        name )
 {
     struct AdfEntryBlock entry;
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, vol->curDirPtr, &entry );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, vol->curDirPtr, &entry );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    ADF_SECTNUM nSect = adfNameToEntryBlk ( vol, entry.hashTable, name, &entry, NULL );
+    ADF_SECTNUM nSect = adfNameToEntryBlk( vol, entry.hashTable, name, &entry, NULL );
     if ( nSect == -1 )
         return ADF_RC_ERROR;
 
     // if current entry is a hard-link - load entry of the hard-linked directory
-    rc = adfReadEntryBlock ( vol, nSect, &entry );
+    rc = adfReadEntryBlock( vol, nSect, &entry );
     if ( rc != ADF_RC_OK )
         return rc;
     if ( entry.realEntry )  {
@@ -600,14 +604,13 @@ ADF_RETCODE adfChangeDir ( struct AdfVolume * const vol,
     }
 
 /*printf("adfChangeDir=%d\n",nSect);*/
-    if (nSect!=-1) {
+    if ( nSect != -1 ) {
         vol->curDirPtr = nSect;
 /*        if (*adfEnv.useNotify)
             (*adfEnv.notifyFct)( 0, ADF_ST_ROOT );*/
         return ADF_RC_OK;
-    }
-    else
-		return ADF_RC_ERROR;
+    } else
+        return ADF_RC_ERROR;
 }
 
 
@@ -615,11 +618,11 @@ ADF_RETCODE adfChangeDir ( struct AdfVolume * const vol,
  * adfParentDir
  *
  */
-ADF_SECTNUM adfParentDir ( struct AdfVolume * const vol )
+ADF_SECTNUM adfParentDir( struct AdfVolume * const  vol )
 {
-    if (vol->curDirPtr!=vol->rootBlock) {
+    if ( vol->curDirPtr != vol->rootBlock ) {
         struct AdfEntryBlock entry;
-        ADF_RETCODE rc = adfReadEntryBlock ( vol, vol->curDirPtr, &entry );
+        ADF_RETCODE rc = adfReadEntryBlock( vol, vol->curDirPtr, &entry );
         if ( rc != ADF_RC_OK )
             return rc;
         vol->curDirPtr = entry.parent;
@@ -632,50 +635,50 @@ ADF_SECTNUM adfParentDir ( struct AdfVolume * const vol )
  * adfEntBlock2Entry
  *
  */
-ADF_RETCODE adfEntBlock2Entry ( const struct AdfEntryBlock * const entryBlk,
-                                struct AdfEntry * const            entry )
+ADF_RETCODE adfEntBlock2Entry( const struct AdfEntryBlock * const  entryBlk,
+                               struct AdfEntry * const             entry )
 {
     entry->type   = entryBlk->secType;
     entry->parent = entryBlk->parent;
 
-    entry->name = strndup ( entryBlk->name,
-                            min ( entryBlk->nameLen,
-                                  (unsigned) ADF_MAX_NAME_LEN ) );
-    if (entry->name==NULL)
+    entry->name = strndup( entryBlk->name,
+                           min( entryBlk->nameLen,
+                                (unsigned) ADF_MAX_NAME_LEN ) );
+    if ( entry->name == NULL )
         return ADF_RC_MALLOC;
 
 /*printf("len=%d name=%s parent=%ld\n",entryBlk->nameLen, entry->name,entry->parent );*/
-    adfDays2Date( entryBlk->days, &(entry->year), &(entry->month), &(entry->days));
+    adfDays2Date( entryBlk->days, &entry->year, &entry->month, &entry->days );
     entry->hour = entryBlk->mins / 60;
     entry->mins = entryBlk->mins % 60;
     entry->secs = entryBlk->ticks / 50;
 
-    entry->access = -1;
-    entry->size = 0L;
+    entry->access  = -1;
+    entry->size    = 0L;
     entry->comment = NULL;
-    entry->real = 0L;
-    switch(entryBlk->secType) {
+    entry->real    = 0L;
+    switch ( entryBlk->secType ) {
     case ADF_ST_ROOT:
         break;
     case ADF_ST_DIR:
-        entry->access = entryBlk->access;
-        entry->comment = strndup ( entryBlk->comment,
-                                   min ( entryBlk->commLen,
-                                         (unsigned) ADF_MAX_COMMENT_LEN ) );
-        if (entry->comment==NULL) {
-            free(entry->name);
+        entry->access  = entryBlk->access;
+        entry->comment = strndup( entryBlk->comment,
+                                  min( entryBlk->commLen,
+                                       (unsigned) ADF_MAX_COMMENT_LEN ) );
+        if ( entry->comment == NULL ) {
+            free( entry->name );
             entry->name = NULL;
             return ADF_RC_MALLOC;
         }
         break;
     case ADF_ST_FILE:
-        entry->access = entryBlk->access;
-        entry->size = entryBlk->byteSize;
-        entry->comment = strndup ( entryBlk->comment,
-                                   min ( entryBlk->commLen,
-                                         (unsigned) ADF_MAX_COMMENT_LEN ) );
-        if (entry->comment==NULL) {
-            free(entry->name);
+        entry->access  = entryBlk->access;
+        entry->size    = entryBlk->byteSize;
+        entry->comment = strndup( entryBlk->comment,
+                                  min( entryBlk->commLen,
+                                       (unsigned) ADF_MAX_COMMENT_LEN ) );
+        if ( entry->comment == NULL ) {
+            free( entry->name );
             entry->name = NULL;
             return ADF_RC_MALLOC;
         }
@@ -686,32 +689,32 @@ ADF_RETCODE adfEntBlock2Entry ( const struct AdfEntryBlock * const entryBlk,
     case ADF_ST_LSOFT:
         break;
     default:
-        adfEnv.wFct ( "adfEntBlock2Entry: unknown type %u for entry '%s', sector %u",
-                      entry->type, entry->name, entry->sector );
+        adfEnv.wFct( "adfEntBlock2Entry: unknown type %u for entry '%s', sector %u",
+                     entry->type, entry->name, entry->sector );
     }
 	
     return ADF_RC_OK;
 }
 
 
-ADF_SECTNUM adfGetEntryByName ( struct AdfVolume * const     vol,
-                                const ADF_SECTNUM            dirPtr,
-                                const char * const           name,
-                                struct AdfEntryBlock * const entry )
+ADF_SECTNUM adfGetEntryByName( struct AdfVolume * const      vol,
+                               const ADF_SECTNUM             dirPtr,
+                               const char * const            name,
+                               struct AdfEntryBlock * const  entry )
 {
     // get parent
     struct AdfEntryBlock parent;
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, dirPtr, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, dirPtr, &parent );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfGetEntryByName: error reading parent entry "
-                      "(block %d)\n", dirPtr );
+        adfEnv.eFct( "adfGetEntryByName: error reading parent entry "
+                     "(block %d)\n", dirPtr );
         return rc;
     }
 
     // get entry
     ADF_SECTNUM nUpdSect;
-    ADF_SECTNUM sectNum = adfNameToEntryBlk ( vol, parent.hashTable, name,
-                                              entry, &nUpdSect );
+    ADF_SECTNUM sectNum = adfNameToEntryBlk( vol, parent.hashTable, name,
+                                             entry, &nUpdSect );
     return sectNum;
 }
 
@@ -721,50 +724,52 @@ ADF_SECTNUM adfGetEntryByName ( struct AdfVolume * const     vol,
  * adfNameToEntryBlk
  *
  */
-ADF_SECTNUM adfNameToEntryBlk ( struct AdfVolume * const     vol,
-                                const int32_t                ht[],
-                                const char * const           name,
-                                struct AdfEntryBlock * const entry,
-                                ADF_SECTNUM * const          nUpdSect )
+ADF_SECTNUM adfNameToEntryBlk( struct AdfVolume * const      vol,
+                               const int32_t                 ht[],
+                               const char * const            name,
+                               struct AdfEntryBlock * const  entry,
+                               ADF_SECTNUM * const           nUpdSect )
 {
     uint8_t upperName[ ADF_MAX_NAME_LEN + 1 ];
     uint8_t upperName2[ ADF_MAX_NAME_LEN + 1 ];
 
-    bool intl = adfVolHasINTL ( vol ) || adfVolHasDIRCACHE ( vol );
-    unsigned hashVal = adfGetHashValue ( (uint8_t *) name, intl );
-    unsigned nameLen = min ( (unsigned) strlen ( name ),
-                             (unsigned) ADF_MAX_NAME_LEN );
-    adfStrToUpper ( upperName, (uint8_t *) name, nameLen, intl );
+    bool intl = adfVolHasINTL( vol ) ||
+                adfVolHasDIRCACHE( vol );
+    unsigned hashVal = adfGetHashValue( (uint8_t *) name, intl );
+    unsigned nameLen = min( (unsigned) strlen ( name ),
+                            (unsigned) ADF_MAX_NAME_LEN );
+    adfStrToUpper( upperName, (uint8_t *) name, nameLen, intl );
 
-    ADF_SECTNUM nSect = ht[hashVal];
+    ADF_SECTNUM nSect = ht[ hashVal ];
 /*printf("name=%s ht[%d]=%d upper=%s len=%d\n",name,hashVal,nSect,upperName,nameLen);
 printf("hashVal=%u\n",adfGetHashValue(upperName, intl ));
 if (!strcmp("españa.country",name)) {
 for ( int i = 0 ; i < ADF_HT_SIZE ; i++ )  printf("ht[%d]=%d    ", i, ht[i]);
 }*/
-    if (nSect==0)
+    if ( nSect == 0 )
         return -1;
 
     ADF_SECTNUM updSect = 0;
     bool found = false;
     do {
-        if (adfReadEntryBlock(vol, nSect, entry)!=ADF_RC_OK)
-			return -1;
-        if (nameLen==entry->nameLen) {
-            adfStrToUpper ( upperName2, (uint8_t *) entry->name, nameLen, intl );
+        if ( adfReadEntryBlock( vol, nSect, entry ) != ADF_RC_OK )
+            return -1;
+        if ( nameLen == entry->nameLen ) {
+            adfStrToUpper( upperName2, (uint8_t *) entry->name, nameLen, intl );
 /*printf("2=%s %s\n",upperName2,upperName);*/
-            found = strncmp((char*)upperName, (char*)upperName2, nameLen)==0;
+            found = ( strncmp( (char *) upperName,
+                               (char *) upperName2, nameLen ) == 0 );
         }
-        if (!found) {
+        if ( ! found ) {
             updSect = nSect;
             nSect = entry->nextSameHash; 
         }
-    }while( !found && nSect!=0 );
+    } while ( ! found && nSect != 0 );
 
-    if ( nSect==0 && !found )
+    if ( nSect == 0 && ! found )
         return -1;
     else {
-        if (nUpdSect!=NULL)
+        if ( nUpdSect != NULL )
             *nUpdSect = updSect;
         return nSect;
     }
@@ -775,17 +780,18 @@ for ( int i = 0 ; i < ADF_HT_SIZE ; i++ )  printf("ht[%d]=%d    ", i, ht[i]);
  * Access2String
  *
  */
-void adfAccess2String ( int32_t acc, char accStr[ 8 + 1 ] )
+void adfAccess2String( int32_t  acc,
+                       char     accStr[ 8 + 1 ] )
 {
-    strcpy ( accStr, "----rwed" );
-    if ( adfAccHasD ( acc ) )  accStr[7] = '-';
-    if ( adfAccHasE ( acc ) )  accStr[6] = '-';
-    if ( adfAccHasW ( acc ) )  accStr[5] = '-';
-    if ( adfAccHasR ( acc ) )  accStr[4] = '-';
-    if ( adfAccHasA ( acc ) )  accStr[3] = 'a';
-    if ( adfAccHasP ( acc ) )  accStr[2] = 'p';
-    if ( adfAccHasS ( acc ) )  accStr[1] = 's';
-    if ( adfAccHasH ( acc ) )  accStr[0] = 'h';
+    strcpy( accStr, "----rwed" );
+    if ( adfAccHasD( acc ) )  accStr[ 7 ] = '-';
+    if ( adfAccHasE( acc ) )  accStr[ 6 ] = '-';
+    if ( adfAccHasW( acc ) )  accStr[ 5 ] = '-';
+    if ( adfAccHasR( acc ) )  accStr[ 4 ] = '-';
+    if ( adfAccHasA( acc ) )  accStr[ 3 ] = 'a';
+    if ( adfAccHasP( acc ) )  accStr[ 2 ] = 'p';
+    if ( adfAccHasS( acc ) )  accStr[ 1 ] = 's';
+    if ( adfAccHasH( acc ) )  accStr[ 0 ] = 'h';
 }
 
 
@@ -796,32 +802,35 @@ void adfAccess2String ( int32_t acc, char accStr[ 8 + 1 ] )
  * name 'name'. if 'thisSect'!=-1, insert this sector pointer  into the hashTable 
  * (here 'thisSect' must be allocated before in the bitmap).
  */
-ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
-                             struct AdfEntryBlock * const dir,
-                             const char * const           name,
-                             const ADF_SECTNUM            thisSect )
+ADF_SECTNUM adfCreateEntry( struct AdfVolume * const      vol,
+                            struct AdfEntryBlock * const  dir,
+                            const char * const            name,
+                            const ADF_SECTNUM             thisSect )
 {
-    ADF_RETCODE rc;
-    ADF_SECTNUM newSect;
-    char name2[ADF_MAX_NAME_LEN+1], name3[ADF_MAX_NAME_LEN+1];
+    ADF_RETCODE  rc;
+    ADF_SECTNUM  newSect;
+    char  name2[ ADF_MAX_NAME_LEN + 1 ],
+          name3[ ADF_MAX_NAME_LEN + 1 ];
 
 /*puts("adfCreateEntry in");*/
 
-    bool intl = adfVolHasINTL ( vol ) || adfVolHasDIRCACHE ( vol );
-    unsigned len = min ( (unsigned) strlen(name),
-                         (unsigned) ADF_MAX_NAME_LEN );
-    adfStrToUpper ( (uint8_t *) name2, (uint8_t *) name, len, intl );
-    unsigned hashValue = adfGetHashValue ( (uint8_t *) name, intl );
+    bool intl = adfVolHasINTL( vol ) ||
+                adfVolHasDIRCACHE( vol );
+    unsigned len = min( (unsigned) strlen(name),
+                        (unsigned) ADF_MAX_NAME_LEN );
+    adfStrToUpper( (uint8_t *) name2,
+                   (uint8_t *) name, len, intl );
+    unsigned hashValue = adfGetHashValue( (uint8_t *) name, intl );
     ADF_SECTNUM nSect = dir->hashTable[ hashValue ];
 
-    if ( nSect==0 ) {
+    if ( nSect == 0 ) {
         /* the first entry with this hash */
 
-        if (thisSect!=-1)
+        if ( thisSect != -1 )
             newSect = thisSect;
         else {
-            newSect = adfGet1FreeBlock(vol);
-            if (newSect==-1) {
+            newSect = adfGet1FreeBlock( vol );
+            if ( newSect == -1 ) {
                (*adfEnv.wFct)("adfCreateEntry : nSect==-1");
                return -1;
             }
@@ -830,13 +839,13 @@ ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
         dir->hashTable[ hashValue ] = newSect;
         if ( dir->secType == ADF_ST_ROOT ) {
             struct AdfRootBlock * const root = (struct AdfRootBlock *) dir;
-            adfTime2AmigaTime(adfGiveCurrentTime(),
-                &(root->cDays),&(root->cMins),&(root->cTicks));
-            rc = adfWriteRootBlock ( vol, (uint32_t) vol->rootBlock, root );
+            adfTime2AmigaTime( adfGiveCurrentTime(),
+                               &root->cDays, &root->cMins, &root->cTicks );
+            rc = adfWriteRootBlock( vol, (uint32_t) vol->rootBlock, root );
         }
         else {
-            adfTime2AmigaTime(adfGiveCurrentTime(),&(dir->days),&(dir->mins),&(dir->ticks));
-            rc = adfWriteDirBlock ( vol, dir->headerKey, (struct AdfDirBlock * ) dir );
+            adfTime2AmigaTime( adfGiveCurrentTime(), &dir->days,&dir->mins,&dir->ticks );
+            rc = adfWriteDirBlock( vol, dir->headerKey, (struct AdfDirBlock *) dir );
         }
 /*puts("adfCreateEntry out, dir");*/
 
@@ -847,16 +856,16 @@ ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
 
         /* find the last on the list */
         do {
-            if ( adfReadEntryBlock ( vol, nSect, &updEntry ) != ADF_RC_OK )
+            if ( adfReadEntryBlock( vol, nSect, &updEntry ) != ADF_RC_OK )
                 return -1;
 
             /* check if the entry with the same name is not present */
             if ( updEntry.nameLen == len ) {
-                adfStrToUpper ( (uint8_t *) name3,
-                                (uint8_t *) updEntry.name,
-                                updEntry.nameLen, intl );
-                if ( strncmp ( name3, name2, len) == 0 ) {
-                    adfEnv.wFct ( "adfCreateEntry : entry already exists" );
+                adfStrToUpper( (uint8_t *) name3,
+                               (uint8_t *) updEntry.name,
+                               updEntry.nameLen, intl );
+                if ( strncmp( name3, name2, len) == 0 ) {
+                    adfEnv.wFct( "adfCreateEntry : entry already exists" );
                     return -1;
                 }
             }
@@ -867,9 +876,9 @@ ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
         if ( thisSect != -1 )
             newSect = thisSect;
         else {
-            newSect = adfGet1FreeBlock ( vol );
+            newSect = adfGet1FreeBlock( vol );
             if ( newSect == -1 ) {
-                adfEnv.wFct ( "adfCreateEntry : nSect==-1" );
+                adfEnv.wFct( "adfCreateEntry : nSect==-1" );
                 return -1;
             }
         }
@@ -880,14 +889,14 @@ ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
 
         /* write changes */
         if ( updEntry.secType == ADF_ST_DIR )
-            rc = adfWriteDirBlock ( vol, updEntry.headerKey,
-                                    (struct AdfDirBlock *) &updEntry );
+            rc = adfWriteDirBlock( vol, updEntry.headerKey,
+                                   (struct AdfDirBlock *) &updEntry );
         else if ( updEntry.secType == ADF_ST_FILE )
-            rc = adfWriteFileHdrBlock ( vol, updEntry.headerKey,
-                                        (struct AdfFileHeaderBlock *) &updEntry );
+            rc = adfWriteFileHdrBlock( vol, updEntry.headerKey,
+                                       (struct AdfFileHeaderBlock *) &updEntry );
         else {
-            adfEnv.eFct ( "adfCreateEntry : entry '%s' has unknown type %d",
-                          updEntry.name, updEntry.secType );
+            adfEnv.eFct( "adfCreateEntry : entry '%s' has unknown type %d",
+                         updEntry.name, updEntry.secType );
             rc = ADF_RC_ERROR;
         }
 
@@ -895,7 +904,7 @@ ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
     }
 
     if ( rc != ADF_RC_OK ) {
-        adfSetBlockFree ( vol, newSect );
+        adfSetBlockFree( vol, newSect );
         return -1;
     }
     else
@@ -909,13 +918,13 @@ ADF_SECTNUM adfCreateEntry ( struct AdfVolume * const     vol,
  * adfIntlToUpper
  *
  */
-uint8_t adfIntlToUpper ( const uint8_t c )
+uint8_t adfIntlToUpper( const uint8_t  c )
 {
     return ( ( c >= 'a' && c <= 'z' ) ||
              ( c >= 224 && c <= 254 && c != 247 ) ) ? c - ('a'-'A') : c ;
 }
 
-uint8_t adfToUpper ( const uint8_t c )
+uint8_t adfToUpper( const uint8_t  c )
 {
     return ( c >= 'a' && c <= 'z' ) ? c - ( 'a' - 'A' ) : c ;
 }
@@ -924,18 +933,18 @@ uint8_t adfToUpper ( const uint8_t c )
  * adfStrToUpper
  *
  */
-void adfStrToUpper ( uint8_t * const       nstr,
-                     const uint8_t * const ostr,
-                     const unsigned        nlen,
-                     const bool            intl )
+void adfStrToUpper( uint8_t * const        nstr,
+                    const uint8_t * const  ostr,
+                    const unsigned         nlen,
+                    const bool             intl )
 {
-    if (intl)
+    if ( intl )
         for ( unsigned i = 0 ; i < nlen ; i++ )
-            nstr[i]=adfIntlToUpper(ostr[i]);
+            nstr[ i ] = adfIntlToUpper( ostr[ i ] );
     else
         for ( unsigned i = 0 ; i < nlen ; i++ )
-            nstr[i]=adfToUpper(ostr[i]);
-    nstr[nlen]='\0';
+            nstr[ i ] = adfToUpper( ostr[ i ] );
+    nstr[ nlen ] = '\0';
 }
 
 
@@ -943,24 +952,24 @@ void adfStrToUpper ( uint8_t * const       nstr,
  * adfGetHashValue
  * 
  */
-unsigned adfGetHashValue ( const uint8_t * const name,
-                           const bool            intl )
+unsigned adfGetHashValue( const uint8_t * const  name,
+                          const bool             intl )
 {
-    uint32_t hash, len;
-    unsigned int i;
-    uint8_t upper;
+    uint32_t      hash, len;
+    unsigned int  i;
+    uint8_t       upper;
 
-    len = hash = (uint32_t) strlen ( (const char * const) name );
-    for(i=0; i<len; i++) {
-        if (intl)
-            upper = adfIntlToUpper(name[i]);
+    len = hash = (uint32_t) strlen( (const char * const) name );
+    for ( i = 0; i < len; i++ ) {
+        if ( intl )
+            upper = adfIntlToUpper( name[ i ] );
         else
-            upper = (uint8_t) toupper ( name[i] );
+            upper = (uint8_t) toupper( name[ i ] );
         hash = (hash * 13 + upper) & 0x7ff;
     }
     hash = hash % ADF_HT_SIZE;
 
-    return(hash);
+    return hash;
 }
 
 
@@ -968,24 +977,24 @@ unsigned adfGetHashValue ( const uint8_t * const name,
  * adfEntryPrint
  *
  */
-void adfEntryPrint ( const struct AdfEntry * const entry )
+void adfEntryPrint( const struct AdfEntry * const  entry )
 {
-    printf("%-30s %2d %6d ", entry->name, entry->type, entry->sector);
-    printf("%2d/%02d/%04d %2d:%02d:%02d",entry->days, entry->month, entry->year,
-        entry->hour, entry->mins, entry->secs);
+    printf( "%-30s %2d %6d ", entry->name, entry->type, entry->sector );
+    printf( "%2d/%02d/%04d %2d:%02d:%02d", entry->days, entry->month, entry->year,
+           entry->hour, entry->mins, entry->secs );
     if ( entry->type == ADF_ST_FILE )
-        printf("%8d ",entry->size);
+        printf( "%8d ",entry->size );
     else
         printf("         ");
     if ( entry->type == ADF_ST_FILE ||
          entry->type == ADF_ST_DIR )
     {
         char accessStr[ 8 + 1 ];
-        adfAccess2String ( entry->access, accessStr );
-        printf ( "%-s ", accessStr );
+        adfAccess2String( entry->access, accessStr );
+        printf( "%-s ", accessStr );
     }
-    if (entry->comment!=NULL)
-        printf("%s ",entry->comment);
+    if ( entry->comment != NULL )
+        printf( "%s ",entry->comment );
     putchar('\n');
 }
 
@@ -994,55 +1003,56 @@ void adfEntryPrint ( const struct AdfEntry * const entry )
  * adfCreateDir
  *
  */
-ADF_RETCODE adfCreateDir ( struct AdfVolume * const vol,
-                           const ADF_SECTNUM        nParent,
-                           const char * const       name )
+ADF_RETCODE adfCreateDir( struct AdfVolume * const  vol,
+                          const ADF_SECTNUM         nParent,
+                          const char * const        name )
 {
     struct AdfEntryBlock parent;
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, nParent, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, nParent, &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
     /* -1 : do not use a specific, already allocated sector */
-    const ADF_SECTNUM nSect = adfCreateEntry ( vol, &parent, name, -1 );
-    if (nSect==-1) {
+    const ADF_SECTNUM nSect = adfCreateEntry( vol, &parent, name, -1 );
+    if ( nSect == -1 ) {
         (*adfEnv.wFct)("adfCreateDir : no sector available");
         return ADF_RC_ERROR;
     }
 
     struct AdfDirBlock dir;
-    memset ( &dir, 0, sizeof(struct AdfDirBlock) );
-    dir.nameLen = (uint8_t) min ( (unsigned) ADF_MAX_NAME_LEN, (unsigned) strlen ( name ) );
-    memcpy(dir.dirName,name,dir.nameLen);
+    memset( &dir, 0, sizeof(struct AdfDirBlock) );
+    dir.nameLen = (uint8_t) min( (unsigned) ADF_MAX_NAME_LEN,
+                                 (unsigned) strlen ( name ) );
+    memcpy( dir.dirName, name, dir.nameLen );
     dir.headerKey = nSect;
 
     if ( parent.secType == ADF_ST_ROOT )
         dir.parent = vol->rootBlock;
     else
         dir.parent = parent.headerKey;
-    adfTime2AmigaTime(adfGiveCurrentTime(),&(dir.days),&(dir.mins),&(dir.ticks));
+    adfTime2AmigaTime( adfGiveCurrentTime(), &dir.days, &dir.mins, &dir.ticks );
 
-    if ( adfVolHasDIRCACHE ( vol ) ) {
+    if ( adfVolHasDIRCACHE( vol ) ) {
         /* for adfCreateEmptyCache, will be added by adfWriteDirBlock */
         dir.secType = ADF_ST_DIR;
-        rc = adfAddInCache ( vol, &parent, (struct AdfEntryBlock *) &dir );
+        rc = adfAddInCache( vol, &parent, (struct AdfEntryBlock *) &dir );
         if ( rc != ADF_RC_OK )
             return rc;
-        rc = adfCreateEmptyCache ( vol, (struct AdfEntryBlock *) &dir, -1 );
+        rc = adfCreateEmptyCache( vol, (struct AdfEntryBlock *) &dir, -1 );
         if ( rc != ADF_RC_OK )
             return rc;        
     }
 
     /* writes the dirblock, with the possible dircache assiocated */
-    rc = adfWriteDirBlock ( vol, nSect, &dir );
+    rc = adfWriteDirBlock( vol, nSect, &dir );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    rc = adfUpdateBitmap ( vol );
+    rc = adfUpdateBitmap( vol );
 
-    if (adfEnv.useNotify)
-        adfEnv.notifyFct ( nParent, ADF_ST_DIR );
+    if ( adfEnv.useNotify )
+        adfEnv.notifyFct( nParent, ADF_ST_DIR );
 
     return rc;
 }
@@ -1052,25 +1062,26 @@ ADF_RETCODE adfCreateDir ( struct AdfVolume * const vol,
  * adfCreateFile
  *
  */
-ADF_RETCODE adfCreateFile ( struct AdfVolume * const          vol,
-                            const ADF_SECTNUM                 nParent,
-                            const char * const                name,
-                            struct AdfFileHeaderBlock * const fhdr )
+ADF_RETCODE adfCreateFile( struct AdfVolume * const           vol,
+                           const ADF_SECTNUM                  nParent,
+                           const char * const                 name,
+                           struct AdfFileHeaderBlock * const  fhdr )
 {
     struct AdfEntryBlock parent;
 /*puts("adfCreateFile in");*/
 
-    ADF_RETCODE rc = adfReadEntryBlock ( vol, nParent, &parent );
+    ADF_RETCODE rc = adfReadEntryBlock( vol, nParent, &parent );
     if ( rc != ADF_RC_OK )
         return rc;
 
     /* -1 : do not use a specific, already allocated sector */
-    const ADF_SECTNUM nSect = adfCreateEntry ( vol, &parent, name, -1 );
-    if (nSect==-1) return ADF_RC_ERROR;
+    const ADF_SECTNUM nSect = adfCreateEntry( vol, &parent, name, -1 );
+    if ( nSect == -1 ) return ADF_RC_ERROR;
 /*printf("new fhdr=%d\n",nSect);*/
-    memset(fhdr,0,512);
-    fhdr->nameLen = (uint8_t) min ( (unsigned) ADF_MAX_NAME_LEN, (unsigned) strlen ( name ) );
-    memcpy(fhdr->fileName,name,fhdr->nameLen);
+    memset( fhdr, 0, 512 );
+    fhdr->nameLen = (uint8_t) min( (unsigned) ADF_MAX_NAME_LEN,
+                                   (unsigned) strlen( name ) );
+    memcpy( fhdr->fileName, name, fhdr->nameLen );
     fhdr->headerKey = nSect;
     if ( parent.secType == ADF_ST_ROOT )
         fhdr->parent = vol->rootBlock;
@@ -1078,23 +1089,22 @@ ADF_RETCODE adfCreateFile ( struct AdfVolume * const          vol,
         fhdr->parent = parent.headerKey;
     else
         (*adfEnv.wFct)("adfCreateFile : unknown parent secType");
-    adfTime2AmigaTime(adfGiveCurrentTime(),
-        &(fhdr->days),&(fhdr->mins),&(fhdr->ticks));
+    adfTime2AmigaTime( adfGiveCurrentTime(), &fhdr->days, &fhdr->mins, &fhdr->ticks );
 
-    rc = adfWriteFileHdrBlock ( vol, nSect, fhdr );
+    rc = adfWriteFileHdrBlock( vol, nSect, fhdr );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    if ( adfVolHasDIRCACHE ( vol ) ) {
-        rc = adfAddInCache ( vol, &parent, (struct AdfEntryBlock *) fhdr );
+    if ( adfVolHasDIRCACHE( vol ) ) {
+        rc = adfAddInCache( vol, &parent, (struct AdfEntryBlock *) fhdr );
         if ( rc != ADF_RC_OK )
             return rc;
     }
 
-    rc = adfUpdateBitmap ( vol );
+    rc = adfUpdateBitmap( vol );
 
-    if (adfEnv.useNotify)
-        adfEnv.notifyFct ( nParent, ADF_ST_FILE );
+    if ( adfEnv.useNotify )
+        adfEnv.notifyFct( nParent, ADF_ST_FILE );
 
     return rc;
 }
@@ -1104,56 +1114,56 @@ ADF_RETCODE adfCreateFile ( struct AdfVolume * const          vol,
  * adfReadEntryBlock
  *
  */
-ADF_RETCODE adfReadEntryBlock ( struct AdfVolume * const     vol,
-                                const ADF_SECTNUM            nSect,
-                                struct AdfEntryBlock * const ent )
+ADF_RETCODE adfReadEntryBlock( struct AdfVolume * const      vol,
+                               const ADF_SECTNUM             nSect,
+                               struct AdfEntryBlock * const  ent )
 {
-    uint8_t buf[512];
+    uint8_t  buf[ 512 ];
 
-    ADF_RETCODE rc = adfVolReadBlock ( vol, (uint32_t) nSect, buf );
+    ADF_RETCODE rc = adfVolReadBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK )
         return rc;
 
-    memcpy(ent, buf, 512);
+    memcpy( ent, buf, 512 );
 #ifdef LITT_ENDIAN
-    int32_t secType = (int32_t) swapLong ( ( uint8_t * ) &ent->secType );
+    int32_t  secType = (int32_t) swapLong( (uint8_t *) &ent->secType );
     if ( secType == ADF_ST_LFILE ||
          secType == ADF_ST_LDIR ||
          secType == ADF_ST_LSOFT  )
     {
-        adfSwapEndian ( (uint8_t *) ent, ADF_SWBL_LINK );
+        adfSwapEndian( (uint8_t *) ent, ADF_SWBL_LINK );
     } else {
-        adfSwapEndian ( (uint8_t *) ent, ADF_SWBL_ENTRY );
+        adfSwapEndian( (uint8_t *) ent, ADF_SWBL_ENTRY );
     }
 #endif
 /*printf("readentry=%d\n",nSect);*/
 
-    const uint32_t checksumCalculated = adfNormalSum ( (uint8_t *) buf, 20, 512 );
+    const uint32_t  checksumCalculated = adfNormalSum( (uint8_t *) buf, 20, 512 );
     if ( ent->checkSum != checksumCalculated ) {
-        const char msg[] = "adfReadEntryBlock : invalid checksum 0x%x != 0x%x (calculated)"
-            ", block %d, volume '%s'";
+        const char  msg[] = "adfReadEntryBlock : invalid checksum 0x%x != "
+            "0x%x (calculated), block %d, volume '%s'";
         if ( adfEnv.ignoreChecksumErrors ) {
-            adfEnv.wFct ( msg, ent->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.wFct( msg, ent->checkSum, checksumCalculated, nSect, vol->volName );
         } else {
-            adfEnv.eFct ( msg, ent->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.eFct( msg, ent->checkSum, checksumCalculated, nSect, vol->volName );
             return ADF_RC_BLOCKSUM;
         }
     }
 
     if ( ent->type != ADF_T_HEADER)  {
-        adfEnv.wFct ( "adfReadEntryBlock : ADF_T_HEADER id not found, volume '%s', block %u",
-                      vol->volName, nSect );
+        adfEnv.wFct( "adfReadEntryBlock : ADF_T_HEADER id not found, volume '%s', block %u",
+                     vol->volName, nSect );
         return ADF_RC_ERROR;
     }
     if ( ent->nameLen > ADF_MAX_NAME_LEN ) {
-        adfEnv.wFct ( "adfReadEntryBlock : nameLen (%d) incorrect, volume '%s', block %u, entry %s",
-                      ent->nameLen, vol->volName, nSect, ent->name );
+        adfEnv.wFct( "adfReadEntryBlock : nameLen (%d) incorrect, volume '%s', block %u, entry %s",
+                     ent->nameLen, vol->volName, nSect, ent->name );
         //printf("nameLen=%d, commLen=%d, name=%s sector%d\n",
         //    ent->nameLen,ent->commLen,ent->name, ent->headerKey);
     }
     if ( ent->commLen > ADF_MAX_COMMENT_LEN ) {
-        adfEnv.wFct ( "adfReadEntryBlock : commLen (%d) incorrect, volume '%s', block %u, entry %s",
-                      ent->commLen, vol->volName, nSect, ent->name);
+        adfEnv.wFct( "adfReadEntryBlock : commLen (%d) incorrect, volume '%s', block %u, entry %s",
+                     ent->commLen, vol->volName, nSect, ent->name);
         //printf("nameLen=%d, commLen=%d, name=%s sector%d\n",
         //    ent->nameLen, ent->commLen, ent->name, ent->headerKey);
     }
@@ -1166,22 +1176,22 @@ ADF_RETCODE adfReadEntryBlock ( struct AdfVolume * const     vol,
  * adfWriteEntryBlock
  *
  */
-ADF_RETCODE adfWriteEntryBlock ( struct AdfVolume * const           vol,
-                                 const ADF_SECTNUM                  nSect,
-                                 const struct AdfEntryBlock * const ent )
+ADF_RETCODE adfWriteEntryBlock( struct AdfVolume * const            vol,
+                                const ADF_SECTNUM                   nSect,
+                                const struct AdfEntryBlock * const  ent )
 {
-    uint8_t buf[512];
-    uint32_t newSum;
+    uint8_t   buf[ 512 ];
+    uint32_t  newSum;
 
-    memcpy ( buf, ent, sizeof(struct AdfEntryBlock) );
+    memcpy( buf, ent, sizeof(struct AdfEntryBlock) );
 
 #ifdef LITT_ENDIAN
-    adfSwapEndian ( buf, ADF_SWBL_ENTRY );
+    adfSwapEndian( buf, ADF_SWBL_ENTRY );
 #endif
-    newSum = adfNormalSum ( buf, 20, sizeof(struct AdfEntryBlock) );
-    swLong(buf+20, newSum);
+    newSum = adfNormalSum( buf, 20, sizeof(struct AdfEntryBlock) );
+    swLong( buf + 20, newSum );
 
-    return adfVolWriteBlock ( vol, (uint32_t) nSect, buf );
+    return adfVolWriteBlock( vol, (uint32_t) nSect, buf );
 }
 
 
@@ -1189,28 +1199,28 @@ ADF_RETCODE adfWriteEntryBlock ( struct AdfVolume * const           vol,
  * adfWriteDirBlock
  *
  */
-ADF_RETCODE adfWriteDirBlock ( struct AdfVolume * const   vol,
-                               const ADF_SECTNUM          nSect,
-                               struct AdfDirBlock * const dir )
+ADF_RETCODE adfWriteDirBlock( struct AdfVolume * const    vol,
+                              const ADF_SECTNUM           nSect,
+                              struct AdfDirBlock * const  dir )
 {
-    uint8_t buf[512];
+    uint8_t buf[ 512 ];
     uint32_t newSum;
     
 
 /*printf("wdirblk=%d\n",nSect);*/
-    dir->type = ADF_T_HEADER;
-    dir->highSeq = 0;
+    dir->type          = ADF_T_HEADER;
+    dir->highSeq       = 0;
     dir->hashTableSize = 0;
-    dir->secType = ADF_ST_DIR;
+    dir->secType       = ADF_ST_DIR;
 
-    memcpy ( buf, dir, sizeof(struct AdfDirBlock) );
+    memcpy( buf, dir, sizeof(struct AdfDirBlock) );
 #ifdef LITT_ENDIAN
-    adfSwapEndian ( buf, ADF_SWBL_DIR );
+    adfSwapEndian( buf, ADF_SWBL_DIR );
 #endif
-    newSum = adfNormalSum ( buf, 20, sizeof(struct AdfDirBlock) );
-    swLong(buf+20, newSum);
+    newSum = adfNormalSum( buf, 20, sizeof(struct AdfDirBlock) );
+    swLong( buf + 20, newSum );
 
-    if ( adfVolWriteBlock ( vol, (uint32_t) nSect, buf ) != ADF_RC_OK )
+    if ( adfVolWriteBlock( vol, (uint32_t) nSect, buf ) != ADF_RC_OK )
         return ADF_RC_ERROR;
 
     return ADF_RC_OK;
