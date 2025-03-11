@@ -32,27 +32,27 @@
 #include "adf_vol.h"
 
 struct GenBlock {
-    ADF_SECTNUM sect;
-    ADF_SECTNUM parent;
-    int type;
-    int secType;
-    char *name;	/* if (type == 2 and (secType==2 or secType==-3)) */
+    ADF_SECTNUM  sect;
+    ADF_SECTNUM  parent;
+    int          type;
+    int          secType;
+    char        *name;	/* if (type == 2 and (secType==2 or secType==-3)) */
 };
 
 
-ADF_RETCODE adfReadGenBlock ( struct AdfVolume * const vol,
-                              const ADF_SECTNUM        nSect,
-                              struct GenBlock * const  block );
+ADF_RETCODE adfReadGenBlock( struct AdfVolume * const  vol,
+                             const ADF_SECTNUM         nSect,
+                             struct GenBlock * const   block );
 
-ADF_PREFIX ADF_RETCODE adfCheckEntry ( struct AdfVolume * const vol,
-                                       const ADF_SECTNUM        nSect,
-                                       const int                level );
+ADF_PREFIX ADF_RETCODE adfCheckEntry( struct AdfVolume * const  vol,
+                                      const ADF_SECTNUM         nSect,
+                                      const int                 level );
 
-ADF_PREFIX ADF_RETCODE adfUndelEntry ( struct AdfVolume * const vol,
-                                       const ADF_SECTNUM        parent,
-                                       const ADF_SECTNUM        nSect );
+ADF_PREFIX ADF_RETCODE adfUndelEntry( struct AdfVolume * const  vol,
+                                      const ADF_SECTNUM         parent,
+                                      const ADF_SECTNUM         nSect );
 
-ADF_PREFIX struct AdfList * adfGetDelEnt ( struct AdfVolume * const vol );
-ADF_PREFIX void adfFreeDelList ( struct AdfList * const list );
+ADF_PREFIX struct AdfList * adfGetDelEnt( struct AdfVolume * const  vol );
+ADF_PREFIX void adfFreeDelList( struct AdfList * const  list );
 
 #endif  /* ADF_SALV_H */
