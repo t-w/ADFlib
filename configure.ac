@@ -104,7 +104,7 @@ AC_ARG_ENABLE([salvage_dircache],
                 no)  salvage_dircache=false ;;
                 *) AC_MSG_ERROR([bad value ${enableval} for --enable-salvage-dircache]) ;;
                esac],
-              [salvage_dircache=false])
+              [salvage_dircache=true])
 
 AM_CONDITIONAL([SALVAGE_DIRCACHE], [test x$salvage_dircache = xtrue])
 echo "Salvage on dircache: ${salvage_dircache}"
