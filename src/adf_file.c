@@ -228,7 +228,7 @@ adfOpenFile_error:
  * adfCloseFile
  *
  */
-void adfFileClose( struct AdfFile *  file )
+void adfFileClose( struct AdfFile * const  file )
 {
     if (file==0)
         return;
