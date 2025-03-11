@@ -266,6 +266,23 @@ ADF_RETCODE adfUndelFile ( struct AdfVolume *          vol,
                            ADF_SECTNUM                 nSect,
                            struct AdfFileHeaderBlock * entry )
 {
+    /* undel file support for volumes with dircache is unfinished,
+       can lead to more volume inconsistencies / data corruption
+       in case of an error updating the cache (proper reverting
+       of adfCreateEntry must be added).
+       For safety: not allowing doing salvage for volumes with dircache. */
+#ifndef ADFLIB_ENABLE_SALVAGE_DIRCACHE
+    #warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE disabled"
+    if ( adfVolHasDIRCACHE ( vol ) ) {
+        adfEnv.eFct ( "adfUndelFile: salvage on volumes with dircache "
+                      "not supported (volume %s)",
+                      nSect, entry->headerKey );
+        return ADF_RC_ERROR;
+    }
+#else
+    #warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE enabled"
+#endif
+
     /* check if the headerKey is consistent with file header block number */
     if ( nSect != entry->headerKey ) {
         adfEnv.eFct ( "adfUndelFile: entry block %d != entry->headerKey %d",

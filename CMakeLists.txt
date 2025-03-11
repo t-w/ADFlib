@@ -119,6 +119,15 @@ endif()
 
 option ( ADFLIB_ENABLE_NATIVE_DEV "Enable real native devices" OFF )
 
+option ( ADFLIB_ENABLE_SALVAGE_DIRCACHE
+         "Allow file undelete on volumes with dircache (EXPERIMENTAL)" OFF )
+if ( ADFLIB_ENABLE_SALVAGE_DIRCACHE )
+  message ( STATUS "Enabling salvage for volumes with dircache." )
+  add_definitions ( -DADFLIB_ENABLE_SALVAGE_DIRCACHE )
+else()
+  message ( STATUS "Disabling salvage for volumes with dircache." )
+endif()
+
 add_subdirectory ( src )
 add_subdirectory ( examples )
 
