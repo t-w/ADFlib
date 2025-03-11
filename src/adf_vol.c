@@ -490,7 +490,7 @@ const char * adfVolGetInfo( struct AdfVolume * const  vol )
 {
     struct AdfRootBlock root;
     if ( adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root ) != ADF_RC_OK )
-        return;
+        return NULL;
 
     char diskName[ 35 ];
     memset( diskName, 0, 35 );
