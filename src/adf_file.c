@@ -948,14 +948,14 @@ ADF_RETCODE adfFileReadExtBlockN ( const struct AdfFile * const   file,
 
 
 /*
- * adfPos2DataBlock
+ * adfFilePos2DataBlock
  *
  */
-int32_t adfPos2DataBlock ( const unsigned   pos,
-                           const unsigned   blockSize,
-                           unsigned * const posInExtBlk,
-                           unsigned * const posInDataBlk,
-                           unsigned * const curDataN )
+int32_t adfFilePos2DataBlock( const unsigned   pos,
+                              const unsigned   blockSize,
+                              unsigned * const posInExtBlk,
+                              unsigned * const posInDataBlk,
+                              unsigned * const curDataN )
 {
     *posInDataBlk = pos % blockSize;   // offset in the data block
     *curDataN     = pos / blockSize;   // index of the data block
@@ -1073,11 +1073,11 @@ static ADF_RETCODE adfFileSeekExt_ ( struct AdfFile * const file,
         return adfFileSeekEOF_ ( file );
     }
 
-    ADF_SECTNUM extBlock = adfPos2DataBlock ( file->pos,
-                                              file->volume->datablockSize,
-                                              &file->posInExtBlk,
-                                              &file->posInDataBlk,
-                                              &file->nDataBlock );
+    ADF_SECTNUM extBlock = adfFilePos2DataBlock( file->pos,
+                                                 file->volume->datablockSize,
+                                                 &file->posInExtBlk,
+                                                 &file->posInDataBlk,
+                                                 &file->nDataBlock );
     if ( extBlock == -1 ) {
         file->curDataPtr = file->fileHdr->dataBlocks [
             ADF_MAX_DATABLK - 1 - file->nDataBlock ];

@@ -146,9 +146,9 @@ void show_file_ext_blocks ( struct AdfVolume * const                vol,
 {
     // check if there are any ext blocks
     uint32_t posInExtBlk, posInDataBlk, curDataN;
-    if ( adfPos2DataBlock ( fheader_block->byteSize,
-                            vol->datablockSize,
-                            &posInExtBlk, &posInDataBlk, &curDataN ) == -1 )
+    if ( adfFilePos2DataBlock( fheader_block->byteSize,
+                               vol->datablockSize,
+                               &posInExtBlk, &posInDataBlk, &curDataN ) == -1 )
     {
         printf ( "No ext blocks.\n" );
         return;

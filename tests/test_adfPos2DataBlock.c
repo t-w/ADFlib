@@ -13,7 +13,7 @@ START_TEST ( test_check_framework )
 END_TEST
 
 
-START_TEST ( test_adfPos2DataBlock )
+START_TEST ( test_adfFilePos2DataBlock )
 {
     uint32_t
         dataBlockIndexInExtBlock,
@@ -76,7 +76,7 @@ START_TEST ( test_adfPos2DataBlock )
     const unsigned NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
     
     for ( unsigned i = 0; i < NTESTS ; ++i ) {
-        extBlockNumber = adfPos2DataBlock (
+        extBlockNumber = adfFilePos2DataBlock(
             // input
             test_data[i].offset,
             test_data[i].blocksize, 
@@ -114,8 +114,8 @@ Suite * adflib_suite ( void )
     tcase_add_test ( tc, test_check_framework );
     suite_add_tcase ( s, tc );
 
-    tc = tcase_create ( "adflib adfPos2DataBlock" );
-    tcase_add_test ( tc, test_adfPos2DataBlock );
+    tc = tcase_create ( "adflib adfFilePos2DataBlock" );
+    tcase_add_test ( tc, test_adfFilePos2DataBlock );
     suite_add_tcase ( s, tc );
 
     return s;
