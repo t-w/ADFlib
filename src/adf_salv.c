@@ -272,7 +272,13 @@ ADF_RETCODE adfUndelFile ( struct AdfVolume *          vol,
        of adfCreateEntry must be added).
        For safety: not allowing doing salvage for volumes with dircache. */
 #ifndef ADFLIB_ENABLE_SALVAGE_DIRCACHE
-    #warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE disabled"
+
+#ifdef _MSC_VER_
+#pragma message "ADFLIB_ENABLE_SALVAGE_DIRCACHE disabled"
+#else
+#warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE disabled"
+#endif
+
     if ( adfVolHasDIRCACHE ( vol ) ) {
         adfEnv.eFct ( "adfUndelFile: salvage on volumes with dircache "
                       "not supported (volume %s)",
@@ -280,7 +286,13 @@ ADF_RETCODE adfUndelFile ( struct AdfVolume *          vol,
         return ADF_RC_ERROR;
     }
 #else
-    #warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE enabled"
+
+#ifdef _MSC_VER_
+#pragma message "ADFLIB_ENABLE_SALVAGE_DIRCACHE enabled"
+#else
+#warning "ADFLIB_ENABLE_SALVAGE_DIRCACHE enabled"
+#endif
+
 #endif
 
     /* check if the headerKey is consistent with file header block number */
