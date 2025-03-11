@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     len = 300;
     n = adfFileRead ( file, len, buf );
-    while(!adfEndOfFile(file)) {
+    while(!adfFileAtEOF(file)) {
         fwrite(buf,sizeof(unsigned char),n,out);
         n = adfFileRead ( file, len, buf );
     }

@@ -270,7 +270,7 @@ uint32_t adfFileRead ( struct AdfFile * const file,
     if ( ( ! file->modeRead ) ||
          n == 0 ||
          file->fileHdr->byteSize == 0 ||
-         adfEndOfFile ( file ) )
+         adfFileAtEOF ( file ) )
     {
         return 0;
     }
@@ -494,7 +494,7 @@ ADF_RETCODE adfFileTruncate ( struct AdfFile * const file,
         ADF_RETCODE rc = adfFileSeek ( file, fileSizeOld );
         if ( rc != ADF_RC_OK )
             return rc;
-        assert ( adfEndOfFile ( file ) == true );
+        assert ( adfFileAtEOF ( file ) == true );
         const unsigned bytesWritten = adfFileWriteFilled ( file, 0, enlargeSize );
         if ( enlargeSize != bytesWritten )
             return ADF_RC_ERROR;

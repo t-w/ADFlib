@@ -148,9 +148,9 @@ int main ( const int          argc,
         fileSizeInHeader   = file->fileHdr->byteSize,
         fileSizeCalculated = 0;
 
-    while(!adfEndOfFile(file)) {
+    while(!adfFileAtEOF(file)) {
         unsigned n = adfFileRead ( file, len, buf );
-        if ( n != len && ! adfEndOfFile ( file ) ) {
+        if ( n != len && ! adfFileAtEOF ( file ) ) {
             fprintf ( stderr, "adfFileRead: error reading %s at %u (device: %s)\n",
                       fileToRecover, adfFileGetPos ( file ), adfDevName );
             status = 13;

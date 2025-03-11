@@ -89,7 +89,7 @@ void test_file_truncate ( test_data_t * const tdata )
     ck_assert_int_eq ( 0, file->posInExtBlk );
     //ck_assert_int_eq ( 0, file->posInDataBlk );
     ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert_int_eq ( adfEndOfFile ( file ), true );
+    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
     adfFileClose ( file );
 
 
@@ -105,7 +105,7 @@ void test_file_truncate ( test_data_t * const tdata )
     ck_assert_int_eq ( 0, file->posInExtBlk );
     //ck_assert_int_eq ( 0, file->posInDataBlk );
     ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert_int_eq ( adfEndOfFile ( file ), true );
+    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
 
     // write data buffer to the file
     const unsigned bufsize = tdata->bufsize;
@@ -142,7 +142,7 @@ void test_file_truncate ( test_data_t * const tdata )
     ck_assert_int_eq ( 0, file->posInExtBlk );
     //ck_assert_int_eq ( 0, file->posInDataBlk );
     ck_assert_int_eq ( 1, file->nDataBlock );
-    ck_assert_int_eq ( adfEndOfFile ( file ), false );
+    ck_assert_int_eq ( adfFileAtEOF ( file ), false );
     adfFileClose ( file );
 
     //
@@ -211,7 +211,7 @@ void test_file_truncate ( test_data_t * const tdata )
                     "file->nDataBlock %d == expected %d, truncsize %u",
                     file->nDataBlock, expected_nDataBlock, truncsize );
     */
-    ck_assert_int_eq ( adfEndOfFile ( file ), true );
+    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
 
     //printf ("file->pos %u\n", file->pos);
     //fflush(stdout);
@@ -227,7 +227,7 @@ void test_file_truncate ( test_data_t * const tdata )
     // make sure we have available current ext. block (if needed)
     /*ck_assert_int_eq ( adfFileSeek ( file, 0 ), ADF_RC_OK );
     ck_assert_int_eq ( adfFileSeek ( file, truncsize + 1 ), ADF_RC_OK );
-    ck_assert_int_eq ( adfEndOfFile ( file ), true );
+    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
     int32_t * const dataBlocks = ( nExtBlocks < 1 ) ? file->fileHdr->dataBlocks :
                                                       file->currentExt->dataBlocks;
     */

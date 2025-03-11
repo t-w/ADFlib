@@ -72,7 +72,7 @@ void test_file_create ( test_data_t * const tdata )
     ck_assert_int_eq ( 0, file->posInExtBlk );
     //ck_assert_int_eq ( 0, file->posInDataBlk );
     ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert ( adfEndOfFile ( file ) != 0 );
+    ck_assert ( adfFileAtEOF ( file ) != 0 );
     adfFileClose ( file );
 
     // the same when open for appending
@@ -82,7 +82,7 @@ void test_file_create ( test_data_t * const tdata )
     ck_assert_int_eq ( 0, file->posInExtBlk );
     //ck_assert_int_eq ( 0, file->posInDataBlk );
     ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert ( adfEndOfFile ( file ) != 0 );
+    ck_assert ( adfFileAtEOF ( file ) != 0 );
     adfFileClose ( file );
 */
     // the same when open for writing
@@ -92,7 +92,7 @@ void test_file_create ( test_data_t * const tdata )
     ck_assert_int_eq ( 0, file->posInExtBlk );
     //ck_assert_int_eq ( 0, file->posInDataBlk );
     ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert ( adfEndOfFile ( file ) != 0 );
+    ck_assert ( adfFileAtEOF ( file ) != 0 );
     adfFileClose ( file );
     
     // umount volume

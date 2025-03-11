@@ -257,7 +257,7 @@ int test_seek_eof ( struct AdfFile * file,
         return 1;
     }
 
-    if ( ! adfEndOfFile ( file ) ) {
+    if ( ! adfFileAtEOF( file ) ) {
         fprintf ( stderr, " -> EOF false after seeking to EOF ( 0x%x / %d )!!!\n",
                   offset, offset );
         return 1;
@@ -284,7 +284,7 @@ int test_seek_eof ( struct AdfFile * file,
         return 1;
     }
 
-    if ( ! adfEndOfFile ( file ) ) {
+    if ( ! adfFileAtEOF( file ) ) {
         fprintf ( stderr, " -> no EOF after reading at EOF!!!\n" );
         return 1;
     }

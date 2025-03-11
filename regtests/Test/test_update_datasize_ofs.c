@@ -305,7 +305,7 @@ int verify_file_metadata_ofs ( struct AdfVolume * const vol,
                     break;            
         }
     } while ( //block_bytes_read == READ_BUFSIZE &&
-        ( ! adfEndOfFile( output ) ) &&
+        ( ! adfFileAtEOF( output ) ) &&
         nerrors <= max_errors );
     
     adfFileClose ( output );

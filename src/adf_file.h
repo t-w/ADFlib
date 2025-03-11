@@ -88,7 +88,7 @@ static inline uint32_t adfFileGetSize ( const struct AdfFile * const file ) {
     return file->fileHdr->byteSize;
 }
 
-static inline bool adfEndOfFile ( const struct AdfFile * const file ) {
+static inline bool adfFileAtEOF ( const struct AdfFile * const file ) {
     return ( file->pos == file->fileHdr->byteSize );
 }
 
