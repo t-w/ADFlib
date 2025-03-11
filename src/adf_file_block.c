@@ -44,42 +44,43 @@
  * adfGetFileBlocks
  *
  */
-ADF_RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
-                               const struct AdfFileHeaderBlock * const entry,
-                               struct AdfFileBlocks * const            fileBlocks )
+ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
+                              const struct AdfFileHeaderBlock * const  entry,
+                              struct AdfFileBlocks * const             fileBlocks )
 {
     ADF_RETCODE status = ADF_RC_OK;
 
-    memset ( fileBlocks, 0, sizeof(struct AdfFileBlocks) );
-    fileBlocks->header = entry->headerKey;
-    //fileBlocks->data.sectors = NULL;    -> memset
-    //fileBlocks->extens.sectors = NULL;  -> memset
+    memset( fileBlocks, 0, sizeof(struct AdfFileBlocks) );
+    fileBlocks->header          = entry->headerKey;
+    //fileBlocks->data.sectors    = NULL;  -> memset
+    //fileBlocks->extens.sectors  = NULL;  -> memset
     fileBlocks->data.itemSize   =
     fileBlocks->extens.itemSize = sizeof(ADF_SECTNUM);
 
 #ifndef NDEBUG
     uint32_t sizeInBlocks =
 #endif
-        adfFileRealSize ( entry->byteSize,
-                          vol->datablockSize,
-                          &fileBlocks->data.nItems,
-                          &fileBlocks->extens.nItems );
+        adfFileRealSize( entry->byteSize,
+                         vol->datablockSize,
+                         &fileBlocks->data.nItems,
+                         &fileBlocks->extens.nItems );
     assert ( sizeInBlocks ==
              fileBlocks->data.nItems + fileBlocks->extens.nItems + 1 );  // +1 for file header block
 
-    const int32_t dblocksInHeader = min ( fileBlocks->data.nItems, (unsigned) ADF_MAX_DATABLK );
+    const int32_t dblocksInHeader = min( fileBlocks->data.nItems,
+                                         (unsigned) ADF_MAX_DATABLK );
     if ( dblocksInHeader != entry->highSeq ) {
-        adfEnv.eFct ( "adfGetFileBlocks : inconsistent data in the File Header block "
-                      "0x%x (%d, file name: %s), "
-                      "highSeq value should be the number of data blocks in the file header, "
-                      "while:  calculated (expected) %d != file header highSeq %d",
-                      entry->headerKey, entry->headerKey, entry->fileName,
-                      dblocksInHeader, entry->highSeq );
+        adfEnv.eFct( "adfGetFileBlocks : inconsistent data in the File Header block "
+                     "0x%x (%d, file name: %s), "
+                     "highSeq value should be the number of data blocks in the file header, "
+                     "while:  calculated (expected) %d != file header highSeq %d",
+                     entry->headerKey, entry->headerKey, entry->fileName,
+                     dblocksInHeader, entry->highSeq );
         return ADF_RC_ERROR;
     }
 
     /* add data blocks from file header block */
-    status = adfVectorAllocate ( (struct AdfVector *) &fileBlocks->data );
+    status = adfVectorAllocate( (struct AdfVector *) &fileBlocks->data );
     if ( status != ADF_RC_OK ) {
         (*adfEnv.eFct)("adfGetFileBlocks : malloc");
         return ADF_RC_MALLOC;
@@ -95,7 +96,7 @@ ADF_RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
     if ( fileBlocks->extens.nItems > 0 ) {
         /* add file extension blocks and data blocks indexed in them */
 
-        status = adfVectorAllocate ( (struct AdfVector *) &fileBlocks->extens );
+        status = adfVectorAllocate( (struct AdfVector *) &fileBlocks->extens );
         if ( status != ADF_RC_OK ) {
             (*adfEnv.eFct)("adfGetFileBlocks : malloc");
             status = ADF_RC_MALLOC;
@@ -104,9 +105,9 @@ ADF_RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
 
         ADF_SECTNUM nSect = entry->extension;
         struct AdfFileExtBlock extBlock;
-        while(nSect!=0) {
+        while( nSect != 0 ) {
             fileBlocks->extens.sectors[ nExtBlocks++ ] = nSect;
-            ADF_RETCODE rc = adfReadFileExtBlock ( vol, nSect, &extBlock );
+            ADF_RETCODE rc = adfReadFileExtBlock( vol, nSect, &extBlock );
             if ( rc != ADF_RC_OK ) {
                 status = rc;
                 goto adfGetFileBlocks_error;
@@ -120,15 +121,15 @@ ADF_RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
     }
 
     if ( nDataBlocks != fileBlocks->data.nItems ) {
-        adfEnv.eFct ( "adfGetFileBlocks : invalid number of data blocks: "
-                      "expected %d != retrieved %d", fileBlocks->data.nItems, nDataBlocks );
+        adfEnv.eFct( "adfGetFileBlocks : invalid number of data blocks: "
+                     "expected %d != retrieved %d", fileBlocks->data.nItems, nDataBlocks );
         status = ADF_RC_ERROR;
         goto adfGetFileBlocks_error;
     }
 
     if ( nExtBlocks != fileBlocks->extens.nItems ) {
-        adfEnv.eFct ( "adfGetFileBlocks : invalid number of ext. blocks: "
-                      "expected %d != retrieved %d", fileBlocks->extens.nItems, nExtBlocks );
+        adfEnv.eFct( "adfGetFileBlocks : invalid number of ext. blocks: "
+                     "expected %d != retrieved %d", fileBlocks->extens.nItems, nExtBlocks );
         status = ADF_RC_ERROR;
         goto adfGetFileBlocks_error;
     }
@@ -136,8 +137,8 @@ ADF_RETCODE adfGetFileBlocks ( struct AdfVolume * const                vol,
     return ADF_RC_OK;
 
 adfGetFileBlocks_error:
-    adfVectorFree ( (struct AdfVector *) &fileBlocks->extens );
-    adfVectorFree ( (struct AdfVector *) &fileBlocks->data );
+    adfVectorFree( (struct AdfVector *) &fileBlocks->extens );
+    adfVectorFree( (struct AdfVector *) &fileBlocks->data );
     return status;
 }
 
@@ -145,23 +146,23 @@ adfGetFileBlocks_error:
  * adfFreeFileBlocks
  *
  */
-ADF_RETCODE adfFreeFileBlocks ( struct AdfVolume * const          vol,
-                                struct AdfFileHeaderBlock * const entry )
+ADF_RETCODE adfFreeFileBlocks( struct AdfVolume * const           vol,
+                               struct AdfFileHeaderBlock * const  entry )
 {
     struct AdfFileBlocks fileBlocks;
-    ADF_RETCODE rc = adfGetFileBlocks ( vol, entry, &fileBlocks );
+    ADF_RETCODE rc = adfGetFileBlocks( vol, entry, &fileBlocks );
     if ( rc != ADF_RC_OK )
         return rc;
 
     for ( unsigned i = 0 ; i < fileBlocks.data.nItems ; i++ ) {
-        adfSetBlockFree ( vol, fileBlocks.data.sectors[i] );
+        adfSetBlockFree( vol, fileBlocks.data.sectors[ i ] );
     }
     for ( unsigned i = 0; i < fileBlocks.extens.nItems ; i++ ) {
-        adfSetBlockFree ( vol, fileBlocks.extens.sectors[i] );
+        adfSetBlockFree( vol, fileBlocks.extens.sectors[ i ] );
     }
 
-    adfVectorFree ( (struct AdfVector *) &fileBlocks.data );
-    adfVectorFree ( (struct AdfVector *) &fileBlocks.extens );
+    adfVectorFree( (struct AdfVector *) &fileBlocks.data );
+    adfVectorFree( (struct AdfVector *) &fileBlocks.extens );
 		
     return rc;
 }
@@ -171,26 +172,26 @@ ADF_RETCODE adfFreeFileBlocks ( struct AdfVolume * const          vol,
  * adfWriteFileHdrBlock
  *
  */
-ADF_RETCODE adfWriteFileHdrBlock ( struct AdfVolume * const          vol,
-                                   const ADF_SECTNUM                 nSect,
-                                   struct AdfFileHeaderBlock * const fhdr )
+ADF_RETCODE adfWriteFileHdrBlock( struct AdfVolume * const           vol,
+                                  const ADF_SECTNUM                  nSect,
+                                  struct AdfFileHeaderBlock * const  fhdr )
 {
-    uint8_t buf[512];
+    uint8_t  buf[ 512] ;
     uint32_t newSum;
 /*printf("adfWriteFileHdrBlock %ld\n",nSect);*/
-    fhdr->type = ADF_T_HEADER;
+    fhdr->type     = ADF_T_HEADER;
     fhdr->dataSize = 0;
-    fhdr->secType = ADF_ST_FILE;
+    fhdr->secType  = ADF_ST_FILE;
 
-    memcpy ( buf, fhdr, sizeof(struct AdfFileHeaderBlock) );
+    memcpy( buf, fhdr, sizeof(struct AdfFileHeaderBlock) );
 #ifdef LITT_ENDIAN
-    adfSwapEndian ( buf, ADF_SWBL_FILE );
+    adfSwapEndian( buf, ADF_SWBL_FILE );
 #endif
-    newSum = adfNormalSum ( buf, 20, sizeof(struct AdfFileHeaderBlock) );
-    swLong(buf+20, newSum);
+    newSum = adfNormalSum( buf, 20, sizeof(struct AdfFileHeaderBlock) );
+    swLong( buf + 20, newSum );
 /*    *(uint32_t*)(buf+20) = swapLong((uint8_t*)&newSum);*/
 
-    return adfVolWriteBlock ( vol, (uint32_t) nSect, buf );
+    return adfVolWriteBlock( vol, (uint32_t) nSect, buf );
 }
 
 
@@ -199,59 +200,59 @@ ADF_RETCODE adfWriteFileHdrBlock ( struct AdfVolume * const          vol,
  * adfReadDataBlock
  *
  */
-ADF_RETCODE adfReadDataBlock ( struct AdfVolume * const vol,
-                               const ADF_SECTNUM        nSect,
-                               void * const             data )
+ADF_RETCODE adfReadDataBlock( struct AdfVolume * const  vol,
+                              const ADF_SECTNUM         nSect,
+                              void * const              data )
 {
     if ( nSect < 1 ) {
         // ie. block 0 is volume's bootblock - cannot be a data block
-        adfEnv.eFct ( "adfReadDataBlock : error, '%d' cannot be a data block", nSect );
+        adfEnv.eFct( "adfReadDataBlock : error, '%d' cannot be a data block", nSect );
         return ADF_RC_ERROR;
     }
 
-    uint8_t buf[512];
+    uint8_t buf[ 512 ];
 
-    ADF_RETCODE rc = adfVolReadBlock ( vol, (uint32_t) nSect, buf );
+    ADF_RETCODE rc = adfVolReadBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfReadDataBlock: error reading block %d, volume '%s'",
-                       nSect, vol->volName );
+        adfEnv.eFct( "adfReadDataBlock: error reading block %d, volume '%s'",
+                     nSect, vol->volName );
         return rc;
     }
 
-    memcpy(data,buf,512);
+    memcpy( data, buf, 512 );
 
-    if ( adfVolIsOFS ( vol ) ) {
+    if ( adfVolIsOFS( vol ) ) {
 #ifdef LITT_ENDIAN
-        adfSwapEndian ( data, ADF_SWBL_DATA );
+        adfSwapEndian( data, ADF_SWBL_DATA );
 #endif
         struct AdfOFSDataBlock * const dBlock = (struct AdfOFSDataBlock *) data;
 /*printf("adfReadDataBlock %ld\n",nSect);*/
 
         const uint32_t checksumCalculated =
-            adfNormalSum ( buf, 20, sizeof(struct AdfOFSDataBlock) );
+            adfNormalSum( buf, 20, sizeof(struct AdfOFSDataBlock) );
         if ( dBlock->checkSum != checksumCalculated ) {
             const char msg[] = "adfReadDataBlock : invalid checksum 0x%x != 0x%x (calculated)"
                 ", block %d, volume '%s'";
             if ( adfEnv.ignoreChecksumErrors ) {
-                adfEnv.wFct ( msg, dBlock->checkSum, checksumCalculated, nSect, vol->volName );
+                adfEnv.wFct( msg, dBlock->checkSum, checksumCalculated, nSect, vol->volName );
             } else {
-                adfEnv.eFct ( msg, dBlock->checkSum, checksumCalculated, nSect, vol->volName );
+                adfEnv.eFct( msg, dBlock->checkSum, checksumCalculated, nSect, vol->volName );
                 return ADF_RC_BLOCKSUM;
             }
         }
 
         if ( dBlock->type != ADF_T_DATA )
-            adfEnv.wFct ( "adfReadDataBlock : id ADF_T_DATA not found, block %d, volume '%s'",
-                           nSect, vol->volName );
+            adfEnv.wFct( "adfReadDataBlock : id ADF_T_DATA not found, block %d, volume '%s'",
+                         nSect, vol->volName );
         if ( dBlock->dataSize > 488 )
-            adfEnv.wFct ( "adfReadDataBlock : dataSize (0x%x / %u) incorrect, block %d, volume '%s'",
-                           dBlock->dataSize, dBlock->dataSize, nSect, vol->volName );
+            adfEnv.wFct( "adfReadDataBlock : dataSize (0x%x / %u) incorrect, block %d, volume '%s'",
+                         dBlock->dataSize, dBlock->dataSize, nSect, vol->volName );
         if ( ! adfVolIsSectNumValid ( vol, dBlock->headerKey ) )
-            adfEnv.wFct ( "adfReadDataBlock : headerKey (0x%x / %u) out of range, block %d, volume '%s'",
-                           dBlock->headerKey, dBlock->headerKey, nSect, vol->volName );
+            adfEnv.wFct( "adfReadDataBlock : headerKey (0x%x / %u) out of range, block %d, volume '%s'",
+                         dBlock->headerKey, dBlock->headerKey, nSect, vol->volName );
         if ( ! adfVolIsSectNumValid ( vol, dBlock->nextData ) )
-            adfEnv.wFct ( "adfReadDataBlock : nextData out of range, block %d, volume '%s'",
-                           nSect, vol->volName );
+            adfEnv.wFct( "adfReadDataBlock : nextData out of range, block %d, volume '%s'",
+                         nSect, vol->volName );
     }
 
     return rc;
@@ -262,37 +263,37 @@ ADF_RETCODE adfReadDataBlock ( struct AdfVolume * const vol,
  * adfWriteDataBlock
  *
  */
-ADF_RETCODE adfWriteDataBlock ( struct AdfVolume * const vol,
-                                const ADF_SECTNUM        nSect,
-                                void * const             data )
+ADF_RETCODE adfWriteDataBlock( struct AdfVolume * const  vol,
+                               const ADF_SECTNUM         nSect,
+                               void * const              data )
 {
     if ( nSect < 1 ) {
         // ie. block 0 is volume's bootblock - cannot be a data block
-        adfEnv.eFct ( "adfWriteDataBlock : error, '%d' cannot be a data block",
-                      nSect );
+        adfEnv.eFct( "adfWriteDataBlock : error, '%d' cannot be a data block",
+                     nSect );
         return ADF_RC_ERROR;
     }
 
     ADF_RETCODE rc;
-    if ( adfVolIsOFS ( vol ) ) {
+    if ( adfVolIsOFS( vol ) ) {
         struct AdfOFSDataBlock * const dataB = (struct AdfOFSDataBlock *) data;
         dataB->type = ADF_T_DATA;
 
-        uint8_t buf[512];
-        memcpy ( buf, data, 512 );
+        uint8_t buf[ 512 ];
+        memcpy( buf, data, 512 );
 #ifdef LITT_ENDIAN
-        adfSwapEndian ( buf, ADF_SWBL_DATA );
+        adfSwapEndian( buf, ADF_SWBL_DATA );
 #endif
-        uint32_t newSum = adfNormalSum ( buf, 20, 512 );
-        swLong(buf+20,newSum);
+        uint32_t newSum = adfNormalSum( buf, 20, 512 );
+        swLong( buf + 20, newSum );
 /*        *(int32_t*)(buf+20) = swapLong((uint8_t*)&newSum);*/
-        rc = adfVolWriteBlock ( vol, (uint32_t) nSect, buf );
+        rc = adfVolWriteBlock( vol, (uint32_t) nSect, buf );
     } else {
-        rc = adfVolWriteBlock ( vol, (uint32_t) nSect, data );
+        rc = adfVolWriteBlock( vol, (uint32_t) nSect, data );
     }
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfWriteDataBlock: error writing block %d, volume '%s'",
-                      nSect, vol->volName );
+        adfEnv.eFct( "adfWriteDataBlock: error writing block %d, volume '%s'",
+                     nSect, vol->volName );
     }
 /*printf("adfWriteDataBlock %ld\n",nSect);*/
 
@@ -304,50 +305,50 @@ ADF_RETCODE adfWriteDataBlock ( struct AdfVolume * const vol,
  * adfReadFileExtBlock
  *
  */
-ADF_RETCODE adfReadFileExtBlock ( struct AdfVolume * const       vol,
-                                  const ADF_SECTNUM              nSect,
-                                  struct AdfFileExtBlock * const fext )
+ADF_RETCODE adfReadFileExtBlock( struct AdfVolume * const        vol,
+                                 const ADF_SECTNUM               nSect,
+                                 struct AdfFileExtBlock * const  fext )
 {
     uint8_t buf[ sizeof(struct AdfFileExtBlock) ];
-    ADF_RETCODE rc = adfVolReadBlock ( vol, (uint32_t) nSect, buf );
+    ADF_RETCODE rc = adfVolReadBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfReadFileExtBlock: error reading block %d, volume '%s'",
-                      nSect, vol->volName );
+        adfEnv.eFct( "adfReadFileExtBlock: error reading block %d, volume '%s'",
+                     nSect, vol->volName );
         return rc;
     }
 /*printf("read fext=%d\n",nSect);*/
-    memcpy ( fext, buf, sizeof(struct AdfFileExtBlock) );
+    memcpy( fext, buf, sizeof(struct AdfFileExtBlock) );
 #ifdef LITT_ENDIAN
-    adfSwapEndian ( (uint8_t *) fext, ADF_SWBL_FEXT );
+    adfSwapEndian( (uint8_t *) fext, ADF_SWBL_FEXT );
 #endif
 
     const uint32_t checksumCalculated =
-        adfNormalSum ( buf, 20, sizeof(struct AdfFileExtBlock) );
+        adfNormalSum( buf, 20, sizeof(struct AdfFileExtBlock) );
     if ( fext->checkSum != checksumCalculated ) {
         const char msg[] = "adfReadFileExtBlock : invalid checksum 0x%x != 0x%x (calculated)"
             ", block %d, volume '%s'";
         if ( adfEnv.ignoreChecksumErrors ) {
-            adfEnv.wFct ( msg, fext->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.wFct( msg, fext->checkSum, checksumCalculated, nSect, vol->volName );
         } else {
-            adfEnv.eFct ( msg, fext->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.eFct( msg, fext->checkSum, checksumCalculated, nSect, vol->volName );
             return ADF_RC_BLOCKSUM;
         }
     }
 
     if ( fext->type != ADF_T_LIST )
-        adfEnv.wFct ( "adfReadFileExtBlock : type ADF_T_LIST not found" );
+        adfEnv.wFct( "adfReadFileExtBlock : type ADF_T_LIST not found" );
     if ( fext->secType != ADF_ST_FILE )
-        adfEnv.wFct ( "adfReadFileExtBlock : sectype ADF_ST_FILE not found" );
-    if (fext->headerKey!=nSect)
+        adfEnv.wFct( "adfReadFileExtBlock : sectype ADF_ST_FILE not found" );
+    if ( fext->headerKey != nSect )
         (*adfEnv.wFct)("adfReadFileExtBlock : headerKey!=nSect");
     if ( fext->highSeq < 0 ||
          fext->highSeq > ADF_MAX_DATABLK )
     {
         (*adfEnv.wFct)("adfReadFileExtBlock : highSeq out of range");
     }
-    if ( ! adfVolIsSectNumValid ( vol, fext->parent ) )
+    if ( ! adfVolIsSectNumValid( vol, fext->parent ) )
         (*adfEnv.wFct)("adfReadFileExtBlock : parent out of range");
-    if ( fext->extension != 0 && ! adfVolIsSectNumValid ( vol, fext->extension ) )
+    if ( fext->extension != 0 && ! adfVolIsSectNumValid( vol, fext->extension ) )
         (*adfEnv.wFct)("adfReadFileExtBlock : extension out of range");
 
     return rc;
@@ -358,30 +359,30 @@ ADF_RETCODE adfReadFileExtBlock ( struct AdfVolume * const       vol,
  * adfWriteFileExtBlock
  *
  */
-ADF_RETCODE adfWriteFileExtBlock ( struct AdfVolume * const       vol,
-                                   const ADF_SECTNUM              nSect,
-                                   struct AdfFileExtBlock * const fext )
+ADF_RETCODE adfWriteFileExtBlock( struct AdfVolume * const        vol,
+                                  const ADF_SECTNUM               nSect,
+                                  struct AdfFileExtBlock * const  fext )
 {
-    uint8_t buf[512];
+    uint8_t buf[ 512 ];
     uint32_t newSum;
 
-    fext->type = ADF_T_LIST;
-    fext->secType = ADF_ST_FILE;
-    fext->dataSize = 0L;
+    fext->type      = ADF_T_LIST;
+    fext->secType   = ADF_ST_FILE;
+    fext->dataSize  = 0L;
     fext->firstData = 0L;
 
-    memcpy(buf,fext,512);
+    memcpy( buf, fext, 512 );
 #ifdef LITT_ENDIAN
-    adfSwapEndian ( buf, ADF_SWBL_FEXT );
+    adfSwapEndian( buf, ADF_SWBL_FEXT );
 #endif
-    newSum = adfNormalSum(buf,20,512);
-    swLong(buf+20,newSum);
+    newSum = adfNormalSum( buf, 20, 512 );
+    swLong( buf + 20, newSum );
 /*    *(int32_t*)(buf+20) = swapLong((uint8_t*)&newSum);*/
 
-    ADF_RETCODE rc = adfVolWriteBlock ( vol, (uint32_t) nSect, buf );
+    ADF_RETCODE rc = adfVolWriteBlock( vol, (uint32_t) nSect, buf );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "adfWriteFileExtBlock: error wriding block %d, volume '%s'",
-                      nSect, vol->volName );
+        adfEnv.eFct( "adfWriteFileExtBlock: error wriding block %d, volume '%s'",
+                     nSect, vol->volName );
     }
 
     return rc;
