@@ -148,10 +148,10 @@ static ADF_RETCODE Win32ReadSector( struct AdfDevice * const  dev,
 }
 
 
-static ADF_RETCODE Win32WriteSector ( struct AdfDevice * const dev,
-                                      const uint32_t           n,
-                                      const unsigned           size,
-                                      const uint8_t * const    buf )
+static ADF_RETCODE Win32WriteSector( struct AdfDevice * const  dev,
+                                     const uint32_t            n,
+                                     const unsigned            size,
+                                     const uint8_t * const     buf )
 {
     void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
 
@@ -164,13 +164,13 @@ static ADF_RETCODE Win32WriteSector ( struct AdfDevice * const dev,
 }
 
 
-static bool Win32IsDevNative ( void )
+static bool Win32IsDevNative(void)
 {
     return true;
 }
 
 
-static bool Win32IsDevice ( const char * const devName )
+static bool Win32IsDevice( const char * const  devName )
 {
     return devName[ 0 ] == '|';
 }
