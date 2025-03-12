@@ -27,13 +27,13 @@
 #include "adf_dev_driver_ramdisk.h"
 #include "adf_env.h"
 
-static struct AdfDevice * ramdiskCreate ( const char * const name,
-                                          const uint32_t     cylinders,
-                                          const uint32_t     heads,
-                                          const uint32_t     sectors )
+static struct AdfDevice * ramdiskCreate( const char * const  name,
+                                         const uint32_t      cylinders,
+                                         const uint32_t      heads,
+                                         const uint32_t      sectors )
 {
     struct AdfDevice * const  dev = ( struct AdfDevice * )
-        malloc ( sizeof ( struct AdfDevice ) );
+        malloc( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
         adfEnv.eFct("ramdiskCreate : malloc error");
         return NULL;
@@ -45,65 +45,65 @@ static struct AdfDevice * ramdiskCreate ( const char * const name,
     dev->cylinders = cylinders;
     dev->size      = cylinders * heads * sectors * 512;
 
-    dev->drvData = malloc ( dev->size );
+    dev->drvData = malloc( dev->size );
     if ( dev->drvData == NULL ) {
         adfEnv.eFct("ramdiskCreate : malloc data error");
-        free ( dev );
+        free( dev );
         return NULL;
     }
 
-    dev->devType   = adfDevType ( dev );
+    dev->devType   = adfDevType( dev );
     dev->nVol      = 0;
     dev->volList   = NULL;
     dev->mounted   = false;
-    dev->name      = strdup ( name );
+    dev->name      = strdup( name );
     dev->drv       = &adfDeviceDriverRamdisk;
 
     return dev;
 }
 
 
-static ADF_RETCODE ramdiskRelease ( struct AdfDevice * const dev )
+static ADF_RETCODE ramdiskRelease( struct AdfDevice * const  dev )
 {
-    free ( dev->drvData );
-    free ( dev->name );
-    free ( dev );
+    free( dev->drvData );
+    free( dev->name );
+    free( dev );
     return ADF_RC_OK;
 }
 
 
-static ADF_RETCODE ramdiskReadSector ( struct AdfDevice * const dev,
-                                       const uint32_t           n,
-                                       const unsigned           size,
-                                       uint8_t * const          buf )
-{
-    unsigned int offset = n * 512;
-    if ( offset > dev->size ||
-         (offset + size) > dev->size)
-    {
-        return ADF_RC_ERROR;
-    }
-    memcpy ( buf, &( (uint8_t *) (dev->drvData) )[offset], size );
-    return ADF_RC_OK;
-}
-
-static ADF_RETCODE ramdiskWriteSector ( struct AdfDevice * const dev,
-                                        const uint32_t           n,
-                                        const unsigned           size,
-                                        const uint8_t * const    buf )
+static ADF_RETCODE ramdiskReadSector( struct AdfDevice * const  dev,
+                                      const uint32_t            n,
+                                      const unsigned            size,
+                                      uint8_t * const           buf )
 {
     unsigned int offset = n * 512;
     if ( offset > dev->size ||
-         (offset + size) > dev->size )
+         ( offset + size ) > dev->size )
     {
         return ADF_RC_ERROR;
     }
-    memcpy ( &( (uint8_t *) (dev->drvData) )[offset], buf, size );
+    memcpy( buf, &( (uint8_t *) dev->drvData )[ offset ], size );
+    return ADF_RC_OK;
+}
+
+static ADF_RETCODE ramdiskWriteSector( struct AdfDevice * const  dev,
+                                       const uint32_t            n,
+                                       const unsigned            size,
+                                       const uint8_t * const     buf )
+{
+    unsigned int offset = n * 512;
+    if ( offset > dev->size ||
+         ( offset + size ) > dev->size )
+    {
+        return ADF_RC_ERROR;
+    }
+    memcpy( &( (uint8_t *) dev->drvData )[ offset ], buf, size );
     return ADF_RC_OK;
 }
 
 
-static bool ramdiskIsDevNative ( void )
+static bool ramdiskIsDevNative( void )
 {
     return false;
 }
