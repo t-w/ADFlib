@@ -176,20 +176,17 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
 {
     struct AdfRDSKblock  rdsk;
     struct AdfPARTblock  part;
-    int32_t              next;
-    struct AdfList      *vList,
-                        *listRoot;
-    int                  i;
 
     ADF_RETCODE rc = adfReadRDSKblock( dev, &rdsk );
     if ( rc != ADF_RC_OK )
         return rc;
 
     /* PART blocks */
-    listRoot  = NULL;
-    next      = rdsk.partitionList;
-    dev->nVol = 0;
-    vList     = NULL;
+    struct AdfList
+        *vList    = NULL,
+        *listRoot = NULL;
+    int32_t next  = rdsk.partitionList;
+    dev->nVol     = 0;
     while ( next != -1 ) {
         rc = adfReadPARTblock( dev, next, &part );
         if ( rc != ADF_RC_OK ) {
@@ -269,7 +266,7 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
         return ADF_RC_MALLOC;
     }
     vList = listRoot;
-    for( i = 0; i < dev->nVol; i++ ) {
+    for( int i = 0; i < dev->nVol; i++ ) {
         dev->volList[ i ] = (struct AdfVolume *) vList->content;
         vList = vList->next;
     }
