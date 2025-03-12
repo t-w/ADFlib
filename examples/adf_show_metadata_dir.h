@@ -1,10 +1,10 @@
 
-#ifndef _ADF_SHOW_METADATA_DIR_H__
-#define _ADF_SHOW_METADATA_DIR_H__
+#ifndef ADF_SHOW_METADATA_DIR_H
+#define ADF_SHOW_METADATA_DIR_H
 
 #include <adflib.h>
 
-void show_directory_metadata ( struct AdfVolume * const vol,
-                               const ADF_SECTNUM        dir_sector );
+void show_directory_metadata( struct AdfVolume * const  vol,
+                              const ADF_SECTNUM         dir_sector );
 
 #endif
