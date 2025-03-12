@@ -441,7 +441,7 @@ ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
                                           partList[ i ]->volType );
         if ( dev->volList[ i ] == NULL ) {
             for ( unsigned j = 0; j < i; j++ ) {
-                free ( dev->volList[ i ] );
+                free ( dev->volList[ j ] );
 /* pas fini */
             }
             free( dev->volList );
