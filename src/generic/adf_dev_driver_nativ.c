@@ -22,10 +22,10 @@
  */
 
 
-#include<stdlib.h>
-#include<string.h>
+#include <stdlib.h>
+#include <string.h>
 #include "adf_dev_driver_nativ.h"
-#include"adf_err.h"
+#include "adf_err.h"
 #include "adf_env.h"
 
 
@@ -34,8 +34,8 @@
  *
  * must fill 'dev->size'
  */
-static struct AdfDevice * myInitDevice ( const char * const  name,
-                                        const AdfAccessMode mode )
+static struct AdfDevice * myInitDevice( const char * const   name,
+                                        const AdfAccessMode  mode )
 {
     (void) name, (void) mode;
     return NULL;
@@ -46,10 +46,10 @@ static struct AdfDevice * myInitDevice ( const char * const  name,
  * myReadSector
  *
  */
-ADF_RETCODE myReadSector ( struct AdfDevice * const dev,
-                       const uint32_t           n,
-                       const unsigned           size,
-                       uint8_t * const          buf )
+ADF_RETCODE myReadSector( struct AdfDevice * const  dev,
+                          const uint32_t            n,
+                          const unsigned            size,
+                          uint8_t * const           buf )
 {
     (void) dev, (void) n, (void) size, (void) buf;
     return ADF_RC_ERROR;
@@ -60,10 +60,10 @@ ADF_RETCODE myReadSector ( struct AdfDevice * const dev,
  * myWriteSector
  *
  */
-ADF_RETCODE myWriteSector ( struct AdfDevice * const dev,
-                        const uint32_t           n,
-                        const unsigned           size,
-                        const uint8_t * const    buf )
+ADF_RETCODE myWriteSector( struct AdfDevice * const  dev,
+                           const uint32_t            n,
+                           const unsigned            size,
+                           const uint8_t * const     buf )
 {
     (void) dev, (void) n, (void) size, (void) buf;
     return ADF_RC_ERROR;
@@ -75,7 +75,7 @@ ADF_RETCODE myWriteSector ( struct AdfDevice * const dev,
  *
  * free native device
  */
-ADF_RETCODE myReleaseDevice ( struct AdfDevice * const dev )
+ADF_RETCODE myReleaseDevice( struct AdfDevice * const  dev )
 {
     (void) dev;
     return ADF_RC_ERROR;
@@ -92,14 +92,14 @@ static bool myIsDevNative(void)
 }
 
 
-static bool myIsDevice ( const char * const devName )
+static bool myIsDevice( const char * const  devName )
 {
     (void) devName;
     return false;
 }
 
 
-const struct AdfDeviceDriver adfDeviceDriverNative = {
+const struct AdfDeviceDriver  adfDeviceDriverNative = {
     .name        = "native generic",
     .data        = NULL,
     .createDev   = NULL,
