@@ -57,7 +57,7 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
     struct AdfDevice * dev =
         ( struct AdfDevice * ) malloc( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
-        (*adfEnv.eFct)("adfLinuxInitDevice : malloc error");
+        adfEnv.eFct("%s: malloc error", __func__ );
         return NULL;
     }
 
@@ -65,8 +65,8 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
 
     dev->drvData = malloc( sizeof ( struct AdfNativeDevice ) );
     if ( dev->drvData == NULL ) {
-        adfEnv.eFct("adfLinuxInitDevice : malloc data error");
-        free ( dev );
+        adfEnv.eFct( "%s: malloc data error",  __func__ );
+        free( dev );
         return NULL;
     }
 
@@ -82,7 +82,7 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
     }
 
     if ( *fd < 0 ) {
-        (*adfEnv.eFct)("adfLinuxInitDevice : cannot open device");
+        adfEnv.eFct( "%s: cannot open device",  __func__ );
         free( dev->drvData );
         free( dev );
         return NULL;
@@ -213,7 +213,7 @@ static bool adfLinuxIsBlockDevice( const char * const  devName )
 
     struct stat sb;
     if ( lstat( devName, &sb ) == -1 ) {
-        adfEnv.eFct( "adfLinuxIsBlockDevice : lstat '%s' failed", devName );
+        adfEnv.eFct( "%s: lstat '%s' failed",  __func__, devName );
         return false;
     }
 
