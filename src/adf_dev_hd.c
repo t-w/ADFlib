@@ -65,8 +65,6 @@ static void adfFreeTmpVolList( struct AdfList * const  root )
  */
 ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
 {
-    struct AdfVolume * vol;
-
     dev->nVol = 0;
     dev->volList = (struct AdfVolume **) malloc( sizeof(struct AdfVolume *) );
     if ( dev->volList == NULL ) {
@@ -74,7 +72,8 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
         return ADF_RC_MALLOC;
     }
 
-    vol = (struct AdfVolume *) malloc( sizeof(struct AdfVolume) );
+    struct AdfVolume * const vol =
+        (struct AdfVolume *) malloc( sizeof(struct AdfVolume) );
     if ( vol == NULL ) {
         free( dev->volList );
         dev->volList = NULL;
@@ -91,7 +90,7 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
 
     vol->firstBlock = 0;
 
-    unsigned size = dev->size + 512 - ( dev->size % 512 );
+    const unsigned size = dev->size + 512 - ( dev->size % 512 );
 /*printf("size=%ld\n",size);*/
 
     /* set filesystem info (read from bootblock) */
