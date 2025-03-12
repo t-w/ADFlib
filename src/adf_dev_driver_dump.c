@@ -59,13 +59,13 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
     struct AdfDevice * dev = (struct AdfDevice *)
         malloc( sizeof(struct AdfDevice) );
     if ( ! dev ) {
-        (*adfEnv.eFct)("adfCreateDumpDevice : malloc dev");
+        adfEnv.eFct("%s: malloc dev", __func__ );
         return NULL;
     }
 
     dev->drvData = malloc( sizeof(struct DevDumpData) );
     if ( dev->drvData == NULL ) {
-        adfEnv.eFct("adfDevDumpOpen : malloc data error");
+        adfEnv.eFct( "%s: malloc data error", __func__ );
         free( dev );
         return NULL;
     }
@@ -76,7 +76,7 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
     if ( *fd == NULL ) {
         free( dev->drvData );
         free( dev );
-        (*adfEnv.eFct)("adfCreateDumpDevice : fopen");
+        adfEnv.eFct("%s: fopen", __func__ );
         return NULL;
     }
 
@@ -90,7 +90,7 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
         fclose( *fd );
         free( dev->drvData );
         free( dev );
-        (*adfEnv.eFct)("adfCreateDumpDevice : fseek");
+        adfEnv.eFct("%s: fseek", __func__ );
         return NULL;
     }
 
@@ -100,7 +100,7 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
         fclose( *fd );
         free( dev->drvData );
         free( dev );
-        (*adfEnv.eFct)("adfCreateDumpDevice : fwrite");
+        adfEnv.eFct("%s: fwrite", __func__ );
         return NULL;
     }
 
@@ -110,7 +110,7 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
     if ( ! *fd ) {
         free( dev->drvData );
         free( dev );
-        (*adfEnv.eFct)("adfCreateDumpDevice : fopen");
+        adfEnv.eFct("%s: fopen", __func__ );
         return NULL;
     }
     dev->cylinders = cylinders;
@@ -145,7 +145,7 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
     struct AdfDevice * const  dev = ( struct AdfDevice * )
         malloc( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
-        adfEnv.eFct( "adfDevDumpOpen : malloc error" );
+        adfEnv.eFct( "%s: malloc error", __func__ );
         return NULL;
     }
 
@@ -153,7 +153,7 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
 
     dev->drvData = malloc( sizeof ( struct DevDumpData ) );
     if ( dev->drvData == NULL ) {
-        adfEnv.eFct("adfDevDumpOpen : malloc data error");
+        adfEnv.eFct("%s: malloc data error", __func__ );
         free( dev );
         return NULL;
     }
@@ -168,7 +168,7 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
             *fd = fopen( name, "rb" );
             dev->readOnly = true;
             if ( *fd != NULL )
-                adfEnv.wFct("adfDevDumpOpen : fopen, read-only mode forced");
+                adfEnv.wFct( "%s: fopen, read-only mode forced", __func__ );
         }
     }
     else
@@ -176,7 +176,7 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
         *fd = fopen( name, "rb" );
 
     if ( *fd == NULL ) {
-        adfEnv.eFct( "adfDevDumpOpen : fopen" );
+        adfEnv.eFct( "%s: fopen", __func__ );
         free( dev->drvData );
         free( dev );
         return NULL;
