@@ -32,7 +32,7 @@ static struct AdfDevice * ramdiskCreate ( const char * const name,
                                           const uint32_t     heads,
                                           const uint32_t     sectors )
 {
-    struct AdfDevice * dev = ( struct AdfDevice * )
+    struct AdfDevice * const  dev = ( struct AdfDevice * )
         malloc ( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
         adfEnv.eFct("ramdiskCreate : malloc error");
