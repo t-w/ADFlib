@@ -418,8 +418,6 @@ ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
                          const unsigned                          n,
                          const struct Partition * const * const  partList )
 {
-    unsigned i, j;
-
 /*struct AdfVolume *vol;*/
 
     if ( dev == NULL || partList == NULL ) {
@@ -435,14 +433,14 @@ ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
         (*adfEnv.eFct)("adfCreateFlop : malloc");
         return ADF_RC_MALLOC;
     }
-    for ( i = 0; i < n; i++ ) {
+    for ( unsigned i = 0; i < n; i++ ) {
         dev->volList[ i ] = adfVolCreate( dev,
                                           (uint32_t) partList[ i ]->startCyl,
                                           (uint32_t) partList[ i ]->lenCyl,
                                           partList[ i ]->volName,
                                           partList[ i ]->volType );
         if ( dev->volList[ i ] == NULL ) {
-            for ( j = 0; j < i; j++ ) {
+            for ( unsigned j = 0; j < i; j++ ) {
                 free ( dev->volList[ i ] );
 /* pas fini */
             }
