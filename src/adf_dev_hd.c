@@ -180,8 +180,6 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
     struct AdfList      *vList,
                         *listRoot;
     int                  i;
-    struct AdfVolume    *vol;
-    unsigned             len;
 
     ADF_RETCODE rc = adfReadRDSKblock( dev, &rdsk );
     if ( rc != ADF_RC_OK )
@@ -201,7 +199,8 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
             return rc;
         }
 
-        vol = (struct AdfVolume *) malloc( sizeof(struct AdfVolume) );
+        struct AdfVolume * const vol =
+            (struct AdfVolume *) malloc( sizeof(struct AdfVolume) );
         if ( vol == NULL ) {
             adfFreeTmpVolList( listRoot );
             (*adfEnv.eFct)("adfMountHd : malloc");
@@ -231,7 +230,7 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
         vol->datablockSize = adfVolIsOFS( vol ) ? 488 : 512;
 
         /* set volume name (from partition info) */
-        len = (unsigned) min( 31, part.nameLen );
+        const unsigned len = (unsigned) min( 31, part.nameLen );
         vol->volName = (char *) malloc( len + 1 );
         if ( vol->volName == NULL ) { 
             adfFreeTmpVolList( listRoot );
