@@ -328,7 +328,7 @@ static void checkInternals(void)
     /* internal checking */
 
     assertInternal( sizeof(short) == 2,
-                    "Compilation error : sizeof(short)!=2\n" );
+                    "Compilation error : sizeof(short) != 2\n" );
 
     assertInternal( sizeof(int32_t) == 4,
                     "Compilation error : sizeof(int32_t) != 4\n" );
@@ -367,9 +367,9 @@ static void checkInternals(void)
 /* if LITT_ENDIAN not defined : must be BIG endian */
 #ifndef LITT_ENDIAN
     assertInternal( val.c[3] == 1, /* little endian : LITT_ENDIAN must be defined ! */
-                    "Compilation error : #define LITT_ENDIAN must exist\n" );
+                    "Compilation error : LITT_ENDIAN not defined\n" );
 #else
     assertInternal( val.c[3] != 1, /* big endian : LITT_ENDIAN must not be defined ! */
-                    "Compilation error : #define LITT_ENDIAN must not exist\n" );
+                    "Compilation error : LITT_ENDIAN defined\n" );
 #endif
 }
