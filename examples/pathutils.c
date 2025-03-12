@@ -2,6 +2,7 @@
 #include "pathutils.h"
 
 #if defined(_WIN32) && !defined(_CYGWIN)
+#include <string.h>
 
 // custom impl. of POSIX's dirname
 // (note that it modifies buffer pointed by path)
