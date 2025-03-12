@@ -768,11 +768,11 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove(
 
     const unsigned dBlockSize  = file->volume->datablockSize;
 
-    const unsigned nDBlocksOld = adfFileSize2Datablocks ( fileSizeOld, dBlockSize );
-    const unsigned nDBlocksNew = adfFileSize2Datablocks ( fileSizeNew, dBlockSize );
+    const unsigned nDBlocksOld = adfFileSize2Datablocks( fileSizeOld, dBlockSize );
+    const unsigned nDBlocksNew = adfFileSize2Datablocks( fileSizeNew, dBlockSize );
 
-    const unsigned nExtBlocksOld = adfFileDatablocks2Extblocks ( nDBlocksOld );
-    const unsigned nExtBlocksNew = adfFileDatablocks2Extblocks ( nDBlocksNew );
+    const unsigned nExtBlocksOld = adfFileDatablocks2Extblocks( nDBlocksOld );
+    const unsigned nExtBlocksNew = adfFileDatablocks2Extblocks( nDBlocksNew );
 
     unsigned const nBlocksToRemove = ( nDBlocksOld + nExtBlocksOld ) -
                                      ( nDBlocksNew + nExtBlocksNew );
