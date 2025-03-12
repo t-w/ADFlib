@@ -32,23 +32,23 @@ typedef struct NT4DriveGeometry_s {
         bytesPerSector;
 } NT4DriveGeometry_t;
 
-HANDLE NT4OpenDrive ( const char * const strDrive );
+HANDLE NT4OpenDrive( const char * const  strDrive );
 
-bool NT4CloseDrive ( const HANDLE hDrv );
+bool NT4CloseDrive( const HANDLE  hDrv );
 
-bool NT4ReadSector ( const HANDLE hDrv,
-                     const long   iSect,
-                     const size_t iSize,
-                     void * const lpvoidBuf );
+bool NT4ReadSector( const HANDLE  hDrv,
+                    const long    iSect,
+                    const size_t  iSize,
+                    void * const  lpvoidBuf );
 
-bool NT4WriteSector ( const HANDLE hDrv,
-                      const long   iSect,
-                      const size_t iSize,
-                      const void * const lpvoidBuf );
+bool NT4WriteSector( const HANDLE        hDrv,
+                     const long          iSect,
+                     const size_t        iSize,
+                     const void * const  lpvoidBuf );
 
-ULONG NT4GetDriveSize ( const HANDLE hDrv );
+ULONG NT4GetDriveSize( const HANDLE  hDrv );
 
-bool NT4GetDriveGeometry ( const HANDLE               hDrv,
-                           NT4DriveGeometry_t * const geometry );
+bool NT4GetDriveGeometry( const HANDLE                hDrv,
+                          NT4DriveGeometry_t * const  geometry );
 
 #endif  /* NT4_DEV_H */
