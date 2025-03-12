@@ -4,7 +4,7 @@
 
 #include <adflib.h>
 
-void show_dircache_metadata ( struct AdfVolume * const  vol,
-                              ADF_SECTNUM               dircache_blocknum );
+void show_dircache_metadata( struct AdfVolume * const  vol,
+                             ADF_SECTNUM               dircache_blocknum );
 
 #endif

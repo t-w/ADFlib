@@ -39,8 +39,8 @@ static void show_dircache_block( const struct AdfDirCacheBlock * const  block );
 static void show_dircache_block_record( const struct AdfCacheEntry * const  cEntry );
 
 
-void show_dircache_metadata ( struct AdfVolume * const  vol,
-                              ADF_SECTNUM               dircache_blocknum )
+void show_dircache_metadata( struct AdfVolume * const  vol,
+                             ADF_SECTNUM               dircache_blocknum )
 {
     if ( ! adfVolHasDIRCACHE( vol ) )
         return;
@@ -68,8 +68,8 @@ static void show_dircache_block( const struct AdfDirCacheBlock * const  block )
     uint8_t block_orig_endian[ 512 ];
     memcpy( block_orig_endian, block, 512 );
     adfSwapEndian( block_orig_endian, ADF_SWBL_CACHE );
-    uint32_t checksum_calculated = adfNormalSum ( block_orig_endian, 0x14,
-                                                  sizeof(struct AdfDirCacheBlock) );
+    uint32_t checksum_calculated = adfNormalSum( block_orig_endian, 0x14,
+                                                 sizeof(struct AdfDirCacheBlock) );
     printf( //"\nDirCache block %u:\n"
             //"  offset field\t\tvalue\n"
             "  0x000  type:\t\t0x%x\t\t%u\n"
