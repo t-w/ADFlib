@@ -1,9 +1,9 @@
 
-#ifndef _ADF_SHOW_METADATA_COMMON_H__
-#define _ADF_SHOW_METADATA_COMMON_H__
+#ifndef ADF_SHOW_METADATA_COMMON_H
+#define ADF_SHOW_METADATA_COMMON_H
 
 #include <adflib.h>
 
-void show_hashtable ( const uint32_t hashtable[ADF_HT_SIZE] );
+void show_hashtable( const uint32_t hashtable[ ADF_HT_SIZE ] );
 
 #endif
