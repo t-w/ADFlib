@@ -5,9 +5,6 @@
 #include "adf_blk.h"
 #include "adf_prefix.h"
 
-#ifndef NDEBUG
-#define NDEBUG
-#endif
 #include <assert.h>
 
 ADF_PREFIX int32_t adfFilePos2DataBlock( const unsigned    pos,
