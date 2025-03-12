@@ -35,7 +35,7 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
     struct AdfDevice * const  dev = ( struct AdfDevice * )
         malloc( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
-        adfEnv.eFct("ramdiskCreate : malloc error");
+        adfEnv.eFct( "%s: malloc error", __func__ );
         return NULL;
     }
 
@@ -47,7 +47,7 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
 
     dev->drvData = malloc( dev->size );
     if ( dev->drvData == NULL ) {
-        adfEnv.eFct("ramdiskCreate : malloc data error");
+        adfEnv.eFct( "%s: malloc data error", __func__ );
         free( dev );
         return NULL;
     }
