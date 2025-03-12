@@ -70,42 +70,43 @@ struct DateTime {
 
 /* swap short and swap long macros for little endian machines */
 
-static inline uint16_t swapShort ( const uint8_t * const p ) {
+static inline uint16_t swapShort( const uint8_t * const p ) {
     return (uint16_t) ( ( p[0] << 8 ) | p[1] );
 }
 
-static inline uint32_t swapLong ( const uint8_t * const p ) {
+static inline uint32_t swapLong( const uint8_t * const p ) {
     return (uint32_t) ( ( swapShort(p) << 16 ) |
                         swapShort( p + 2 ) );
 }
 
 
-void swLong ( uint8_t * const buf,
-              const uint32_t  val );
+void swLong( uint8_t * const  buf,
+             const uint32_t   val );
 
-void swShort ( uint8_t * const buf,
-               const uint16_t  val );
+void swShort( uint8_t * const  buf,
+              const uint16_t   val );
 
-void adfDays2Date( int32_t       days,
-                   int * const   yy,
-                   int * const   mm,
-                   int * const   dd );
+void adfDays2Date( int32_t      days,
+                   int * const  yy,
+                   int * const  mm,
+                   int * const  dd );
 
-bool adfIsLeap ( const int y );
+bool adfIsLeap( const int y );
 
-void adfTime2AmigaTime ( struct DateTime dt,
-                         int32_t * const day,
-                         int32_t * const min,
-                         int32_t * const ticks );
+void adfTime2AmigaTime( struct DateTime  dt,
+                        int32_t * const  day,
+                        int32_t * const  min,
+                        int32_t * const  ticks );
 
-struct DateTime adfGiveCurrentTime ( void );
+struct DateTime adfGiveCurrentTime(void);
 
-void dumpBlock ( const uint8_t * const buf );
+void dumpBlock( const uint8_t * const  buf );
 
 
 #ifndef HAVE_STRNDUP
 #pragma message "Using the custom strndup()"
-char * strndup ( const char * const s, size_t n );
+char * strndup( const char * const  s,
+                size_t              n );
 #endif
 
 #endif  /* ADF_UTIL_H */
