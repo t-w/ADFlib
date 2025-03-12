@@ -144,7 +144,7 @@ ADF_RETCODE adfEnvSetProperty( const ADF_ENV_PROPERTY  property,
         adfEnv.quiet =  (bool) newval;
         break;
     default:
-        adfEnv.eFct( "adfEnvSetProp: invalid property %d", property );
+        adfEnv.eFct( "%s: invalid property %d", __func__, property );
         return ADF_RC_ERROR;
     }
     return ADF_RC_OK;
@@ -167,7 +167,7 @@ intptr_t adfEnvGetProperty( const ADF_ENV_PROPERTY  property )
     case ADF_PR_IGNORE_CHECKSUM_ERRORS:  return (intptr_t) adfEnv.ignoreChecksumErrors;
     case ADF_PR_QUIET:                   return (intptr_t) adfEnv.quiet;
     default:
-        adfEnv.eFct( "adfEnvGetProp: invalid property %d", property );
+        adfEnv.eFct( "%s: invalid property %d", __func__, property );
     }
     return 0;
 }
