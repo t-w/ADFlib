@@ -75,7 +75,7 @@ void adfSwapEndian( uint8_t * const  buf,
     assert( type <= MAX_SWTYPE );
     if ( type > MAX_SWTYPE || type < 0 ) {
         /* this should never happen */
-        adfEnv.eFct( "adfSwapEndian: type %d do not exist", type );
+        adfEnv.eFct( "%s: type %d do not exist", __func__, type );
         return;
     }
 
@@ -100,7 +100,7 @@ void adfSwapEndian( uint8_t * const  buf,
         i += 2;
     }
     if ( p != swapTable[ type ][ i + 1 ] )
-        (*adfEnv.wFct)("Warning: Endian Swapping length");		/* BV */
+        adfEnv.wFct("%s: Warning: Endian Swapping length", __func__ );	/* BV */
 }
 
 
@@ -130,18 +130,20 @@ ADF_RETCODE adfReadRootBlock( struct AdfVolume * const     vol,
     if ( root->type != ADF_T_HEADER ||
          root->secType != ADF_ST_ROOT )
     {
-        (*adfEnv.wFct)("adfReadRootBlock : id not found");
+        adfEnv.wFct("%s: id not found", __func__ );
         return ADF_RC_BLOCKTYPE;
     }
 
     const uint32_t checksumCalculated = adfNormalSum( buf, 0x14, ADF_LOGICAL_BLOCK_SIZE );
     if ( root->checkSum != checksumCalculated ) {
-        const char msg[] = "adfReadRootBlock : invalid checksum 0x%x != 0x%x (calculated)"
+        const char msg[] = "%s: invalid checksum 0x%x != 0x%x (calculated)"
             ", block %d, volume '%s'";
         if ( adfEnv.ignoreChecksumErrors ) {
-            adfEnv.wFct( msg, root->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.wFct( msg, __func__, root->checkSum, checksumCalculated,
+                         nSect, vol->volName );
         } else {
-            adfEnv.eFct( msg, root->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.eFct( msg, __func__, root->checkSum, checksumCalculated,
+                         nSect, vol->volName );
             return ADF_RC_BLOCKSUM;
         }
     }
@@ -212,24 +214,25 @@ ADF_RETCODE adfReadBootBlock( struct AdfVolume * const     vol,
 #endif
     if ( strncmp( "DOS", boot->dosType, 3 ) != 0 ) {
         if ( strncmp( "PFS", boot->dosType, 3 ) == 0 ) {
-            adfEnv.wFct("adfReadBootBlock : PFS volume found - not supported...");
+            adfEnv.wFct( "%s: PFS volume found - not supported...", __func__ );
             return ADF_RC_ERROR;
         }
-        adfEnv.wFct("adfReadBootBlock : DOS id not found");
+        adfEnv.wFct( "%s: DOS id not found", __func__ );
         return ADF_RC_ERROR;
     }
-
 
     if ( boot->data[ 0 ] != 0 ) {
         const uint32_t checksumCalculated = adfBootSum( buf );
 /*printf("compsum=%lx sum=%lx\n",	adfBootSum(buf),boot->checkSum );*/		/* BV */
         if ( boot->checkSum != checksumCalculated ) {
-            const char msg[] = "adfReadBootBlock : invalid checksum 0x%x != 0x%x (calculated)"
+            const char msg[] = "%s: invalid checksum 0x%x != 0x%x (calculated)"
                 ", block %d, volume '%s'";
             if ( adfEnv.ignoreChecksumErrors ) {
-                adfEnv.wFct( msg, boot->checkSum, checksumCalculated, 0, vol->volName );
+                adfEnv.wFct( msg, __func__, boot->checkSum, checksumCalculated,
+                             0, vol->volName );
             } else {
-                adfEnv.eFct( msg, boot->checkSum, checksumCalculated, 0, vol->volName );
+                adfEnv.eFct( msg, __func__, boot->checkSum, checksumCalculated,
+                             0, vol->volName );
                 return ADF_RC_BLOCKSUM;
             }
         }
