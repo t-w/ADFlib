@@ -500,7 +500,7 @@ ADF_RETCODE adfFileTruncate( struct AdfFile * const  file,
     };
     ADF_RETCODE rc = adfFileTruncateGetBlocksToRemove( file, fileSizeNew,
                                                        &blocksToRemove );
-    assert( blockToRemove.itemSize == sizeof(ADF_SECTNUM) );
+    assert( blocksToRemove.itemSize == sizeof(ADF_SECTNUM) );
     if ( rc != ADF_RC_OK )
         return rc;
 
