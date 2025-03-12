@@ -56,43 +56,43 @@ typedef void (*AdfRwhAccessFct)(ADF_SECTNUM, ADF_SECTNUM, bool);
 typedef void (*AdfProgressBarFct)(int);
 
 struct AdfEnv {
-    AdfLogFct vFct;       /* verbose callback function */
-    AdfLogFct wFct;       /* warning callback function */
-    AdfLogFct eFct;       /* error callback function */
+    AdfLogFct          vFct;       /* verbose callback function */
+    AdfLogFct          wFct;       /* warning callback function */
+    AdfLogFct          eFct;       /* error callback function */
 
-    AdfNotifyFct notifyFct;
-    bool useNotify;
+    AdfNotifyFct       notifyFct;
+    bool               useNotify;
 
-    AdfRwhAccessFct rwhAccess;
-    bool useRWAccess;
+    AdfRwhAccessFct    rwhAccess;
+    bool               useRWAccess;
 
-    AdfProgressBarFct progressBar;
-    bool useProgressBar;
+    AdfProgressBarFct  progressBar;
+    bool               useProgressBar;
 
-    bool useDirCache;
+    bool               useDirCache;
 
-    bool ignoreChecksumErrors;
+    bool               ignoreChecksumErrors;
 
-    bool quiet;          /* true disables warning/error messages */
+    bool               quiet;          /* true disables warning/error messages */
 };
 
 
-ADF_PREFIX void adfEnvInitDefault ( void );
-ADF_PREFIX void adfEnvCleanUp ( void );
+ADF_PREFIX void adfEnvInitDefault(void);
+ADF_PREFIX void adfEnvCleanUp(void);
 
-ADF_PREFIX void adfEnvSetFct ( const AdfLogFct    eFct,
-                               const AdfLogFct    wFct,
-                               const AdfLogFct    vFct,
-                               const AdfNotifyFct notifyFct );
+ADF_PREFIX void adfEnvSetFct( const AdfLogFct     eFct,
+                              const AdfLogFct     wFct,
+                              const AdfLogFct     vFct,
+                              const AdfNotifyFct  notifyFct );
 
-ADF_PREFIX ADF_RETCODE adfEnvSetProperty ( const ADF_ENV_PROPERTY property,
-                                           const intptr_t         newValue );
+ADF_PREFIX ADF_RETCODE adfEnvSetProperty( const ADF_ENV_PROPERTY  property,
+                                          const intptr_t          newValue );
 
-ADF_PREFIX intptr_t adfEnvGetProperty ( const ADF_ENV_PROPERTY property );
+ADF_PREFIX intptr_t adfEnvGetProperty( const ADF_ENV_PROPERTY  property );
 
-ADF_PREFIX char * adfGetVersionNumber ( void );
-ADF_PREFIX char * adfGetVersionDate ( void );
+ADF_PREFIX char * adfGetVersionNumber(void);
+ADF_PREFIX char * adfGetVersionDate(void);
 
-ADF_PREFIX extern struct AdfEnv adfEnv;
+ADF_PREFIX extern struct AdfEnv  adfEnv;
 
 #endif  /* ADF_ENV_H */

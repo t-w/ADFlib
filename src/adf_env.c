@@ -39,21 +39,21 @@
 #include <stdlib.h>
 
 
-struct AdfEnv adfEnv;
+struct AdfEnv  adfEnv;
 
 
-static void Warningf ( const char * const format, ... );
-static void Errorf ( const char * const format, ... );
-static void Verbosef ( const char * const format, ... );
+static void Warningf( const char * const  format, ... );
+static void Errorf( const char * const  format, ... );
+static void Verbosef( const char * const  format, ... );
 
-static void Changed ( ADF_SECTNUM nSect,
-                      int         changedType );
+static void Changed( ADF_SECTNUM  nSect,
+                     int          changedType );
 
-static void rwHeadAccess ( const ADF_SECTNUM physical,
-                           const ADF_SECTNUM logical,
-                           const bool        write );
+static void rwHeadAccess( const ADF_SECTNUM  physical,
+                          const ADF_SECTNUM  logical,
+                          const bool         write );
 
-static void progressBar ( int perCentDone );
+static void progressBar( int  perCentDone );
 
 static void checkInternals(void);
 
@@ -70,8 +70,8 @@ void adfEnvInitDefault(void)
     adfEnv.eFct = Errorf;
     adfEnv.vFct = Verbosef;
 
-    adfEnv.notifyFct = Changed;
-    adfEnv.rwhAccess = rwHeadAccess;
+    adfEnv.notifyFct   = Changed;
+    adfEnv.rwhAccess   = rwHeadAccess;
     adfEnv.progressBar = progressBar;
 
     adfEnv.useDirCache    = false;
@@ -84,8 +84,8 @@ void adfEnvInitDefault(void)
 /*    sprintf(str,"ADFlib %s (%s)",adfGetVersionNumber(),adfGetVersionDate());
     (*adfEnv.vFct)(str);
 */
-    adfAddDeviceDriver ( &adfDeviceDriverDump );
-    adfAddDeviceDriver ( &adfDeviceDriverRamdisk );
+    adfAddDeviceDriver( &adfDeviceDriverDump );
+    adfAddDeviceDriver( &adfDeviceDriverRamdisk );
 }
 
 
@@ -103,8 +103,8 @@ void adfEnvCleanUp(void)
  * adfEnvSetProperty
  *
  */
-ADF_RETCODE adfEnvSetProperty ( const ADF_ENV_PROPERTY property,
-                                const intptr_t         newval )
+ADF_RETCODE adfEnvSetProperty( const ADF_ENV_PROPERTY  property,
+                               const intptr_t          newval )
 {
     switch ( property ) {
     case ADF_PR_VFCT:
@@ -144,14 +144,14 @@ ADF_RETCODE adfEnvSetProperty ( const ADF_ENV_PROPERTY property,
         adfEnv.quiet =  (bool) newval;
         break;
     default:
-        adfEnv.eFct ( "adfEnvSetProp: invalid property %d", property );
+        adfEnv.eFct( "adfEnvSetProp: invalid property %d", property );
         return ADF_RC_ERROR;
     }
     return ADF_RC_OK;
 }
 
 
-intptr_t adfEnvGetProperty ( const ADF_ENV_PROPERTY property )
+intptr_t adfEnvGetProperty( const ADF_ENV_PROPERTY  property )
 {
     switch ( property ) {
     case ADF_PR_VFCT:                    return (intptr_t) adfEnv.vFct;
@@ -167,7 +167,7 @@ intptr_t adfEnvGetProperty ( const ADF_ENV_PROPERTY property )
     case ADF_PR_IGNORE_CHECKSUM_ERRORS:  return (intptr_t) adfEnv.ignoreChecksumErrors;
     case ADF_PR_QUIET:                   return (intptr_t) adfEnv.quiet;
     default:
-        adfEnv.eFct ( "adfEnvGetProp: invalid property %d", property );
+        adfEnv.eFct( "adfEnvGetProp: invalid property %d", property );
     }
     return 0;
 }
@@ -177,10 +177,10 @@ intptr_t adfEnvGetProperty ( const ADF_ENV_PROPERTY property )
  *  adfEnvSetFct
  *
  */
-void adfEnvSetFct ( const AdfLogFct    eFct,
-                    const AdfLogFct    wFct,
-                    const AdfLogFct    vFct,
-                    const AdfNotifyFct notifyFct )
+void adfEnvSetFct( const AdfLogFct     eFct,
+                   const AdfLogFct     wFct,
+                   const AdfLogFct     vFct,
+                   const AdfNotifyFct  notifyFct )
 {
     if ( eFct != NULL )
         adfEnv.eFct = eFct;
@@ -197,9 +197,9 @@ void adfEnvSetFct ( const AdfLogFct    eFct,
  * adfGetVersionNumber
  *
  */
-char* adfGetVersionNumber(void)
+char * adfGetVersionNumber(void)
 {
-	return(ADFLIB_VERSION);
+    return ADFLIB_VERSION;
 }
 
 
@@ -207,25 +207,26 @@ char* adfGetVersionNumber(void)
  * adfGetVersionDate
  *
  */
-char* adfGetVersionDate(void)
+char * adfGetVersionDate(void)
 {
-	return(ADFLIB_DATE);
+    return ADFLIB_DATE;
 }
 
 
 /*##################################################################################*/
 
-static void rwHeadAccess ( const ADF_SECTNUM physical,
-                           const ADF_SECTNUM logical,
-                           const bool        write )
+static void rwHeadAccess( const ADF_SECTNUM  physical,
+                          const ADF_SECTNUM  logical,
+                          const bool         write )
 {
     /* display the physical sector, the logical block, and if the access is read or write */
-    fprintf(stderr, "phy %d / log %d : %c\n", physical, logical, write ? 'W' : 'R');
+    fprintf( stderr, "phy %d / log %d : %c\n",
+             physical, logical, write ? 'W' : 'R' );
 }
 
-static void progressBar ( int perCentDone )
+static void progressBar( int perCentDone )
 {
-    fprintf(stderr,"%d %% done\n",perCentDone);
+    fprintf( stderr, "%d %% done\n", perCentDone );
 }
 
 //static void Warning(char* msg) {
@@ -242,51 +243,51 @@ static void progressBar ( int perCentDone )
 //}
 
 
-static void Warningf ( const char * const format, ... )
+static void Warningf( const char * const  format, ... )
 {
     if ( adfEnv.quiet )
         return;
 
     va_list ap;
-    va_start ( ap, format );
+    va_start( ap, format );
 
-    fprintf ( stderr, "Warning <" );
-    vfprintf ( stderr, format, ap );
-    fprintf ( stderr, ">\n" );
+    fprintf( stderr, "Warning <" );
+    vfprintf( stderr, format, ap );
+    fprintf( stderr, ">\n" );
 }
 
 
-static void Errorf ( const char * const format, ... )
+static void Errorf( const char * const  format, ... )
 {
     if ( adfEnv.quiet )
         return;
 
     va_list ap;
-    va_start ( ap, format );
+    va_start( ap, format );
 
-    fprintf ( stderr, "Error <" );
-    vfprintf ( stderr, format, ap );
-    fprintf ( stderr, ">\n" );
+    fprintf( stderr, "Error <" );
+    vfprintf( stderr, format, ap );
+    fprintf( stderr, ">\n" );
 /*    exit(1);*/
 }
 
 
-static void Verbosef ( const char * const format, ... )
+static void Verbosef( const char * const  format, ... )
 {
     if ( adfEnv.quiet )
         return;
 
     va_list ap;
-    va_start ( ap, format );
+    va_start( ap, format );
 
-    fprintf ( stderr, "Verbose <" );
-    vfprintf ( stderr, format, ap );
-    fprintf ( stderr, ">\n" );
+    fprintf( stderr, "Verbose <" );
+    vfprintf( stderr, format, ap );
+    fprintf( stderr, ">\n" );
 }
 
 
-static void Changed ( const ADF_SECTNUM nSect,
-                      const int         changedType )
+static void Changed( const ADF_SECTNUM  nSect,
+                     const int          changedType )
 {
     (void) nSect, (void) changedType;
 /*    switch(changedType) {
@@ -307,14 +308,15 @@ static void Changed ( const ADF_SECTNUM nSect,
 
 union u {
     int32_t l;
-    char    c[4];
+    char    c[ 4 ];
 };
 
-static void assertInternal ( bool cnd, const char * const msg )
+static void assertInternal( bool                cnd,
+                            const char * const  msg )
 {
     if ( ! cnd ) {
-        fputs ( msg, stderr );
-        exit(1);
+        fputs( msg, stderr );
+        exit( 1 );
     }
 }
 
@@ -325,49 +327,49 @@ static void checkInternals(void)
 
     /* internal checking */
 
-    assertInternal ( sizeof(short) == 2,
-                     "Compilation error : sizeof(short)!=2\n" );
+    assertInternal( sizeof(short) == 2,
+                    "Compilation error : sizeof(short)!=2\n" );
 
-    assertInternal ( sizeof(int32_t) == 4,
-                     "Compilation error : sizeof(int32_t) != 4\n" );
+    assertInternal( sizeof(int32_t) == 4,
+                    "Compilation error : sizeof(int32_t) != 4\n" );
 
-    assertInternal ( sizeof(struct AdfEntryBlock) == 512,
-                     "Internal error : sizeof(struct AdfEntryBlock) != 512\n");
+    assertInternal( sizeof(struct AdfEntryBlock) == 512,
+                    "Internal error : sizeof(struct AdfEntryBlock) != 512\n");
 
-    assertInternal ( sizeof(struct AdfRootBlock) == 512,
-                     "Internal error : sizeof(struct AdfRootBlock) != 512\n");
+    assertInternal( sizeof(struct AdfRootBlock) == 512,
+                    "Internal error : sizeof(struct AdfRootBlock) != 512\n");
 
-    assertInternal ( sizeof(struct AdfDirBlock) == 512,
-                     "Internal error : sizeof(struct AdfDirBlock) != 512\n");
+    assertInternal( sizeof(struct AdfDirBlock) == 512,
+                    "Internal error : sizeof(struct AdfDirBlock) != 512\n");
 
-    assertInternal ( sizeof(struct AdfBootBlock) == 1024,
-                     "Internal error : sizeof(struct AdfBootBlock) != 1024\n" );
+    assertInternal( sizeof(struct AdfBootBlock) == 1024,
+                    "Internal error : sizeof(struct AdfBootBlock) != 1024\n" );
 
-    assertInternal ( sizeof(struct AdfFileHeaderBlock) == 512,
-                     "Internal error : sizeof(struct AdfFileHeaderBlock) != 512\n" );
+    assertInternal( sizeof(struct AdfFileHeaderBlock) == 512,
+                    "Internal error : sizeof(struct AdfFileHeaderBlock) != 512\n" );
 
-    assertInternal ( sizeof(struct AdfFileExtBlock) == 512,
-                     "Internal error : sizeof(struct AdfFileExtBlock) != 512\n" );
+    assertInternal( sizeof(struct AdfFileExtBlock) == 512,
+                    "Internal error : sizeof(struct AdfFileExtBlock) != 512\n" );
 
-    assertInternal ( sizeof(struct AdfOFSDataBlock) == 512,
-                     "Internal error : sizeof(struct AdfOFSDataBlock) != 512\n" );
+    assertInternal( sizeof(struct AdfOFSDataBlock) == 512,
+                    "Internal error : sizeof(struct AdfOFSDataBlock) != 512\n" );
 
-    assertInternal ( sizeof(struct AdfBitmapBlock) == 512,
-                     "Internal error : sizeof(struct AdfBitmapBlock) != 512\n" );
+    assertInternal( sizeof(struct AdfBitmapBlock) == 512,
+                    "Internal error : sizeof(struct AdfBitmapBlock) != 512\n" );
 
-    assertInternal ( sizeof(struct AdfBitmapExtBlock) == 512,
-                     "Internal error : sizeof(struct AdfBitmapExtBlock) != 512\n" );
+    assertInternal( sizeof(struct AdfBitmapExtBlock) == 512,
+                    "Internal error : sizeof(struct AdfBitmapExtBlock) != 512\n" );
 
-    assertInternal ( sizeof(struct AdfLinkBlock) == 512,
-                     "Internal error : sizeof(struct AdfLinkBlock) != 512\n" );
+    assertInternal( sizeof(struct AdfLinkBlock) == 512,
+                    "Internal error : sizeof(struct AdfLinkBlock) != 512\n" );
 
     val.l = 1L;
 /* if LITT_ENDIAN not defined : must be BIG endian */
 #ifndef LITT_ENDIAN
-    assertInternal ( val.c[3] == 1, /* little endian : LITT_ENDIAN must be defined ! */
-                     "Compilation error : #define LITT_ENDIAN must exist\n" );
+    assertInternal( val.c[3] == 1, /* little endian : LITT_ENDIAN must be defined ! */
+                    "Compilation error : #define LITT_ENDIAN must exist\n" );
 #else
-    assertInternal ( val.c[3] != 1, /* big endian : LITT_ENDIAN must not be defined ! */
-                     "Compilation error : #define LITT_ENDIAN must not exist\n" );
+    assertInternal( val.c[3] != 1, /* big endian : LITT_ENDIAN must not be defined ! */
+                    "Compilation error : #define LITT_ENDIAN must not exist\n" );
 #endif
 }
