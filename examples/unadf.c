@@ -87,7 +87,8 @@ int main(int argc, char *argv[]) {
     struct AdfVolume *vol = NULL;
     struct AdfList *list, *node;
 
-    fprintf(stderr, "unADF v%s : a unzip like for .ADF files, powered by ADFlib (v%s - %s)\n\n",
+    fprintf(stderr, "unADF v%s : an unzip-like utility for .ADF files.\n\n"
+        "Powered by ADFlib v%s (%s)\n\n",
         UNADF_VERSION, adfGetVersionNumber(), adfGetVersionDate());
 
     adfEnvInitDefault();

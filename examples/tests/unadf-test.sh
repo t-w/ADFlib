@@ -6,7 +6,7 @@ UNADF=`get_test_cmd unadf`
 
 # check if it works at all
 #$unadf >$actual 2>/dev/null
-$UNADF 2>&1 | grep -v "powered" >$actual 2>/dev/null
+$UNADF 2>&1 | grep -v "unADF" | grep -v "Powered" | grep -v "^$" >$actual 2>/dev/null
 compare_with "check if it works at all" unadf_1
 
 

@@ -1,4 +1,3 @@
-
 unadf [-lrcsmpw] [-v n] [-d extractdir] dumpname.adf [files-with-path]
     -l : lists root directory contents
     -r : lists directory tree contents
@@ -7,7 +6,5 @@ unadf [-lrcsmpw] [-v n] [-d extractdir] dumpname.adf [files-with-path]
     -m : display file comments, if exists (must be used with -l)
     -p : send extracted files to pipe (unadf -p dump.adf Pics/pic1.gif | xv -)
     -w : mangle filenames to be compatible with Windows filesystems
-
     -v n : mount volume #n instead of default #0 volume
-
     -d dir : extract to 'dir' directory
