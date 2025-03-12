@@ -290,7 +290,7 @@ ADF_RETCODE adfWriteDataBlock( struct AdfVolume * const  vol,
 #ifdef LITT_ENDIAN
         adfSwapEndian( buf, ADF_SWBL_DATA );
 #endif
-        uint32_t newSum = adfNormalSum( buf, 20, 512 );
+        const uint32_t newSum = adfNormalSum( buf, 20, 512 );
         swLong( buf + 20, newSum );
 /*        *(int32_t*)(buf+20) = swapLong((uint8_t*)&newSum);*/
         rc = adfVolWriteBlock( vol, (uint32_t) nSect, buf );
@@ -380,7 +380,6 @@ ADF_RETCODE adfWriteFileExtBlock( struct AdfVolume * const        vol,
                                   struct AdfFileExtBlock * const  fext )
 {
     uint8_t buf[ 512 ];
-    uint32_t newSum;
 
     fext->type      = ADF_T_LIST;
     fext->secType   = ADF_ST_FILE;
@@ -391,7 +390,7 @@ ADF_RETCODE adfWriteFileExtBlock( struct AdfVolume * const        vol,
 #ifdef LITT_ENDIAN
     adfSwapEndian( buf, ADF_SWBL_FEXT );
 #endif
-    newSum = adfNormalSum( buf, 20, 512 );
+    const uint32_t newSum = adfNormalSum( buf, 20, 512 );
     swLong( buf + 20, newSum );
 /*    *(int32_t*)(buf+20) = swapLong((uint8_t*)&newSum);*/
 
