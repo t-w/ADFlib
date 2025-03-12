@@ -49,7 +49,7 @@ struct DevDumpData {
 static struct AdfDevice * adfDevDumpOpen ( const char * const  name,
                                            const AdfAccessMode mode )
 {
-    struct AdfDevice * dev = ( struct AdfDevice * )
+    struct AdfDevice * const  dev = ( struct AdfDevice * )
         malloc ( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
         adfEnv.eFct ( "adfDevDumpOpen : malloc error" );
