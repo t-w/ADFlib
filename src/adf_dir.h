@@ -145,22 +145,6 @@ ADF_SECTNUM adfNameToEntryBlk( struct AdfVolume * const      vol,
                                struct AdfEntryBlock * const  entry,
                                ADF_SECTNUM * const           nUpdSect );
 
-/* util. / helpers */
-
-void adfAccess2String( int32_t  acc,
-                       char     accStr[ 8 + 1 ] );
-
-uint8_t adfIntlToUpper( const uint8_t c );
-
-void adfStrToUpper( uint8_t * const        nstr,
-                    const uint8_t * const  ostr,
-                    const unsigned         nlen,
-                    const bool             intl );
-
-unsigned adfGetHashValue( const uint8_t * const  name,
-                          const bool             intl );
-
-
 /* info / debug */
 ADF_PREFIX void adfEntryPrint( const struct AdfEntry * const  entry );
 

@@ -42,6 +42,15 @@
 #include <string.h>
 
 
+static void adfStrToUpper( uint8_t * const        nstr,
+                           const uint8_t * const  ostr,
+                           const unsigned         nlen,
+                           const bool             intl );
+
+static unsigned adfGetHashValue( const uint8_t * const  name,
+                                 const bool             intl );
+
+
 /*
  * adfToRootDir
  *
@@ -1122,8 +1131,8 @@ for ( int i = 0 ; i < ADF_HT_SIZE ; i++ )  printf("ht[%d]=%d    ", i, ht[i]);
  * Access2String
  *
  */
-void adfAccess2String( int32_t  acc,
-                       char     accStr[ 8 + 1 ] )
+static void adfAccess2String( int32_t  acc,
+                              char     accStr[ 8 + 1 ] )
 {
     strcpy( accStr, "----rwed" );
     if ( adfAccHasD( acc ) )  accStr[ 7 ] = '-';
@@ -1143,13 +1152,13 @@ void adfAccess2String( int32_t  acc,
  * adfIntlToUpper
  *
  */
-uint8_t adfIntlToUpper( const uint8_t  c )
+static inline uint8_t adfIntlToUpper( const uint8_t  c )
 {
     return ( ( c >= 'a' && c <= 'z' ) ||
              ( c >= 224 && c <= 254 && c != 247 ) ) ? c - ('a'-'A') : c ;
 }
 
-uint8_t adfToUpper( const uint8_t  c )
+static inline uint8_t adfToUpper( const uint8_t  c )
 {
     return ( c >= 'a' && c <= 'z' ) ? c - ( 'a' - 'A' ) : c ;
 }
