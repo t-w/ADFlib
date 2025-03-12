@@ -34,18 +34,18 @@
  *
  * adds a cell at the end the list
  */
-struct AdfList * adfListNewCell ( struct AdfList * const list,
-                                  void * const           content )
+struct AdfList * adfListNewCell( struct AdfList * const  list,
+                                 void * const            content )
 {
     struct AdfList * const cell = ( struct AdfList * )
-        malloc ( sizeof ( struct AdfList ) );
-    if (!cell) {
-        adfEnv.eFct ( "adfListNewCell : malloc" );
+        malloc( sizeof ( struct AdfList ) );
+    if ( ! cell ) {
+        adfEnv.eFct( "adfListNewCell : malloc" );
         return NULL;
     }
     cell->content = content;
-    cell->next = cell->subdir = 0;
-    if (list!=NULL)
+    cell->next    = cell->subdir = 0;
+    if ( list != NULL )
         list->next = cell;
 
     return cell;
@@ -56,18 +56,18 @@ struct AdfList * adfListNewCell ( struct AdfList * const list,
  * adfListFree
  *
  */
-void adfListFree ( struct AdfList * const list )
+void adfListFree( struct AdfList * const  list )
 {
-    if (list==NULL) 
+    if ( list == NULL )
         return;
     
-    if (list->next)
-        adfListFree ( list->next );
-    free(list);
+    if ( list->next )
+        adfListFree( list->next );
+    free( list );
 }
 
 
-ADF_RETCODE adfVectorAllocate ( struct AdfVector * const  vector )
+ADF_RETCODE adfVectorAllocate( struct AdfVector * const  vector )
 {
     if ( vector == NULL )
         return ADF_RC_NULLPTR;
@@ -77,14 +77,14 @@ ADF_RETCODE adfVectorAllocate ( struct AdfVector * const  vector )
         return ADF_RC_ERROR;
 
     vector->items = ( vector->nItems > 0 ) ?
-        malloc ( vector->nItems * vector->itemSize ) : NULL;
+        malloc( vector->nItems * vector->itemSize ) : NULL;
 
     return ( vector->nItems > 0 &&
              vector->items == NULL ) ? ADF_RC_MALLOC : ADF_RC_OK;
 }
 
-void adfVectorFree ( struct AdfVector * const vector )
+void adfVectorFree( struct AdfVector * const  vector )
 {
-    free ( vector->items );
+    free( vector->items );
     vector->items = NULL;
 }

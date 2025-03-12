@@ -33,9 +33,9 @@
 #include "adf_types.h"
 
 struct AdfList {         /* generic linked tree */
-    void *content;
-    struct AdfList *subdir;
-    struct AdfList *next;
+    void *            content;
+    struct AdfList *  subdir;
+    struct AdfList *  next;
 };
 
 /* shorter, less clutter but type-unsafe version:
@@ -62,12 +62,13 @@ struct AdfVectorSectors {
 };
 
 
-ADF_PREFIX struct AdfList * adfListNewCell ( struct AdfList * const list,
-                                             void * const           content );
+ADF_PREFIX struct AdfList * adfListNewCell( struct AdfList * const  list,
+                                            void * const            content );
 
-ADF_PREFIX void adfListFree ( struct AdfList * const list );
+ADF_PREFIX void adfListFree( struct AdfList * const  list );
 
-ADF_PREFIX ADF_RETCODE adfVectorAllocate ( struct AdfVector * const vector );
-ADF_PREFIX void adfVectorFree ( struct AdfVector * const vector );
+
+ADF_PREFIX ADF_RETCODE adfVectorAllocate( struct AdfVector * const  vector );
+ADF_PREFIX void adfVectorFree( struct AdfVector * const  vector );
 
 #endif  /* ADF_STR_H */
