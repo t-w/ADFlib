@@ -27,13 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(_WIN32) && !defined(_CYGWIN)
-char * dirname( char * path );
-char * basename( char * path );
-#else
-#include <libgen.h>
-#endif
-
 
 ADF_RETCODE rebuild_bitmap( struct AdfVolume * const  vol );
 int show_block_allocation_bitmap( struct AdfVolume * const  vol );

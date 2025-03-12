@@ -92,7 +92,9 @@ adf_show_metadata_SOURCES = adf_show_metadata.c \
   adf_show_metadata_file.c \
   adf_show_metadata_file.h \
   adf_show_metadata_volume.c \
-  adf_show_metadata_volume.h
+  adf_show_metadata_volume.h \
+  pathutils.c \
+  pathutils.h
 adf_show_metadata_LDADD = $(ADFLIBS)
 adf_show_metadata_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

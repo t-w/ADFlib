@@ -47,6 +47,8 @@ add_executable ( adf_show_metadata
   adf_show_metadata_file.h
   adf_show_metadata_volume.c
   adf_show_metadata_volume.h
+  pathutils.c
+  pathutils.h
 )
 target_link_libraries ( adf_show_metadata adf )
 set_target_properties ( adf_show_metadata PROPERTIES
