@@ -331,10 +331,8 @@ ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
                                const struct Partition * const * const  partList )
 {
     (void)               n;
-    int                  i;
     struct AdfRDSKblock  rdsk;
     struct AdfPARTblock  part;
-    unsigned             len;
 
     /* RDSK */ 
  
@@ -361,7 +359,7 @@ ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
     /* PART */
 
     ADF_SECTNUM j = 1;
-    for ( i = 0; i < dev->nVol; i++ ) {
+    for ( int i = 0; i < dev->nVol; i++ ) {
         memset( &part, 0, sizeof(struct AdfPARTblock) );
 
         if ( i < dev->nVol - 1 )
@@ -369,8 +367,8 @@ ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
         else
             part.next = -1;
 
-        len = min( (unsigned) ADF_MAX_NAME_LEN,
-                   (unsigned) strlen( partList[ i ]->volName ) );
+        const unsigned len = min( (unsigned) ADF_MAX_NAME_LEN,
+                                  (unsigned) strlen( partList[ i ]->volName ) );
         part.nameLen = (char) len;
         strncpy( part.name, partList[ i ]->volName, len );
 
