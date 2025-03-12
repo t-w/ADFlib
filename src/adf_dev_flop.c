@@ -49,7 +49,7 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
     struct AdfVolume * const vol = (struct AdfVolume *)
         malloc( sizeof(struct AdfVolume) );
     if ( vol == NULL ) {
-        (*adfEnv.eFct)("adfMount : malloc");
+        adfEnv.eFct( "%s: malloc", __func__ );
         return ADF_RC_MALLOC;
     }
 
@@ -65,8 +65,8 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
     ADF_RETCODE rc = adfDevReadBlock(
         dev, (uint32_t) vol->firstBlock, 512, (uint8_t *) &boot );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct( "adfMountFlop : error reading BootBlock, device %s, volume %d",
-                     dev->name, 0 );
+        adfEnv.eFct( "%s: error reading BootBlock, device %s, volume %d",
+                     __func__, dev->name, 0 );
         free( vol );
         return rc;
     }
@@ -100,7 +100,7 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
     if ( ! dev->volList ) {
         free( vol->volName );
         free( vol );
-        adfEnv.eFct( "adfMountFlop : malloc, device '%s'", dev->name );
+        adfEnv.eFct( "%s: malloc, device '%s'", __func__, dev->name );
         return ADF_RC_MALLOC;
     }
     dev->volList[ 0 ] = vol;
@@ -122,16 +122,16 @@ ADF_RETCODE adfCreateFlop( struct AdfDevice * const  dev,
                            const uint8_t             volType )
 {
     if ( dev == NULL ) {
-        (*adfEnv.eFct)("adfCreateFlop : dev==NULL");
+        adfEnv.eFct( "%s: dev == NULL", __func__ );
         return ADF_RC_NULLPTR;
     }
     if ( volName == NULL ) {
-        (*adfEnv.eFct)("adfCreateFlop : volName == NULL");
+        adfEnv.eFct( "%s: volName == NULL", __func__ );
         return ADF_RC_NULLPTR;
     }
     dev->volList = (struct AdfVolume **) malloc( sizeof(struct AdfVolume *) );
     if ( ! dev->volList ) {
-        (*adfEnv.eFct)("adfCreateFlop : malloc");
+        adfEnv.eFct( "%s: malloc", __func__ );
         return ADF_RC_MALLOC;
     }
     dev->volList[ 0 ] = adfVolCreate( dev, 0L, 80L, volName, volType );
