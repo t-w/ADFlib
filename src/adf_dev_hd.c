@@ -549,7 +549,6 @@ ADF_RETCODE adfWriteRDSKblock( struct AdfDevice * const     dev,
                                struct AdfRDSKblock * const  rdsk )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
-    uint32_t newSum;
 
     if ( dev->readOnly ) {
         (*adfEnv.wFct)("adfWriteRDSKblock : can't write block, read only device");
@@ -572,7 +571,7 @@ ADF_RETCODE adfWriteRDSKblock( struct AdfDevice * const     dev,
     adfSwapEndian( buf, ADF_SWBL_RDSK );
 #endif
 
-    newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
+    const uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
 
     return adfDevWriteBlock( dev, 0, ADF_LOGICAL_BLOCK_SIZE, buf );
@@ -638,7 +637,6 @@ ADF_RETCODE adfWritePARTblock ( struct AdfDevice * const    dev,
                                 struct AdfPARTblock * const part )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
-    uint32_t newSum;
 	
     if ( dev->readOnly ) {
         (*adfEnv.wFct)("adfWritePARTblock : can't write block, read only device");
@@ -660,7 +658,7 @@ ADF_RETCODE adfWritePARTblock ( struct AdfDevice * const    dev,
     adfSwapEndian( buf, ADF_SWBL_PART );
 #endif
 
-    newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
+    const uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
 /*    *(int32_t*)(buf+8) = swapLong((uint8_t*)&newSum);*/
 
@@ -720,7 +718,6 @@ ADF_RETCODE adfWriteFSHDblock( struct AdfDevice * const     dev,
                                struct AdfFSHDblock * const  fshd )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
-    uint32_t newSum;
 
     if ( dev->readOnly ) {
         (*adfEnv.wFct)("adfWriteFSHDblock : can't write block, read only device");
@@ -737,7 +734,7 @@ ADF_RETCODE adfWriteFSHDblock( struct AdfDevice * const     dev,
     adfSwapEndian( buf, ADF_SWBL_FSHD );
 #endif
 
-    newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
+    uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
 /*    *(int32_t*)(buf+8) = swapLong((uint8_t*)&newSum);*/
 
@@ -799,7 +796,6 @@ ADF_RETCODE adfWriteLSEGblock( struct AdfDevice * const     dev,
                                struct AdfLSEGblock * const  lseg )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
-    uint32_t newSum;
 
     if ( dev->readOnly ) {
         (*adfEnv.wFct)("adfWriteLSEGblock : can't write block, read only device");
@@ -816,7 +812,7 @@ ADF_RETCODE adfWriteLSEGblock( struct AdfDevice * const     dev,
     adfSwapEndian( buf, ADF_SWBL_LSEG );
 #endif
 
-    newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
+    uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
 /*    *(int32_t*)(buf+8) = swapLong((uint8_t*)&newSum);*/
 
