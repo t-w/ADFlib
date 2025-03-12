@@ -41,21 +41,21 @@ struct AdfNativeDevice {
     int fd;
 };
 
-static bool adfLinuxIsBlockDevice ( const char * const devName );
+static bool adfLinuxIsBlockDevice( const char * const  devName );
 
 /*
  * adfLinuxInitDevice
  *
  */
-static struct AdfDevice * adfLinuxInitDevice ( const char * const  name,
-                                               const AdfAccessMode mode )
+static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
+                                              const AdfAccessMode  mode )
 {
-    if ( ! adfLinuxIsBlockDevice ( name ) ) {
+    if ( ! adfLinuxIsBlockDevice( name ) ) {
         return NULL;
     }
 
-    struct AdfDevice * dev = ( struct AdfDevice * )
-        malloc ( sizeof ( struct AdfDevice ) );
+    struct AdfDevice * dev =
+        ( struct AdfDevice * ) malloc( sizeof ( struct AdfDevice ) );
     if ( dev == NULL ) {
         (*adfEnv.eFct)("adfLinuxInitDevice : malloc error");
         return NULL;
@@ -63,7 +63,7 @@ static struct AdfDevice * adfLinuxInitDevice ( const char * const  name,
 
     dev->readOnly = ( mode != ADF_ACCESS_MODE_READWRITE );
 
-    dev->drvData = malloc ( sizeof ( struct AdfNativeDevice ) );
+    dev->drvData = malloc( sizeof ( struct AdfNativeDevice ) );
     if ( dev->drvData == NULL ) {
         adfEnv.eFct("adfLinuxInitDevice : malloc data error");
         free ( dev );
@@ -73,18 +73,18 @@ static struct AdfDevice * adfLinuxInitDevice ( const char * const  name,
     int * const fd = &( ( (struct AdfNativeDevice *) dev->drvData )->fd );
 
     if ( ! dev->readOnly ) {
-        *fd = open ( name, O_RDWR );
+        *fd = open( name, O_RDWR );
         dev->readOnly = ( *fd < 0 ) ? true : false;
     }
 
     if ( dev->readOnly ) {
-        *fd = open ( name, O_RDONLY );
+        *fd = open( name, O_RDONLY );
     }
 
     if ( *fd < 0 ) {
         (*adfEnv.eFct)("adfLinuxInitDevice : cannot open device");
-        free ( dev->drvData );
-        free ( dev );
+        free( dev->drvData );
+        free( dev );
         return NULL;
     }
 
@@ -100,17 +100,17 @@ static struct AdfDevice * adfLinuxInitDevice ( const char * const  name,
         size = blocks * 512;
     }
     */
-    if ( ioctl ( *fd, BLKGETSIZE64, &size ) < 0 ) {
+    if ( ioctl( *fd, BLKGETSIZE64, &size ) < 0 ) {
         // fall-back to lseek
-        size = ( unsigned long long ) lseek ( *fd, 0, SEEK_END );
-        lseek ( *fd, 0, SEEK_SET );
+        size = ( unsigned long long ) lseek( *fd, 0, SEEK_END );
+        lseek( *fd, 0, SEEK_SET );
     }
 
     dev->size = (uint32_t) size;
     
     // https://docs.kernel.org/userspace-api/ioctl/hdio.html
     struct hd_geometry geom;
-    if ( ioctl ( *fd, HDIO_GETGEO, &geom ) == 0 ) {
+    if ( ioctl( *fd, HDIO_GETGEO, &geom ) == 0 ) {
         dev->heads     = geom.heads;
         dev->sectors   = geom.sectors;
         dev->cylinders = geom.cylinders;
@@ -121,11 +121,11 @@ static struct AdfDevice * adfLinuxInitDevice ( const char * const  name,
         dev->cylinders = dev->size / ( dev->sectors * dev->heads * 512 );
     }
 
-    dev->devType = adfDevType ( dev );
+    dev->devType = adfDevType( dev );
     dev->nVol    = 0;
     dev->volList = NULL;
     dev->mounted = false;
-    dev->name    = strdup ( name );
+    dev->name    = strdup( name );
     dev->drv     = &adfDeviceDriverNative;
 
     return ADF_RC_OK;
@@ -137,12 +137,12 @@ static struct AdfDevice * adfLinuxInitDevice ( const char * const  name,
  *
  * free native device
  */
-static ADF_RETCODE adfLinuxReleaseDevice ( struct AdfDevice * const dev )
+static ADF_RETCODE adfLinuxReleaseDevice( struct AdfDevice * const  dev )
 {
-    close ( ( (struct AdfNativeDevice *) dev->drvData )->fd );
-    free ( dev->drvData );
-    free ( dev->name );
-    free ( dev );
+    close( ( (struct AdfNativeDevice *) dev->drvData )->fd );
+    free( dev->drvData );
+    free( dev->name );
+    free( dev );
     return ADF_RC_OK;
 }
 
@@ -151,19 +151,19 @@ static ADF_RETCODE adfLinuxReleaseDevice ( struct AdfDevice * const dev )
  * adfLinuxReadSector
  *
  */
-static ADF_RETCODE adfLinuxReadSector ( struct AdfDevice * const dev,
-                                        const uint32_t           n,
-                                        const unsigned           size,
-                                        uint8_t * const          buf )
+static ADF_RETCODE adfLinuxReadSector( struct AdfDevice * const  dev,
+                                       const uint32_t            n,
+                                       const unsigned            size,
+                                       uint8_t * const           buf )
 {
     const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
 
     off_t offset = n * 512;
-    if ( lseek ( fd, offset, SEEK_SET ) != offset ) {
+    if ( lseek( fd, offset, SEEK_SET ) != offset ) {
         return ADF_RC_ERROR;
     }
 
-    if ( read ( fd, buf, (size_t) size ) != (ssize_t) size )
+    if ( read( fd, buf, (size_t) size ) != (ssize_t) size )
         return ADF_RC_ERROR;
 
     return ADF_RC_OK;   
@@ -174,19 +174,19 @@ static ADF_RETCODE adfLinuxReadSector ( struct AdfDevice * const dev,
  * adfLinuxWriteSector
  *
  */
-static ADF_RETCODE adfLinuxWriteSector ( struct AdfDevice * const dev,
-                                         const uint32_t           n,
-                                         const unsigned           size,
-                                         const uint8_t * const    buf )
+static ADF_RETCODE adfLinuxWriteSector( struct AdfDevice * const  dev,
+                                        const uint32_t            n,
+                                        const unsigned            size,
+                                        const uint8_t * const     buf )
 {
     const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
 
     off_t offset = n * 512;
-    if ( lseek ( fd, offset, SEEK_SET ) != offset ) {
+    if ( lseek( fd, offset, SEEK_SET ) != offset ) {
         return ADF_RC_ERROR;
     }
 
-    if ( write ( fd, (void *) buf, (size_t) size ) != size )
+    if ( write( fd, (void *) buf, (size_t) size ) != size )
         return ADF_RC_ERROR;
 
     return ADF_RC_OK;
@@ -197,7 +197,7 @@ static ADF_RETCODE adfLinuxWriteSector ( struct AdfDevice * const dev,
  * adfLinuxIsDevNative
  *
  */
-static bool adfLinuxIsDevNative ( void )
+static bool adfLinuxIsDevNative( void )
 {
     return true;
 }
@@ -207,13 +207,13 @@ static bool adfLinuxIsDevNative ( void )
  * adfLinuxIsBlockDevice
  *
  */
-static bool adfLinuxIsBlockDevice ( const char * const devName )
+static bool adfLinuxIsBlockDevice( const char * const  devName )
 {
     //return ( strncmp ( devName, "/dev/", 5 ) == 0 );
 
     struct stat sb;
-    if ( lstat ( devName, &sb ) == -1 ) {
-        adfEnv.eFct ( "adfLinuxIsBlockDevice : lstat '%s' failed", devName );
+    if ( lstat( devName, &sb ) == -1 ) {
+        adfEnv.eFct( "adfLinuxIsBlockDevice : lstat '%s' failed", devName );
         return false;
     }
 
@@ -221,7 +221,7 @@ static bool adfLinuxIsBlockDevice ( const char * const devName )
 }
 
 
-const struct AdfDeviceDriver adfDeviceDriverNative = {
+const struct AdfDeviceDriver  adfDeviceDriverNative = {
     .name        = "native linux",
     .data        = NULL,
     .createDev   = NULL,
