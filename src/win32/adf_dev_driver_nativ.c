@@ -118,6 +118,20 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
 }
 
 
+static ADF_RETCODE Win32ReleaseDevice( struct AdfDevice * const  dev )
+{
+    void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
+
+    if ( ! NT4CloseDrive( *hDrv ) )
+        return ADF_RC_ERROR;				/* BV */
+    free( dev->name );
+    free( dev->drvData );
+    free( dev );
+
+    return ADF_RC_OK;
+}
+
+
 static ADF_RETCODE Win32ReadSector( struct AdfDevice * const  dev,
                                     const uint32_t            n,
                                     const unsigned            size,
@@ -149,19 +163,6 @@ static ADF_RETCODE Win32WriteSector ( struct AdfDevice * const dev,
     return ADF_RC_OK;
 }
 
-
-static ADF_RETCODE Win32ReleaseDevice ( struct AdfDevice * const dev )
-{
-    void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
-
-    if ( ! NT4CloseDrive( *hDrv ) )
-        return ADF_RC_ERROR;				/* BV */
-    free( dev->name );
-    free( dev->drvData );
-    free( dev );
-
-    return ADF_RC_OK;
-}
 
 static bool Win32IsDevNative ( void )
 {
