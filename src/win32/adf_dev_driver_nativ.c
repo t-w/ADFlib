@@ -48,7 +48,7 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
 
     struct AdfDevice * dev = malloc( sizeof(struct AdfDevice) );
     if ( dev == NULL ) {
-        adfEnv.eFct( "Win32InitDevice : malloc error" );
+        adfEnv.eFct( "%s: malloc error", __func__ );
         return NULL;
     }
 
@@ -56,14 +56,14 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
 
     dev->drvData = malloc( sizeof(struct AdfNativeDevice) );
     if ( dev->drvData == NULL ) {
-        adfEnv.eFct("Win32InitDevice : malloc data error");
+        adfEnv.eFct( "%s: malloc data error", __func__ );
         free( dev );
         return NULL;
     }
 
     /* convert device name to something usable by Win32 functions */
     if ( strlen( lpstrName ) != 3 ) {
-        (*adfEnv.eFct)("Win32InitDevice : invalid drive specifier");
+        adfEnv.eFct( "%s: invalid drive specifier", __func__ );
         free( dev->drvData );
         free( dev );
         return NULL;
@@ -77,7 +77,7 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
     void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
     *hDrv = NT4OpenDrive( strTempName );
     if ( *hDrv == NULL ) {
-        (*adfEnv.eFct)("Win32InitDevice : NT4OpenDrive");
+        adfEnv.eFct( "%s: NT4OpenDrive", __func__ );
         free( dev->drvData );
         free( dev );
         return NULL;
@@ -85,14 +85,14 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
 
     NT4DriveGeometry_t geometry;
     if ( ! NT4GetDriveGeometry( *hDrv, &geometry ) ) {
-        (*adfEnv.eFct)("Win32InitDevice : error getting drive geometry");
+        adfEnv.eFct( "%s: error getting drive geometry", __func__ );
         Win32ReleaseDevice( dev );
         return NULL;
     }
 
     // no support for disks with non 512-byte sectors (-> to improve?)
     if ( geometry.bytesPerSector != 512 ) {
-        (*adfEnv.eFct)("Win32InitDevice : non 512-byte sector size");
+        adfEnv.eFct( "%s: non 512-byte sector size", __func__ );
         Win32ReleaseDevice( dev );
         return NULL;
     }
@@ -126,7 +126,7 @@ static ADF_RETCODE Win32ReadSector( struct AdfDevice * const  dev,
     void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
 
     if ( ! NT4ReadSector( *hDrv, (long) n, size, buf ) ) {
-        (*adfEnv.eFct)("Win32InitDevice : NT4ReadSector");
+        adfEnv.eFct( "%s: NT4ReadSector", __func__ );
         return ADF_RC_ERROR;				/* BV */
     }
 
@@ -142,7 +142,7 @@ static ADF_RETCODE Win32WriteSector ( struct AdfDevice * const dev,
     void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
 
     if ( ! NT4WriteSector( *hDrv, (long) n, size, buf) ) {
-        (*adfEnv.eFct)("Win32InitDevice : NT4WriteSector");
+        adfEnv.eFct( "%s: NT4WriteSector", __func__ );
         return ADF_RC_ERROR;				/* BV */
     }
 
