@@ -149,7 +149,7 @@ struct AdfList * adfGetRDirEnt( struct AdfVolume * const  vol,
              entry = ( struct AdfEntry * ) malloc( sizeof(struct AdfEntry) );
              if ( ! entry ) {
                  adfFreeDirList( head );
-				 (*adfEnv.eFct)("adfGetDirEnt : malloc");
+                 adfEnv.eFct( "%s: malloc", __func__ );
                  return NULL;
              }
              if ( adfReadEntryBlock( vol, hashTable[ i ], &entryBlk ) != ADF_RC_OK ) {
@@ -183,7 +183,7 @@ struct AdfList * adfGetRDirEnt( struct AdfVolume * const  vol,
                  entry = ( struct AdfEntry * ) malloc( sizeof(struct AdfEntry) );
                  if ( ! entry ) {
                      adfFreeDirList( head );
-					 (*adfEnv.eFct)("adfGetDirEnt : malloc");
+                     adfEnv.eFct( "%s: malloc", __func__ );
                      return NULL;
                  }
                  if ( adfReadEntryBlock( vol, nextSector, &entryBlk ) != ADF_RC_OK ) {
@@ -265,8 +265,8 @@ ADF_SECTNUM adfGetEntryByName( struct AdfVolume * const      vol,
     struct AdfEntryBlock parent;
     ADF_RETCODE rc = adfReadEntryBlock( vol, dirPtr, &parent );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct( "adfGetEntryByName: error reading parent entry "
-                     "(block %d)\n", dirPtr );
+        adfEnv.eFct( "%s: error reading parent entry "
+                     "(block %d)\n", __func__, dirPtr );
         return rc;
     }
 
@@ -308,7 +308,7 @@ ADF_RETCODE adfCreateFile( struct AdfVolume * const           vol,
     else if ( parent.secType == ADF_ST_DIR )
         fhdr->parent = parent.headerKey;
     else
-        (*adfEnv.wFct)("adfCreateFile : unknown parent secType");
+        adfEnv.wFct("%s: unknown parent secType", __func__ );
     adfTime2AmigaTime( adfGiveCurrentTime(), &fhdr->days, &fhdr->mins, &fhdr->ticks );
 
     rc = adfWriteFileHdrBlock( vol, nSect, fhdr );
@@ -346,7 +346,7 @@ ADF_RETCODE adfCreateDir( struct AdfVolume * const  vol,
     /* -1 : do not use a specific, already allocated sector */
     const ADF_SECTNUM nSect = adfCreateEntry( vol, &parent, name, -1 );
     if ( nSect == -1 ) {
-        (*adfEnv.wFct)("adfCreateDir : no sector available");
+        adfEnv.wFct("%s: no sector available", __func__ );
         return ADF_RC_ERROR;
     }
 
@@ -424,8 +424,8 @@ ADF_SECTNUM adfCreateEntry( struct AdfVolume * const      vol,
         else {
             newSect = adfGet1FreeBlock( vol );
             if ( newSect == -1 ) {
-               (*adfEnv.wFct)("adfCreateEntry : nSect==-1");
-               return -1;
+                adfEnv.wFct( "%s: nSect == -1", __func__ );
+                return -1;
             }
         }
 
@@ -458,7 +458,7 @@ ADF_SECTNUM adfCreateEntry( struct AdfVolume * const      vol,
                                (uint8_t *) updEntry.name,
                                updEntry.nameLen, intl );
                 if ( strncmp( name3, name2, len) == 0 ) {
-                    adfEnv.wFct( "adfCreateEntry : entry already exists" );
+                    adfEnv.wFct( "%s: entry already exists", __func__ );
                     return -1;
                 }
             }
@@ -471,7 +471,7 @@ ADF_SECTNUM adfCreateEntry( struct AdfVolume * const      vol,
         else {
             newSect = adfGet1FreeBlock( vol );
             if ( newSect == -1 ) {
-                adfEnv.wFct( "adfCreateEntry : nSect==-1" );
+                adfEnv.wFct( "%s: nSect==-1", __func__ );
                 return -1;
             }
         }
@@ -488,8 +488,8 @@ ADF_SECTNUM adfCreateEntry( struct AdfVolume * const      vol,
             rc = adfWriteFileHdrBlock( vol, updEntry.headerKey,
                                        (struct AdfFileHeaderBlock *) &updEntry );
         else {
-            adfEnv.eFct( "adfCreateEntry : entry '%s' has unknown type %d",
-                         updEntry.name, updEntry.secType );
+            adfEnv.eFct( "%s: entry '%s' has unknown type %d",
+                         __func__, updEntry.name, updEntry.secType );
             rc = ADF_RC_ERROR;
         }
 
@@ -514,7 +514,6 @@ ADF_RETCODE adfRemoveEntry( struct AdfVolume * const  vol,
                             const char * const        name )
 {
     struct AdfEntryBlock parent, previous, entry;
-    char buf[200];
 
     ADF_RETCODE rc = adfReadEntryBlock( vol, pSect, &parent );
     if ( rc != ADF_RC_OK )
@@ -524,16 +523,14 @@ ADF_RETCODE adfRemoveEntry( struct AdfVolume * const  vol,
     const ADF_SECTNUM nSect =
         adfNameToEntryBlk( vol, parent.hashTable, name, &entry, &nSect2 );
     if ( nSect == -1 ) {
-      sprintf( buf, "adfRemoveEntry : entry '%s' not found", name );
-        (*adfEnv.wFct)( buf );
+        adfEnv.wFct( "%s: entry '%s' not found", __func__, name );
         return ADF_RC_ERROR;
     }
     /* if it is a directory, is it empty ? */
     if ( entry.secType == ADF_ST_DIR &&
          ! isDirEmpty ( (struct AdfDirBlock *) &entry ) )
     {
-      sprintf(buf, "adfRemoveEntry : directory '%s' not empty", name);
-        (*adfEnv.wFct)(buf);
+        adfEnv.wFct( "%s: directory '%s' not empty", __func__, name );
         return ADF_RC_ERROR;
     }
 /*    printf("name=%s  nSect2=%ld\n",name, nSect2);*/
@@ -579,8 +576,7 @@ ADF_RETCODE adfRemoveEntry( struct AdfVolume * const  vol,
             adfEnv.notifyFct( pSect, ADF_ST_DIR );
     }
     else {
-      sprintf(buf, "adfRemoveEntry : secType %d not supported", entry.secType);
-        (*adfEnv.wFct)(buf);
+        adfEnv.wFct( "%s: secType %d not supported", __func__, entry.secType );
         return ADF_RC_ERROR;
     }
 
@@ -633,7 +629,7 @@ ADF_RETCODE adfRenameEntry( struct AdfVolume * const  vol,
     const ADF_SECTNUM nSect =
         adfNameToEntryBlk( vol, parent.hashTable, oldName, &entry, &prevSect );
     if ( nSect == -1 ) {
-        adfEnv.wFct( "adfRenameEntry : entry '%s' not found", oldName );
+        adfEnv.wFct( "%s: entry '%s' not found", __func__, oldName );
         return ADF_RC_ERROR;
     }
 
@@ -703,7 +699,7 @@ ADF_RETCODE adfRenameEntry( struct AdfVolume * const  vol,
                                (uint8_t *) previous.name,
                                previous.nameLen, intl );
                 if ( strncmp( name3, name2, len ) == 0 ) {
-                    (*adfEnv.wFct)("adfRenameEntry : entry already exists");
+                    adfEnv.wFct( "%s: entry already exists", __func__ );
                     return ADF_RC_ERROR;
                 }
             }
@@ -719,7 +715,7 @@ ADF_RETCODE adfRenameEntry( struct AdfVolume * const  vol,
             rc = adfWriteFileHdrBlock( vol, previous.headerKey,
                                        (struct AdfFileHeaderBlock *) &previous );
         else {
-            (*adfEnv.wFct)("adfRenameEntry : unknown entry type");
+            adfEnv.wFct( "%s: unknown entry type", __func__ );
             rc = ADF_RC_ERROR;
         }
         if ( rc != ADF_RC_OK )
@@ -779,7 +775,7 @@ ADF_RETCODE adfSetEntryAccess( struct AdfVolume * const  vol,
     const ADF_SECTNUM
         nSect = adfNameToEntryBlk( vol, parent.hashTable, name, &entry, NULL );
     if ( nSect == -1 ) {
-        (*adfEnv.wFct)("adfSetEntryAccess : entry not found");
+        adfEnv.wFct( "%s: entry not found", __func__ );
         return ADF_RC_ERROR;
     }
 
@@ -795,7 +791,7 @@ ADF_RETCODE adfSetEntryAccess( struct AdfVolume * const  vol,
             return rc;
     }
     else {
-        (*adfEnv.wFct)("adfSetEntryAccess : entry secType incorrect");
+        adfEnv.wFct( "%s: entry secType incorrect", __func__ );
         // abort here?
     }
 
@@ -824,7 +820,7 @@ ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
     const ADF_SECTNUM nSect =
         adfNameToEntryBlk( vol, parent.hashTable, name, &entry, NULL );
     if ( nSect == -1 ) {
-        (*adfEnv.wFct)("adfSetEntryComment : entry not found");
+        adfEnv.wFct( "%s: entry not found", __func__ );
         return ADF_RC_ERROR;
     }
 
@@ -843,7 +839,7 @@ ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
             return rc;
     }
     else {
-        (*adfEnv.wFct)("adfSetEntryComment : entry secType incorrect");
+        adfEnv.wFct("%s: entry secType incorrect", __func__ );
         // abort here?
     }
 
@@ -918,30 +914,32 @@ ADF_RETCODE adfReadEntryBlock( struct AdfVolume * const      vol,
 
     const uint32_t  checksumCalculated = adfNormalSum( (uint8_t *) buf, 20, 512 );
     if ( ent->checkSum != checksumCalculated ) {
-        const char  msg[] = "adfReadEntryBlock : invalid checksum 0x%x != "
+        const char  msg[] = "%s: invalid checksum 0x%x != "
             "0x%x (calculated), block %d, volume '%s'";
         if ( adfEnv.ignoreChecksumErrors ) {
-            adfEnv.wFct( msg, ent->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.wFct( msg, __func__, ent->checkSum, checksumCalculated,
+                         nSect, vol->volName );
         } else {
-            adfEnv.eFct( msg, ent->checkSum, checksumCalculated, nSect, vol->volName );
+            adfEnv.eFct( msg, __func__, ent->checkSum, checksumCalculated,
+                         nSect, vol->volName );
             return ADF_RC_BLOCKSUM;
         }
     }
 
     if ( ent->type != ADF_T_HEADER)  {
-        adfEnv.wFct( "adfReadEntryBlock : ADF_T_HEADER id not found, volume '%s', block %u",
-                     vol->volName, nSect );
+        adfEnv.wFct( "%s: ADF_T_HEADER id not found, volume '%s', block %u",
+                     __func__, vol->volName, nSect );
         return ADF_RC_ERROR;
     }
     if ( ent->nameLen > ADF_MAX_NAME_LEN ) {
-        adfEnv.wFct( "adfReadEntryBlock : nameLen (%d) incorrect, volume '%s', block %u, entry %s",
-                     ent->nameLen, vol->volName, nSect, ent->name );
+        adfEnv.wFct( "%s: nameLen (%d) incorrect, volume '%s', block %u, entry %s",
+                     __func__, ent->nameLen, vol->volName, nSect, ent->name );
         //printf("nameLen=%d, commLen=%d, name=%s sector%d\n",
         //    ent->nameLen,ent->commLen,ent->name, ent->headerKey);
     }
     if ( ent->commLen > ADF_MAX_COMMENT_LEN ) {
-        adfEnv.wFct( "adfReadEntryBlock : commLen (%d) incorrect, volume '%s', block %u, entry %s",
-                     ent->commLen, vol->volName, nSect, ent->name);
+        adfEnv.wFct( "%s: commLen (%d) incorrect, volume '%s', block %u, entry %s",
+                     __func__, ent->commLen, vol->volName, nSect, ent->name);
         //printf("nameLen=%d, commLen=%d, name=%s sector%d\n",
         //    ent->nameLen, ent->commLen, ent->name, ent->headerKey);
     }
@@ -1063,8 +1061,8 @@ ADF_RETCODE adfEntBlock2Entry( const struct AdfEntryBlock * const  entryBlk,
     case ADF_ST_LSOFT:
         break;
     default:
-        adfEnv.wFct( "adfEntBlock2Entry: unknown type %u for entry '%s', sector %u",
-                     entry->type, entry->name, entry->sector );
+        adfEnv.wFct( "%s: unknown type %u for entry '%s', sector %u",
+                     __func__, entry->type, entry->name, entry->sector );
     }
 
     return ADF_RC_OK;
