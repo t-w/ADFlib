@@ -67,7 +67,7 @@ struct AdfList *file_list = NULL;
 
 /* prototypes */
 void parse_args(int argc, char *argv[]);
-void help(void);
+void help(FILE * const stream);
 void print_device(struct AdfDevice *dev);
 void print_volume(struct AdfVolume * vol);
 void print_tree(struct AdfList *node, char *path);
@@ -86,10 +86,6 @@ int main(int argc, char *argv[]) {
     struct AdfDevice *dev = NULL;
     struct AdfVolume *vol = NULL;
     struct AdfList *list, *node;
-
-    fprintf(stderr, "unADF v%s : an unzip-like utility for .ADF files.\n\n"
-        "Powered by ADFlib v%s (%s)\n\n",
-        UNADF_VERSION, adfGetVersionNumber(), adfGetVersionDate());
 
     adfEnvInitDefault();
     parse_args(argc, argv);
@@ -192,7 +188,7 @@ void parse_args(int argc, char *argv[]) {
         char option = argv[i][1];
         if ( option == 'v' || option == 'd' ) {
             if ( i + 1 >= argc || argv[i][2] != '\0' ) {
-                help();
+                help(stderr);
                 exit(1);
             }
 
@@ -227,8 +223,19 @@ void parse_args(int argc, char *argv[]) {
                     ? "-p option must be used with extraction, ignored\n"
                     : "sending files to pipe\n");
                 break;
+            case 'h':
+                help(stdout);
+                exit(0);
+            case 'V':
+                /* knowing also the build version of ADFlib is useful, in case
+                   of any issues and version discrepancy (build vs. runtime) */
+                printf("%s, with ADFlib: build   v%s (%s)\n"
+                       "                  runtime v%s (%s)\n",
+                       UNADF_VERSION, ADFLIB_VERSION, ADFLIB_DATE,
+                       adfGetVersionNumber(), adfGetVersionDate());
+                exit(0);
             default: /* unknown option - show help and exit */
-                help();
+                help(stderr);
                 exit(1);
             }
         }
@@ -239,7 +246,7 @@ void parse_args(int argc, char *argv[]) {
         adf_file = argv[i++];
     }
     else {
-        help();
+        help(stderr);
         exit(1);
     }
 
@@ -252,18 +259,21 @@ void parse_args(int argc, char *argv[]) {
     }
 }
 
-void help(void) {
-    fprintf(stderr,
-        "unadf [-lrcsmpw] [-v n] [-d extractdir] dumpname.adf [files-with-path]\n"
+void help(FILE * const stream) {
+    fprintf(stream,
+        "\nunADF - an unzip-like utility for .ADF files.\n\n"
+        "Usage:  unadf [-lrcsmpwV] [-v n] [-d extractdir] dumpname.adf [files-with-path]\n\n"
         "    -l : lists root directory contents\n"
         "    -r : lists directory tree contents\n"
         "    -c : use dircache data (must be used with -l)\n"
         "    -s : display entries logical block pointer (must be used with -l)\n"
         "    -m : display file comments, if exists (must be used with -l)\n"
         "    -p : send extracted files to pipe (unadf -p dump.adf Pics/pic1.gif | xv -)\n"
-        "    -w : mangle filenames to be compatible with Windows filesystems\n\n"
-        "    -v n : mount volume #n instead of default #0 volume\n\n"
-        "    -d dir : extract to 'dir' directory\n");
+        "    -w : mangle filenames to be compatible with Windows filesystems\n"
+        "    -h : show help\n"
+        "    -V : show version\n\n"
+        "    -v n : mount volume #n instead of default #0 volume\n"
+        "    -d dir : extract to 'dir' directory\n\n");
 }
 
 /* prints one line of information about a device */

@@ -4,67 +4,104 @@ basedir=`dirname "$0"`
 
 UNADF=`get_test_cmd unadf`
 
-# check if it works at all
-#$unadf >$actual 2>/dev/null
-$UNADF 2>&1 | grep -v "unADF" | grep -v "Powered" | grep -v "^$" >$actual 2>/dev/null
-compare_with "check if it works at all" unadf_1
+# check no args
+check_no_args() {
+    $( $UNADF >$actual 2>&1 || exit 0; )
+    compare_with "check no args" unadf_1
+}
 
+check_help() {
+    $UNADF -h >$actual
+    compare_with "check help" unadf_help
+}
 
 # check invalid args
-#$unadf -v >$actual 2>/dev/null
-$UNADF -v 2>&1 | grep -v "powered" >$actual 2>/dev/null
-compare_with "check invalid arg for -v" unadf_2
+check_invalid_args() {
+    $( $UNADF -v >$actual 2>&1 || exit 0; )
+    compare_with "check invalid arg for -v" unadf_2
 
-#$unadf -d >$actual 2>/dev/null
-$UNADF -d 2>&1 | grep -v "powered" >$actual 2>/dev/null
-compare_with "check invalid arg for -d" unadf_3
+    $( $UNADF -d >$actual 2>&1 || exit 0; )
+    compare_with "check invalid arg for -d" unadf_3
+}
 
 # -l (list root directory) option
-$UNADF -l "$basedir/arccsh.adf" >$actual 2>/dev/null
-compare_with "-l (list root directory) option" unadf_4
+check_list_root_directory_option() {
+    $UNADF -l "$basedir/arccsh.adf" >$actual 2>/dev/null
+    compare_with "-l (list root directory) option" unadf_4
+}
 
 # -r (list entire disk) option
-$UNADF -r "$basedir/arccsh.adf" >$actual 2>/dev/null
-compare_with "-r (list entire disk) option" unadf_5
+check_list_entire_disk_option() {
+    $UNADF -r "$basedir/arccsh.adf" >$actual 2>/dev/null
+    compare_with "-r (list entire disk) option" unadf_5
+}
 
 # -s (show logical block pointer) option
-$UNADF -ls "$basedir/arccsh.adf" >$actual 2>/dev/null
-compare_with "-s (show logical block pointer) option" unadf_6
-
+check_show_logical_block_pointer_option() {
+    $UNADF -ls "$basedir/arccsh.adf" >$actual 2>/dev/null
+    compare_with "-s (show logical block pointer) option" unadf_6
+}
 # TODO -c (use dircache data) option
 # TODO -m (display file comments) option
 # TODO -v (mount different volume) option
 
 # -d (extract to dir)
-$UNADF -d $tmpdir/x "$basedir/arccsh.adf" >$actual 2>/dev/null
-compare_with "-d (extract to dir)" unadf_7
+check_extract_to_dir() {
+    $UNADF -d $tmpdir/x "$basedir/arccsh.adf" >$actual 2>/dev/null
+    compare_with "-d (extract to dir)" unadf_7
 
 # check permissions were set on extracted files
 # (these tests are failing on MSYS2:
 #  -> either the way of checking or permissions are not valid)
-if [ "x${host_type}" != 'xMINGW32' -a \
-     "x${host_type}" != 'xMINGW64' ]
-then
-    [ -x $tmpdir/x/CSH ] || { echo "Invalid x/CSH permissions" ; echo failed >$status ; }
-    [ -x $tmpdir/x/c/LZX ] || { echo "Invalid x/c/LZX permissions" ; echo failed >$status ; }
-fi
+    if [ "x${host_type}" != 'xMINGW32' -a \
+         "x${host_type}" != 'xMINGW64' ]
+    then
+	[ -x $tmpdir/x/CSH ] || { echo "Invalid x/CSH permissions" ;
+				  echo failed >$status ; }
+	[ -x $tmpdir/x/c/LZX ] || { echo "Invalid x/c/LZX permissions" ;
+				    echo failed >$status ; }
+    fi
+}
 
 # -d (extract to dir) with specific files, not all their original case
-$UNADF -d $tmpdir/x "$basedir/arccsh.adf" csh s/startup-sequence devs/system-configuration >$actual 2>/dev/null
-compare_with "-d (extract to dir) with specific files, not all their original case" unadf_8
-
+check_extract_to_dir_with_specific_files() {
+    $UNADF -d $tmpdir/x "$basedir/arccsh.adf" csh s/startup-sequence \
+        devs/system-configuration >$actual 2>/dev/null
+    compare_with "-d (extract to dir) with specific files, not all their original case" \
+        unadf_8
+}
 # TODO check permissions were set (bug: currently they aren't)
 
 # -p (extract to pipe) option
-$UNADF -p "$basedir/arccsh.adf" s/startup-sequence >$actual 2>/dev/null
-compare_with " -p (extract to pipe) option" unadf_9
+check_extract_to_pipe_option() {
+    $UNADF -p "$basedir/arccsh.adf" s/startup-sequence >$actual 2>/dev/null
+    compare_with " -p (extract to pipe) option" unadf_9
+}
 
 # -w (mangle win32 filenames) option
-$UNADF -d $tmpdir/x -w "$basedir/win32-names.adf" >$actual 2>/dev/null
-compare_with "-w (mangle win32 filenames) option" unadf_10
+check_mangle_win32_filenames_option() {
+    $UNADF -d $tmpdir/x -w "$basedir/win32-names.adf" >$actual 2>/dev/null
+    compare_with "-w (mangle win32 filenames) option" unadf_10
+}
 
 # confirm the mangling (-w) only occurs on extraction
-$UNADF -r -w "$basedir/win32-names.adf" >$actual 2>/dev/null
-compare_with "confirm the mangling (-w) only occurs on extraction" unadf_11
+check_confirm_the_mangling() {
+    $UNADF -r -w "$basedir/win32-names.adf" >$actual 2>/dev/null
+    compare_with "confirm the mangling (-w) only occurs on extraction" unadf_11
+}
+
+
+check_no_args
+check_help
+check_invalid_args
+check_list_root_directory_option
+check_list_entire_disk_option
+check_show_logical_block_pointer_option
+check_extract_to_dir
+check_extract_to_dir_with_specific_files
+check_extract_to_pipe_option
+check_mangle_win32_filenames_option
+check_confirm_the_mangling
 
 read status < $status && test "x$status" = xsuccess
+echo "status: $status"

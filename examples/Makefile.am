@@ -24,6 +24,7 @@ dist_check_DATA = \
 	tests/results/adf-show-metadata-test_4 \
 	tests/results/adf-show-metadata-test_5 \
 	tests/results/unadf_1 \
+	tests/results/unadf_help \
 	tests/results/unadf_2 \
 	tests/results/unadf_3 \
 	tests/results/unadf_4 \
@@ -44,6 +45,7 @@ dist_check_DATA = \
 	tests/results_msys/adf-show-metadata-test_4 \
 	tests/results_msys/adf-show-metadata-test_5 \
 	tests/results_msys/unadf_1 \
+	tests/results_msys/unadf_help \
 	tests/results_msys/unadf_2 \
 	tests/results_msys/unadf_3 \
 	tests/results_msys/unadf_4 \
