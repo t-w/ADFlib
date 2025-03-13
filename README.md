@@ -51,19 +51,22 @@ Usage info is shown when they are executed without any parameters
 
 ### unADF
 
-`unADF` is an unzip like utility for `.ADF` files:
+`unADF` is an unzip-like utility for `.ADF` files.
 
 ```
-unadf [-lrcsp -v n] dumpname.adf [files-with-path] [-d extractdir]
+Usage:  unadf [-lrcsmpwV] [-v n] [-d extractdir] dumpname.adf [files-with-path]
+
     -l : lists root directory contents
     -r : lists directory tree contents
     -c : use dircache data (must be used with -l)
     -s : display entries logical block pointer (must be used with -l)
     -m : display file comments, if exists (must be used with -l)
+    -p : send extracted files to pipe (unadf -p dump.adf Pics/pic1.gif | xv -)
+    -w : mangle filenames to be compatible with Windows filesystems
+    -h : show help
+    -V : show version
 
     -v n : mount volume #n instead of default #0 volume
-
-    -p : send extracted files to pipe (unadf -p dump.adf Pics/pic1.gif | xv -)
     -d dir : extract to 'dir' directory
 ```
 
