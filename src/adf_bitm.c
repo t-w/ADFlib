@@ -1024,17 +1024,3 @@ static uint32_t nBlock2bitmapSize( uint32_t  nBlock )
         mapSize++;
     return mapSize;
 }
-
-
-/*
-static void adfBitmapRelease ( struct AdfVolume * const vol )
-{
-    if ( vol->bitmapTable != NULL ) {
-        for ( unsigned j = 0 ; j < i; j++ )
-                free(vol->bitmapTable[j]);
-        free(vol->bitmapTable);
-    }
-    free(vol->bitmapBlocks);
-    free(vol->bitmapBlocksChg);
-}
-*/
