@@ -58,6 +58,25 @@ static ADF_RETCODE adfBitmapDirCacheSetUsed(
 static uint32_t nBlock2bitmapSize( uint32_t  nBlock );
 
 
+#if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
+
+static void checkNonzeroBMpagesBeyondBMsizeRoot(
+    const char * const callerFuncName,
+    const uint32_t     firstFree,
+    const uint32_t     volBitmapSize,
+    const int32_t      rootBmPages[ ADF_BM_PAGES_ROOT_SIZE ] );
+
+static void checkNonzeroBMpagesBeyondBMsizeExt(
+    const char * const  callerFuncName,
+    const uint32_t      firstFree,
+    const unsigned      bmExt_i,
+    const ADF_SECTNUM   bmExtSect,
+    const uint32_t      volBitmapSize,
+    const int32_t       bmExtBlockBmPages[ ADF_BM_PAGES_EXT_SIZE ] );
+
+#endif
+
+
 /*
  * adfCreateBitmap
  *
@@ -171,7 +190,7 @@ ADF_RETCODE adfReadBitmap( struct AdfVolume * const           vol,
 
     uint32_t j = 0,
              i = 0;
-    /* bitmap pointers in rootblock : 0 <= i < BM_PAGES_ROOT_SIZE */
+    /* bitmap pointers in rootblock : 0 <= i < ADF_BM_PAGES_ROOT_SIZE */
     ADF_SECTNUM bmSect;
     while ( i < vol->bitmap.size &&
             i < ADF_BM_PAGES_ROOT_SIZE &&
@@ -229,16 +248,9 @@ ADF_RETCODE adfReadBitmap( struct AdfVolume * const           vol,
         return ADF_RC_ERROR;
     }
 
-    /* check for erratic (?) (non-zero) entries in bmpages beyond the expected size,
-       more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
-    for ( uint32_t i2 = i ; i2 < ADF_BM_PAGES_ROOT_SIZE ; i2++ ) {
-        if ( root->bmPages[ i2 ] != 0 )
-            adfEnv.wFct( "%s: a non-zero (%u, 0x%02x) entry in rootblock "
-                         "bmpage[%u] in a volume with bmpage size %d",
-                         __func__, root->bmPages[ i2 ], root->bmPages[ i2 ],
-                         i2, vol->bitmap.size );
-    }
+    checkNonzeroBMpagesBeyondBMsizeRoot(
+        __func__, i, vol->bitmap.size, root->bmPages );
 #endif
 
     if ( root->bmExt == 0 )
@@ -275,20 +287,9 @@ ADF_RETCODE adfReadBitmap( struct AdfVolume * const           vol,
             i++; j++;
         }
 
-        /* check for erratic (?) (non-zero) entries in bmpages beyond
-           the expected size,
-           more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
-        for ( uint32_t i2 = i ; i2 < BM_PAGES_EXT_SIZE ; i2++ ) {
-            if ( bmExt.bmPages[ i2 ] != 0 )
-                adfEnv.wFct(
-                    "%s: a non-zero (%u, 0x%02x) entry in bm ext. %u (%d) "
-                    "bmext.bmpage[%u] (bmpage %u), volume bm blocks %d",
-                    __func__, bmExt.bmPages[ i2 ], bmExt.bmPages[ i2 ],
-                    bmExt_i, bmExtSect, i2,
-                    i2 + BM_PAGES_ROOT_SIZE + bmExt_i * BM_PAGES_EXT_SIZE,
-                    vol->bitmap.size );
-        }
+        checkNonzeroBMpagesBeyondBMsizeExt(
+            __func__, i, bmExt_i, bmExtSect, vol->bitmap.size, bmExt.bmPages );
         bmExt_i++;
 #endif
         bmExtSect = bmExt.nextBlock;
@@ -436,7 +437,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
 
     uint32_t i = 0,
              j = 0;
-    /* bitmap pointers in rootblock : 0 <= i < BM_PAGES_ROOT_SIZE */
+    /* bitmap pointers in rootblock : 0 <= i < ADF_BM_PAGES_ROOT_SIZE */
     ADF_SECTNUM bmSect;
     while ( i < vol->bitmap.size &&
             i < ADF_BM_PAGES_ROOT_SIZE &&
@@ -496,19 +497,9 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
         return ADF_RC_ERROR;
     }
 
-    /* check for erratic (?) (non-zero) entries in bmpages beyond the expected size,
-       more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
-    for ( uint32_t i2 = i ; i2 < ADF_BM_PAGES_ROOT_SIZE ; i2++ ) {
-        if ( root->bmPages[ i2 ] != 0 )
-            adfEnv.wFct( "%s: a non-zero (%u, 0x%02x) entry in rootblock "
-                         "bmpage[%u] in a volume with bmpage size %d",
-                         __func__, root->bmPages[ i2 ], root->bmPages[ i2 ],
-                         i2, vol->bitmap.size );
-    }
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    //     -> REPAIR INSTEAD (?) -> JUST SET TO 0
-    //
+    checkNonzeroBMpagesBeyondBMsizeRoot(
+        __func__, i, vol->bitmap.size, root->bmPages );
 #endif
 
     ADF_SECTNUM bmExtSect = root->bmExt;
@@ -544,19 +535,9 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
             i++; j++;
         }
 
-        /* check for erratic (?) (non-zero) entries in bmpages beyond the expected size,
-           more info:  https://github.com/adflib/ADFlib/issues/63 */
 #if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
-        for ( uint32_t i2 = i ; i2 < BM_PAGES_EXT_SIZE ; i2++ ) {
-            if ( bmExtBlock.bmPages[ i2 ] != 0 )
-                adfEnv.wFct(
-                    "%s: a non-zero (%u, 0x%02x) entry in bm ext. %u (%d) "
-                    "bmext.bmpage[%u] (bmpage %u), volume bmpage blocks %d",
-                    __func__, bmExtBlock.bmPages[ i2 ], bmExtBlock.bmPages[ i2 ],
-                    bmExt_i, bmExtSect, i2,
-                    i2 + BM_PAGES_ROOT_SIZE + bmExt_i * BM_PAGES_EXT_SIZE,
-                    vol->bitmap.size );
-        }
+        checkNonzeroBMpagesBeyondBMsizeExt(
+            __func__, i, bmExt_i, bmExtSect, vol->bitmap.size, bmExtBlock.bmPages );
         bmExt_i++;
 #endif
         bmExtSect = bmExtBlock.nextBlock;
@@ -1024,3 +1005,54 @@ static uint32_t nBlock2bitmapSize( uint32_t  nBlock )
         mapSize++;
     return mapSize;
 }
+
+
+#if CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE == 1
+
+/* Check for erratic (?) (non-zero) entries in bmpages beyond the expected
+   size, more info:  https://github.com/adflib/ADFlib/issues/63
+
+   Instead of only checking, such bmpage entries could be "repaired"
+   (set to 0) but, for instance, if any software uses that for some "special"
+   data (eg. as copy protection), "repairing" it would damage the software.
+   So, leaving this code as it is (only as diagnostics) until. eventually,
+   some other rationale for "repairing" comes up.
+*/
+
+
+static void checkNonzeroBMpagesBeyondBMsizeRoot(
+    const char * const  callerFuncName,
+    const uint32_t      firstFree,
+    const uint32_t      volBitmapSize,
+    const int32_t       rootBmPages[ ADF_BM_PAGES_ROOT_SIZE ] )
+{
+    for ( uint32_t i = firstFree; i < ADF_BM_PAGES_ROOT_SIZE; i++ ) {
+        if ( rootBmPages[ i ] != 0 )
+            adfEnv.wFct( "%s: a non-zero (%u, 0x%02x) entry in rootblock "
+                         "bmpage[%u] in a volume with bmpage size %d",
+                         callerFuncName, rootBmPages[ i ], rootBmPages[ i ],
+                         i, volBitmapSize );
+    }
+}
+
+static void checkNonzeroBMpagesBeyondBMsizeExt(
+    const char * const  callerFuncName,
+    const uint32_t      firstFree,
+    const unsigned      bmExt_i,
+    const ADF_SECTNUM   bmExtSect,
+    const uint32_t      volBitmapSize,
+    const int32_t       bmExtBlockBmPages[ ADF_BM_PAGES_EXT_SIZE ] )
+{
+    for ( uint32_t i = firstFree; i < ADF_BM_PAGES_EXT_SIZE; i++ ) {
+        if ( bmExtBlockBmPages[ i ] != 0 )
+            adfEnv.wFct(
+                "%s: a non-zero (%u, 0x%02x) entry in bm ext. %u (%d) "
+                "bmext.bmpage[%u] (bmpage %u), volume bmpage blocks %d",
+                callerFuncName, bmExtBlockBmPages[ i ], bmExtBlockBmPages[ i ],
+                bmExt_i, bmExtSect, i,
+                i + ADF_BM_PAGES_ROOT_SIZE + bmExt_i * ADF_BM_PAGES_EXT_SIZE,
+                volBitmapSize );
+    }
+}
+
+#endif
