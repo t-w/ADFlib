@@ -720,7 +720,6 @@ void adfSetBlockUsed( struct AdfVolume * const  vol,
 /*
  * adfReadBitmapBlock
  *
- * ENDIAN DEPENDENT
  */
 ADF_RETCODE adfReadBitmapBlock( struct AdfVolume *       vol,
                                 ADF_SECTNUM              nSect,
@@ -761,7 +760,6 @@ ADF_RETCODE adfReadBitmapBlock( struct AdfVolume *       vol,
 /*
  * adfWriteBitmapBlock
  *
- * OK
  */
 ADF_RETCODE adfWriteBitmapBlock( struct AdfVolume * const             vol,
                                  const ADF_SECTNUM                    nSect,
@@ -788,7 +786,6 @@ ADF_RETCODE adfWriteBitmapBlock( struct AdfVolume * const             vol,
 /*
  * adfReadBitmapExtBlock
  *
- * ENDIAN DEPENDENT
  */
 ADF_RETCODE adfReadBitmapExtBlock( struct AdfVolume * const          vol,
                                    const ADF_SECTNUM                 nSect,
