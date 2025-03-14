@@ -84,7 +84,7 @@ static void checkNonzeroBMpagesBeyondBMsizeExt(
  */
 ADF_RETCODE adfCreateBitmap( struct AdfVolume * const  vol )
 {
-    ADF_SECTNUM nBlock = (ADF_SECTNUM) adfVolGetSizeInBlocksWithoutBootblock( vol );
+    const ADF_SECTNUM nBlock = (ADF_SECTNUM) adfVolGetSizeInBlocksWithoutBootblock( vol );
 
     vol->bitmap.size = nBlock2bitmapSize( (uint32_t) nBlock );
     ADF_RETCODE rc = adfBitmapAllocate( vol );
@@ -343,15 +343,14 @@ ADF_RETCODE adfUpdateBitmap( struct AdfVolume * const  vol )
  */
 ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol )
 {
-    ADF_SECTNUM *sectList;
-
     struct AdfRootBlock root;
     ADF_RETCODE rc = adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root );
     if ( rc != ADF_RC_OK ) {
         return rc;
     }
 
-    sectList = (ADF_SECTNUM *) malloc( sizeof(ADF_SECTNUM) * (unsigned) vol->bitmap.size );
+     ADF_SECTNUM * const sectList =
+         (ADF_SECTNUM *) malloc( sizeof(ADF_SECTNUM) * (unsigned) vol->bitmap.size );
     if ( ! sectList ) {
         adfEnv.eFct( "%s: sectList", __func__ );
         return ADF_RC_MALLOC;
@@ -362,7 +361,7 @@ ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol )
         return ADF_RC_VOLFULL;
     }
 
-    unsigned n = min( vol->bitmap.size, (uint32_t) ADF_BM_PAGES_ROOT_SIZE );
+    const unsigned n = min( vol->bitmap.size, (uint32_t) ADF_BM_PAGES_ROOT_SIZE );
     for ( unsigned i = 0 ; i < n ; i++ ) {
         root.bmPages[ i ] = vol->bitmap.blocks[ i ] = sectList[ i ];
     }
@@ -517,7 +516,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
         }
         i = 0;
         while ( i < ADF_BM_PAGES_EXT_SIZE && j < vol->bitmap.size ) {
-            ADF_SECTNUM bmBlkPtr = bmExtBlock.bmPages[ i ];
+            const ADF_SECTNUM bmBlkPtr = bmExtBlock.bmPages[ i ];
             if ( ! adfVolIsSectNumValid( vol, bmBlkPtr ) ) {
                 adfEnv.eFct( "%s: sector %d out of range, "
                              "bmext %d bmpages[%u]",
@@ -633,7 +632,7 @@ bool adfGetFreeBlocks( struct AdfVolume * const  vol,
         }
     }
 
-    bool gotAllBlocks = ( i == nbSect );
+    const bool gotAllBlocks = ( i == nbSect );
     if ( gotAllBlocks )
         for ( j = 0; j < nbSect; j++ )
             adfSetBlockUsed( vol, sectList[ j ] );
@@ -650,9 +649,10 @@ bool adfIsBlockFree( const struct AdfVolume * const  vol,
                      const ADF_SECTNUM               nSect )
 {
     assert( nSect >= 2 );
-    int sectOfMap  = nSect - 2;
-    int block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 );
-    int indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
+    const int
+        sectOfMap  = nSect - 2,
+        block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 ),
+        indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
 
 /*printf("sect=%d block=%d ind=%d,  ",sectOfMap,block,indexInMap);
 printf("bit=%d,  ",sectOfMap%32);
@@ -675,16 +675,16 @@ void adfSetBlockFree( struct AdfVolume * const  vol,
     assert( nSect >= 2 );
     assert( nSect <= vol->lastBlock - vol->firstBlock );
 
-    uint32_t oldValue;
-    int sectOfMap  = nSect - 2;
-    int block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 );
-    int indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
+    const int
+        sectOfMap  = nSect - 2,
+        block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 ),
+        indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
 
 /*printf("sect=%d block=%d ind=%d,  ",sectOfMap,block,indexInMap);
 printf("bit=%d,  ",sectOfMap%32);
 *printf("bitm=%x,  ",bitMask[ sectOfMap%32]);*/
 
-    oldValue = vol->bitmap.table[ block ]->map[ indexInMap ];
+    const uint32_t oldValue = vol->bitmap.table[ block ]->map[ indexInMap ];
 /*printf("old=%x,  ",oldValue);*/
     vol->bitmap.table[ block ]->map[ indexInMap ] =
         oldValue | bitMask[ sectOfMap % 32 ];
@@ -704,12 +704,12 @@ void adfSetBlockUsed( struct AdfVolume * const  vol,
     assert( nSect >= 2 );
     assert( nSect <= vol->lastBlock - vol->firstBlock );
 
-    uint32_t oldValue;
-    int sectOfMap  = nSect - 2;
-    int block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 );
-    int indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
+    const int
+        sectOfMap  = nSect - 2,
+        block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 ),
+        indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
 
-    oldValue = vol->bitmap.table[ block ]->map[ indexInMap ];
+    const uint32_t oldValue = vol->bitmap.table[ block ]->map[ indexInMap ];
 
     vol->bitmap.table[ block ]->map[ indexInMap ] =
         oldValue & ( ~bitMask[ sectOfMap % 32 ] );
@@ -774,7 +774,7 @@ ADF_RETCODE adfWriteBitmapBlock( struct AdfVolume * const             vol,
     adfSwapEndian( buf, ADF_SWBL_BITMAP );
 #endif
 
-    uint32_t newSum = adfNormalSum( buf, 0, ADF_LOGICAL_BLOCK_SIZE );
+    const uint32_t newSum = adfNormalSum( buf, 0, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf, newSum );
 
 /*	dumpBlock((uint8_t*)buf);*/
