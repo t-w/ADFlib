@@ -124,7 +124,7 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
             free( vol->bitmap.blocks );
             vol->bitmap.blocks = NULL;
             for ( unsigned j = 0 ; j < i ; j++ )
-                free ( vol->bitmap.table[ j ] );
+                free( vol->bitmap.table[ j ] );
             free( vol->bitmap.table );
             vol->bitmap.table = NULL;
             adfEnv.eFct( "%s: malloc", __func__ );
@@ -370,7 +370,7 @@ ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol )
     /* for devices with more than 25 * BM_MAP_SIZE(127) blocks == hards disks */
     if ( vol->bitmap.size > ADF_BM_PAGES_ROOT_SIZE ) {
 
-        unsigned nExtBlock = (vol->bitmap.size - ADF_BM_PAGES_ROOT_SIZE ) / ADF_BM_MAP_SIZE;
+        unsigned nExtBlock = ( vol->bitmap.size - ADF_BM_PAGES_ROOT_SIZE ) / ADF_BM_MAP_SIZE;
         if ( ( vol->bitmap.size - ADF_BM_PAGES_ROOT_SIZE ) % ADF_BM_MAP_SIZE )
             nExtBlock++;
 
@@ -399,11 +399,11 @@ ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol )
                 nBlock++;
             }
             if ( k + 1 < nExtBlock )
-                bitme.nextBlock = bitExtBlock[ k+1 ];
+                bitme.nextBlock = bitExtBlock[ k + 1 ];
             else
                 bitme.nextBlock = 0;
 
-            rc = adfWriteBitmapExtBlock ( vol, bitExtBlock[ k ], &bitme );
+            rc = adfWriteBitmapExtBlock( vol, bitExtBlock[ k ], &bitme );
             if ( rc != ADF_RC_OK ) {
                 free( sectList );
                 free( bitExtBlock );
@@ -524,7 +524,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
             adfFreeBitmap( vol );
             return rc;
         }
-        i=0;
+        i = 0;
         while ( i < ADF_BM_PAGES_EXT_SIZE && j < vol->bitmap.size ) {
             ADF_SECTNUM bmBlkPtr = bmExtBlock.bmPages[ i ];
             if ( ! adfVolIsSectNumValid( vol, bmBlkPtr ) ) {
@@ -593,7 +593,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
         return rc;
     }
 
-    if ( ! isDirEmpty( (const struct AdfDirBlock * const) &rootDirBlock) ) {
+    if ( ! isDirEmpty( (const struct AdfDirBlock * const) &rootDirBlock ) ) {
         // note: for a large volume (a hard disk) getting all entries can become big
         // - it may need to be optimized
         struct AdfList * const entries = adfGetRDirEnt( vol, vol->rootBlock, true );
@@ -674,7 +674,7 @@ bool adfIsBlockFree( const struct AdfVolume * const  vol,
                      const ADF_SECTNUM               nSect )
 {
     assert( nSect >= 2 );
-    int sectOfMap = nSect-2;
+    int sectOfMap  = nSect - 2;
     int block      = sectOfMap / ( ADF_BM_MAP_SIZE * 32 );
     int indexInMap = ( sectOfMap / 32 ) % ADF_BM_MAP_SIZE;
 
@@ -763,7 +763,8 @@ ADF_RETCODE adfReadBitmapBlock( struct AdfVolume *       vol,
     adfSwapEndian( (uint8_t *) bitm, ADF_SWBL_BITMAP );
 #endif
 
-    const uint32_t checksumCalculated = adfNormalSum( buf, 0, ADF_LOGICAL_BLOCK_SIZE );
+    const uint32_t checksumCalculated = adfNormalSum( buf, 0,
+                                                      ADF_LOGICAL_BLOCK_SIZE );
     if ( bitm->checkSum != checksumCalculated ) {
         const char msg[] = "%s: invalid checksum 0x%x != 0x%x (calculated)"
             ", block %d, volume '%s'";
