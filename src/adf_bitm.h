@@ -34,7 +34,52 @@
 #include "adf_types.h"
 #include "adf_vol.h"
 
-ADF_PREFIX bool adfVolBitmapIsMarkedValid( struct AdfVolume * const  vol );
+
+/* create / destroy bitmap structure for vol. */
+
+ADF_RETCODE adfCreateBitmap( struct AdfVolume * const  vol );
+ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol );
+ADF_PREFIX void adfFreeBitmap( struct AdfVolume * const  vol );
+
+
+/* read volume's bitmap */
+ADF_RETCODE adfReadBitmap( struct AdfVolume * const           vol,
+                           const struct AdfRootBlock * const  root );
+
+/* write volume's bitmap */
+ADF_PREFIX ADF_RETCODE adfUpdateBitmap( struct AdfVolume * const  vol );
+
+/* write new volume's bitmap (while creating/formatting the volume) */
+ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol );
+
+/* reconstruct bitmap based on blocks allocated for written data */
+ADF_PREFIX ADF_RETCODE adfReconstructBitmap(
+    struct AdfVolume * const           vol,
+    const struct AdfRootBlock * const  root );
+
+
+/* block allocate */
+
+ADF_SECTNUM adfGet1FreeBlock( struct AdfVolume * const vol );
+
+bool adfGetFreeBlocks( struct AdfVolume * const  vol,
+                       const int                 nbSect,
+                       ADF_SECTNUM * const       sectList );
+
+
+/* block status operations */
+
+bool adfIsBlockFree( const struct AdfVolume * const  vol,
+                     const ADF_SECTNUM               nSect );
+
+void adfSetBlockFree( struct AdfVolume * const  vol,
+                      const ADF_SECTNUM         nSect );
+
+void adfSetBlockUsed( struct AdfVolume * const  vol,
+                      const ADF_SECTNUM         nSect );
+
+
+/* bitmap block read/write operations */
 
 ADF_PREFIX ADF_RETCODE adfReadBitmapBlock(
     struct AdfVolume * const       vol,
@@ -56,34 +101,10 @@ ADF_PREFIX ADF_RETCODE adfWriteBitmapExtBlock(
     const ADF_SECTNUM                       nSect,
     const struct AdfBitmapExtBlock * const  bitme );
 
-ADF_SECTNUM adfGet1FreeBlock( struct AdfVolume * const vol );
-ADF_PREFIX ADF_RETCODE adfUpdateBitmap( struct AdfVolume * const  vol );
+
+/* status */
 ADF_PREFIX uint32_t adfCountFreeBlocks( const struct AdfVolume * const  vol );
 
-ADF_RETCODE adfReadBitmap( struct AdfVolume * const           vol,
-                           const struct AdfRootBlock * const  root );
-
-ADF_PREFIX ADF_RETCODE adfReconstructBitmap(
-    struct AdfVolume * const           vol,
-    const struct AdfRootBlock * const  root );
-
-bool adfIsBlockFree( const struct AdfVolume * const  vol,
-                     const ADF_SECTNUM               nSect );
-
-void adfSetBlockFree( struct AdfVolume * const  vol,
-                      const ADF_SECTNUM         nSect );
-
-void adfSetBlockUsed( struct AdfVolume * const  vol,
-                      const ADF_SECTNUM         nSect );
-
-bool adfGetFreeBlocks( struct AdfVolume * const  vol,
-                       const int                 nbSect,
-                       ADF_SECTNUM * const       sectList );
-
-ADF_RETCODE adfCreateBitmap( struct AdfVolume * const  vol );
-ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol );
-
-ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol );
-ADF_PREFIX void adfFreeBitmap( struct AdfVolume * const  vol );
+ADF_PREFIX bool adfVolBitmapIsMarkedValid( struct AdfVolume * const  vol );
 
 #endif  /* ADF_BITM_H */
