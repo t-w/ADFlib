@@ -586,11 +586,6 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
         adfFreeDirList( entries );
     }
 
-    // directory cache blocks? (TO CHECK!)
-    //  -> done above (in adfBitmapListSetUsed() )
-
-    // any other blocks to check????
-
     return rc;
 }
 
