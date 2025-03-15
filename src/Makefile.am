@@ -37,7 +37,7 @@ libadf_la_SOURCES = \
     adf_str.c \
     adf_util.c \
     adf_util.h \
-    adf_vector.c
+    adf_vector.c \
     adf_vol.c
 #    debug_util.h \
 #    debug_util.c
