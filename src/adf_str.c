@@ -40,7 +40,7 @@ struct AdfList * adfListNewCell( struct AdfList * const  list,
     struct AdfList * const cell = ( struct AdfList * )
         malloc( sizeof ( struct AdfList ) );
     if ( ! cell ) {
-        adfEnv.eFct( "adfListNewCell : malloc" );
+        adfEnv.eFct( "%s: malloc", __func__ );
         return NULL;
     }
     cell->content = content;
