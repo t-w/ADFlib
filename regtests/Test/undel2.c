@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -82,11 +83,11 @@ int main ( const int          argc,
         cell = cell->next;
     }
     adfFreeDirList(list);
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     printf ( "\nremove %s", fileToRecover );
     adfRemoveEntry(vol,vol->curDirPtr, fileToRecover );
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     cell = list = adfGetDelEnt(vol);
     if (cell)
@@ -121,7 +122,7 @@ int main ( const int          argc,
         goto clean_up_volume;
     }
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {

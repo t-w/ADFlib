@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
     adfVolInstallBootBlock ( vol, bootcode );
     fclose(boot);
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

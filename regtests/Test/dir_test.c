@@ -9,6 +9,7 @@
 
 #include"adflib.h"
 #include "adf_dir.h"
+#include "common.h"
 
 int test_chdir_hlink ( struct AdfVolume * vol,
                        char *             hlink,
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     cell = list = adfGetDirEnt(vol,vol->curDirPtr);
     while(cell) {

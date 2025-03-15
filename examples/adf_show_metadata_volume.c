@@ -24,6 +24,7 @@
 #include <adf_raw.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "adf_show_metadata_volume.h"
@@ -40,7 +41,9 @@ static void show_bmpages_array( const int32_t * const  bmpages,
 
 void show_volume_metadata( struct AdfVolume * const  vol )
 {
-    printf( "%s", adfVolGetInfo( vol ) );
+    const char * const volInfo = adfVolGetInfo( vol );
+    printf( "%s", volInfo );
+    free( volInfo );
 
     struct AdfBootBlock bblock;
     if ( adfReadBootBlock( vol, &bblock ) != ADF_RC_OK ) {

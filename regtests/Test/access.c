@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
 

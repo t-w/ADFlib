@@ -415,7 +415,7 @@ char * adfDevGetInfo( const struct AdfDevice * const  dev )
         devTypeInfo = "unknown device type!";
     }
 
-    char * const info = malloc( DEVINFO_SIZE );
+    char * const info = malloc( DEVINFO_SIZE + 1 );
     if ( info == NULL )
         return NULL;
 

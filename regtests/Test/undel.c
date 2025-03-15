@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
         status = 5;
 	goto clean_up_volume;
     }
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     puts("\ncreate dir_5u");
     ADF_RETCODE rc = adfCreateDir ( vol, vol->curDirPtr, "dir_5u" );
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
         status = 6;
 	goto clean_up_volume;
     }
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     struct AdfList *list, *cell;
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
         status = 7;
 	goto clean_up_volume;
     }
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     puts("\nremove dir_5u");
     rc = adfRemoveEntry ( vol, vol->curDirPtr, "dir_5u" );
@@ -100,7 +101,7 @@ int main(int argc, char *argv[])
         status = 8;
 	goto clean_up_volume;
     }
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     cell = list = adfGetDelEnt(vol);
     if (cell)
@@ -127,7 +128,7 @@ int main(int argc, char *argv[])
         status = 10;
 	goto clean_up_volume;
     }
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     puts("\nundel dir_5u");
     rc = adfUndelEntry ( vol, vol->curDirPtr, 885 ); // dir_5u
@@ -135,7 +136,7 @@ int main(int argc, char *argv[])
         status = 11;
 	goto clean_up_volume;
     }
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {

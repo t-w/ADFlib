@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -38,7 +39,9 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    printf( "%s", adfDevGetInfo( hd ) );
+    const char * const devInfo = adfDevGetInfo( hd );
+    printf( "%s", devInfo );
+    free( devInfo );
 
     if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
@@ -68,7 +71,7 @@ int main(int argc, char *argv[])
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
 

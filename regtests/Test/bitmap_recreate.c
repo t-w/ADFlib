@@ -177,7 +177,7 @@ int main ( const int          argc,
     
     error_status = ( nerrors != 0 );
     
-    //printf( "%s", adfVolGetInfo( vol ) );
+    //showVolInfo( vol );
     //putchar('\n');
 
     /* cleanup */

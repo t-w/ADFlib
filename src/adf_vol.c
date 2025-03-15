@@ -479,14 +479,11 @@ const char * adfVolGetFsStr( const struct AdfVolume * const  vol )
 }
 
 
-#define VOLINFO_SIZE 1024
-static char volInfo[ VOLINFO_SIZE + 1 ];
-
 /*
  * adfVolGetInfo
  *
  */
-const char * adfVolGetInfo( struct AdfVolume * const  vol )
+char * adfVolGetInfo( struct AdfVolume * const  vol )
 {
     struct AdfRootBlock root;
     if ( adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root ) != ADF_RC_OK )
@@ -524,34 +521,70 @@ const char * adfVolGetInfo( struct AdfVolume * const  vol )
     adfDays2Date( root.days,   &aYear, &aMonth, &aDays );
     adfDays2Date( root.cDays,  &mYear, &mMonth, &mDays );
 
-    snprintf( volInfo, VOLINFO_SIZE,
-              "\nADF volume info:\n  Name:\t\t%-30s\n"
-              "  Type:\t\t%s"
-              "  Filesystem:\t%s %s %s\n"
-              "  Free blocks:\t%d\n"
-              "  R/W:\t\t%s\n"
-              "  Created:\t%d/%02d/%02d %d:%02d:%02d\n"
-              "  Last access:\t%d/%02d/%02d %d:%02d:%02d"
-              "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
-              vol->volName, // diskName ?
-              typeInfo,
-              adfVolIsFFS( vol ) ? "FFS" : "OFS",
-              adfVolHasINTL( vol ) ? "INTL " : "",
-              adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
-              adfCountFreeBlocks( vol ),
-              vol->readOnly ? "Read only" : "Read/Write",
-              cDays, cMonth, cYear,
-              root.coMins / 60,
-              root.coMins % 60,
-              root.coTicks / 50,
-              aDays, aMonth, aYear,
-              root.mins / 60,
-              root.mins % 60,
-              root.ticks / 50,
-              mDays, mMonth, mYear,
-              root.cMins / 60,
-              root.cMins % 60,
-              root.cTicks / 50 );
+    const unsigned volInfoSize = snprintf(
+        NULL, 0,
+        "\nADF volume info:\n  Name:\t\t%-30s\n"
+        "  Type:\t\t%s"
+        "  Filesystem:\t%s %s %s\n"
+        "  Free blocks:\t%d\n"
+        "  R/W:\t\t%s\n"
+        "  Created:\t%d/%02d/%02d %d:%02d:%02d\n"
+        "  Last access:\t%d/%02d/%02d %d:%02d:%02d"
+        "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
+        vol->volName, // diskName ?
+        typeInfo,
+        adfVolIsFFS( vol ) ? "FFS" : "OFS",
+        adfVolHasINTL( vol ) ? "INTL " : "",
+        adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
+        adfCountFreeBlocks( vol ),
+        vol->readOnly ? "Read only" : "Read/Write",
+        cDays, cMonth, cYear,
+        root.coMins / 60,
+        root.coMins % 60,
+        root.coTicks / 50,
+        aDays, aMonth, aYear,
+        root.mins / 60,
+        root.mins % 60,
+        root.ticks / 50,
+        mDays, mMonth, mYear,
+        root.cMins / 60,
+        root.cMins % 60,
+        root.cTicks / 50 ) + 1;
+
+
+    char * const volInfo = malloc( volInfoSize );
+    if ( volInfo == NULL )
+        return NULL;
+
+    snprintf(
+        volInfo, volInfoSize,
+        "\nADF volume info:\n  Name:\t\t%-30s\n"
+        "  Type:\t\t%s"
+        "  Filesystem:\t%s %s %s\n"
+        "  Free blocks:\t%d\n"
+        "  R/W:\t\t%s\n"
+        "  Created:\t%d/%02d/%02d %d:%02d:%02d\n"
+        "  Last access:\t%d/%02d/%02d %d:%02d:%02d"
+        "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
+        vol->volName, // diskName ?
+        typeInfo,
+        adfVolIsFFS( vol ) ? "FFS" : "OFS",
+        adfVolHasINTL( vol ) ? "INTL " : "",
+        adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
+        adfCountFreeBlocks( vol ),
+        vol->readOnly ? "Read only" : "Read/Write",
+        cDays, cMonth, cYear,
+        root.coMins / 60,
+        root.coMins % 60,
+        root.coTicks / 50,
+        aDays, aMonth, aYear,
+        root.mins / 60,
+        root.mins % 60,
+        root.ticks / 50,
+        mDays, mMonth, mYear,
+        root.cMins / 60,
+        root.cMins % 60,
+        root.cTicks / 50 );
 
     return volInfo;
 }

@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -87,8 +88,8 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    printf( "%s", adfVolGetInfo( vol ) );
-    printf( "%s", adfVolGetInfo( vol2 ) );
+    showVolInfo( vol );
+    showVolInfo( vol2 );
 
     adfVolUnMount(vol);
     adfVolUnMount(vol2);

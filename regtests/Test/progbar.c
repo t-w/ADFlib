@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -62,7 +63,7 @@ puts("\ncreate floppy");
         adfEnvCleanUp(); exit(1);
     }
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

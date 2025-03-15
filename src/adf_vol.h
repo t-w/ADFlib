@@ -103,10 +103,6 @@ ADF_PREFIX ADF_RETCODE adfVolWriteBlock( struct AdfVolume * const  vol,
                                          const uint32_t            nSect,
                                          const uint8_t * const     buf );
 
-ADF_PREFIX const char * adfVolGetFsStr( const struct AdfVolume * const  vol );
-ADF_PREFIX const char * adfVolGetInfo( struct AdfVolume * const  vol );
-
-
 static inline uint32_t adfVolGetSizeInBlocks( const struct AdfVolume * const  vol )
 {
     return (uint32_t) ( vol->lastBlock - vol->firstBlock + 1 );
@@ -162,5 +158,19 @@ static inline bool adfVolIsFsValid( const struct AdfVolume * const  vol )
         adfVolIsFFS( vol ) ||
         adfVolIsPFS( vol ) );
 }
+
+
+ADF_PREFIX const char * adfVolGetFsStr( const struct AdfVolume * const  vol );
+
+
+/*
+ * adfVolGetInfo
+ *
+ * Returns pointer to dynamically allocated char array
+ * with text information about the volume device.
+ * It must be free()-d afterwards.
+ */
+ADF_PREFIX char * adfVolGetInfo( struct AdfVolume * const  vol );
+
 
 #endif  /* ADF_VOL_H */

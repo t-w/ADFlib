@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 
 
 void MyVer(char *msg)
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
     printf( "%s", devInfo );
     free( devInfo );
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
 
     cell = list = adfGetDirEnt(vol,vol->curDirPtr);

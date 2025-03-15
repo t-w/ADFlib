@@ -9,6 +9,8 @@
 
 #include"adflib.h"
 #include "adf_dir.h"
+#include "common.h"
+
 
 void MyVer(char *msg)
 {
@@ -56,8 +58,8 @@ int main(int argc, char *argv[])
         fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
-	
-    printf( "%s", adfVolGetInfo( vol ) );
+
+    showVolInfo( vol );
 
     head = list = adfGetDirEnt(vol,vol->curDirPtr);
     while(list) {
@@ -118,7 +120,7 @@ int main(int argc, char *argv[])
 
     putchar('\n');
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

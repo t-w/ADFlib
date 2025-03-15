@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    printf( "%s", adfVolGetInfo( vol ) );
+    showVolInfo( vol );
 
 
     /* write one file */
