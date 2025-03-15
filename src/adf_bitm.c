@@ -34,6 +34,7 @@
 #include "adf_file_block.h"
 #include "adf_raw.h"
 #include "adf_util.h"
+#include "adf_vector.h"
 
 #include <assert.h>
 #include <stdlib.h>

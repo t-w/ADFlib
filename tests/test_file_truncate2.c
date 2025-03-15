@@ -165,7 +165,7 @@ void test_adfFileTruncateGetBlocksToRemove ( test_data_t * const tdata )
     //         bufsize, truncsize );
     //fflush(stdout);
 
-    struct AdfVectorSectors blocks_to_remove;
+    struct AdfVectorSectors blocks_to_remove = adfVectorSectorsCreate(0);
     ADF_RETCODE rc = adfFileTruncateGetBlocksToRemove ( file, truncsize, &blocks_to_remove );
     //printf ( "testing 2 with : bufsize %u, truncsize %u\n",
     //         bufsize, truncsize );
@@ -186,7 +186,7 @@ void test_adfFileTruncateGetBlocksToRemove ( test_data_t * const tdata )
                     "bufsize %u, truncsize %u",
                     n_blocks_to_remove_expected, blocks_to_remove.nItems,
                     bufsize, truncsize );
-    adfVectorFree ( (struct AdfVector *) &blocks_to_remove );
+    blocks_to_remove.destroy( &blocks_to_remove );
 
     // umount volume
     adfVolUnMount ( vol );

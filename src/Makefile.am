@@ -37,6 +37,7 @@ libadf_la_SOURCES = \
     adf_str.c \
     adf_util.c \
     adf_util.h \
+    adf_vector.c
     adf_vol.c
 #    debug_util.h \
 #    debug_util.c
@@ -71,6 +72,7 @@ adfinc_HEADERS = \
     adf_salv.h \
     adf_str.h \
     adf_types.h \
+    adf_vector.h \
     adf_version.h \
     adf_vol.h
 

@@ -165,6 +165,7 @@ int main( const int     argc,
         status = 5;
 
 clean_up_free_del_list:
+    options.entries.destroy( &options.entries );
     adfFreeDelList( deletedEntries );
 
 clean_up_volume:
@@ -179,7 +180,6 @@ clean_up_dev_close:
 clean_up_env:
     adfEnvCleanUp();
 
-    adfVectorFree( (struct AdfVector *) &options.entries );
 
     return status;
 }
@@ -196,9 +196,7 @@ bool parse_args( const int * const     argc,
     options->verbose =
     options->help    =
     options->version = false;
-    options->entries.nItems   = 0;
-    options->entries.itemSize = sizeof( ADF_SECTNUM );
-    options->entries.sectors  = NULL;
+    options->entries = adfVectorSectorsCreate( 0 );
 
     const char * valid_options = "p:hvV";
     int opt;
@@ -247,9 +245,8 @@ bool parse_args( const int * const     argc,
 
     /* (optional) list of files (given as sectors of their file header blocks)
        to undelete */
-    options->entries.nItems = (unsigned)( *argc - optind );
-    ADF_RETCODE rc = adfVectorAllocate( (struct AdfVector * const) &options->entries );
-    if ( rc != ADF_RC_OK ) {
+    options->entries = adfVectorSectorsCreate( (unsigned)( *argc - optind ) );
+    if ( options->entries.sectors == NULL ) {
         fprintf( stderr, "Memory allocation error.");
         return false;
     }
@@ -265,7 +262,7 @@ bool parse_args( const int * const     argc,
              blockIdx > 0x7fffffff )          /* overflow / negative */
         {
             fprintf( stderr, "Invalid file header block number '%s'.\n", blockStr );
-            adfVectorFree( (struct AdfVector *) &options->entries );
+            options->entries.destroy( &options->entries );
             return false;
         }
         options->entries.sectors[ i ] = (ADF_SECTNUM) blockIdx;

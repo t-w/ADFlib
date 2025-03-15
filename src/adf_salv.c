@@ -372,8 +372,8 @@ ADF_RETCODE adfUndelFile( struct AdfVolume *           vol,
             goto adfUndelFile_error_set_blocks_free;
     }
 
-    adfVectorFree( (struct AdfVector *) &fileBlocks.data );
-    adfVectorFree( (struct AdfVector *) &fileBlocks.extens );
+    fileBlocks.data.destroy( &fileBlocks.data );
+    fileBlocks.extens.destroy( &fileBlocks.extens );
 
     return adfUpdateBitmap( vol );
 
@@ -386,8 +386,8 @@ adfUndelFile_error_set_blocks_free:
         adfSetBlockFree( vol, fileBlocks.data.sectors[ i ] );
 
 adfUndelFile_error:
-    adfVectorFree( (struct AdfVector *) &fileBlocks.data );
-    adfVectorFree( (struct AdfVector *) &fileBlocks.extens );
+    fileBlocks.data.destroy( &fileBlocks.data );
+    fileBlocks.extens.destroy( &fileBlocks.extens );
     return rc;
 }
 
@@ -486,8 +486,8 @@ ADF_RETCODE adfCheckFile( struct AdfVolume * const                 vol,
     }
 
 adfCheckFile_free:
-    adfVectorFree( (struct AdfVector *) &fileBlocks.data );
-    adfVectorFree( (struct AdfVector *) &fileBlocks.extens );
+    fileBlocks.data.destroy( &fileBlocks.data );
+    fileBlocks.extens.destroy( &fileBlocks.extens );
 
     return rc;
 }

@@ -54,20 +54,18 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
     fileBlocks->header          = entry->headerKey;
     //fileBlocks->data.sectors    = NULL;  -> memset
     //fileBlocks->extens.sectors  = NULL;  -> memset
-    fileBlocks->data.itemSize   =
-    fileBlocks->extens.itemSize = sizeof(ADF_SECTNUM);
+    fileBlocks->data              = adfVectorSectorsCreate( 0 );
+    fileBlocks->extens            = adfVectorSectorsCreate( 0 );
 
+    uint32_t dataItemsNum, extensItemsNum;
 #ifndef NDEBUG
     uint32_t sizeInBlocks =
 #endif
-        adfFileRealSize( entry->byteSize,
-                         vol->datablockSize,
-                         &fileBlocks->data.nItems,
-                         &fileBlocks->extens.nItems );
-    assert ( sizeInBlocks ==
-             fileBlocks->data.nItems + fileBlocks->extens.nItems + 1 );  // +1 for file header block
+        adfFileRealSize( entry->byteSize, vol->datablockSize,
+                         &dataItemsNum, &extensItemsNum );
+    assert( sizeInBlocks == dataItemsNum + extensItemsNum + 1 );  // +1 for file header block
 
-    const int32_t dblocksInHeader = min( fileBlocks->data.nItems,
+    const int32_t dblocksInHeader = min( dataItemsNum,
                                          (unsigned) ADF_MAX_DATABLK );
     if ( dblocksInHeader != entry->highSeq ) {
         adfEnv.eFct( "%s: inconsistent data in the File Header block "
@@ -80,8 +78,8 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
     }
 
     /* add data blocks from file header block */
-    status = adfVectorAllocate( (struct AdfVector *) &fileBlocks->data );
-    if ( status != ADF_RC_OK ) {
+    fileBlocks->data = adfVectorSectorsCreate( dataItemsNum );
+    if ( fileBlocks->data.sectors == NULL ) {
         adfEnv.eFct( "%s: malloc", __func__ );
         return ADF_RC_MALLOC;
     }
@@ -93,11 +91,11 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
             entry->dataBlocks[ ADF_MAX_DATABLK - 1 - i ];
     }
 
-    if ( fileBlocks->extens.nItems > 0 ) {
+    if ( extensItemsNum > 0 ) {
         /* add file extension blocks and data blocks indexed in them */
 
-        status = adfVectorAllocate( (struct AdfVector *) &fileBlocks->extens );
-        if ( status != ADF_RC_OK ) {
+        fileBlocks->extens = adfVectorSectorsCreate( extensItemsNum );
+        if ( fileBlocks->extens.sectors == NULL ) {
             adfEnv.eFct( "%s: malloc", __func__ );
             status = ADF_RC_MALLOC;
             goto adfGetFileBlocks_error;
@@ -139,8 +137,8 @@ ADF_RETCODE adfGetFileBlocks( struct AdfVolume * const                 vol,
     return ADF_RC_OK;
 
 adfGetFileBlocks_error:
-    adfVectorFree( (struct AdfVector *) &fileBlocks->extens );
-    adfVectorFree( (struct AdfVector *) &fileBlocks->data );
+    fileBlocks->extens.destroy( &fileBlocks->extens );
+    fileBlocks->data.destroy( &fileBlocks->data );
     return status;
 }
 
@@ -163,8 +161,8 @@ ADF_RETCODE adfFreeFileBlocks( struct AdfVolume * const           vol,
         adfSetBlockFree( vol, fileBlocks.extens.sectors[ i ] );
     }
 
-    adfVectorFree( (struct AdfVector *) &fileBlocks.data );
-    adfVectorFree( (struct AdfVector *) &fileBlocks.extens );
+    fileBlocks.data.destroy( &fileBlocks.data );
+    fileBlocks.extens.destroy( &fileBlocks.extens );
 		
     return rc;
 }

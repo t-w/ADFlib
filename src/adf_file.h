@@ -27,6 +27,7 @@
 #define ADF_FILE_H
 
 #include "adf_blk.h"
+#include "adf_vector.h"
 #include "adf_vol.h"
 
 
