@@ -123,11 +123,6 @@ static inline uint32_t adfVolGetSizeInBlocksWithoutBootblock(
     return (uint32_t) ( adfVolGetSizeInBlocks ( vol ) - 2 );
 }
 
-static inline uint32_t adfVolGetBlockNum( const struct AdfVolume * const  vol )
-{
-    return (uint32_t) ( vol->lastBlock - vol->firstBlock + 1 );
-}
-
 /* get calculated position of the filesystem's rootblock for given volume */
 static inline ADF_SECTNUM adfVolCalcRootBlk( const struct AdfVolume * const  vol )
 {

@@ -114,7 +114,7 @@ int main( const int                  argc,
         goto dev_mount_cleanup;
     }
 
-    const unsigned volSizeBlocks = adfVolGetBlockNum( vol );
+    const unsigned volSizeBlocks = adfVolGetSizeInBlocks( vol );
     printf( "\nMounted volume:\t\t%d, '%s'\n"
             "\nVolume size in blocks:   \n"
             "   total (including boot block)   %u\n"
