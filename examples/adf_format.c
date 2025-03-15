@@ -112,8 +112,11 @@ int main( const int            argc,
         exit( EXIT_FAILURE );
     }
 
-    if ( options.verbose )
-        adfDevInfo( device );
+    if ( options.verbose ) {
+        const char * const devInfo = adfDevGetInfo( device );
+        printf( "%s", devInfo );
+        free( devInfo );
+    }
 
     if ( device->nVol <= (int) options.volidx ) {
         fprintf( stderr, "Invalid volume index %u, %s contains %d volume%s.\n",
@@ -163,8 +166,11 @@ int main( const int            argc,
     }
     printf( "Done!\n" );
 
-    if ( options.verbose )
-        adfDevInfo( device );
+    if ( options.verbose ) {
+        const char * const devInfo = adfDevGetInfo( device );
+        printf( "%s", devInfo );
+        free( devInfo );
+    }
 
     adfDevClose( device );
     adfEnvCleanUp();

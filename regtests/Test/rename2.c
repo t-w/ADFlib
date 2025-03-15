@@ -52,7 +52,9 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfDevInfo(hd);
+    const char * const devInfo = adfDevGetInfo( hd );
+    printf( "%s", devInfo );
+    free( devInfo );
 
     printf( "%s", adfVolGetInfo( vol ) );
 

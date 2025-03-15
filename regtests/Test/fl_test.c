@@ -69,9 +69,11 @@ int main(int argc, char *argv[])
         fprintf(stderr, "can't mount device\n");
         adfEnvCleanUp(); exit(1);
     }
-	
-    adfDevInfo(hd);
-	
+
+    const char * const devInfo = adfDevGetInfo( hd );
+    printf( "%s", devInfo );
+    free( devInfo );
+
     adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                  ADF_DOSFS_DIRCACHE );
 

@@ -33,6 +33,7 @@
 #include "adf_dev_hd.h"
 #include "adf_env.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -129,64 +130,6 @@ int adfDevType( const struct AdfDevice * const  dev )
         adfEnv.eFct("%: unknown device type", __func__ );
         return -1;
     }
-}
-
-
-/*
- * adfDevInfo
- *
- * display information about the device and its volumes
- * for demonstration purpose only since the output is stdout !
- *
- * can be used before adfVolCreate() or adfVolMount()
- */
-void adfDevInfo( const struct AdfDevice * const  dev )
-{
-    const char * devTypeInfo = NULL;
-    switch ( dev->devType ) {
-    case ADF_DEVTYPE_FLOPDD:
-        devTypeInfo = "floppy dd";
-        break;
-    case ADF_DEVTYPE_FLOPHD:
-        devTypeInfo = "floppy hd";
-        break;
-    case ADF_DEVTYPE_HARDDISK:
-        devTypeInfo = "harddisk";
-        break;
-    case ADF_DEVTYPE_HARDFILE:
-        devTypeInfo = "hardfile";
-        break;
-    default:
-        devTypeInfo = "unknown device type!";
-    }
-
-    printf( "\nADF device info:\n  Type:\t\t%s\n  Driver:\t%s\n",
-            devTypeInfo, dev->drv->name );
-
-    printf( "  Geometry:\n"
-            "    Cylinders\t%d\n"
-            "    Heads\t%d\n"
-            "    Sectors\t%d\n\n",
-            dev->cylinders, dev->heads, dev->sectors );
-
-    printf( "  Volumes:\t%d%s\n", dev->nVol,
-            dev->nVol > 0 ? "\n   idx  first bl.     last bl.    filesystem    name" : "" );
-
-    for ( int i = 0 ; i < dev->nVol ; i++ ) {
-        const struct AdfVolume * const vol = dev->volList[i];
-        const char * const fstype = ( adfVolIsDosFS( vol ) ) ?
-            ( adfVolIsOFS( vol ) ? "OFS" : "FFS" ) : "???";
-        printf( "    %2d  %9d    %9d    %s(%s)      \"%s\"", i,
-                vol->firstBlock,
-                vol->lastBlock,
-                adfVolIsFsValid(vol) ? vol->fs.id : "???",
-                fstype,
-                vol->volName ? vol->volName : "" );
-        if ( vol->mounted )
-            printf("    mounted");
-        putchar('\n');
-    }
-    putchar('\n');
 }
 
 
@@ -443,4 +386,76 @@ static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev )
              dev->heads > 0    &&
              dev->sectors > 0  &&
              dev->cylinders * dev->heads * dev->sectors * 512 == dev->size );
+}
+
+
+/*
+ * adfDevGetInfo
+ *
+ */
+#define DEVINFO_SIZE 1024
+
+char * adfDevGetInfo( const struct AdfDevice * const  dev )
+{
+    const char * devTypeInfo = NULL;
+    switch ( dev->devType ) {
+    case ADF_DEVTYPE_FLOPDD:
+        devTypeInfo = "floppy dd";
+        break;
+    case ADF_DEVTYPE_FLOPHD:
+        devTypeInfo = "floppy hd";
+        break;
+    case ADF_DEVTYPE_HARDDISK:
+        devTypeInfo = "harddisk";
+        break;
+    case ADF_DEVTYPE_HARDFILE:
+        devTypeInfo = "hardfile";
+        break;
+    default:
+        devTypeInfo = "unknown device type!";
+    }
+
+    char * const info = malloc( DEVINFO_SIZE );
+    if ( info == NULL )
+        return NULL;
+
+    char *infoptr = info;
+    infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+                         "\nADF device info:\n  Type:\t\t%s\n  Driver:\t%s\n",
+                         devTypeInfo, dev->drv->name );
+
+    infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+                         "  Geometry:\n"
+            "    Cylinders\t%d\n"
+            "    Heads\t%d\n"
+            "    Sectors\t%d\n\n",
+            dev->cylinders, dev->heads, dev->sectors );
+
+    infoptr += snprintf(
+        infoptr, DEVINFO_SIZE - ( infoptr - info ),
+        "  Volumes:\t%d%s\n", dev->nVol,
+        dev->nVol > 0 ? "\n   idx  first bl.     last bl.    filesystem    name" : "" );
+
+    for ( int i = 0 ; i < dev->nVol ; i++ ) {
+        const struct AdfVolume * const vol = dev->volList[i];
+        const char * const fstype = ( adfVolIsDosFS( vol ) ) ?
+            ( adfVolIsOFS( vol ) ? "OFS" : "FFS" ) : "???";
+        infoptr += snprintf(
+            infoptr, DEVINFO_SIZE - ( infoptr - info ),
+            "    %2d  %9d    %9d    %s(%s)      \"%s\"", i,
+                vol->firstBlock,
+                vol->lastBlock,
+                adfVolIsFsValid(vol) ? vol->fs.id : "???",
+                fstype,
+                vol->volName ? vol->volName : "" );
+        if ( vol->mounted )
+            infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+                                 "    mounted");
+        infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+                             "\n");
+    }
+    infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+                         "\n");
+    assert( infoptr - info < DEVINFO_SIZE );
+    return info;
 }

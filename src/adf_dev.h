@@ -91,7 +91,6 @@ ADF_PREFIX void adfDevClose( struct AdfDevice * const dev );
 
 
 ADF_PREFIX int adfDevType( const struct AdfDevice * const dev );
-ADF_PREFIX void adfDevInfo( const struct AdfDevice * const dev );
 
 ADF_PREFIX ADF_RETCODE adfDevMount( struct AdfDevice * const dev );
 ADF_PREFIX void adfDevUnMount( struct AdfDevice * const dev );
@@ -106,4 +105,17 @@ ADF_PREFIX ADF_RETCODE adfDevWriteBlock( struct AdfDevice * const  dev,
                                          const uint32_t            pSect,
                                          const uint32_t            size,
                                          const uint8_t * const     buf );
+
+/*
+ * adfDevGetInfo
+ *
+ * Returns pointer to dynamically allocated char array
+ * with text information about the device and its volumes.
+ * It must be free()-d afterwards.
+ *
+ * can be used before adfVolCreate() or adfVolMount()
+ */
+
+ADF_PREFIX char * adfDevGetInfo( const struct AdfDevice * const  dev );
+
 #endif  /* ADF_DEV_H */

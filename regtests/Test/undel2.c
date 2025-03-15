@@ -64,7 +64,9 @@ int main ( const int          argc,
         goto clean_up_dev_close;
     }
 
-    adfDevInfo ( hd );
+    const char * const devInfo = adfDevGetInfo( hd );
+    printf( "%s", devInfo );
+    free( devInfo );
 
     struct AdfVolume * const vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {

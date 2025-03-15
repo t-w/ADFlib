@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    adfDevInfo ( hd );
+    printf( "%s", adfDevGetInfo( hd ) );
 
     if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )

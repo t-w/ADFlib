@@ -92,7 +92,11 @@ int main( const int                   argc,
                  floppy_type, adfname );
         return 1;
     }
-    adfDevInfo( device );
+
+    const char * const devInfo = adfDevGetInfo( device );
+    printf( "%s", devInfo );
+    free( devInfo );
+
     printf( "Done!\n" );
 
     adfDevUnMount( device );
