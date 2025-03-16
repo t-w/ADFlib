@@ -248,9 +248,14 @@ unsigned test_seek_after_write( const test_data_t * const  test_data )
     struct AdfDevice * const device  = adfDevCreate( "dump", adfname, 80, 2, 11 );
     if ( ! device )
         return 1;
-    adfCreateFlop( device, test_data->volname, test_data->fstype );
 
     unsigned errors = 0;
+
+    if ( adfCreateFlop( device, test_data->volname, test_data->fstype ) != ADF_RC_OK ) {
+        errors += 1;
+        goto umount_device;
+    }
+
 
     // mount volume
     struct AdfVolume * const vol = adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
