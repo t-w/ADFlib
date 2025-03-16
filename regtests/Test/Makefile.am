@@ -77,13 +77,33 @@ TESTS = \
 
 ADFLIBS = $(top_builddir)/src/libadf.la
 
-fl_test_SOURCES = fl_test.c common.c common.h
-fl_test_LDADD = $(ADFLIBS)
-fl_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+access_SOURCES = access.c common.c common.h log.c log.h
+access_LDADD = $(ADFLIBS)
+access_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-fl_test2_SOURCES = fl_test2.c common.c common.h
-fl_test2_LDADD = $(ADFLIBS)
-fl_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
+bitmap_read_segfault_SOURCES = bitmap_read_segfault.c log.c log.h
+bitmap_read_segfault_LDADD = $(ADFLIBS)
+bitmap_read_segfault_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+bitmap_recreate_SOURCES = bitmap_recreate.c log.c log.h
+bitmap_recreate_LDADD = $(ADFLIBS)
+bitmap_recreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+bootdisk_SOURCES = bootdisk.c common.c common.h
+bootdisk_LDADD = $(ADFLIBS)
+bootdisk_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+cache_crash_SOURCES = cache_crash.c
+cache_crash_LDADD = $(ADFLIBS)
+cache_crash_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+comment_SOURCES = comment.c common.c common.h
+comment_LDADD = $(ADFLIBS)
+comment_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+del_test_SOURCES = del_test.c common.c common.h
+del_test_LDADD = $(ADFLIBS)
+del_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 dir_test_SOURCES = dir_test.c common.c common.h
 dir_test_LDADD = $(ADFLIBS)
@@ -97,17 +117,9 @@ dir_test_chdir_SOURCES = dir_test_chdir.c
 dir_test_chdir_LDADD = $(ADFLIBS)
 dir_test_chdir_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-hd_test_SOURCES = hd_test.c common.c common.h
-hd_test_LDADD = $(ADFLIBS)
-hd_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-hd_test2_SOURCES = hd_test2.c common.c common.h
-hd_test2_LDADD = $(ADFLIBS)
-hd_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-hd_test3_SOURCES = hd_test3.c common.c common.h
-hd_test3_LDADD = $(ADFLIBS)
-hd_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
+dispsect_SOURCES = dispsect.c common.c common.h
+dispsect_LDADD = $(ADFLIBS)
+dispsect_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 file_test_SOURCES = file_test.c common.c common.h
 file_test_LDADD = $(ADFLIBS)
@@ -137,74 +149,62 @@ file_read_hard_link_test_SOURCES = file_read_hard_link_test.c
 file_read_hard_link_test_LDADD = $(ADFLIBS)
 file_read_hard_link_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-del_test_SOURCES = del_test.c common.c common.h
-del_test_LDADD = $(ADFLIBS)
-del_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+fl_test_SOURCES = fl_test.c common.c common.h
+fl_test_LDADD = $(ADFLIBS)
+fl_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-bootdisk_SOURCES = bootdisk.c common.c common.h
-bootdisk_LDADD = $(ADFLIBS)
-bootdisk_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-rename_SOURCES = rename.c common.c common.h
-rename_LDADD = $(ADFLIBS)
-rename_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-hardfile_SOURCES = hardfile.c common.c common.h
-hardfile_LDADD = $(ADFLIBS)
-hardfile_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-rename2_SOURCES = rename2.c common.c common.h
-rename2_LDADD = $(ADFLIBS)
-rename2_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-hardfile2_SOURCES = hardfile2.c common.c common.h
-hardfile2_LDADD = $(ADFLIBS)
-hardfile2_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-access_SOURCES = access.c common.c common.h log.c log.h
-access_LDADD = $(ADFLIBS)
-access_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-cache_crash_SOURCES = cache_crash.c
-cache_crash_LDADD = $(ADFLIBS)
-cache_crash_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-comment_SOURCES = comment.c common.c common.h
-comment_LDADD = $(ADFLIBS)
-comment_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-undel_SOURCES = undel.c common.c common.h
-undel_LDADD = $(ADFLIBS)
-undel_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-readonly_SOURCES = readonly.c common.c common.h
-readonly_LDADD = $(ADFLIBS)
-readonly_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-undel2_SOURCES = undel2.c common.c common.h
-undel2_LDADD = $(ADFLIBS)
-undel2_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-dispsect_SOURCES = dispsect.c common.c common.h
-dispsect_LDADD = $(ADFLIBS)
-dispsect_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-progbar_SOURCES = progbar.c common.c common.h
-progbar_LDADD = $(ADFLIBS)
-progbar_DEPENDENCIES = $(top_builddir)/src/libadf.la
+fl_test2_SOURCES = fl_test2.c common.c common.h
+fl_test2_LDADD = $(ADFLIBS)
+fl_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 floppy_overfilling_test_SOURCES = floppy_overfilling_test.c
 floppy_overfilling_test_LDADD = $(ADFLIBS)
 floppy_overfilling_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-bitmap_read_segfault_SOURCES = bitmap_read_segfault.c log.c log.h
-bitmap_read_segfault_LDADD = $(ADFLIBS)
-bitmap_read_segfault_DEPENDENCIES = $(top_builddir)/src/libadf.la
+hardfile_SOURCES = hardfile.c common.c common.h
+hardfile_LDADD = $(ADFLIBS)
+hardfile_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-bitmap_recreate_SOURCES = bitmap_recreate.c log.c log.h
-bitmap_recreate_LDADD = $(ADFLIBS)
-bitmap_recreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
+hardfile2_SOURCES = hardfile2.c common.c common.h
+hardfile2_LDADD = $(ADFLIBS)
+hardfile2_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+hd_test_SOURCES = hd_test.c common.c common.h
+hd_test_LDADD = $(ADFLIBS)
+hd_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+hd_test2_SOURCES = hd_test2.c common.c common.h
+hd_test2_LDADD = $(ADFLIBS)
+hd_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+hd_test3_SOURCES = hd_test3.c common.c common.h
+hd_test3_LDADD = $(ADFLIBS)
+hd_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+progbar_SOURCES = progbar.c common.c common.h
+progbar_LDADD = $(ADFLIBS)
+progbar_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+readonly_SOURCES = readonly.c common.c common.h
+readonly_LDADD = $(ADFLIBS)
+readonly_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+rename_SOURCES = rename.c common.c common.h
+rename_LDADD = $(ADFLIBS)
+rename_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+rename2_SOURCES = rename2.c common.c common.h
+rename2_LDADD = $(ADFLIBS)
+rename2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 test_update_datasize_ofs_SOURCES = test_update_datasize_ofs.c
 test_update_datasize_ofs_LDADD = $(ADFLIBS)
 test_update_datasize_ofs_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+undel_SOURCES = undel.c common.c common.h
+undel_LDADD = $(ADFLIBS)
+undel_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+undel2_SOURCES = undel2.c common.c common.h
+undel2_LDADD = $(ADFLIBS)
+undel2_DEPENDENCIES = $(top_builddir)/src/libadf.la
