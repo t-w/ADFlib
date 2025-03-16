@@ -31,6 +31,7 @@
 #include "adf_dev_drivers.h"
 #include "adf_dev_flop.h"
 #include "adf_dev_hd.h"
+#include "adf_dev_hdfile.h"
 #include "adf_env.h"
 
 #include <assert.h>

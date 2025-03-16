@@ -34,7 +34,6 @@
 #include "adf_prefix.h"
 
 ADF_RETCODE adfMountHd( struct AdfDevice * const  dev );
-ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev );
 
 ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
                                const int                               n,
@@ -45,9 +44,6 @@ ADF_PREFIX ADF_RETCODE adfCreateHd(
     const unsigned                          n,
     const struct Partition * const * const  partList );
 
-ADF_PREFIX ADF_RETCODE adfCreateHdFile( struct AdfDevice * const  dev,
-                                        const char * const        volName,
-                                        const uint8_t             volType );
 
 ADF_RETCODE adfReadRDSKblock( struct AdfDevice * const     dev,
                               struct AdfRDSKblock * const  blk );

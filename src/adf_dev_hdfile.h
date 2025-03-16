@@ -1,11 +1,11 @@
 /*
  *  ADF Library. (C) 1997-2002 Laurent Clevy
  *
- * adflib.h
+ *  adf_dev_hdfile.h
  *
  *  $Id$
  *
- * general include file
+ *  Hardfile (HDF) device code
  *
  *  This file is part of ADFLib.
  *
@@ -25,59 +25,17 @@
  *
  */
 
-#ifndef ADFLIB_H
-#define ADFLIB_H
+#ifndef ADF_DEV_HDFILE_H
+#define ADF_DEV_HDFILE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-/* Windows - a DLL-specific function declaration prefix (to import/export library symbols) */
+#include "adf_dev.h"
+#include "adf_err.h"
 #include "adf_prefix.h"
 
-#include "adf_types.h"
-#include "adf_version.h"
 
-/* util */
-//#include "adf_util.h"
+ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev );
 
-/* dir */
-#include "adf_dir.h"
-
-/* file */
-#include "adf_file.h"
-#include "adf_file_block.h"
-
-/* volume */
-#include "adf_vol.h"
-
-/* device */
-#include "adf_dev.h"
-#include "adf_dev_flop.h"
-#include "adf_dev_hd.h"
-#include "adf_dev_hdfile.h"
-
-/* device drivers */
-#include "adf_dev_drivers.h"
-
-/* env */
-#include "adf_env.h"
-
-/* link */
-//#include "adf_link.h"
-
-/* salv */
-#include "adf_salv.h"
-
-/* middle level API */
-
-/* low level API */
-
-#include "adf_bitm.h"
-#include "adf_raw.h"
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif  /* ADFLIB_H */
+ADF_PREFIX ADF_RETCODE adfCreateHdFile( struct AdfDevice * const  dev,
+                                        const char * const        volName,
+                                        const uint8_t             volType );
+#endif /* ADF_DEV_HDFILE_H */
