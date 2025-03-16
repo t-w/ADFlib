@@ -41,8 +41,6 @@ int main(int argc, char *argv[])
         log_error( "missing required parameter (image/device) - aborting...\n");
         return 1;
     }
-
-    struct AdfVolume *vol;
  
     adfEnvInitDefault();
 
@@ -64,7 +62,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
