@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 
 
@@ -29,69 +29,72 @@ int main(int argc, char *argv[])
 
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "access-newdev", 80, 2, 11 );
-    if (!hd) {
-        fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+    if ( ! hd ) {
+        fprintf( stderr, "can't mount device\n" );
+        adfEnvCleanUp();
+        exit( 1 );
     }
 
     showDevInfo( hd );
 
-    if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
-                                      ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
+    if ( adfCreateFlop( hd, "empty", ADF_DOSFS_FFS |
+                                     ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
-		fprintf(stderr, "can't create floppy\n");
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        fprintf( stderr, "can't create floppy\n" );
+        adfDevUnMount( hd );
+        adfDevClose( hd );
+        adfEnvCleanUp();
+        exit( 1 );
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+    if ( ! vol ) {
+        adfDevUnMount( hd );
+        adfDevClose( hd );
+        fprintf( stderr, "can't mount volume\n" );
+        adfEnvCleanUp();
+        exit( 1 );
     }
 
     struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
-    if (!fic) {
-        adfVolUnMount(vol);
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
+    if ( ! fic ) {
+        adfVolUnMount( vol );
+        adfDevUnMount( hd );
+        adfDevClose( hd );
         adfEnvCleanUp();
-        exit(1);
+        exit( 1 );
     }
     unsigned char buf[1];
-    adfFileWrite ( fic, 1, buf );
-    adfFileClose ( fic );
+    adfFileWrite( fic, 1, buf );
+    adfFileClose( fic );
 
     showVolInfo( vol );
 
-    adfCreateDir(vol,vol->curDirPtr,"dir_5u");
+    adfCreateDir( vol, vol->curDirPtr, "dir_5u" );
 
     showDirEntries( vol, vol->curDirPtr );
 
-    adfSetEntryAccess ( vol, vol->curDirPtr, "dir_5u",
-                        0 | ADF_ACCMASK_A | ADF_ACCMASK_E );
-    adfSetEntryAccess ( vol, vol->curDirPtr, "file_1a",
-                        0 | ADF_ACCMASK_P | ADF_ACCMASK_W );
+    adfSetEntryAccess( vol, vol->curDirPtr, "dir_5u",
+                       0 | ADF_ACCMASK_A | ADF_ACCMASK_E );
+    adfSetEntryAccess( vol, vol->curDirPtr, "file_1a",
+                       0 | ADF_ACCMASK_P | ADF_ACCMASK_W );
 
     putchar('\n');
 
     showDirEntries( vol, vol->curDirPtr );
 
-    adfSetEntryAccess ( vol, vol->curDirPtr, "dir_5u",
-                        0x12 & ! ADF_ACCMASK_A & ! ADF_ACCMASK_E );
-    adfSetEntryAccess ( vol, vol->curDirPtr, "file_1a",
-                        0x24 & ! ADF_ACCMASK_P & ! ADF_ACCMASK_W );
+    adfSetEntryAccess( vol, vol->curDirPtr, "dir_5u",
+                       0x12 & ! ADF_ACCMASK_A & ! ADF_ACCMASK_E );
+    adfSetEntryAccess( vol, vol->curDirPtr, "file_1a",
+                       0x24 & ! ADF_ACCMASK_P & ! ADF_ACCMASK_W );
 
     putchar('\n');
 
     showDirEntries( vol, vol->curDirPtr );
 
-    adfVolUnMount(vol);
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfVolUnMount( vol );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
     adfEnvCleanUp();
 
