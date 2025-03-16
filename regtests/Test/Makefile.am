@@ -197,11 +197,11 @@ floppy_overfilling_test_SOURCES = floppy_overfilling_test.c
 floppy_overfilling_test_LDADD = $(ADFLIBS)
 floppy_overfilling_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-bitmap_read_segfault_SOURCES = bitmap_read_segfault.c
+bitmap_read_segfault_SOURCES = bitmap_read_segfault.c log.c log.h
 bitmap_read_segfault_LDADD = $(ADFLIBS)
 bitmap_read_segfault_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-bitmap_recreate_SOURCES = bitmap_recreate.c
+bitmap_recreate_SOURCES = bitmap_recreate.c log.c log.h
 bitmap_recreate_LDADD = $(ADFLIBS)
 bitmap_recreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

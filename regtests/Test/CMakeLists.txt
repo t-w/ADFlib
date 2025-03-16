@@ -101,10 +101,10 @@ TARGET_LINK_LIBRARIES ( progbar adf )
 add_executable ( floppy_overfilling_test floppy_overfilling_test.c )
 TARGET_LINK_LIBRARIES ( floppy_overfilling_test adf )
 
-add_executable ( bitmap_read_segfault bitmap_read_segfault.c )
+add_executable ( bitmap_read_segfault bitmap_read_segfault.c log.c log.h )
 TARGET_LINK_LIBRARIES ( bitmap_read_segfault adf )
 
-add_executable ( bitmap_recreate bitmap_recreate.c )
+add_executable ( bitmap_recreate bitmap_recreate.c log.c log.h )
 TARGET_LINK_LIBRARIES ( bitmap_recreate adf )
 
 add_executable ( test_update_datasize_ofs test_update_datasize_ofs.c )

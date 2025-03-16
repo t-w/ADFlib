@@ -24,18 +24,10 @@
 #endif
 
 #include "adflib.h"
+#include "log.h"
 
 #define TEST_VERBOSITY 1
 
-
-void log_error ( FILE * const       file,
-                 const char * const format, ... );
-
-void log_warning ( FILE * const       file,
-                   const char * const format, ... );
-
-void log_info ( FILE * const       file,
-                const char * const format, ... );
 
 ADF_RETCODE copy_file ( const char * const dst_fname,
                     const char * const src_fname );
@@ -50,8 +42,10 @@ char * num32_to_bit_str ( uint32_t num,
 int main ( const int          argc,
            const char * const argv[] )
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 2 ) {
-        fprintf (stderr, "Usage: %s <ADF_IMAGE>\n", argv[0] );
+        log_error( "Usage: %s <ADF_IMAGE>\n", argv[0] );
         return 1;
     }
 
@@ -77,15 +71,14 @@ int main ( const int          argc,
     /* mount the original image */
     struct AdfDevice * devOrig = adfDevOpen ( adfOrig, ADF_ACCESS_MODE_READONLY );
     if ( ! devOrig ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  adfOrig );
+        log_error( "Cannot open file/device '%s' - aborting...\n", adfOrig );
         error_status = true;
         goto clean_up;
     }
 
     ADF_RETCODE rc = adfDevMount ( devOrig );
     if ( rc != ADF_RC_OK ) {
-        log_error ( stderr, "can't mount device %s\n", adfOrig );
+        log_error( "can't mount device %s\n", adfOrig );
         error_status = true;
         goto close_dev_orig;
     }
@@ -93,7 +86,7 @@ int main ( const int          argc,
     struct AdfVolume * const volOrig = adfVolMount ( devOrig, 0,
                                                      ADF_ACCESS_MODE_READONLY );
     if ( volOrig == NULL ) {
-        log_error ( stderr, "can't mount volume %d\n", 0 );
+        log_error( "can't mount volume %d\n", 0 );
         error_status = true;
         goto umount_dev_orig;
     }
@@ -103,15 +96,14 @@ int main ( const int          argc,
     struct AdfDevice * const devUpdate = adfDevOpen ( adfUpdate,
                                                       ADF_ACCESS_MODE_READWRITE );
     if ( ! devUpdate ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  adfUpdate );
+        log_error( "Cannot open file/device '%s' - aborting...\n", adfUpdate );
         error_status = true;
         goto umount_vol_orig;
     }
 
     rc = adfDevMount ( devUpdate );
     if ( rc != ADF_RC_OK ) {
-        log_error ( stderr, "can't mount device %s\n", adfUpdate );
+        log_error( "can't mount device %s\n", adfUpdate );
         error_status = true;
         goto close_dev_updated;
     }
@@ -119,7 +111,7 @@ int main ( const int          argc,
     struct AdfVolume * volUpdate = adfVolMount ( devUpdate, 0,
                                                  ADF_ACCESS_MODE_READONLY );
     if ( volUpdate == NULL ) {
-        log_error ( stderr, "can't mount volume %d\n", 0 );
+        log_error( "can't mount volume %d\n", 0 );
         error_status = true;
         goto umount_dev_updated;
     }
@@ -128,8 +120,7 @@ int main ( const int          argc,
     /* update the block allocation bitmap */
     rc = adfVolRemount ( volUpdate, ADF_ACCESS_MODE_READWRITE );
     if ( rc != ADF_RC_OK ) {
-        log_error (
-            stderr, "error remounting read-write, volume %d\n", 0 );
+        log_error( "error remounting read-write, volume %d\n", 0 );
         error_status = true;
         goto umount_vol_updated;
     }
@@ -137,16 +128,16 @@ int main ( const int          argc,
     struct AdfRootBlock root;
     rc = adfReadRootBlock ( volUpdate, (uint32_t) volUpdate->rootBlock, &root );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "Invalid RootBlock, volume %s, sector %u - aborting...",
-                      volUpdate->volName, volUpdate->rootBlock );
+        log_error( "Invalid RootBlock, volume %s, sector %u - aborting...",
+                   volUpdate->volName, volUpdate->rootBlock );
         error_status = true;
         goto umount_vol_updated;
     }
 
     rc = adfReconstructBitmap ( volUpdate, &root );
     if ( rc != ADF_RC_OK ) {
-        adfEnv.eFct ( "Error rebuilding the bitmap (%d), volume %s",
-                      rc, volUpdate->volName );
+        log_error( "Error rebuilding the bitmap (%d), volume %s",
+                   rc, volUpdate->volName );
         error_status = true;
         goto umount_vol_updated;
     }
@@ -173,7 +164,7 @@ int main ( const int          argc,
     /* compare the original and reconstructed */
     unsigned nerrors = compare_bitmaps ( volOrig, volUpdate );
     if ( nerrors != 0 )
-        log_error ( stderr, "Bitmap update of %s: %u errors\n", adfOrig, nerrors );
+        log_error( "Bitmap update of %s: %u errors\n", adfOrig, nerrors );
     
     error_status = ( nerrors != 0 );
     
@@ -200,7 +191,7 @@ clean_up:
     adfEnvCleanUp();
     
 delete_adf_copy:
-    log_info ( stdout, "Removing %s\n", adfUpdate );
+    log_info( "Removing %s\n", adfUpdate );
     unlink ( adfUpdate );
     
     return ( error_status ? 1 : 0 );
@@ -213,7 +204,7 @@ delete_adf_copy:
 ADF_RETCODE copy_file ( const char * const dst_fname,
                     const char * const src_fname )
 {
-    log_info ( stdout, "Copying %s to %s... ", src_fname, dst_fname );
+    log_info( "Copying %s to %s... ", src_fname, dst_fname );
     FILE * const src = fopen ( src_fname, "rb" );
     if ( src == NULL )
         return ADF_RC_ERROR;
@@ -230,14 +221,14 @@ ADF_RETCODE copy_file ( const char * const dst_fname,
     while ( ( bytes_read = fread ( buffer, 1, BUFSIZE, src ) ) > 0 ) {
         size_t bytes_written = fwrite ( buffer, 1, bytes_read, dst );
         if ( bytes_written != bytes_read ) {
-            log_error ( stderr, "error writing copy to %s\n", dst_fname );
+            log_error( "error writing copy to %s\n", dst_fname );
             status = ADF_RC_ERROR;
             break;
         }
     }
     fclose ( src );
     fclose ( dst );
-    log_info ( stdout, "Done!\n" );
+    log_info( "Done!\n" );
     return status;
 }
 
@@ -252,8 +243,8 @@ unsigned compare_bitmaps ( struct AdfVolume * const volOrig,
     if ( adfReadRootBlock ( volOrig, (uint32_t) volOrig->rootBlock,
                             &rbOrig ) != ADF_RC_OK )
     {
-        log_error ( stderr, "invalid RootBlock on orig. volume, sector %u\n",
-                    volOrig->rootBlock );
+        log_error( "invalid RootBlock on orig. volume, sector %u\n",
+                   volOrig->rootBlock );
 
         return 1;
     }
@@ -261,8 +252,8 @@ unsigned compare_bitmaps ( struct AdfVolume * const volOrig,
     if ( adfReadRootBlock ( volUpdate, (uint32_t) volUpdate->rootBlock,
                             &rbUpdate ) != ADF_RC_OK )
     {
-        log_error ( stderr, "invalid RootBlock on orig. volume, sector %u\n",
-                    volOrig->rootBlock );
+        log_error( "invalid RootBlock on orig. volume, sector %u\n",
+                   volOrig->rootBlock );
 
         return 1;
     } 
@@ -279,31 +270,31 @@ unsigned compare_bitmaps ( struct AdfVolume * const volOrig,
         if ( ( bmPageOrig == 0 && bmPageUpdate != 0 ) ||
              ( bmPageOrig != 0 && bmPageUpdate == 0 ) )
         {
-            log_error ( stderr, "bmPages[%u]: orig (%u) != ... update (%u)"
-                        " - and one of them is 0 -> error -> skipping!\n",
-                        i, bmPageOrig, bmPageUpdate );
+            log_error( "bmPages[%u]: orig (%u) != ... update (%u)"
+                       " - and one of them is 0 -> error -> skipping!\n",
+                       i, bmPageOrig, bmPageUpdate );
             nerrors++;
             continue;
         }
         
         if ( bmPageOrig != bmPageUpdate ) {
             // in case of relocation, this could be OK - but return a warning
-            log_warning ( stderr, "bmPages[%u] differ: orig (%u) != update (%u)\n",
-                          i, bmPageOrig, bmPageUpdate );
+            log_warning( "bmPages[%u] differ: orig (%u) != update (%u)\n",
+                         i, bmPageOrig, bmPageUpdate );
         }
 
         ADF_RETCODE rc = adfReadBitmapBlock ( volOrig, bmPageOrig, &bmOrig );
         if ( rc != ADF_RC_OK ) {
-            log_error ( stderr, "error reading bitmap block on vol. orig, block %u\n",
-                        bmPageOrig );
+            log_error( "error reading bitmap block on vol. orig, block %u\n",
+                       bmPageOrig );
             nerrors++;
             continue;
         }
 
         rc = adfReadBitmapBlock ( volUpdate, bmPageUpdate, &bmUpdate );
         if ( rc != ADF_RC_OK ) {
-            log_error ( stderr, "error reading bitmap block on vol. update, block %u\n",
-                        bmPageOrig );
+            log_error( "error reading bitmap block on vol. update, block %u\n",
+                       bmPageOrig );
             nerrors++;
             continue;
         }
@@ -315,13 +306,12 @@ unsigned compare_bitmaps ( struct AdfVolume * const volOrig,
                 uint32_t
                     valOrig   = bmOrig.map[i],
                     valUpdate = bmUpdate.map[i];
-                log_error ( stderr,
-                            "bm differ at %u:\n"
-                            "  orig   0x%08x  %s\n"
-                            "  update 0x%08x  %s\n",
-                            i,
-                            valOrig,   num32_to_bit_str ( valOrig, bitStrOrig ),
-                            valUpdate, num32_to_bit_str ( valUpdate, bitStrUpdate ) );
+                log_error( "bm differ at %u:\n"
+                           "  orig   0x%08x  %s\n"
+                           "  update 0x%08x  %s\n",
+                           i,
+                           valOrig,   num32_to_bit_str( valOrig, bitStrOrig ),
+                           valUpdate, num32_to_bit_str( valUpdate, bitStrUpdate ) );
                 nerrors++;
             }
         }
@@ -331,54 +321,6 @@ unsigned compare_bitmaps ( struct AdfVolume * const volOrig,
 
     return nerrors;
 }
-
-
-
-void log_error ( FILE * const       file,
-                 const char * const format, ... )
-{
-#if TEST_VERBOSITY > 0
-    va_list ap;
-    va_start ( ap, format );
-    fprintf ( stderr, "Error: " );
-    vfprintf ( file, format, ap );
-    va_end ( ap );
-#else
-    (void) file, (void) format;
-#endif
-}
-
-
-void log_warning ( FILE * const       file,
-                   const char * const format, ... )
-{
-#if TEST_VERBOSITY > 0
-    va_list ap;
-    va_start ( ap, format );
-    fprintf ( stderr, "Warning: " );
-    vfprintf ( file, format, ap );
-    va_end ( ap );
-#else
-    (void) file, (void) format;
-#endif
-}
-
-
-void log_info ( FILE * const       file,
-                const char * const format, ... )
-{
-#if TEST_VERBOSITY > 1
-    va_list ap;
-    va_start ( ap, format );
-    //fprintf ( stderr, "Warning: " );
-    vfprintf ( file, format, ap );
-    va_end ( ap );
-#else
-    (void) file, (void) format;
-#endif
-}
-
-
 
 
 char * num32_to_bit_str ( uint32_t num,
