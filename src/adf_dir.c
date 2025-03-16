@@ -118,8 +118,8 @@ ADF_SECTNUM adfParentDir( struct AdfVolume * const  vol )
  * adfGetDirEnt
  *
  */
-struct AdfList * adfGetDirEnt( struct AdfVolume * const  vol,
-                               const ADF_SECTNUM         nSect )
+struct AdfList * adfGetDirEnt( const struct AdfVolume * const  vol,
+                               const ADF_SECTNUM               nSect )
 {
     return adfGetRDirEnt( vol, nSect, false );
 }
@@ -128,9 +128,9 @@ struct AdfList * adfGetDirEnt( struct AdfVolume * const  vol,
  * adfGetRDirEnt
  *
  */
-struct AdfList * adfGetRDirEnt( struct AdfVolume * const  vol,
-                                const ADF_SECTNUM         nSect,
-                                const bool                recurs )
+struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
+                                const ADF_SECTNUM               nSect,
+                                const bool                      recurs )
 {
     struct AdfList *cell, *head;
     struct AdfEntry * entry;
@@ -889,9 +889,9 @@ int adfDirCountEntries( struct AdfVolume * const  vol,
  * adfReadEntryBlock
  *
  */
-ADF_RETCODE adfReadEntryBlock( struct AdfVolume * const      vol,
-                               const ADF_SECTNUM             nSect,
-                               struct AdfEntryBlock * const  ent )
+ADF_RETCODE adfReadEntryBlock( const struct AdfVolume * const  vol,
+                               const ADF_SECTNUM               nSect,
+                               struct AdfEntryBlock * const    ent )
 {
     uint8_t  buf[ 512 ];
 
@@ -953,7 +953,7 @@ ADF_RETCODE adfReadEntryBlock( struct AdfVolume * const      vol,
  * adfWriteEntryBlock
  *
  */
-ADF_RETCODE adfWriteEntryBlock( struct AdfVolume * const            vol,
+ADF_RETCODE adfWriteEntryBlock( const struct AdfVolume * const      vol,
                                 const ADF_SECTNUM                   nSect,
                                 const struct AdfEntryBlock * const  ent )
 {
@@ -976,9 +976,9 @@ ADF_RETCODE adfWriteEntryBlock( struct AdfVolume * const            vol,
  * adfWriteDirBlock
  *
  */
-ADF_RETCODE adfWriteDirBlock( struct AdfVolume * const    vol,
-                              const ADF_SECTNUM           nSect,
-                              struct AdfDirBlock * const  dir )
+ADF_RETCODE adfWriteDirBlock( const struct AdfVolume * const  vol,
+                              const ADF_SECTNUM               nSect,
+                              struct AdfDirBlock * const      dir )
 {
     uint8_t buf[ 512 ];
     uint32_t newSum;

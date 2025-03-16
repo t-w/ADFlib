@@ -60,12 +60,12 @@ ADF_PREFIX ADF_RETCODE adfChangeDir( struct AdfVolume * const  vol,
 ADF_PREFIX ADF_RETCODE adfParentDir( struct AdfVolume * const  vol );
 
 /* get and free list of directory entries */
-ADF_PREFIX struct AdfList * adfGetDirEnt ( struct AdfVolume * const  vol,
-                                           const ADF_SECTNUM         nSect );
+ADF_PREFIX struct AdfList * adfGetDirEnt( const struct AdfVolume * const  vol,
+                                          const ADF_SECTNUM               nSect );
 
-ADF_PREFIX struct AdfList * adfGetRDirEnt ( struct AdfVolume * const  vol,
-                                            const ADF_SECTNUM         nSect,
-                                            const bool                recurs );
+ADF_PREFIX struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
+                                           const ADF_SECTNUM               nSect,
+                                           const bool                      recurs );
 
 ADF_PREFIX void adfFreeDirList( struct AdfList * const  list );
 ADF_PREFIX void adfFreeEntry( struct AdfEntry * const  entry );
@@ -124,17 +124,17 @@ ADF_PREFIX int adfDirCountEntries( struct AdfVolume * const  vol,
 
 /* block operations */
 
-ADF_PREFIX ADF_RETCODE adfReadEntryBlock( struct AdfVolume * const      vol,
-                                          const ADF_SECTNUM             nSect,
-                                          struct AdfEntryBlock * const  ent );
+ADF_PREFIX ADF_RETCODE adfReadEntryBlock( const struct AdfVolume * const  vol,
+                                          const ADF_SECTNUM               nSect,
+                                          struct AdfEntryBlock * const    ent );
 
-ADF_RETCODE adfWriteEntryBlock( struct AdfVolume * const            vol,
+ADF_RETCODE adfWriteEntryBlock( const struct AdfVolume * const      vol,
                                 const ADF_SECTNUM                   nSect,
                                 const struct AdfEntryBlock * const  ent );
 
-ADF_RETCODE adfWriteDirBlock( struct AdfVolume * const    vol,
-                              const ADF_SECTNUM           nSect,
-                              struct AdfDirBlock * const  dir );
+ADF_RETCODE adfWriteDirBlock( const struct AdfVolume * const  vol,
+                              const ADF_SECTNUM               nSect,
+                              struct AdfDirBlock * const      dir );
 
 ADF_RETCODE adfEntBlock2Entry( const struct AdfEntryBlock * const  entryBlk,
                                struct AdfEntry * const             entry );
