@@ -24,15 +24,11 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
-    struct AdfDevice *hd;
-    struct AdfVolume *vol;
-    struct AdfFile *fic;
-    unsigned char buf[1];
  
     adfEnvInitDefault();
 
     /* create and mount one device */
-    hd = adfDevCreate ( "dump", "access-newdev", 80, 2, 11 );
+    struct AdfDevice * const hd = adfDevCreate( "dump", "access-newdev", 80, 2, 11 );
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
         adfEnvCleanUp(); exit(1);
@@ -49,7 +45,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         adfDevUnMount ( hd );
         adfDevClose ( hd );
@@ -57,7 +53,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
+    struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         adfVolUnMount(vol);
         adfDevUnMount ( hd );
@@ -65,6 +61,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp();
         exit(1);
     }
+    unsigned char buf[1];
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
 
