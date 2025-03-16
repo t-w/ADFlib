@@ -93,7 +93,7 @@ int main( const int                   argc,
         return 1;
     }
 
-    const char * const devInfo = adfDevGetInfo( device );
+    char * const devInfo = adfDevGetInfo( device );
     printf( "%s", devInfo );
     free( devInfo );
 

@@ -113,7 +113,7 @@ int main( const int            argc,
     }
 
     if ( options.verbose ) {
-        const char * const devInfo = adfDevGetInfo( device );
+        char * const devInfo = adfDevGetInfo( device );
         printf( "%s", devInfo );
         free( devInfo );
     }
@@ -167,7 +167,7 @@ int main( const int            argc,
     printf( "Done!\n" );
 
     if ( options.verbose ) {
-        const char * const devInfo = adfDevGetInfo( device );
+        char * const devInfo = adfDevGetInfo( device );
         printf( "%s", devInfo );
         free( devInfo );
     }

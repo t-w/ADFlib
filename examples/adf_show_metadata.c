@@ -148,7 +148,7 @@ int parse_args( const int                   argc,
 
 void show_device_metadata( struct AdfDevice * const  dev )
 {
-    const char * const  info = adfDevGetInfo( dev );
+    char * const  info = adfDevGetInfo( dev );
     printf( "%s", info );
     free( info );
 }
