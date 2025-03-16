@@ -102,11 +102,11 @@ ADF_PREFIX ADF_RETCODE adfFileSeek( struct AdfFile * const file,
                                     const uint32_t         pos );
 
 static inline ADF_RETCODE adfFileSeekStart( struct AdfFile * const  file ) {
-    return adfFileSeek ( file, 0 );
+    return adfFileSeek( file, 0 );
 }
 
 static inline ADF_RETCODE adfFileSeekEOF( struct AdfFile * const  file ) {
-    return adfFileSeek ( file, adfFileGetSize ( file ) );
+    return adfFileSeek( file, adfFileGetSize( file ) );
 }
 
 ADF_PREFIX ADF_RETCODE adfFileTruncate( struct AdfFile * const  file,
