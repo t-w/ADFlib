@@ -30,8 +30,7 @@ int main(int argc, char *argv[])
     int status = 0;
 
     if ( argc < 2 ) {
-        fprintf ( stderr,
-                  "required parameter (image/device) absent - aborting...\n");
+        log_error( "missing parameter (image/device) - aborting...\n" );
         return 1;
     }
  
