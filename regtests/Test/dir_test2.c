@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         goto cleanup_env;
     }
 
-    ADF_RETCODE rc = adfDevMount ( hd );
+    ADF_RETCODE rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
         status = 1;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
@@ -64,20 +64,20 @@ int main(int argc, char *argv[])
     showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
-    adfCreateDir(vol,vol->curDirPtr,"dir_1a");
+    adfCreateDir( vol, vol->curDirPtr, "dir_1a" );
     showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     /* same hash than dir_1a" */
-    adfCreateDir(vol,vol->curDirPtr,"dir_5u");
+    adfCreateDir( vol, vol->curDirPtr, "dir_5u" );
     showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
