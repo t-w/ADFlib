@@ -31,16 +31,11 @@ int main(int argc, char *argv[])
     log_init( stderr, TEST_VERBOSITY );
 
     int status = 0;
-
-    struct AdfDevice *hd;
-    struct AdfVolume *vol;
-    struct AdfFile *fic;
-    unsigned char buf[1];
  
     adfEnvInitDefault();
 
     /* create and mount one device */
-    hd = adfDevCreate ( "dump", "comment-newdev", 80, 2, 11 );
+    struct AdfDevice * const hd = adfDevCreate( "dump", "comment-newdev", 80, 2, 11 );
     if (!hd) {
         log_error( "can't create device\n" );
         status = 1;
@@ -57,19 +52,20 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
 
-    fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
+    struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't open file for writing\n" );
         status = 1;
         goto cleanup_vol;
     }
+    unsigned char buf[1];
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
 
