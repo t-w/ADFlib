@@ -253,7 +253,7 @@ unsigned test_seek_after_write( const test_data_t * const  test_data )
     unsigned errors = 0;
 
     // mount volume
-    struct AdfVolume * vol = adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
     if ( vol == NULL ) {
         errors += 1;
         goto umount_device;
@@ -281,7 +281,7 @@ unsigned test_seek_after_write( const test_data_t * const  test_data )
 
     // fill the buffer with random bytes and make a checksum
     pattern_random( buffer_random, bufsize );
-    uint32_t buf_checksum = checksum( buffer_random, bufsize );
+    const uint32_t buf_checksum = checksum( buffer_random, bufsize );
 
     // create a new file in th ADF volume
     const char filename[] = "testfile_chunk_overwrite.tmp";
@@ -343,11 +343,11 @@ unsigned test_seek_after_write( const test_data_t * const  test_data )
 
     adfFileClose( file );
 
-    uint32_t buf_checksum2 = checksum( buffer_random, bufsize );
+    const uint32_t buf_checksum2 = checksum( buffer_random, bufsize );
     assert( buf_checksum == buf_checksum2 );
 
     // verify overwritten data
-    unsigned nerrors_overwriting =
+    const unsigned nerrors_overwriting =
         verify_overwritten_data( vol, filename, buffer_random, offset, chunksize );
     if ( nerrors_overwriting > 0 ) {
         log_error( "+%u errors, file %s\n", nerrors_overwriting, filename );
@@ -355,7 +355,8 @@ unsigned test_seek_after_write( const test_data_t * const  test_data )
     }
     
     // check also the same data in "normally" written file (without any seek)
-    unsigned nerrors_wo_seek = //verify_data ( vol, filename2, buffer, offset, chunksize );
+    const unsigned nerrors_wo_seek =
+        //verify_data ( vol, filename2, buffer, offset, chunksize );
         verify_file_data( vol, filename2, buffer_random, bufsize, 10 );
     if ( nerrors_wo_seek > 0 )  {
         log_error( "+%u errors, file %s\n", nerrors_wo_seek, filename2 );
@@ -486,7 +487,7 @@ unsigned verify_file_data( struct AdfVolume * const     vol,
                            const unsigned               bytes_written,  // == bufsize (!)
                            const unsigned               errors_max )
 {
-    struct AdfFile * output = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
+    struct AdfFile * const output = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
     if ( ! output )
         return 1;
 
