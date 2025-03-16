@@ -251,11 +251,11 @@ ADF_RETCODE adfReadDataBlock( struct AdfVolume * const  vol,
             adfEnv.wFct( "%s: dataSize (0x%x / %u) incorrect, block %d, volume '%s'",
                          __func__, dBlock->dataSize, dBlock->dataSize, nSect, vol->volName );
 
-        if ( ! adfVolIsSectNumValid ( vol, dBlock->headerKey ) )
+        if ( ! adfVolIsSectNumValid( vol, dBlock->headerKey ) )
             adfEnv.wFct( "%s: headerKey (0x%x / %u) out of range, block %d, volume '%s'",
                          __func__, dBlock->headerKey, dBlock->headerKey, nSect, vol->volName );
 
-        if ( ! adfVolIsSectNumValid ( vol, dBlock->nextData ) )
+        if ( ! adfVolIsSectNumValid( vol, dBlock->nextData ) )
             adfEnv.wFct( "%s: nextData out of range, block %d, volume '%s'",
                          __func__, nSect, vol->volName );
     }
