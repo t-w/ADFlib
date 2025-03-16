@@ -45,7 +45,7 @@ target_link_libraries ( dispsect adf )
 add_executable ( dir_test dir_test.c common.c common.h log.c log.h )
 target_link_libraries ( dir_test adf )
 
-add_executable ( dir_test2 dir_test2.c common.c common.h )
+add_executable ( dir_test2 dir_test2.c common.c common.h  log.c log.h )
 target_link_libraries ( dir_test2 adf )
 
 add_executable ( dir_test_chdir dir_test_chdir.c )
