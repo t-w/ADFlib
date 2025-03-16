@@ -110,7 +110,7 @@ comment_SOURCES = comment.c common.c common.h log.c log.h
 comment_LDADD = $(ADFLIBS)
 comment_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-del_test_SOURCES = del_test.c common.c common.h
+del_test_SOURCES = del_test.c common.c common.h log.c log.h
 del_test_LDADD = $(ADFLIBS)
 del_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
