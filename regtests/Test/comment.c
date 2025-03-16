@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "comment-newdev", 80, 2, 11 );
-    if (!hd) {
+    if ( ! hd ) {
         log_error( "can't create device\n" );
         status = 1;
         goto cleanup_env;
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 
     showDevInfo( hd );
 
-    if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
-                                      ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
+    if ( adfCreateFlop( hd, "empty", ADF_DOSFS_FFS |
+                                     ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
         log_error( "can't create floppy\n" );
         status = 1;
@@ -53,50 +53,50 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
 
     struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
-    if (!fic) {
+    if ( ! fic ) {
         log_error( "can't open file for writing\n" );
         status = 1;
         goto cleanup_vol;
     }
     unsigned char buf[1];
-    adfFileWrite ( fic, 1, buf );
-    adfFileClose ( fic );
+    adfFileWrite( fic, 1, buf );
+    adfFileClose( fic );
 
     showVolInfo( vol );
 
-    adfCreateDir(vol,vol->curDirPtr,"dir_5u");
+    adfCreateDir( vol, vol->curDirPtr, "dir_5u" );
 
     showDirEntries( vol, vol->curDirPtr );
 
-    adfSetEntryComment(vol, vol->curDirPtr, "dir_5u", "dir_5u comment");
-    adfSetEntryComment(vol, vol->curDirPtr, "file_1a", "file_1a very very long comment");
+    adfSetEntryComment( vol, vol->curDirPtr, "dir_5u", "dir_5u comment" );
+    adfSetEntryComment( vol, vol->curDirPtr, "file_1a", "file_1a very very long comment" );
 
     putchar('\n');
 
     showDirEntries( vol, vol->curDirPtr );
 
-    adfSetEntryComment(vol, vol->curDirPtr, "dir_5u", "");
-    adfSetEntryComment(vol, vol->curDirPtr, "file_1a", "new comment" );
+    adfSetEntryComment( vol, vol->curDirPtr, "dir_5u", "" );
+    adfSetEntryComment( vol, vol->curDirPtr, "file_1a", "new comment" );
 
     putchar('\n');
 
-    adfEnvSetProperty ( ADF_PR_USEDIRC, true );
+    adfEnvSetProperty( ADF_PR_USEDIRC, true );
 
     showDirEntries( vol, vol->curDirPtr );
 
 cleanup_vol:
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
