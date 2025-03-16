@@ -122,6 +122,14 @@ dir_test2_SOURCES = dir_test2.c common.c common.h log.c log.h
 dir_test2_LDADD = $(ADFLIBS)
 dir_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
+#dirc_SOURCES = dirc.c
+#dirc_LDADD = $(ADFLIBS)
+#dirc_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+#dirc_test_SOURCES = dirc_test.c
+#dirc_test_LDADD = $(ADFLIBS)
+#dirc_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 dir_test_chdir_SOURCES = dir_test_chdir.c
 dir_test_chdir_LDADD = $(ADFLIBS)
 dir_test_chdir_DEPENDENCIES = $(top_builddir)/src/libadf.la
