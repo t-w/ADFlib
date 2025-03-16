@@ -33,7 +33,7 @@ target_link_libraries ( cache_crash adf )
 #add_executable ( cache_test cache_test.c )
 #target_link_libraries ( cache_test adf )
 
-add_executable ( comment comment.c common.c common.h )
+add_executable ( comment comment.c common.c common.h  log.c log.h )
 target_link_libraries ( comment adf )
 
 add_executable ( del_test del_test.c common.c common.h )

@@ -9,6 +9,9 @@
 
 #include"adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 1
 
 
 void MyVer(char *msg)
@@ -24,6 +27,9 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
+
+    log_init( stderr, TEST_VERBOSITY );
+
     struct AdfDevice *hd;
     struct AdfVolume *vol;
     struct AdfFile *fic;
@@ -34,7 +40,7 @@ int main(int argc, char *argv[])
     /* create and mount one device */
     hd = adfDevCreate ( "dump", "comment-newdev", 80, 2, 11 );
     if (!hd) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't create device\n" );
         adfEnvCleanUp(); exit(1);
     }
 
@@ -43,7 +49,7 @@ int main(int argc, char *argv[])
     if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
-		fprintf(stderr, "can't create floppy\n");
+        log_error( "can't create floppy\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         adfEnvCleanUp(); exit(1);
@@ -51,14 +57,15 @@ int main(int argc, char *argv[])
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
 
     fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
+        log_error( "can't open file for writing\n" );
         adfVolUnMount(vol);
         adfDevUnMount ( hd );
         adfDevClose ( hd );
