@@ -39,9 +39,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    const char * devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     partList = (struct Partition**)malloc(sizeof(struct Partition*));
     if (!partList) exit(1);
@@ -91,9 +89,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {

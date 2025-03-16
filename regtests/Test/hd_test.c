@@ -49,9 +49,7 @@ int main(int argc, char *argv[])
         adfDevClose ( hd );
         adfEnvCleanUp(); exit(1);
     }
-    const char * devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     /* mount the 2 partitions */
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
@@ -94,9 +92,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {

@@ -52,9 +52,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    const char * const devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     showVolInfo( vol );
     showDirEntries( vol, vol->curDirPtr );

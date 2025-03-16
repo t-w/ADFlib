@@ -41,9 +41,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    const char * devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     partList = (struct Partition**)malloc(sizeof(struct Partition*)*2);
     if (!partList) exit(1);
@@ -113,9 +111,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     adfDevUnMount ( hd );
     adfDevClose ( hd );

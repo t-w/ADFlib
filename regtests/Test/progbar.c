@@ -41,9 +41,7 @@ puts("\ncreate dumpdevice");
         adfEnvCleanUp(); exit(1);
     }
 
-    const char * const devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
 puts("\ncreate floppy");
     if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
