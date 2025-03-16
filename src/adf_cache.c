@@ -53,9 +53,9 @@ freeEntCache(struct AdfCacheEntry *cEntry)
  *
  * replace 'adfGetDirEnt'. returns a the dir contents based on the dircache list
  */
-struct AdfList * adfGetDirEntCache ( struct AdfVolume * const vol,
-                                     const ADF_SECTNUM        dir,
-                                     const bool               recurs )
+struct AdfList * adfGetDirEntCache( const struct AdfVolume * const  vol,
+                                    const ADF_SECTNUM               dir,
+                                    const bool                      recurs )
 {
     struct AdfEntryBlock parent;
     struct AdfDirCacheBlock dirc;
@@ -621,9 +621,9 @@ ADF_RETCODE adfCreateEmptyCache ( struct AdfVolume * const     vol,
  * adfReadDirCBlock
  *
  */
-ADF_RETCODE adfReadDirCBlock ( struct AdfVolume * const        vol,
-                               const ADF_SECTNUM               nSect,
-                               struct AdfDirCacheBlock * const dirc )
+ADF_RETCODE adfReadDirCBlock( const struct AdfVolume * const   vol,
+                              const ADF_SECTNUM                nSect,
+                              struct AdfDirCacheBlock * const  dirc )
 {
     uint8_t buf[512];
 
@@ -653,9 +653,9 @@ ADF_RETCODE adfReadDirCBlock ( struct AdfVolume * const        vol,
  * adfWriteDirCblock
  *
  */
-ADF_RETCODE adfWriteDirCBlock ( struct AdfVolume * const        vol,
-                                const int32_t                   nSect,
-                                struct AdfDirCacheBlock * const dirc )
+ADF_RETCODE adfWriteDirCBlock( const struct AdfVolume * const   vol,
+                               const int32_t                    nSect,
+                               struct AdfDirCacheBlock * const  dirc )
 {
     uint8_t buf[ADF_LOGICAL_BLOCK_SIZE];
     uint32_t newSum;
