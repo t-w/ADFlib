@@ -93,6 +93,10 @@ bootdisk_SOURCES = bootdisk.c common.c common.h log.c log.h
 bootdisk_LDADD = $(ADFLIBS)
 bootdisk_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
+bootdisk2_SOURCES = bootdisk2.c common.c common.h log.c log.h
+bootdisk2_LDADD = $(ADFLIBS)
+bootdisk2_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 cache_crash_SOURCES = cache_crash.c
 cache_crash_LDADD = $(ADFLIBS)
 cache_crash_DEPENDENCIES = $(top_builddir)/src/libadf.la

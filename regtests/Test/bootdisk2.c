@@ -8,6 +8,9 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 1
 
 
 void MyVer(char *msg)
@@ -22,6 +25,8 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     struct AdfDevice *hd;
     struct AdfVolume *vol;
     FILE* boot;
@@ -29,7 +34,7 @@ int main(int argc, char *argv[])
  
     boot=fopen(argv[1],"rb");
     if (!boot) {
-        fprintf(stderr, "can't mount volume\n");
+        log_error( "can't open bootcode file\n");
         exit(1);
     }
     fread(bootcode, sizeof(unsigned char), 1024, boot);
@@ -39,15 +44,15 @@ int main(int argc, char *argv[])
 
     hd = adfMountDev ( argv[2], ADF_ACCESS_MODE_READWRITE );
     if (!hd) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't mount device\n" );
         adfEnvCleanUp(); exit(1);
     }
 	
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfUnMountDev(hd);
         adfCloseDev(hd);
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
 
