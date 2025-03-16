@@ -82,12 +82,7 @@ int main(int argc, char *argv[])
     puts("\ncreate dir_5u");
     showVolInfo( vol );
 
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     puts("\nremove file_1a");
     adfRemoveEntry(vol,vol->curDirPtr,"file_1a");
@@ -117,13 +112,7 @@ int main(int argc, char *argv[])
     puts("\nundel dir_5u");
     showVolInfo( vol );
 
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

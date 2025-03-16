@@ -26,3 +26,35 @@ void showEntryInfo( const struct AdfEntry * const  entry )
 {
     showInfo( adfEntryGetInfo( entry ) );
 }
+
+
+
+void showDirEntries( const struct AdfVolume * const  vol,
+                     const ADF_SECTNUM               dirPtr )
+{
+    struct AdfList *list, *cell;
+
+    cell = list = adfGetDirEnt( vol, dirPtr );
+    while ( cell ) {
+        showEntryInfo( cell->content );
+        cell = cell->next;
+    }
+    adfFreeDirList( list );
+}
+
+/* version 2 - without using adfFreeDirList */
+/*
+void showDirEntries2( const struct AdfVolume * const  vol,
+                      const ADF_SECTNUM               dirPtr )
+{
+    struct AdfList *list, *cell;
+
+    cell = list = adfGetDirEnt( vol, vol->curDirPtr );
+    while ( cell ) {
+        showEntryInfo( cell->content );
+        adfFreeEntry( cell->content );
+        cell = cell->next;
+    }
+    adfListFree( list );
+}
+*/

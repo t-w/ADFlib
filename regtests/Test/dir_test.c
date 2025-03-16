@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume *vol;
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -71,39 +70,18 @@ int main(int argc, char *argv[])
     }
 
     showVolInfo( vol );
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     /* cd dir_2 */
     //ADF_SECTNUM nSect = adfChangeDir(vol, "dir_2");
     adfChangeDir(vol, "dir_2");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     /* cd .. */
     adfParentDir(vol);
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        adfFreeEntry(cell->content);
-        cell = cell->next;
-    }
-    adfListFree ( list );
+    showDirEntries( vol, vol->curDirPtr );
 
     int status = 0;
 

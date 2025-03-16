@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
     long n;
     FILE *in;
     long len;
-     struct AdfList *list;
 
     adfEnvInitDefault();
 
@@ -52,13 +51,7 @@ int main(int argc, char *argv[])
 
     showVolInfo( vol );
 
-    list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
+    showDirEntries( vol, vol->curDirPtr );
 
 //    adfCreateDir(vol,vol->curDirPtr,"dir_1a");
     adfCreateDir(vol,vol->curDirPtr,"dir_1b");
@@ -89,13 +82,7 @@ int main(int argc, char *argv[])
 
     adfRemoveEntry(vol,vol->curDirPtr, "dir_1b");
 
-    list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
+    showDirEntries( vol, vol->curDirPtr );
 
     adfVolUnMount(vol);
     adfUnMountDev(hd);

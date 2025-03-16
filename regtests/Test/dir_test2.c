@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume *vol;
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -61,37 +60,16 @@ int main(int argc, char *argv[])
     }
 
     showVolInfo( vol );
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     adfCreateDir(vol,vol->curDirPtr,"dir_1a");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     /* same hash than dir_1a" */
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     adfVolUnMount(vol);

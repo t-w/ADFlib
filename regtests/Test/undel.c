@@ -79,13 +79,7 @@ int main(int argc, char *argv[])
     }
     showVolInfo( vol );
 
-    struct AdfList *list, *cell;
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     puts("\nremove file_1a");
     rc = adfRemoveEntry ( vol, vol->curDirPtr, "file_1a" );
@@ -103,6 +97,7 @@ int main(int argc, char *argv[])
     }
     showVolInfo( vol );
 
+    struct AdfList *list, *cell;
     cell = list = adfGetDelEnt(vol);
     if (cell)
         puts ( "Found deleted entries:" );
@@ -137,13 +132,7 @@ int main(int argc, char *argv[])
 	goto clean_up_volume;
     }
     showVolInfo( vol );
-
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
 clean_up_volume:
     adfVolUnMount(vol);

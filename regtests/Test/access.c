@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     struct AdfVolume *vol;
     struct AdfFile *fic;
     unsigned char buf[1];
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -73,12 +72,7 @@ int main(int argc, char *argv[])
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
 
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfSetEntryAccess ( vol, vol->curDirPtr, "dir_5u",
                         0 | ADF_ACCMASK_A | ADF_ACCMASK_E );
@@ -87,12 +81,7 @@ int main(int argc, char *argv[])
 
     putchar('\n');
 
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfSetEntryAccess ( vol, vol->curDirPtr, "dir_5u",
                         0x12 & ! ADF_ACCMASK_A & ! ADF_ACCMASK_E );
@@ -101,12 +90,7 @@ int main(int argc, char *argv[])
 
     putchar('\n');
 
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
     struct AdfVolume *vol;
     struct AdfFile *fic;
     unsigned char buf[1];
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -106,39 +105,17 @@ int main(int argc, char *argv[])
     adfFileClose ( fic );
 
     puts("Create file_1a, file_24, dir_1a, dir_5u (with this order)");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     puts("Rename dir_5u into file_5u");
-
     adfRenameEntry(vol, vol->curDirPtr, "dir_5u", vol->curDirPtr, "file_5u");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     puts("Rename file_1a into dir_3");
-
     adfRenameEntry(vol, vol->curDirPtr,"file_1a", vol->curDirPtr,"dir_3");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     puts("Create dir_5u, Rename dir_3 into toto");
 /*
@@ -154,22 +131,9 @@ int main(int argc, char *argv[])
     adfCloseFile(fic);
 */
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
-
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     adfRenameEntry(vol, vol->curDirPtr,"dir_1a", vol->curDirPtr,"longfilename");
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

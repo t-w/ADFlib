@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
     struct AdfVolume *vol;
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -56,14 +55,7 @@ int main(int argc, char *argv[])
     }
 
     showVolInfo( vol );
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        adfFreeEntry(cell->content);
-        cell = cell->next;
-    }
-    adfListFree ( list );
+    showDirEntries( vol, vol->curDirPtr );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

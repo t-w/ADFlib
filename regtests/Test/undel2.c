@@ -76,19 +76,13 @@ int main ( const int          argc,
         goto clean_up_dev_unmount;
     }
 
-    struct AdfList *list, *cell;
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-    showVolInfo( vol );
+    showDirEntries( vol, vol->curDirPtr );
 
     printf ( "\nremove %s", fileToRecover );
     adfRemoveEntry(vol,vol->curDirPtr, fileToRecover );
     showVolInfo( vol );
 
+    struct AdfList *list, *cell;
     cell = list = adfGetDelEnt(vol);
     if (cell)
         puts ( "Found deleted entries:" );
@@ -123,13 +117,7 @@ int main ( const int          argc,
     }
 
     showVolInfo( vol );
-
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     struct AdfFile * const file = adfFileOpen ( vol, fileToRecover,
                                                 ADF_FILE_MODE_READ );

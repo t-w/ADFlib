@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume *vol;
-    struct AdfList *list;
  
     adfEnvInitDefault();
 
@@ -59,15 +58,7 @@ int main(int argc, char *argv[])
     }
 
     showVolInfo( vol );
-
-    list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     adfCreateDir(vol,vol->curDirPtr,"newdir");
@@ -75,15 +66,7 @@ int main(int argc, char *argv[])
     /* cd dir_2 */
     //ADF_SECTNUM nSect = adfChangeDir(vol, "same_hash");
     adfChangeDir(vol, "same_hash");
-
-    list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     /* not empty */
@@ -96,28 +79,12 @@ int main(int argc, char *argv[])
     /* last */
     adfRemoveEntry(vol, vol->curDirPtr, "dir_1a");
 
-    list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     adfParentDir(vol);
-
     adfRemoveEntry(vol, vol->curDirPtr, "mod.And.DistantCall");
-
-    list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     showVolInfo( vol );

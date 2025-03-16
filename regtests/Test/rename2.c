@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
     struct AdfVolume *vol;
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -58,15 +57,7 @@ int main(int argc, char *argv[])
     free( devInfo );
 
     showVolInfo( vol );
-
-
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
-
+    showDirEntries( vol, vol->curDirPtr );
     putchar('\n');
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
@@ -75,56 +66,29 @@ int main(int argc, char *argv[])
 
     adfCreateDir(vol,vol->curDirPtr,"toto");
 printf("[dir = %d]\n",vol->curDirPtr);
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
+
 printf("[dir = %ld]\n",883L);
-    cell = list = adfGetDirEnt(vol,883);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, 883 );
 
     adfRenameEntry(vol, 883,"dir_51", vol->curDirPtr,"dir_55");
 putchar('\n');
 
 printf("[dir = %d]\n",vol->curDirPtr);
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
+
 printf("[dir = %ld]\n",883L);
-    cell = list = adfGetDirEnt(vol,883);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, 883 );
 
     adfRenameEntry(vol, vol->curDirPtr,"toto", 883,"moved_dir");
 
 putchar('\n');
 
 printf("[dir = %d]\n",vol->curDirPtr);
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
+
 printf("[dir = %ld]\n",883L);
-    cell = list = adfGetDirEnt(vol,883);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, 883 );
 
 	    adfVolUnMount(vol);
     adfDevUnMount ( hd );

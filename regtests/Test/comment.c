@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     struct AdfVolume *vol;
     struct AdfFile *fic;
     unsigned char buf[1];
-    struct AdfList *list, *cell;
  
     adfEnvInitDefault();
 
@@ -73,24 +72,14 @@ int main(int argc, char *argv[])
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
 
-    cell = list = adfGetDirEnt(vol, vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfSetEntryComment(vol, vol->curDirPtr, "dir_5u", "dir_5u comment");
     adfSetEntryComment(vol, vol->curDirPtr, "file_1a", "file_1a very very long comment");
 
     putchar('\n');
 
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfSetEntryComment(vol, vol->curDirPtr, "dir_5u", "");
     adfSetEntryComment(vol, vol->curDirPtr, "file_1a", "new comment" );
@@ -99,12 +88,7 @@ int main(int argc, char *argv[])
 
     adfEnvSetProperty ( ADF_PR_USEDIRC, true );
 
-    cell = list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(cell) {
-        showEntryInfo( cell->content );
-        cell = cell->next;
-    }
-    adfFreeDirList(list);
+    showDirEntries( vol, vol->curDirPtr );
 
     adfVolUnMount(vol);
     adfDevUnMount ( hd );

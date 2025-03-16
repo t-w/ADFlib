@@ -33,7 +33,6 @@ int main(int argc, char *argv[])
     struct AdfFile *file;
     unsigned char buf[600];
     FILE *out;
-    struct AdfList *list;
  
     adfEnvInitDefault();
 
@@ -86,14 +85,7 @@ int main(int argc, char *argv[])
     adfFileClose ( file );
 
     /* the directory */
-    list = adfGetDirEnt(vol,vol->curDirPtr);
-    while(list) {
-        showEntryInfo( list->content );
-        adfFreeEntry(list->content);
-        list = list->next;
-    }
-    adfListFree ( list );
-
+    showDirEntries( vol, vol->curDirPtr );
 
     /* re read this file */
     file = adfFileOpen ( vol, "moon_gif", ADF_FILE_MODE_READ );
