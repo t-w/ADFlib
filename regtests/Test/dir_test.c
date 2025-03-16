@@ -10,6 +10,9 @@
 #include"adflib.h"
 #include "adf_dir.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 3
 
 int test_chdir_hlink ( struct AdfVolume * vol,
                        char *             hlink,
@@ -32,9 +35,10 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 2 ) {
-        fprintf ( stderr,
-                  "required parameter (image/device) absent - aborting...\n");
+        log_error( "missing required parameter (image/device) - aborting...\n");
         return 1;
     }
 
@@ -48,24 +52,23 @@ int main(int argc, char *argv[])
 /* testffs.adf */
     struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  argv[1] );
+        log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         adfEnvCleanUp();
         exit(1);
     }
 
     ADF_RETCODE rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't mount device\n" );
         adfDevClose ( hd );
         adfEnvCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
 
@@ -112,11 +115,10 @@ int test_chdir_hlink ( struct AdfVolume * vol,
 
     adfToRootDir ( vol );
 
-    printf ("*** Test entering hard link %s\n", hlink );
+    log_info ("*** Test entering hard link %s\n", hlink );
     ADF_RETCODE rc = adfChangeDir ( vol, hlink );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, "adfChangeDir error entering hard link %s.\n",
-                  hlink );
+        log_error( "adfChangeDir error entering hard link %s.\n", hlink );
         status++;
     }
 
@@ -131,8 +133,8 @@ int test_chdir_hlink ( struct AdfVolume * vol,
     adfFreeDirList ( list );
 
     if ( count != num_entries ) {
-        fprintf ( stderr, "Incorrect number of entries (%d) after chdir to hard link %s.\n",
-                  count, hlink );
+        log_error( "Incorrect number of entries (%d) after chdir to hard link %s.\n",
+                   count, hlink );
         status++;
     }
 
@@ -148,7 +150,7 @@ int test_softlink_realname ( struct AdfVolume * vol,
 {
     adfToRootDir ( vol );
 
-    printf ("*** Test getting destination name for soft link %s\n", slink );
+    log_info("*** Test getting destination name for soft link %s\n", slink );
 
     struct AdfLinkBlock entry;
     ADF_SECTNUM sectNum = adfGetEntryByName ( vol, vol->curDirPtr, slink,
@@ -162,11 +164,10 @@ int test_softlink_realname ( struct AdfVolume * vol,
     }
 
     if ( strncmp ( expected_dest_name, entry.realName, 6 ) != 0 ) {
-        fprintf ( stderr,
-                  "Name of the softlink %s incorrect: read '%s' != expected '%s'\n",
-                  slink, entry.realName, expected_dest_name );
+        log_error( "Name of the softlink %s incorrect: read '%s' != expected '%s'\n",
+                   slink, entry.realName, expected_dest_name );
         return 1;
     }
-    printf (" -> OK!\n");
+    log_info(" -> OK!\n");
     return 0;
 }
