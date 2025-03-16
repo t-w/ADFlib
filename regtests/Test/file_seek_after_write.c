@@ -9,6 +9,10 @@
 #include <unistd.h>   // for unlink()
 #endif
 
+#include "log.h"
+
+#define TEST_VERBOSITY 1
+
 
 typedef struct test_data_s {
     //struct AdfDevice * device;
@@ -49,6 +53,8 @@ unsigned verify_file_data ( struct AdfVolume * const    vol,
 
 int main(void)
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     /* this test will try to overwrite the following offsets (OFS):
            +-----+-----+-----+
        ... | 486 | 487 | 488 |
@@ -322,8 +328,8 @@ unsigned test_seek_after_write ( const test_data_t * const test_data )
     ADF_RETCODE rc = adfFileSeek ( file, offset );
     if ( rc != ADF_RC_OK ) {
         adfFileClose ( file );
-        fprintf ( stderr, "seeking to offset 0x%x (0x%u) failed\n",
-                offset, offset );
+        log_error( "seeking to offset 0x%x (0x%u) failed\n",
+                   offset, offset );
         errors += 1;
         goto cleanup;
     }
@@ -344,29 +350,27 @@ unsigned test_seek_after_write ( const test_data_t * const test_data )
     unsigned nerrors_overwriting =
         verify_overwritten_data ( vol, filename, buffer_random, offset, chunksize );
     if ( nerrors_overwriting > 0 ) {
-            fprintf ( stderr, "+%u errors, file %s\n",
-                      nerrors_overwriting, filename );
-            fflush ( stderr );
+        log_error( "+%u errors, file %s\n", nerrors_overwriting, filename );
+        //fflush( stderr );
     }
     
     // check also the same data in "normally" written file (without any seek)
     unsigned nerrors_wo_seek = //verify_data ( vol, filename2, buffer, offset, chunksize );
         verify_file_data ( vol, filename2, buffer_random, bufsize, 10 );
     if ( nerrors_wo_seek > 0 )  {
-            fprintf ( stderr, "+%u errors, file %s\n",
-                      nerrors_wo_seek, filename2 );
-            fflush ( stderr );
+        log_error( "+%u errors, file %s\n", nerrors_wo_seek, filename2 );
+        //fflush( stderr );
     }
 
     errors += nerrors_overwriting + nerrors_wo_seek;
     if ( errors > 0 )  {
-        fprintf ( stderr, "%s failed with %u errors ( fs %s, dblock %u,"
-                  " filesize %u, chunk offset %u, chunksize %u )\n",
-                  test_data->testname, errors,
-                  ( test_data->fstype == 0 ) ? "OFS" : "FFS",
-                  test_data->dblocksize,
-                  bufsize, offset, chunksize );
-        fflush ( stderr );
+        log_error( "%s failed with %u errors ( fs %s, dblock %u,"
+                   " filesize %u, chunk offset %u, chunksize %u )\n",
+                   test_data->testname, errors,
+                   ( test_data->fstype == 0 ) ? "OFS" : "FFS",
+                   test_data->dblocksize,
+                   bufsize, offset, chunksize );
+        //fflush( stderr );
     }
 
 cleanup:
@@ -410,10 +414,10 @@ unsigned verify_overwritten_data ( struct AdfVolume * const vol,
     for ( unsigned i = 0 ; i < chunk0_size ; ++i ) {
         if ( rbuf[i] != 0 ) {
             nerrors += 1;
-            fprintf ( stderr, "data error: offset 0x%x (0x%u), buf 0x%x, file 0x%x,"
-                      " fname %s, filesize %u\n",
-                      i, i, 0, rbuf[i], filename, filesize );
-            fflush ( stderr );
+            log_error( "data error: offset 0x%x (0x%u), buf 0x%x, file 0x%x,"
+                       " fname %s, filesize %u\n",
+                       i, i, 0, rbuf[i], filename, filesize );
+            //fflush( stderr );
         }
     }
 
@@ -426,11 +430,11 @@ unsigned verify_overwritten_data ( struct AdfVolume * const vol,
         //        offset_i, offset_i, buffer[offset_i], rbuf[i] );
         if ( rbuf[i] != buffer[offset_i] ) {
             nerrors += 1;
-            fprintf ( stderr, "data error: offset 0x%x (0x%u), buf 0x%x, file 0x%x,"
-                      " fname %s, chunk offset %u, chunksize %u, filesize %u\n",
-                      offset_i, offset_i, buffer[offset_i], rbuf[i], filename,
-                      offset, chunksize, filesize );
-            fflush ( stderr );
+            log_error( "data error: offset 0x%x (0x%u), buf 0x%x, file 0x%x,"
+                       " fname %s, chunk offset %u, chunksize %u, filesize %u\n",
+                       offset_i, offset_i, buffer[offset_i], rbuf[i], filename,
+                       offset, chunksize, filesize );
+            //fflush( stderr );
         }
     }
 
@@ -441,10 +445,10 @@ unsigned verify_overwritten_data ( struct AdfVolume * const vol,
     for ( unsigned i = 0 ; i < chunk0_size ; ++i ) {
         if ( rbuf[i] != 0 ) {
             nerrors += 1;
-            fprintf ( stderr, "data error: offset 0x%x (0x%u), buf 0x%x, file 0x%x,"
-                      " fname %s, filesize %u\n",
-                      i, i, 0, rbuf[i], filename, filesize );
-            fflush ( stderr );
+            log_error( "data error: offset 0x%x (0x%u), buf 0x%x, file 0x%x,"
+                       " fname %s, filesize %u\n",
+                       i, i, 0, rbuf[i], filename, filesize );
+            //fflush( stderr );
         }
     }
 
@@ -503,11 +507,11 @@ unsigned verify_file_data ( struct AdfVolume * const    vol,
 
         for ( unsigned i = 0 ; i < block_bytes_read ; ++i ) {
             if ( readbuf [ offset % READ_BUFSIZE ] != buffer [ offset ] ) {
-                fprintf ( stderr, "Data differ at %u ( 0x%x ): orig. 0x%x, read 0x%x\n",
-                          offset, offset,
-                          buffer [ offset ],
-                          readbuf [ offset % READ_BUFSIZE ] );
-                fflush ( stderr );
+                log_error( "Data differ at %u ( 0x%x ): orig. 0x%x, read 0x%x\n",
+                           offset, offset,
+                           buffer [ offset ],
+                           readbuf [ offset % READ_BUFSIZE ] );
+                //fflush( stderr );
                 nerrors++;
                 if ( nerrors >= errors_max ) {
                     adfFileClose ( output );
@@ -521,9 +525,9 @@ unsigned verify_file_data ( struct AdfVolume * const    vol,
     adfFileClose ( output );
 
     if ( bytes_read != bytes_written ) {
-        fprintf ( stderr, "bytes read (%u) != bytes written (%u) -> ERROR!!!\n",
-                  bytes_read, bytes_written );
-        fflush ( stderr );
+        log_error( "bytes read (%u) != bytes written (%u) -> ERROR!!!\n",
+                   bytes_read, bytes_written );
+        //fflush( stderr );
         nerrors++;
     }
 

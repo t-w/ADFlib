@@ -72,7 +72,7 @@ target_link_libraries ( file_seek_test adf )
 add_executable ( file_seek_test2 file_seek_test2.c )
 target_link_libraries ( file_seek_test2 adf )
 
-add_executable ( file_seek_after_write file_seek_after_write.c )
+add_executable ( file_seek_after_write file_seek_after_write.c log.c log.h )
 target_link_libraries ( file_seek_after_write adf )
 
 add_executable ( file_read_hard_link_test file_read_hard_link_test.c )
