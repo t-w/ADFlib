@@ -9,7 +9,7 @@
 
 #include "adflib.h"
 #include "common.h"
-
+#include "log.h"
 
 void MyVer(char *msg)
 {
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "access-newdev", 80, 2, 11 );
     if ( ! hd ) {
-        fprintf( stderr, "can't mount device\n" );
+        log_error( "can't create device\n" );
         status = 1;
         goto cleanup_env;
     }
@@ -41,21 +41,21 @@ int main(int argc, char *argv[])
     if ( adfCreateFlop( hd, "empty", ADF_DOSFS_FFS |
                                      ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
-        fprintf( stderr, "can't create floppy\n" );
+        log_error( "can't create floppy\n" );
         status = 1;
         goto cleanup_dev;
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if ( ! vol ) {
-        fprintf( stderr, "can't mount volume\n" );
+        log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
 
     struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if ( ! fic ) {
-        fprintf( stderr, "can't open file for writing\n" );
+        log_error( "can't open file for writing\n" );
         status = 1;
         goto cleanup_vol;
     }

@@ -11,7 +11,7 @@ include_directories (
   ${PROJECT_BINARY_DIR}/src
 )
 
-add_executable ( access access.c common.c common.h )
+add_executable ( access access.c common.c common.h log.c log.h )
 target_link_libraries ( access adf )
 
 add_executable ( bitmap_read_segfault bitmap_read_segfault.c log.c log.h )
