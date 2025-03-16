@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include"adflib.h"
+#include "common.h"
 #include "log.h"
 
 #define TEST_VERBOSITY 1
@@ -27,7 +28,6 @@ int main(int argc, char *argv[])
 {
     log_init( stderr, TEST_VERBOSITY );
 
-    struct AdfDevice *hd;
     struct AdfVolume *vol;
     FILE* boot;
     unsigned char bootcode[1024];
@@ -42,17 +42,25 @@ int main(int argc, char *argv[])
 
     adfEnvInitDefault();
 
-    hd = adfMountDev ( argv[2], ADF_ACCESS_MODE_READWRITE );
-    if (!hd) {
+    struct AdfDevice * const hd = adfDevOpen( argv[2], ADF_ACCESS_MODE_READWRITE );
+    if ( ! hd ) {
+        log_error( "Cannot open file/device '%s' - aborting...\n", argv[2] );
+        adfEnvCleanUp();
+        exit(1);
+    }
+
+    ADF_RETCODE rc = adfDevMount ( hd );
+    if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
+        adfDevClose( hd );
         adfEnvCleanUp(); exit(1);
     }
 	
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
-        adfUnMountDev(hd);
-        adfCloseDev(hd);
+        adfDevUnMount( hd );
+        adfDevClose( hd );
         adfEnvCleanUp(); exit(1);
     }
 
@@ -61,7 +69,9 @@ int main(int argc, char *argv[])
     showVolInfo( vol );
 
     adfVolUnMount ( vol );
-    adfUnMountDev(hd);
+
+    adfDevUnMount ( hd );
+    adfDevClose ( hd );
 
     adfEnvCleanUp();
 
