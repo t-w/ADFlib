@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 #include "log.h"
 
@@ -37,49 +37,52 @@ int main(int argc, char *argv[])
     FILE* boot;
     unsigned char bootcode[1024];
  
-    boot=fopen(argv[1],"rb");
-    if (!boot) {
+    boot = fopen( argv[1], "rb" );
+    if ( ! boot ) {
         log_error( "can't open bootcode file\n" );
         exit(1);
     }
-    fread(bootcode, sizeof(unsigned char), 1024, boot);
-    fclose(boot);
+    fread( bootcode, sizeof(unsigned char), 1024, boot );
+    fclose( boot );
 
     adfEnvInitDefault();
 
     /* create and mount one device */
-    hd = adfDevCreate ( "dump", "bootdisk-newdev", 80, 2, 11 );
-    if (!hd) {
+    hd = adfDevCreate( "dump", "bootdisk-newdev", 80, 2, 11 );
+    if ( ! hd ) {
         log_error( "can't create device\n" );
-        adfEnvCleanUp(); exit(1);
+        adfEnvCleanUp();
+        exit(1);
     }
 
     showDevInfo( hd );
 
-    if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
-                                      ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
+    if ( adfCreateFlop( hd, "empty", ADF_DOSFS_FFS |
+                                     ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
         log_error( "can't create floppy\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        adfDevUnMount( hd );
+        adfDevClose( hd );
+        adfEnvCleanUp();
+        exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
-        adfDevUnMount ( hd );
-        adfDevClose (hd );
-        adfEnvCleanUp(); exit(1);
+        adfDevUnMount( hd );
+        adfDevClose( hd );
+        adfEnvCleanUp();
+        exit(1);
     }
 
-    adfVolInstallBootBlock ( vol, bootcode );
+    adfVolInstallBootBlock( vol, bootcode );
 
     showVolInfo( vol );
 
     adfVolUnMount(vol);
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
     adfEnvCleanUp();
 
