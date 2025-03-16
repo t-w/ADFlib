@@ -89,7 +89,7 @@ bitmap_recreate_SOURCES = bitmap_recreate.c log.c log.h
 bitmap_recreate_LDADD = $(ADFLIBS)
 bitmap_recreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-bootdisk_SOURCES = bootdisk.c common.c common.h
+bootdisk_SOURCES = bootdisk.c common.c common.h log.c log.h
 bootdisk_LDADD = $(ADFLIBS)
 bootdisk_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

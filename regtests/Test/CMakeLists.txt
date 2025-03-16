@@ -20,7 +20,7 @@ target_link_libraries ( bitmap_read_segfault adf )
 add_executable ( bitmap_recreate bitmap_recreate.c log.c log.h )
 target_link_libraries ( bitmap_recreate adf )
 
-add_executable ( bootdisk bootdisk.c common.c common.h )
+add_executable ( bootdisk bootdisk.c common.c common.h log.c log.h )
 target_link_libraries ( bootdisk adf )
 
 add_executable ( cache_crash cache_crash.c )
