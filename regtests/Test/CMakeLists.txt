@@ -29,6 +29,10 @@ target_link_libraries ( bootdisk2 adf )
 add_executable ( cache_crash cache_crash.c )
 target_link_libraries ( cache_crash adf )
 
+# an incomplete test?
+#add_executable ( cache_test cache_test.c )
+#target_link_libraries ( cache_test adf )
+
 add_executable ( comment comment.c common.c common.h )
 target_link_libraries ( comment adf )
 

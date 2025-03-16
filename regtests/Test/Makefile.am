@@ -101,6 +101,11 @@ cache_crash_SOURCES = cache_crash.c
 cache_crash_LDADD = $(ADFLIBS)
 cache_crash_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
+# an incomplete test?
+#cache_test_SOURCES = cache_test.c
+#cache_test_LDADD = $(ADFLIBS)
+#cache_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 comment_SOURCES = comment.c common.c common.h
 comment_LDADD = $(ADFLIBS)
 comment_DEPENDENCIES = $(top_builddir)/src/libadf.la
