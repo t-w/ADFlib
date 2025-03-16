@@ -6,23 +6,23 @@
 #include <stdlib.h>
 
 
+static inline void showInfo( char * const info )
+{
+    printf( "%s", info );
+    free( info );
+}
+
 void showDevInfo( struct AdfDevice * const dev )
 {
-    const char * const devInfo = adfDevGetInfo( dev );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showInfo( adfDevGetInfo( dev ) );
 }
 
 void showVolInfo( struct AdfVolume * const vol )
 {
-    const char * const volInfo = adfVolGetInfo( vol );
-    printf( "%s", volInfo );
-    free( volInfo );
+    showInfo( adfVolGetInfo( vol ) );
 }
 
 void showEntryInfo( const struct AdfEntry * const  entry )
 {
-    char * const info = adfEntryGetInfo( entry );
-    printf( "%s", info );
-    free( info );
+    showInfo( adfEntryGetInfo( entry ) );
 }
