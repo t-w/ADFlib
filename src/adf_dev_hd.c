@@ -43,6 +43,151 @@ static void adfFreeTmpVolList( struct AdfList * const  root );
 
 
 /*
+ * adfCreateHd
+ *
+ * create a filesystem one an harddisk device (partitions==volumes, and the header)
+ *
+ * fills dev->volList[]
+ *
+ */
+ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
+                         const unsigned                          n,
+                         const struct Partition * const * const  partList )
+{
+/*struct AdfVolume *vol;*/
+
+    if ( dev == NULL || partList == NULL ) {
+        adfEnv.eFct( "%s: illegal parameter(s)", __func__ );
+        return ADF_RC_ERROR;
+    }
+
+    dev->devType = ADF_DEVTYPE_HARDDISK;
+
+    dev->volList = (struct AdfVolume **) malloc(
+        sizeof(struct AdfVolume *) * n );
+    if ( ! dev->volList ) {
+        adfEnv.eFct( "%s: malloc", __func__ );
+        return ADF_RC_MALLOC;
+    }
+    for ( unsigned i = 0; i < n; i++ ) {
+        dev->volList[ i ] = adfVolCreate( dev,
+                                          (uint32_t) partList[ i ]->startCyl,
+                                          (uint32_t) partList[ i ]->lenCyl,
+                                          partList[ i ]->volName,
+                                          partList[ i ]->volType );
+        if ( dev->volList[ i ] == NULL ) {
+            for ( unsigned j = 0; j < i; j++ ) {
+                free ( dev->volList[ j ] );
+/* pas fini */
+            }
+            free( dev->volList );
+            adfEnv.eFct( "%s: adfVolCreate() failed", __func__ );
+        }
+    }
+    dev->nVol = (int) n;
+/*
+vol=dev->volList[0];
+printf("0first=%ld last=%ld root=%ld\n",vol->firstBlock,
+ vol->lastBlock, vol->rootBlock);
+*/
+    dev->mounted = true;
+
+    return adfCreateHdHeader( dev, (int) n, partList );
+}
+
+
+/*
+ * adfCreateHdHeader
+ *
+ * create PARTIALLY the sectors of the header of one harddisk : can not be mounted
+ * back on a real Amiga ! It's because some device dependant values can't be guessed...
+ *
+ * do not use dev->volList[], but partList for partitions information : start and len are cylinders,
+ *  not blocks
+ * do not fill dev->volList[]
+ * called by adfCreateHd()
+ */
+ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
+                               const int                               n,
+                               const struct Partition * const * const  partList )
+{
+    (void)               n;
+    struct AdfRDSKblock  rdsk;
+    struct AdfPARTblock  part;
+
+    /* RDSK */ 
+ 
+    memset( (uint8_t *) &rdsk, 0, sizeof(struct AdfRDSKblock) );
+
+    rdsk.rdbBlockLo = 0;
+    rdsk.rdbBlockHi = ( dev->sectors * dev->heads * 2 ) - 1;
+    rdsk.loCylinder = 2;
+    rdsk.hiCylinder = dev->cylinders - 1;
+    rdsk.cylBlocks  = dev->sectors * dev->heads;
+
+    rdsk.cylinders = dev->cylinders;
+    rdsk.sectors   = dev->sectors;
+    rdsk.heads     = dev->heads;
+	
+    rdsk.badBlockList   = -1;
+    rdsk.partitionList  = 1;
+    rdsk.fileSysHdrList = 1 + dev->nVol;
+
+    ADF_RETCODE rc = adfWriteRDSKblock( dev, &rdsk );
+    if ( rc != ADF_RC_OK )
+        return rc;
+
+    /* PART */
+
+    ADF_SECTNUM j = 1;
+    for ( int i = 0; i < dev->nVol; i++ ) {
+        memset( &part, 0, sizeof(struct AdfPARTblock) );
+
+        if ( i < dev->nVol - 1 )
+            part.next = j + 1;
+        else
+            part.next = -1;
+
+        const unsigned len = min( (unsigned) ADF_MAX_NAME_LEN,
+                                  (unsigned) strlen( partList[ i ]->volName ) );
+        part.nameLen = (char) len;
+        strncpy( part.name, partList[ i ]->volName, len );
+
+        part.surfaces       = (int32_t) dev->heads;
+        part.blocksPerTrack = (int32_t) dev->sectors;
+        part.lowCyl         = partList[ i ]->startCyl;
+        part.highCyl        = partList[ i ]->startCyl +
+                              partList[ i ]->lenCyl - 1;
+        memcpy( part.dosType, "DOS", 3 );
+
+        part.dosType[ 3 ] = partList[ i ]->volType & 0x01;
+
+        rc = adfWritePARTblock( dev, j, &part );
+        if ( rc != ADF_RC_OK )
+            return rc;
+        j++;
+    }
+
+    /* FSHD */
+    struct AdfFSHDblock fshd;
+    memcpy( fshd.dosType, "DOS", 3 );
+    fshd.dosType[ 3 ] = (char) partList[ 0 ]->volType;
+    fshd.next         = -1;
+    fshd.segListBlock = j + 1;
+    rc = adfWriteFSHDblock( dev, j, &fshd );
+    if ( rc != ADF_RC_OK )
+        return rc;
+    j++;
+	
+    /* LSEG */
+    struct AdfLSEGblock lseg;
+    lseg.next = -1;
+
+    return adfWriteLSEGblock( dev, j, &lseg );
+}
+
+
+/*
  * adfMountHd
  *
  * normal not used directly : called by adfDevMount()
@@ -189,151 +334,6 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
     }
 
     return ADF_RC_OK;
-}
-
-
-/*
- * adfCreateHdHeader
- *
- * create PARTIALLY the sectors of the header of one harddisk : can not be mounted
- * back on a real Amiga ! It's because some device dependant values can't be guessed...
- *
- * do not use dev->volList[], but partList for partitions information : start and len are cylinders,
- *  not blocks
- * do not fill dev->volList[]
- * called by adfCreateHd()
- */
-ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
-                               const int                               n,
-                               const struct Partition * const * const  partList )
-{
-    (void)               n;
-    struct AdfRDSKblock  rdsk;
-    struct AdfPARTblock  part;
-
-    /* RDSK */ 
- 
-    memset( (uint8_t *) &rdsk, 0, sizeof(struct AdfRDSKblock) );
-
-    rdsk.rdbBlockLo = 0;
-    rdsk.rdbBlockHi = ( dev->sectors * dev->heads * 2 ) - 1;
-    rdsk.loCylinder = 2;
-    rdsk.hiCylinder = dev->cylinders - 1;
-    rdsk.cylBlocks  = dev->sectors * dev->heads;
-
-    rdsk.cylinders = dev->cylinders;
-    rdsk.sectors   = dev->sectors;
-    rdsk.heads     = dev->heads;
-	
-    rdsk.badBlockList   = -1;
-    rdsk.partitionList  = 1;
-    rdsk.fileSysHdrList = 1 + dev->nVol;
-
-    ADF_RETCODE rc = adfWriteRDSKblock( dev, &rdsk );
-    if ( rc != ADF_RC_OK )
-        return rc;
-
-    /* PART */
-
-    ADF_SECTNUM j = 1;
-    for ( int i = 0; i < dev->nVol; i++ ) {
-        memset( &part, 0, sizeof(struct AdfPARTblock) );
-
-        if ( i < dev->nVol - 1 )
-            part.next = j + 1;
-        else
-            part.next = -1;
-
-        const unsigned len = min( (unsigned) ADF_MAX_NAME_LEN,
-                                  (unsigned) strlen( partList[ i ]->volName ) );
-        part.nameLen = (char) len;
-        strncpy( part.name, partList[ i ]->volName, len );
-
-        part.surfaces       = (int32_t) dev->heads;
-        part.blocksPerTrack = (int32_t) dev->sectors;
-        part.lowCyl         = partList[ i ]->startCyl;
-        part.highCyl        = partList[ i ]->startCyl +
-                              partList[ i ]->lenCyl - 1;
-        memcpy( part.dosType, "DOS", 3 );
-
-        part.dosType[ 3 ] = partList[ i ]->volType & 0x01;
-
-        rc = adfWritePARTblock( dev, j, &part );
-        if ( rc != ADF_RC_OK )
-            return rc;
-        j++;
-    }
-
-    /* FSHD */
-    struct AdfFSHDblock fshd;
-    memcpy( fshd.dosType, "DOS", 3 );
-    fshd.dosType[ 3 ] = (char) partList[ 0 ]->volType;
-    fshd.next         = -1;
-    fshd.segListBlock = j + 1;
-    rc = adfWriteFSHDblock( dev, j, &fshd );
-    if ( rc != ADF_RC_OK )
-        return rc;
-    j++;
-	
-    /* LSEG */
-    struct AdfLSEGblock lseg;
-    lseg.next = -1;
-
-    return adfWriteLSEGblock( dev, j, &lseg );
-}
-
-
-/*
- * adfCreateHd
- *
- * create a filesystem one an harddisk device (partitions==volumes, and the header)
- *
- * fills dev->volList[]
- *
- */
-ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
-                         const unsigned                          n,
-                         const struct Partition * const * const  partList )
-{
-/*struct AdfVolume *vol;*/
-
-    if ( dev == NULL || partList == NULL ) {
-        adfEnv.eFct( "%s: illegal parameter(s)", __func__ );
-        return ADF_RC_ERROR;
-    }
-
-    dev->devType = ADF_DEVTYPE_HARDDISK;
-
-    dev->volList = (struct AdfVolume **) malloc(
-        sizeof(struct AdfVolume *) * n );
-    if ( ! dev->volList ) {
-        adfEnv.eFct( "%s: malloc", __func__ );
-        return ADF_RC_MALLOC;
-    }
-    for ( unsigned i = 0; i < n; i++ ) {
-        dev->volList[ i ] = adfVolCreate( dev,
-                                          (uint32_t) partList[ i ]->startCyl,
-                                          (uint32_t) partList[ i ]->lenCyl,
-                                          partList[ i ]->volName,
-                                          partList[ i ]->volType );
-        if ( dev->volList[ i ] == NULL ) {
-            for ( unsigned j = 0; j < i; j++ ) {
-                free ( dev->volList[ j ] );
-/* pas fini */
-            }
-            free( dev->volList );
-            adfEnv.eFct( "%s: adfVolCreate() failed", __func__ );
-        }
-    }
-    dev->nVol = (int) n;
-/*
-vol=dev->volList[0];
-printf("0first=%ld last=%ld root=%ld\n",vol->firstBlock,
- vol->lastBlock, vol->rootBlock);
-*/
-    dev->mounted = true;
-
-    return adfCreateHdHeader( dev, (int) n, partList );
 }
 
 

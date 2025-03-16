@@ -33,17 +33,21 @@
 #include "adf_blk_hd.h"
 #include "adf_prefix.h"
 
-ADF_RETCODE adfMountHd( struct AdfDevice * const  dev );
-
-ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
-                               const int                               n,
-                               const struct Partition * const * const  partList );
-
+/* create and format hd volumes (erases data!) */
 ADF_PREFIX ADF_RETCODE adfCreateHd(
     struct AdfDevice * const                dev,
     const unsigned                          n,
     const struct Partition * const * const  partList );
 
+ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
+                               const int                               n,
+                               const struct Partition * const * const  partList );
+
+/* mount hd volumes (called by adfDevMount) */
+ADF_RETCODE adfMountHd( struct AdfDevice * const  dev );
+
+
+/* hd block operations */
 
 ADF_RETCODE adfReadRDSKblock( struct AdfDevice * const     dev,
                               struct AdfRDSKblock * const  blk );
