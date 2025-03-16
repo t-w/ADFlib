@@ -11,6 +11,9 @@
 #include "common.h"
 #include "log.h"
 
+#define TEST_VERBOSITY 1
+
+
 void MyVer(char *msg)
 {
     fprintf(stderr,"Verbose [%s]\n",msg);
@@ -25,6 +28,8 @@ int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
     int status = 0;
+
+    log_init( stderr, TEST_VERBOSITY );
  
     adfEnvInitDefault();
 
