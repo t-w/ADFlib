@@ -28,27 +28,27 @@ typedef struct test_data_s {
 } test_data_t;
 
 
-unsigned test_seek_after_write ( const test_data_t * const test_data );
+unsigned test_seek_after_write( const test_data_t * const  test_data );
 
 
-unsigned verify_overwritten_data ( struct AdfVolume * const vol,
-                                   const char * const       filename,
-                                   const uint8_t * const    buffer,
-                                   const unsigned           offset,
-                                   const unsigned           chunksize );
+unsigned verify_overwritten_data( struct AdfVolume * const  vol,
+                                  const char * const        filename,
+                                  const uint8_t * const     buffer,
+                                  const unsigned            offset,
+                                  const unsigned            chunksize );
 
-void pattern_random ( unsigned char * buf,
-                      const unsigned  bufsize );
+void pattern_random( unsigned char *  buf,
+                     const unsigned   bufsize );
 
-uint32_t checksum ( const unsigned char * dataptr,
-                    size_t                size );
+uint32_t checksum( const unsigned char *  dataptr,
+                   size_t                 size );
 
 // from tests/test_util.c
-unsigned verify_file_data ( struct AdfVolume * const    vol,
-                            const char * const          filename,
-                            const unsigned char * const buffer,
-                            const unsigned              bytes_written,  // == bufsize (!)
-                            const unsigned              errors_max );
+unsigned verify_file_data( struct AdfVolume * const     vol,
+                           const char * const           filename,
+                           const unsigned char * const  buffer,
+                           const unsigned               bytes_written,  // == bufsize (!)
+                           const unsigned               errors_max );
 
 
 int main(void)
@@ -226,14 +226,14 @@ int main(void)
 
     adfEnvInitDefault();
 
-    unsigned errors = test_seek_after_write ( &test_dblock_1_overlap_ofs );
-    errors         += test_seek_after_write ( &test_dblock_1_overlap_ffs );
-    errors         += test_seek_after_write ( &test_dblock_72_overlap_ofs );
-    errors         += test_seek_after_write ( &test_dblock_72_overlap_ffs );
-    errors         += test_seek_after_write ( &test_dblock_73_overlap_ofs );
-    errors         += test_seek_after_write ( &test_dblock_73_overlap_ffs );
-    errors         += test_seek_after_write ( &test_37380_3_overlap_ffs );
-    errors         += test_seek_after_write ( &test_37380_7_overlap_ffs );
+    unsigned errors = test_seek_after_write( &test_dblock_1_overlap_ofs );
+    errors         += test_seek_after_write( &test_dblock_1_overlap_ffs );
+    errors         += test_seek_after_write( &test_dblock_72_overlap_ofs );
+    errors         += test_seek_after_write( &test_dblock_72_overlap_ffs );
+    errors         += test_seek_after_write( &test_dblock_73_overlap_ofs );
+    errors         += test_seek_after_write( &test_dblock_73_overlap_ffs );
+    errors         += test_seek_after_write( &test_37380_3_overlap_ffs );
+    errors         += test_seek_after_write( &test_37380_7_overlap_ffs );
 
     adfEnvCleanUp();
 
@@ -241,19 +241,19 @@ int main(void)
 }
     
 
-unsigned test_seek_after_write ( const test_data_t * const test_data )
+unsigned test_seek_after_write( const test_data_t * const  test_data )
 {
     // create device
-    const char * const adfname = test_data->adfname;
-    struct AdfDevice * const device = adfDevCreate ( "dump", adfname, 80, 2, 11 );
+    const char * const       adfname = test_data->adfname;
+    struct AdfDevice * const device  = adfDevCreate( "dump", adfname, 80, 2, 11 );
     if ( ! device )
         return 1;
-    adfCreateFlop ( device, test_data->volname, test_data->fstype );
+    adfCreateFlop( device, test_data->volname, test_data->fstype );
 
     unsigned errors = 0;
 
     // mount volume
-    struct AdfVolume * vol = adfVolMount ( device, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * vol = adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
     if ( vol == NULL ) {
         errors += 1;
         goto umount_device;
@@ -261,63 +261,63 @@ unsigned test_seek_after_write ( const test_data_t * const test_data )
     const unsigned blocksize =
         //( adfVolIsOFS ( vol ) ? 488u : 512u );
         (unsigned) vol->datablockSize;
-    assert ( (unsigned) vol->datablockSize == test_data->dblocksize );
+    assert( (unsigned) vol->datablockSize == test_data->dblocksize );
     
     // allocate buffers
     const unsigned bufsize = test_data->bufsize;
-    uint8_t * const buffer_0 = malloc ( bufsize );
+    uint8_t * const buffer_0 = malloc( bufsize );
     if ( buffer_0 == NULL )  {
         errors += 1;
         goto umount_volume;
     }
-    uint8_t * const buffer_random = malloc ( bufsize );
+    uint8_t * const buffer_random = malloc( bufsize );
     if ( buffer_random == NULL )  {
         errors += 1;
         goto cleanup_0;
     }
 
     // fill buffer_0 with 0s
-    memset ( buffer_0, 0, bufsize );
+    memset( buffer_0, 0, bufsize );
 
     // fill the buffer with random bytes and make a checksum
-    pattern_random ( buffer_random, bufsize );
-    uint32_t buf_checksum = checksum ( buffer_random, bufsize );
+    pattern_random( buffer_random, bufsize );
+    uint32_t buf_checksum = checksum( buffer_random, bufsize );
 
     // create a new file in th ADF volume
     const char filename[] = "testfile_chunk_overwrite.tmp";
-    struct AdfFile * file = adfFileOpen ( vol, filename, ADF_FILE_MODE_WRITE );
+    struct AdfFile * file = adfFileOpen( vol, filename, ADF_FILE_MODE_WRITE );
     if ( file == NULL )  {
         errors += 1;
         goto cleanup;
     }
 
     // ... and write it with buffer filled with 0s
-    unsigned bytes_written = adfFileWrite ( file, bufsize, buffer_0 );
-    assert ( bytes_written == bufsize );
-    assert ( file->fileHdr->byteSize == bufsize );
-    adfFileClose ( file );
+    unsigned bytes_written = adfFileWrite( file, bufsize, buffer_0 );
+    assert( bytes_written == bufsize );
+    assert( file->fileHdr->byteSize == bufsize );
+    adfFileClose( file );
 
     // write file without seek (for off-line comparison / double-check)
     const char filename2[] = "testfile_wo_seek.tmp";
-    file = adfFileOpen ( vol, filename2, ADF_FILE_MODE_WRITE );
+    file = adfFileOpen( vol, filename2, ADF_FILE_MODE_WRITE );
     if ( file == NULL )  {
         errors += 1;
         goto cleanup;
     }
-    bytes_written = adfFileWrite ( file, bufsize, buffer_random );
-    assert ( bytes_written == bufsize );
-    assert ( file->fileHdr->byteSize == bufsize );
-    adfFileClose ( file );
+    bytes_written = adfFileWrite( file, bufsize, buffer_random );
+    assert( bytes_written == bufsize );
+    assert( file->fileHdr->byteSize == bufsize );
+    adfFileClose( file );
 
     const unsigned chunksize = test_data->chunksize;
-    assert ( chunksize < blocksize );
+    assert( chunksize < blocksize );
     const unsigned offset = test_data->offset;
 
     // check data in "normally" written file (without any seek)
-    errors += verify_file_data ( vol, filename2, buffer_random, bufsize, 10 );
+    errors += verify_file_data( vol, filename2, buffer_random, bufsize, 10 );
     
     // reopen the test file
-    file = adfFileOpen ( vol, filename, ADF_FILE_MODE_WRITE );
+    file = adfFileOpen( vol, filename, ADF_FILE_MODE_WRITE );
     if ( file == NULL )  {
         errors += 1;
         goto cleanup;
@@ -325,30 +325,30 @@ unsigned test_seek_after_write ( const test_data_t * const test_data )
 
     // write chunk being end of a data block + 1 byte (so that the last byte is
     // in the next/following data block) from buffer with random data
-    ADF_RETCODE rc = adfFileSeek ( file, offset );
+    ADF_RETCODE rc = adfFileSeek( file, offset );
     if ( rc != ADF_RC_OK ) {
-        adfFileClose ( file );
+        adfFileClose( file );
         log_error( "seeking to offset 0x%x (0x%u) failed\n",
                    offset, offset );
         errors += 1;
         goto cleanup;
     }
-    bytes_written = adfFileWrite ( file, chunksize,
-                                   buffer_random + offset );
-    assert ( bytes_written == chunksize );
-    assert ( file->fileHdr->byteSize == bufsize );
+    bytes_written = adfFileWrite( file, chunksize,
+                                  buffer_random + offset );
+    assert( bytes_written == chunksize );
+    assert( file->fileHdr->byteSize == bufsize );
 
     // seek to inside another data block (to trigger file flush by seek)
-    adfFileSeek ( file, bufsize / 2 );
+    adfFileSeek( file, bufsize / 2 );
 
-    adfFileClose ( file );
+    adfFileClose( file );
 
-    uint32_t buf_checksum2 = checksum ( buffer_random, bufsize );
-    assert ( buf_checksum == buf_checksum2 );
+    uint32_t buf_checksum2 = checksum( buffer_random, bufsize );
+    assert( buf_checksum == buf_checksum2 );
 
     // verify overwritten data
     unsigned nerrors_overwriting =
-        verify_overwritten_data ( vol, filename, buffer_random, offset, chunksize );
+        verify_overwritten_data( vol, filename, buffer_random, offset, chunksize );
     if ( nerrors_overwriting > 0 ) {
         log_error( "+%u errors, file %s\n", nerrors_overwriting, filename );
         //fflush( stderr );
@@ -356,7 +356,7 @@ unsigned test_seek_after_write ( const test_data_t * const test_data )
     
     // check also the same data in "normally" written file (without any seek)
     unsigned nerrors_wo_seek = //verify_data ( vol, filename2, buffer, offset, chunksize );
-        verify_file_data ( vol, filename2, buffer_random, bufsize, 10 );
+        verify_file_data( vol, filename2, buffer_random, bufsize, 10 );
     if ( nerrors_wo_seek > 0 )  {
         log_error( "+%u errors, file %s\n", nerrors_wo_seek, filename2 );
         //fflush( stderr );
@@ -374,43 +374,43 @@ unsigned test_seek_after_write ( const test_data_t * const test_data )
     }
 
 cleanup:
-    free ( buffer_random );
+    free( buffer_random );
 cleanup_0:
-    free ( buffer_0 );
+    free( buffer_0 );
 umount_volume:
-    adfVolUnMount ( vol );
+    adfVolUnMount( vol );
 umount_device:
-    adfDevUnMount ( device );
-    adfDevClose ( device );
-    if ( unlink ( adfname ) != 0 )
-        perror ("error deleting the image");
+    adfDevUnMount( device );
+    adfDevClose( device );
+    if ( unlink( adfname ) != 0 )
+        perror("error deleting the image");
     return errors;
 }
 
 
-unsigned verify_overwritten_data ( struct AdfVolume * const vol,
-                                   const char * const       filename,
-                                   const uint8_t * const    buffer,
-                                   const unsigned           offset,
-                                   const unsigned           chunksize )
+unsigned verify_overwritten_data( struct AdfVolume * const  vol,
+                                  const char * const        filename,
+                                  const uint8_t * const     buffer,
+                                  const unsigned            offset,
+                                  const unsigned            chunksize )
 {
     unsigned nerrors = 0;
-    struct AdfFile * const file = adfFileOpen ( vol, filename, ADF_FILE_MODE_READ );
+    struct AdfFile * const file = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
     if ( file == NULL )
         return 1;
 
     const unsigned filesize = file->fileHdr->byteSize;
     uint8_t * const rbuf = //malloc ( chunksize );
-        malloc ( filesize );
-    assert ( rbuf != NULL );
+        malloc( filesize );
+    assert( rbuf != NULL );
 
     //ADF_RETCODE rc = adfFileSeek ( file, offset );
     //assert ( rc == ADF_RC_OK );
 
     // verify part filled with 0
     unsigned chunk0_size = offset;
-    unsigned bytes_read = adfFileRead ( file, chunk0_size, rbuf );
-    assert ( bytes_read == chunk0_size );
+    unsigned bytes_read  = adfFileRead( file, chunk0_size, rbuf );
+    assert( bytes_read == chunk0_size );
     for ( unsigned i = 0 ; i < chunk0_size ; ++i ) {
         if ( rbuf[i] != 0 ) {
             nerrors += 1;
@@ -422,8 +422,8 @@ unsigned verify_overwritten_data ( struct AdfVolume * const vol,
     }
 
     // verify overwritten data chunk
-    bytes_read = adfFileRead ( file, chunksize, rbuf );
-    assert ( bytes_read == chunksize );
+    bytes_read = adfFileRead( file, chunksize, rbuf );
+    assert( bytes_read == chunksize );
     for ( unsigned i = 0 ; i < chunksize ; ++i )  {
         const unsigned offset_i = offset + i;
         //printf ("offset 0x%x (0x%u), buffer: %x, file %x\n",
@@ -440,8 +440,8 @@ unsigned verify_overwritten_data ( struct AdfVolume * const vol,
 
     // verify the remaining part filled with 0
     chunk0_size = filesize - chunk0_size - chunksize;
-    bytes_read = adfFileRead ( file, chunk0_size, rbuf );
-    assert ( bytes_read == chunk0_size );
+    bytes_read  = adfFileRead( file, chunk0_size, rbuf );
+    assert( bytes_read == chunk0_size );
     for ( unsigned i = 0 ; i < chunk0_size ; ++i ) {
         if ( rbuf[i] != 0 ) {
             nerrors += 1;
@@ -452,14 +452,14 @@ unsigned verify_overwritten_data ( struct AdfVolume * const vol,
         }
     }
 
-    adfFileClose ( file );
-    free ( rbuf );
+    adfFileClose( file );
+    free( rbuf );
     return nerrors;
 }
 
 
-void pattern_random ( unsigned char * buf,
-                      const unsigned  bufsize )
+void pattern_random( unsigned char *  buf,
+                     const unsigned   bufsize )
 {
     for ( unsigned i = 0 ; i < bufsize ; ++i )  {
         buf[i] = (unsigned char) ( rand() & 0xff );
@@ -467,8 +467,8 @@ void pattern_random ( unsigned char * buf,
 }
 
 
-uint32_t checksum ( const unsigned char * dataptr,
-                    size_t                size )
+uint32_t checksum( const unsigned char *  dataptr,
+                   size_t                 size )
 {
     uint32_t chksum = 0;
     while ( size-- != 0 )
@@ -480,41 +480,42 @@ uint32_t checksum ( const unsigned char * dataptr,
 
 
 // from tests/test_util.c
-unsigned verify_file_data ( struct AdfVolume * const    vol,
-                            const char * const          filename,
-                            const unsigned char * const buffer,
-                            const unsigned              bytes_written,  // == bufsize (!)
-                            const unsigned              errors_max )
+unsigned verify_file_data( struct AdfVolume * const     vol,
+                           const char * const           filename,
+                           const unsigned char * const  buffer,
+                           const unsigned               bytes_written,  // == bufsize (!)
+                           const unsigned               errors_max )
 {
-    struct AdfFile * output = adfFileOpen ( vol, filename, ADF_FILE_MODE_READ );
+    struct AdfFile * output = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
     if ( ! output )
         return 1;
 
-#ifdef _MSC_VER   // visual studio do not understand that const is const...
+#ifdef _MSC_VER   // msvc does not accept const unsigned as array size
 #define READ_BUFSIZE 1024
 #else
     const unsigned READ_BUFSIZE = 1024;
 #endif
-    unsigned char readbuf [ READ_BUFSIZE ];
+    unsigned char readbuf[ READ_BUFSIZE ];
 
-    unsigned bytes_read = 0,
-             block_bytes_read,
-             offset = 0,
-             nerrors = 0;
+    unsigned
+        bytes_read       = 0,
+        block_bytes_read,
+        offset           = 0,
+        nerrors          = 0;
     do {
-        block_bytes_read = adfFileRead ( output, READ_BUFSIZE, readbuf );
-        bytes_read += block_bytes_read;
+        block_bytes_read = adfFileRead( output, READ_BUFSIZE, readbuf );
+        bytes_read      += block_bytes_read;
 
         for ( unsigned i = 0 ; i < block_bytes_read ; ++i ) {
-            if ( readbuf [ offset % READ_BUFSIZE ] != buffer [ offset ] ) {
+            if ( readbuf[ offset % READ_BUFSIZE ] != buffer[ offset ] ) {
                 log_error( "Data differ at %u ( 0x%x ): orig. 0x%x, read 0x%x\n",
                            offset, offset,
-                           buffer [ offset ],
-                           readbuf [ offset % READ_BUFSIZE ] );
+                           buffer[ offset ],
+                           readbuf[ offset % READ_BUFSIZE ] );
                 //fflush( stderr );
                 nerrors++;
                 if ( nerrors >= errors_max ) {
-                    adfFileClose ( output );
+                    adfFileClose( output );
                     return nerrors;
                 }
             }
@@ -522,7 +523,7 @@ unsigned verify_file_data ( struct AdfVolume * const    vol,
         }
     } while ( block_bytes_read == READ_BUFSIZE );
 
-    adfFileClose ( output );
+    adfFileClose( output );
 
     if ( bytes_read != bytes_written ) {
         log_error( "bytes read (%u) != bytes written (%u) -> ERROR!!!\n",
