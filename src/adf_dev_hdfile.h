@@ -32,10 +32,12 @@
 #include "adf_err.h"
 #include "adf_prefix.h"
 
-
-ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev );
-
+/* format hdf volume (erases data!) */
 ADF_PREFIX ADF_RETCODE adfCreateHdFile( struct AdfDevice * const  dev,
                                         const char * const        volName,
                                         const uint8_t             volType );
+
+/* mount hdf volume (called by adfDevMount) */
+ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev );
+
 #endif /* ADF_DEV_HDFILE_H */
