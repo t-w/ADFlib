@@ -39,24 +39,7 @@
 #include <string.h>
 
 
-/*
- * adfFreeTmpVolList
- *
- */
-static void adfFreeTmpVolList( struct AdfList * const  root )
-{
-    struct AdfList *cell;
-    struct AdfVolume *vol;
-
-    cell = root;
-    while ( cell != NULL ) {
-        vol = (struct AdfVolume *) cell->content;
-        if ( vol->volName != NULL )
-            free( vol->volName );
-        cell = cell->next;
-    }
-    adfListFree( root );
-}
+static void adfFreeTmpVolList( struct AdfList * const  root );
 
 
 /*
@@ -828,3 +811,22 @@ ADF_RETCODE adfWriteLSEGblock( struct AdfDevice * const     dev,
 }
 
 /*##########################################################################*/
+
+/*
+ * adfFreeTmpVolList
+ *
+ */
+static void adfFreeTmpVolList( struct AdfList * const  root )
+{
+    struct AdfList *cell;
+    struct AdfVolume *vol;
+
+    cell = root;
+    while ( cell != NULL ) {
+        vol = (struct AdfVolume *) cell->content;
+        if ( vol->volName != NULL )
+            free( vol->volName );
+        cell = cell->next;
+    }
+    adfListFree( root );
+}
