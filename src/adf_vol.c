@@ -393,9 +393,9 @@ bool adfVolIsSectNumValid( const struct AdfVolume * const  vol,
  *
  * read logical block
  */
-ADF_RETCODE adfVolReadBlock( struct AdfVolume * const  vol,
-                             const uint32_t            nSect,
-                             uint8_t * const           buf )
+ADF_RETCODE adfVolReadBlock( const struct AdfVolume * const  vol,
+                             const uint32_t                  nSect,
+                             uint8_t * const                 buf )
 {
     if ( ! vol->mounted ) {
         adfEnv.eFct( "%s: volume not mounted", __func__ );
@@ -432,9 +432,9 @@ ADF_RETCODE adfVolReadBlock( struct AdfVolume * const  vol,
  * adfVolWriteBlock
  *
  */
-ADF_RETCODE adfVolWriteBlock( struct AdfVolume * const  vol,
-                              const uint32_t            nSect,
-                              const uint8_t * const     buf )
+ADF_RETCODE adfVolWriteBlock( const struct AdfVolume * const  vol,
+                              const uint32_t                  nSect,
+                              const uint8_t * const           buf )
 {
     if ( ! vol->mounted ) {
         adfEnv.eFct( "%s: volume not mounted", __func__ );

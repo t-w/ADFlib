@@ -101,14 +101,14 @@ ADF_PREFIX bool adfVolIsSectNumValid( const struct AdfVolume * const  vol,
                                       const ADF_SECTNUM               nSect );
 
 /* read volume's block */
-ADF_PREFIX ADF_RETCODE adfVolReadBlock( struct AdfVolume * const  vol,
-                                        const uint32_t            nSect,
-                                        uint8_t * const           buf );
+ADF_PREFIX ADF_RETCODE adfVolReadBlock( const struct AdfVolume * const  vol,
+                                        const uint32_t                  nSect,
+                                        uint8_t * const                 buf );
 
 /* write volume's block */
-ADF_PREFIX ADF_RETCODE adfVolWriteBlock( struct AdfVolume * const  vol,
-                                         const uint32_t            nSect,
-                                         const uint8_t * const     buf );
+ADF_PREFIX ADF_RETCODE adfVolWriteBlock( const struct AdfVolume * const  vol,
+                                         const uint32_t                  nSect,
+                                         const uint8_t * const           buf );
 
 /* get volume's size in blocks */
 static inline uint32_t adfVolGetSizeInBlocks( const struct AdfVolume * const  vol )
