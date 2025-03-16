@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
 
     log_init( stderr, TEST_VERBOSITY );
 
+    int status = 0;
+
     struct AdfDevice *hd;
     struct AdfVolume *vol;
     struct AdfFile *fic;
@@ -41,7 +43,8 @@ int main(int argc, char *argv[])
     hd = adfDevCreate ( "dump", "comment-newdev", 80, 2, 11 );
     if (!hd) {
         log_error( "can't create device\n" );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_env;
     }
 
     showDevInfo( hd );
@@ -50,27 +53,22 @@ int main(int argc, char *argv[])
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
         log_error( "can't create floppy\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't open file for writing\n" );
-        adfVolUnMount(vol);
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_vol;
     }
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
@@ -97,11 +95,15 @@ int main(int argc, char *argv[])
 
     showDirEntries( vol, vol->curDirPtr );
 
+cleanup_vol:
     adfVolUnMount(vol);
+
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_env:
     adfEnvCleanUp();
 
-    return 0;
+    return status;
 }
