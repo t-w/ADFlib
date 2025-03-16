@@ -40,9 +40,7 @@ int main(int argc, char *argv[])
     adfCreateHdFile ( hd, "empty", ADF_DOSFS_FFS |
                                    ADF_DOSFS_DIRCACHE );
 
-    const char * const devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {

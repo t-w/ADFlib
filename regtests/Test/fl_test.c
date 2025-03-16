@@ -71,9 +71,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    const char * const devInfo = adfDevGetInfo( hd );
-    printf( "%s", devInfo );
-    free( devInfo );
+    showDevInfo( hd );
 
     adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                  ADF_DOSFS_DIRCACHE );

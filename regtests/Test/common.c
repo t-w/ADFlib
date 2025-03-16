@@ -5,6 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+void showDevInfo( struct AdfDevice * const dev )
+{
+    const char * const devInfo = adfDevGetInfo( dev );
+    printf( "%s", devInfo );
+    free( devInfo );
+}
+
+
 void showVolInfo( struct AdfVolume * const vol )
 {
     const char * const volInfo = adfVolGetInfo( vol );
