@@ -35,14 +35,14 @@ int main(int argc, char *argv[])
  
     adfEnvInitDefault();
 
-    adfEnvSetProperty ( ADF_PR_USEDIRC, true );
+    adfEnvSetProperty( ADF_PR_USEDIRC, true );
 
     /* display or not the physical / logical blocks and W or R */
-    adfEnvSetProperty ( ADF_PR_USE_RWACCESS, true );
+    adfEnvSetProperty( ADF_PR_USE_RWACCESS, true );
  
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "dispsect-newdev", 80, 2, 11 );
-    if (!hd) {
+    if ( ! hd ) {
         log_error( "can't create device\n" );
         status = 1;
         goto cleanup_env;
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
 
     showDevInfo( hd );
 
-    if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
-                                      ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
+    if ( adfCreateFlop( hd, "empty", ADF_DOSFS_FFS |
+                                     ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
         log_error("can't create floppy\n");
         status = 1;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
@@ -67,59 +67,55 @@ int main(int argc, char *argv[])
 
     log_info( "\ncreate file_1a" );
     struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
-    if (!fic) {
+    if ( ! fic ) {
         log_error( "can't open file\n" );
         status = 1;
         goto cleanup_vol;
     }
-    adfFileWrite ( fic, 1, buf );
-    adfFileClose ( fic );
+    adfFileWrite( fic, 1, buf );
+    adfFileClose( fic );
 
     showVolInfo( vol );
 
     log_info( "\ncreate dir_5u" );
-    adfCreateDir(vol,vol->curDirPtr,"dir_5u");
+    adfCreateDir( vol, vol->curDirPtr, "dir_5u" );
     showVolInfo( vol );
 
     showDirEntries( vol, vol->curDirPtr );
 
     log_info( "\nremove file_1a" );
-    adfRemoveEntry(vol,vol->curDirPtr,"file_1a");
+    adfRemoveEntry( vol, vol->curDirPtr, "file_1a" );
     showVolInfo( vol );
 
     log_info( "\nremove dir_5u" );
-    adfRemoveEntry(vol,vol->curDirPtr,"dir_5u");
+    adfRemoveEntry( vol, vol->curDirPtr, "dir_5u" );
     showVolInfo( vol );
 
-    struct AdfList * const list = adfGetDelEnt( vol );
-    struct AdfList * cell = list;
-    while(cell) {
+    struct AdfList * const  list = adfGetDelEnt( vol );
+    struct AdfList *        cell = list;
+    while ( cell ) {
         struct GenBlock * const block = (struct GenBlock *) cell->content;
-        printf ( "%s %d %d %d\n",
-                 block->name,
-                 block->type,
-                 block->secType,
-                 block->sect);
+        printf( "%s %d %d %d\n", block->name, block->type, block->secType, block->sect );
         cell = cell->next;
     }
-    adfFreeDelList(list);
+    adfFreeDelList( list );
 
     log_info( "\nundel file_1a" );
-    adfUndelEntry(vol,vol->curDirPtr,883); // file_1a
+    adfUndelEntry( vol, vol->curDirPtr, 883 ); // file_1a
     showVolInfo( vol );
 
     log_info("\nundel dir_5u");
-    adfUndelEntry(vol,vol->curDirPtr,885); // dir_5u
+    adfUndelEntry( vol, vol->curDirPtr, 885 ); // dir_5u
     showVolInfo( vol );
 
     showDirEntries( vol, vol->curDirPtr );
 
 cleanup_vol:
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
