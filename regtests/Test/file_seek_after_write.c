@@ -5,10 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef _WIN32
-#include <unistd.h>   // for unlink()
-#endif
-
 #include "log.h"
 
 #define TEST_VERBOSITY 1
@@ -388,7 +384,7 @@ umount_volume:
 umount_device:
     adfDevUnMount( device );
     adfDevClose( device );
-    if ( unlink( adfname ) != 0 )
+    if ( remove( adfname ) != 0 )
         perror("error deleting the image");
     return errors;
 }

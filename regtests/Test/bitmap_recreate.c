@@ -19,10 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef _WIN32
-#include <unistd.h>   // for unlink()
-#endif
-
 #include "adflib.h"
 #include "log.h"
 
@@ -192,7 +188,7 @@ clean_up:
     
 delete_adf_copy:
     log_info( "Removing %s\n", adfUpdate );
-    unlink( adfUpdate );
+    remove( adfUpdate );
     
     return ( error_status ? 1 : 0 );
 }
