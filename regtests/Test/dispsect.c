@@ -30,12 +30,7 @@ int main(int argc, char *argv[])
 
     log_init( stderr, TEST_VERBOSITY );
 
-    struct AdfDevice *hd;
-    struct AdfVolume *vol;
-    struct AdfFile *fic;
     unsigned char buf[1];
-    struct AdfList *list, *cell;
-    struct GenBlock *block;
  
     adfEnvInitDefault();
 
@@ -45,7 +40,7 @@ int main(int argc, char *argv[])
     adfEnvSetProperty ( ADF_PR_USE_RWACCESS, true );
  
     /* create and mount one device */
-    hd = adfDevCreate ( "dump", "dispsect-newdev", 80, 2, 11 );
+    struct AdfDevice * const hd = adfDevCreate( "dump", "dispsect-newdev", 80, 2, 11 );
     if (!hd) {
         log_error( "can't create device\n" );
         adfEnvCleanUp(); exit(1);
@@ -62,7 +57,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
@@ -71,7 +66,7 @@ int main(int argc, char *argv[])
     }
 
     log_info( "\ncreate file_1a" );
-    fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
+    struct AdfFile * const fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't open file\n" );
         adfVolUnMount(vol);
@@ -99,9 +94,10 @@ int main(int argc, char *argv[])
     adfRemoveEntry(vol,vol->curDirPtr,"dir_5u");
     showVolInfo( vol );
 
-    cell = list = adfGetDelEnt(vol);
+    struct AdfList * const list = adfGetDelEnt( vol );
+    struct AdfList * cell = list;
     while(cell) {
-        block =(struct GenBlock*) cell->content;
+        struct GenBlock * const block = (struct GenBlock *) cell->content;
         printf ( "%s %d %d %d\n",
                  block->name,
                  block->type,
