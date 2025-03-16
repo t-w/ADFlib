@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
     list = adfGetDirEnt(vol,vol->curDirPtr);
     while(list) {
-        adfEntryPrint ( list->content );
+        showEntryInfo( list->content );
         adfFreeEntry(list->content);
         list = list->next;
     }
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
     list = adfGetDirEnt(vol,vol->curDirPtr);
     while(list) {
-        adfEntryPrint ( list->content );
+        showEntryInfo( list->content );
         adfFreeEntry(list->content);
         list = list->next;
     }
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
     list = adfGetDirEnt(vol,vol->curDirPtr);
     while(list) {
-        adfEntryPrint ( list->content );
+        showEntryInfo( list->content );
         adfFreeEntry(list->content);
         list = list->next;
     }
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 
     list = adfGetDirEnt(vol,vol->curDirPtr);
     while(list) {
-        adfEntryPrint ( list->content );
+        showEntryInfo( list->content );
         adfFreeEntry(list->content);
         list = list->next;
     }

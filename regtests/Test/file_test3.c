@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     /* the directory */
     list = adfGetDirEnt(vol,vol->curDirPtr);
     while(list) {
-        adfEntryPrint ( list->content );
+        showEntryInfo( list->content );
         adfFreeEntry(list->content);
         list = list->next;
     }

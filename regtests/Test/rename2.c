@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
     cell = list = adfGetDirEnt(vol,vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
@@ -77,14 +77,14 @@ int main(int argc, char *argv[])
 printf("[dir = %d]\n",vol->curDirPtr);
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
 printf("[dir = %ld]\n",883L);
     cell = list = adfGetDirEnt(vol,883);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
@@ -95,14 +95,14 @@ putchar('\n');
 printf("[dir = %d]\n",vol->curDirPtr);
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
 printf("[dir = %ld]\n",883L);
     cell = list = adfGetDirEnt(vol,883);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
@@ -114,14 +114,14 @@ putchar('\n');
 printf("[dir = %d]\n",vol->curDirPtr);
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
 printf("[dir = %ld]\n",883L);
     cell = list = adfGetDirEnt(vol,883);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);

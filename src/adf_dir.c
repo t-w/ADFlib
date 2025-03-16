@@ -36,6 +36,7 @@
 #include "adf_raw.h"
 #include "adf_util.h"
 
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1206,29 +1207,49 @@ unsigned adfGetHashValue( const uint8_t * const  name,
 
 
 /*
- * adfEntryPrint
+ * adfEntryGetInfo
  *
  */
-void adfEntryPrint( const struct AdfEntry * const  entry )
+
+#define ENTRYINFO_SIZE 512
+
+char * adfEntryGetInfo( const struct AdfEntry * const  entry )
 {
-    printf( "%-30s %2d %6d ", entry->name, entry->type, entry->sector );
-    printf( "%2d/%02d/%04d %2d:%02d:%02d", entry->days, entry->month, entry->year,
-           entry->hour, entry->mins, entry->secs );
-    if ( entry->type == ADF_ST_FILE )
-        printf( "%8d ",entry->size );
+    char * const info = malloc( ENTRYINFO_SIZE + 1 );
+    if ( info == NULL )
+        return NULL;
+
+    char *infoptr = info;
+    infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+                         "%-30s %2d %6d "
+                         "%2d/%02d/%04d %2d:%02d:%02d",
+                         entry->name, entry->type, entry->sector,
+                         entry->days, entry->month, entry->year,
+                         entry->hour, entry->mins, entry->secs );
+
+
+   if ( entry->type == ADF_ST_FILE )
+       infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+                            "%8d ",entry->size );
     else
-        printf("         ");
+       infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+                            "         " );
+
     if ( entry->type == ADF_ST_FILE ||
          entry->type == ADF_ST_DIR )
     {
         char accessStr[ 8 + 1 ];
         adfAccess2String( entry->access, accessStr );
-        printf( "%-s ", accessStr );
+
+        infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+                             "%-s ", accessStr );
     }
+
     if ( entry->comment != NULL )
-        printf( "%s ",entry->comment );
-    putchar('\n');
+        infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+                             "%s ",entry->comment );
+    infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ), "\n" );
+
+    assert( infoptr - info < ENTRYINFO_SIZE );
+    return info;
 }
-
-
-/*###########################################################################*/

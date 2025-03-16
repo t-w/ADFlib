@@ -145,7 +145,13 @@ ADF_SECTNUM adfNameToEntryBlk( struct AdfVolume * const      vol,
                                struct AdfEntryBlock * const  entry,
                                ADF_SECTNUM * const           nUpdSect );
 
-/* info / debug */
-ADF_PREFIX void adfEntryPrint( const struct AdfEntry * const  entry );
+/*
+ * adfEntryGetInfo
+ *
+ * Returns pointer to dynamically allocated char array
+ * with text information about the device and its volumes.
+ * It must be free()-d afterwards.
+ */
+char * adfEntryGetInfo( const struct AdfEntry * const  entry );
 
 #endif  /* ADF_DIR_H */

@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     cell = list = adfGetDirEnt(vol,vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);

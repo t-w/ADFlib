@@ -40,7 +40,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #define CHECK_NONZERO_BMPAGES_BEYOND_BMSIZE 0
 
 extern uint32_t bitMask[ 32 ];

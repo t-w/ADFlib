@@ -79,7 +79,7 @@ int main ( const int          argc,
     struct AdfList *list, *cell;
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
@@ -126,7 +126,7 @@ int main ( const int          argc,
 
     cell = list = adfGetDirEnt(vol, vol->curDirPtr);
     while(cell) {
-        adfEntryPrint ( cell->content );
+        showEntryInfo( cell->content );
         cell = cell->next;
     }
     adfFreeDirList(list);
