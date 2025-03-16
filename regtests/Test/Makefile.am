@@ -134,7 +134,7 @@ dir_test_chdir_SOURCES = dir_test_chdir.c
 dir_test_chdir_LDADD = $(ADFLIBS)
 dir_test_chdir_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-dispsect_SOURCES = dispsect.c common.c common.h
+dispsect_SOURCES = dispsect.c common.c common.h log.c log.h
 dispsect_LDADD = $(ADFLIBS)
 dispsect_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
