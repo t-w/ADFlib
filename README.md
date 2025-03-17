@@ -215,9 +215,19 @@ While it can be used rather safely in read-only mode, be very careful with
 write mode using a volume with dircache enabled.
 
 
-## The API documentation in doc/
+## Documentation
+
+- ADF format (devices and filesystems):
+  - [The .ADF (Amiga Disk File) format FAQ](http://lclevy.free.fr/adflib/adf_info.html)
+    by [Laurent Clévy](http://lclevy.free.fr/) (also
+	[here](https://adflib.github.io/FAQ/adf_info.html)) - a comprehensive study
+	of the Amiga storage technology - from disk data encoding through disk
+	geometry to	filesystem structure (OFS/FFS)
+  - [Wikipedia article](https://en.wikipedia.org/wiki/Amiga_Disk_File)
+
+### The API documentation in doc/
 ... in major part is outdated. The lib underwent many changes and, possibly,
-many are to come, not enough time to fully deal with this, too...
+some still to come. Not enough time to fully deal with this, too...
 
 Please use it as a reference for the concepts and general ways of use (as those
 have not changed) while for the details regarding functions check the header
