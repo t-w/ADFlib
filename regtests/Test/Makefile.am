@@ -166,7 +166,7 @@ file_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 #file_test2a_LDADD = $(ADFLIBS)
 #file_test2a_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-file_test3_SOURCES = file_test3.c common.c common.h
+file_test3_SOURCES = file_test3.c common.c common.h log.c log.h
 file_test3_LDADD = $(ADFLIBS)
 file_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

@@ -9,6 +9,9 @@
 
 #include"adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 1
 
 
 void MyVer(char *msg)
@@ -23,9 +26,10 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 2 ) {
-        fprintf ( stderr,
-                  "required parameter (image/device) absent - aborting...\n");
+        log_error( "missing parameter (image/device) - aborting...\n" );
         return 1;
     }
 
@@ -41,24 +45,23 @@ int main(int argc, char *argv[])
     /* open and mount existing device : OFS */
     struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  argv[1] );
+        log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         adfEnvCleanUp();
         exit(1);
     }
 
     ADF_RETCODE rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't mount device\n" );
         adfDevClose ( hd );
         adfEnvCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
 
@@ -67,9 +70,15 @@ int main(int argc, char *argv[])
 
     /* write one file */
     file = adfFileOpen ( vol, "moon_gif", ADF_FILE_MODE_WRITE );
-    if (!file) return 1;
+    if (!file) {
+        log_error( "can't open file 'moon_gif' for writing\n" );
+        return 1;
+    }
     out = fopen( argv[2],"rb");
-    if (!out) return 1;
+    if ( ! out ) {
+        log_error( "can't open file '%s' for reading\n", argv[2] );
+        return 1;
+    }
     
     unsigned len = 600;
     unsigned n = (unsigned) fread(buf,sizeof(unsigned char),len,out);
@@ -89,9 +98,15 @@ int main(int argc, char *argv[])
 
     /* re read this file */
     file = adfFileOpen ( vol, "moon_gif", ADF_FILE_MODE_READ );
-    if (!file) return 1;
+    if ( ! file ) {
+        log_error( "can't open file 'moon_gif' for reading\n" );
+        return 1;
+    }
     out = fopen("moon__gif","wb");
-    if (!out) return 1;
+    if ( ! out ) {
+        log_error( "can't open file 'moon__gif' for writing\n" );
+        return 1;
+    }
 
     len = 300;
     n = adfFileRead ( file, len, buf );
