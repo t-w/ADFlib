@@ -31,10 +31,6 @@ int main(int argc, char *argv[])
     log_init( stderr, TEST_VERBOSITY );
 
     int status = 0;
-
-    struct AdfVolume *vol;
-    struct AdfFile *fic;
-    unsigned char buf[1];
  
     adfEnvInitDefault();
 
@@ -56,7 +52,7 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         status = 1;
@@ -66,8 +62,9 @@ int main(int argc, char *argv[])
     showVolInfo( vol );
 
     log_info("Create file_1a, file_24, dir_1a, dir_5u (with this order)");
+    const unsigned char buf[1];
 
-    fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
+    struct AdfFile * fic = adfFileOpen( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't create file 'file_1a'\n" );
         status = 1;
