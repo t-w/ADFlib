@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
     (void) argc, (void) argv;
 
     int status = 0;
-
-    struct AdfVolume *vol;
  
     adfEnvInitDefault();
 
@@ -47,7 +45,7 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         fprintf(stderr, "can't mount volume\n");
         status = 1;
