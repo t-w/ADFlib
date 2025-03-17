@@ -32,18 +32,13 @@ int main(int argc, char *argv[])
         log_error( "missing parameter (image/device) - aborting...\n" );
         return 1;
     }
-
-    struct AdfVolume *vol;
-    struct AdfFile *file;
-    unsigned char buf[600];
-    FILE *out;
  
     adfEnvInitDefault();
 
 //	adfEnvSetFct(0,0,MyVer,0);
 
     /* open and mount existing device : OFS */
-    struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
+    struct AdfDevice * const hd = adfDevOpen( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         adfEnvCleanUp();
@@ -57,7 +52,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
@@ -69,18 +64,19 @@ int main(int argc, char *argv[])
 
 
     /* write one file */
-    file = adfFileOpen ( vol, "moon_gif", ADF_FILE_MODE_WRITE );
+    struct AdfFile * file = adfFileOpen( vol, "moon_gif", ADF_FILE_MODE_WRITE );
     if (!file) {
         log_error( "can't open file 'moon_gif' for writing\n" );
         return 1;
     }
-    out = fopen( argv[2],"rb");
+    FILE * out = fopen( argv[2], "rb" );
     if ( ! out ) {
         log_error( "can't open file '%s' for reading\n", argv[2] );
         return 1;
     }
     
     unsigned len = 600;
+    unsigned char buf[600];
     unsigned n = (unsigned) fread(buf,sizeof(unsigned char),len,out);
     while(!feof(out)) {
         adfFileWrite ( file, n, buf );
