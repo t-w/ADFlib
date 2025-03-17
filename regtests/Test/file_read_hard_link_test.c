@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include"adflib.h"
+#include "log.h"
 
-#define TEST_VERBOSITY 1
+#define TEST_VERBOSITY 3
 
 typedef struct check_s {
     unsigned int  offset;
@@ -34,6 +35,8 @@ int test_single_read ( struct AdfFile * const file_adf,
 int main ( int argc, char * argv[] )
 { 
     (void) argc;
+
+    log_init( stderr, TEST_VERBOSITY );
 
     adfEnvInitDefault();
 
@@ -85,10 +88,10 @@ int main ( int argc, char * argv[] )
     test_chained_hlink.image_filename = argv[2];
 
     // run tests
-    printf ("*** Test reading a file opened using a hardlink\n" );
+    log_info( "*** Test reading a file opened using a hardlink\n" );
     status += test_hlink_read ( &test_hlink );
     status += test_hlink_read ( &test_chained_hlink );
-    printf ( status ? " -> ERROR\n" : " -> PASSED\n" );
+    log_info( status ? " -> ERROR\n" : " -> PASSED\n" );
 
     // clean-up
     adfEnvCleanUp();
@@ -99,37 +102,35 @@ int main ( int argc, char * argv[] )
 
 int test_hlink_read ( reading_test_t * test_data )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "\n*** Testing %s"
+    log_info( "\n*** Testing %s"
              "\n\timage file:\t%s\n\tdirectory:\t%s\n\thlink:\t\t%s\n\treal file:\t%s\n",
              test_data->info,
              test_data->image_filename,
              test_data->hlink_dir,
              test_data->hlink_name,
              test_data->real_file );
-#endif
 
     struct AdfDevice * const dev = adfDevOpen ( test_data->image_filename,
                                                 ADF_ACCESS_MODE_READONLY );
     if ( ! dev ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  test_data->image_filename );
+        log_error( "Cannot open file/device '%s' - aborting...\n",
+                   test_data->image_filename );
         adfEnvCleanUp();
         exit(1);
     }
 
     ADF_RETCODE rc = adfDevMount ( dev );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, "Cannot mount image %s - aborting the test...\n",
-                  test_data->image_filename );
+        log_error( "Cannot mount image %s - aborting the test...\n",
+                   test_data->image_filename );
         adfDevClose ( dev );
         return 1;
     }
 
     struct AdfVolume * const vol = adfVolMount ( dev, 0, ADF_ACCESS_MODE_READONLY );
     if ( ! vol ) {
-        fprintf ( stderr, "Cannot mount volume 0 from image %s - aborting the test...\n",
-                  test_data->image_filename );
+        log_error( "Cannot mount volume 0 from image %s - aborting the test...\n",
+                   test_data->image_filename );
         adfDevUnMount ( dev );
         adfDevClose ( dev );
         return 1;
@@ -143,13 +144,12 @@ int test_hlink_read ( reading_test_t * test_data )
     adfToRootDir ( vol );
     char * dir = test_data->hlink_dir;
     if ( dir ) {
-#if TEST_VERBOSITY > 0
-        printf ("Entering directory %s...\n", dir );
-#endif
+        log_info( "Entering directory %s...\n", dir );
+
         int chdir_st = adfChangeDir ( vol, dir );
         if ( chdir_st != ADF_RC_OK ) {
-            fprintf ( stderr, " -> Cannot chdir to %s, status %d - aborting...\n",
-                      dir, chdir_st );
+            log_error( " -> Cannot chdir to %s, status %d - aborting...\n",
+                       dir, chdir_st );
             adfToRootDir ( vol );
             status = 1;
             goto clean_up;
@@ -159,8 +159,8 @@ int test_hlink_read ( reading_test_t * test_data )
     struct AdfFile * const file_adf = adfFileOpen ( vol, test_data->hlink_name,
                                                     ADF_FILE_MODE_READ );
     if ( ! file_adf ) {
-        fprintf ( stderr, " -> Cannot open hard link file %s - aborting...\n",
-                  test_data->hlink_name );
+        log_error( " -> Cannot open hard link file %s - aborting...\n",
+                   test_data->hlink_name );
         status = 1;
         goto clean_up;
     }
@@ -188,10 +188,8 @@ int test_single_read ( struct AdfFile * const file_adf,
                        unsigned int           offset,
                        unsigned char          expected_value )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "  Reading data after seek to position 0x%x (%d)...",
-             offset, offset );
-#endif
+    log_info( "  Reading data after seek to position 0x%x (%d)...",
+              offset, offset );
 
     adfFileSeek ( file_adf, offset );
 
@@ -199,19 +197,17 @@ int test_single_read ( struct AdfFile * const file_adf,
     unsigned n = adfFileRead ( file_adf, 1, &c );
 
     if ( n != 1 ) {
-        fprintf ( stderr, " -> Reading data failed!!!\n" );
+        log_error( " -> Reading data failed!!!\n" );
         return 1;
     }
     
     if ( c != expected_value ) {
-        fprintf ( stderr, " -> Incorrect data read:  expected 0x%x != read 0x%x\n",
-                 (int) expected_value, (int) c );
+        log_error( " -> Incorrect data read:  expected 0x%x != read 0x%x\n",
+                   (int) expected_value, (int) c );
         return 1;
     }
 
-#if TEST_VERBOSITY > 0
-    printf ( " -> OK.\n" );
-#endif
+    log_info( " -> OK.\n" );
 
     return 0;
 }
