@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
 
     log_init( stderr, TEST_VERBOSITY );
 
+    int status = 0;
+
     struct AdfVolume *vol;
     struct AdfFile *fic;
     unsigned char buf[1];
@@ -40,7 +42,8 @@ int main(int argc, char *argv[])
     struct AdfDevice * const hd = adfDevCreate ( "dump", "rename-newdev", 80, 2, 11 );
     if (!hd) {
         log_error( "can't createdevice\n" );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_env;
     }
 
     showDevInfo( hd );
@@ -49,17 +52,15 @@ int main(int argc, char *argv[])
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
         log_error( "can't create floppy\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showVolInfo( vol );
@@ -69,11 +70,8 @@ int main(int argc, char *argv[])
     fic = adfFileOpen ( vol, "file_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't create file 'file_1a'\n" );
-        adfVolUnMount(vol);
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_vol;
     }
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
@@ -81,11 +79,8 @@ int main(int argc, char *argv[])
     fic = adfFileOpen ( vol, "file_24", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't create file 'file_24'\n" );
-        adfVolUnMount(vol);
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_vol;
     }
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
@@ -93,11 +88,8 @@ int main(int argc, char *argv[])
     fic = adfFileOpen ( vol, "dir_1a", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't create file 'dir_1a'\n" );
-        adfVolUnMount(vol);
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_vol;
     }
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
@@ -105,11 +97,8 @@ int main(int argc, char *argv[])
     fic = adfFileOpen ( vol, "dir_5u", ADF_FILE_MODE_WRITE );
     if (!fic) {
         log_error( "can't create file 'dir_5a'\n" );
-        adfVolUnMount(vol);
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_vol;
     }
     adfFileWrite ( fic, 1, buf );
     adfFileClose ( fic );
@@ -144,11 +133,15 @@ int main(int argc, char *argv[])
     adfRenameEntry(vol, vol->curDirPtr,"dir_1a", vol->curDirPtr,"longfilename");
     showDirEntries( vol, vol->curDirPtr );
 
+cleanup_vol:
     adfVolUnMount(vol);
+
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_env:
     adfEnvCleanUp();
 
-    return 0;
+    return status;
 }
