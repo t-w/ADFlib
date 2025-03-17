@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include"adflib.h"
+#include "common.h"
 #include "log.h"
 
 #define TEST_VERBOSITY 2
