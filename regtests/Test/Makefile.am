@@ -138,7 +138,7 @@ dispsect_SOURCES = dispsect.c common.c common.h log.c log.h
 dispsect_LDADD = $(ADFLIBS)
 dispsect_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-file_read_hard_link_test_SOURCES = file_read_hard_link_test.c
+file_read_hard_link_test_SOURCES = file_read_hard_link_test.c log.c log.h
 file_read_hard_link_test_LDADD = $(ADFLIBS)
 file_read_hard_link_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
