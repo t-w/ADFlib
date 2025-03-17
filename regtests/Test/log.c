@@ -40,6 +40,7 @@ void log_error( const char * const  format, ... )
     va_start( ap, format );
     fprintf( logfile, "%s", prefix_error );
     vfprintf( logfile, format, ap );
+    fprintf( logfile, "\n" );
     va_end( ap );
 }
 
@@ -54,6 +55,7 @@ void log_warning( const char * const  format, ... )
     va_start( ap, format );
     fprintf( logfile, "%s", prefix_warning );
     vfprintf( logfile, format, ap );
+    fprintf( logfile, "\n" );
     va_end( ap );
 }
 
@@ -68,6 +70,7 @@ void log_info( const char * const format, ... )
     va_start( ap, format );
     fprintf( logfile, "%s", prefix_info );
     vfprintf( logfile, format, ap );
+    fprintf( logfile, "\n" );
     va_end( ap );
 }
 
@@ -82,6 +85,7 @@ void flog_error( FILE * const        file,
     va_start( ap, format );
     fprintf( file, "%s", prefix_error );
     vfprintf( file, format, ap );
+    fprintf( logfile, "\n" );
     va_end( ap );
 }
 
@@ -96,6 +100,7 @@ void flog_warning( FILE * const        file,
     va_start( ap, format );
     fprintf( file, "%s", prefix_warning );
     vfprintf( file, format, ap );
+    fprintf( logfile, "\n" );
     va_end( ap );
 }
 
@@ -110,5 +115,6 @@ void flog_info( FILE * const       file,
     va_start( ap, format );
     fprintf( file, "%s", prefix_info );
     vfprintf( file, format, ap );
+    fprintf( logfile, "\n" );
     va_end( ap );
 }
