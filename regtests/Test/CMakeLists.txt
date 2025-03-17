@@ -102,7 +102,7 @@ target_link_libraries ( hd_test2 adf )
 add_executable ( hd_test3 hd_test3.c common.c common.h )
 target_link_libraries ( hd_test3 adf )
 
-add_executable ( readonly readonly.c common.c common.h )
+add_executable ( readonly readonly.c common.c common.h log.c log.h )
 target_link_libraries ( readonly adf )
 
 add_executable ( rename rename.c common.c common.h log.c log.h )

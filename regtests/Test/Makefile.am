@@ -202,7 +202,7 @@ progbar_SOURCES = progbar.c common.c common.h
 progbar_LDADD = $(ADFLIBS)
 progbar_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-readonly_SOURCES = readonly.c common.c common.h
+readonly_SOURCES = readonly.c common.c common.h log.c log.h
 readonly_LDADD = $(ADFLIBS)
 readonly_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
