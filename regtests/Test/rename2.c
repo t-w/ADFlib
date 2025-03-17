@@ -24,6 +24,9 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
+
+    int status = 0;
+
     struct AdfVolume *vol;
  
     adfEnvInitDefault();
@@ -32,24 +35,23 @@ int main(int argc, char *argv[])
     struct AdfDevice * const hd = adfDevCreate ( "dump", "rename2-newdev", 80, 2, 11 );
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_env;
     }
 
     if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
 		fprintf(stderr, "can't create floppy\n");
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showDevInfo( hd );
@@ -88,11 +90,14 @@ printf("[dir = %d]\n",vol->curDirPtr);
 printf("[dir = %ld]\n",883L);
     showDirEntries( vol, 883 );
 
-	    adfVolUnMount(vol);
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfVolUnMount( vol );
 
+cleanup_dev:
+    adfDevUnMount( hd );
+    adfDevClose( hd );
+
+cleanup_env:
     adfEnvCleanUp();
 
-    return 0;
+    return status;
 }
