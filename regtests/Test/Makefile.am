@@ -210,7 +210,7 @@ rename_SOURCES = rename.c common.c common.h log.c log.h
 rename_LDADD = $(ADFLIBS)
 rename_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-rename2_SOURCES = rename2.c common.c common.h
+rename2_SOURCES = rename2.c common.c common.h log.c log.h
 rename2_LDADD = $(ADFLIBS)
 rename2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

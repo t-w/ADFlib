@@ -9,6 +9,9 @@
 
 #include"adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 3
 
 
 void MyVer(char *msg)
@@ -25,6 +28,8 @@ int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
 
+    log_init( stderr, TEST_VERBOSITY );
+
     int status = 0;
  
     adfEnvInitDefault();
@@ -32,7 +37,7 @@ int main(int argc, char *argv[])
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate ( "dump", "rename2-newdev", 80, 2, 11 );
     if (!hd) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't create device\n" );
         status = 1;
         goto cleanup_env;
     }
@@ -40,14 +45,14 @@ int main(int argc, char *argv[])
     if ( adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                       ADF_DOSFS_DIRCACHE ) != ADF_RC_OK )
     {
-		fprintf(stderr, "can't create floppy\n");
+        log_error( "can't create floppy\n" );
         status = 1;
         goto cleanup_dev;
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
-        fprintf(stderr, "can't mount volume\n");
+        log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
@@ -56,36 +61,36 @@ int main(int argc, char *argv[])
 
     showVolInfo( vol );
     showDirEntries( vol, vol->curDirPtr );
-    putchar('\n');
+    log_info("\n");
 
     adfCreateDir(vol,vol->curDirPtr,"dir_5u");
 
     adfCreateDir(vol,883,"dir_51");
 
     adfCreateDir(vol,vol->curDirPtr,"toto");
-printf("[dir = %d]\n",vol->curDirPtr);
+    log_info( "[dir = %d]\n", vol->curDirPtr );
     showDirEntries( vol, vol->curDirPtr );
 
-printf("[dir = %ld]\n",883L);
+    log_info( "[dir = %ld]\n", 883L );
     showDirEntries( vol, 883 );
 
     adfRenameEntry(vol, 883,"dir_51", vol->curDirPtr,"dir_55");
-putchar('\n');
+    log_info("\n");
 
-printf("[dir = %d]\n",vol->curDirPtr);
+    log_info( "[dir = %d]\n", vol->curDirPtr );
     showDirEntries( vol, vol->curDirPtr );
 
-printf("[dir = %ld]\n",883L);
+    log_info( "[dir = %ld]\n", 883L );
     showDirEntries( vol, 883 );
 
     adfRenameEntry(vol, vol->curDirPtr,"toto", 883,"moved_dir");
 
-putchar('\n');
+    log_info("\n");
 
-printf("[dir = %d]\n",vol->curDirPtr);
+    log_info( "[dir = %d]\n", vol->curDirPtr );
     showDirEntries( vol, vol->curDirPtr );
 
-printf("[dir = %ld]\n",883L);
+    log_info( "[dir = %ld]\n", 883L );
     showDirEntries( vol, 883 );
 
     adfVolUnMount( vol );

@@ -108,7 +108,7 @@ target_link_libraries ( readonly adf )
 add_executable ( rename rename.c common.c common.h log.c log.h )
 target_link_libraries ( rename adf )
 
-add_executable ( rename2 rename2.c common.c common.h )
+add_executable ( rename2 rename2.c common.c common.h log.c log.h )
 target_link_libraries ( rename2 adf )
 
 add_executable ( undel undel.c common.c common.h )
