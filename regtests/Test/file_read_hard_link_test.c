@@ -25,14 +25,14 @@ typedef struct reading_test_s {
 } reading_test_t;
 
 
-int test_hlink_read ( reading_test_t * test_data );
+int test_hlink_read( reading_test_t *  test_data );
 
-int test_single_read ( struct AdfFile * const file_adf,
-                       unsigned int           offset,
-                       unsigned char          expected_value );
+int test_single_read( struct AdfFile * const  file_adf,
+                      unsigned int            offset,
+                      unsigned char           expected_value );
 
 
-int main ( int argc, char * argv[] )
+int main( int argc, char * argv[] )
 { 
     (void) argc;
 
@@ -84,13 +84,13 @@ int main ( int argc, char * argv[] )
         }
     };
 
-    test_hlink.image_filename = argv[1];
+    test_hlink.image_filename         = argv[1];
     test_chained_hlink.image_filename = argv[2];
 
     // run tests
     log_info( "*** Test reading a file opened using a hardlink\n" );
-    status += test_hlink_read ( &test_hlink );
-    status += test_hlink_read ( &test_chained_hlink );
+    status += test_hlink_read( &test_hlink );
+    status += test_hlink_read( &test_chained_hlink );
     log_info( status ? " -> ERROR\n" : " -> PASSED\n" );
 
     // clean-up
@@ -100,7 +100,7 @@ int main ( int argc, char * argv[] )
 }
 
 
-int test_hlink_read ( reading_test_t * test_data )
+int test_hlink_read( reading_test_t *  test_data )
 {
     log_info( "\n*** Testing %s"
              "\n\timage file:\t%s\n\tdirectory:\t%s\n\thlink:\t\t%s\n\treal file:\t%s\n",
@@ -110,8 +110,8 @@ int test_hlink_read ( reading_test_t * test_data )
              test_data->hlink_name,
              test_data->real_file );
 
-    struct AdfDevice * const dev = adfDevOpen ( test_data->image_filename,
-                                                ADF_ACCESS_MODE_READONLY );
+    struct AdfDevice * const dev = adfDevOpen( test_data->image_filename,
+                                               ADF_ACCESS_MODE_READONLY );
     if ( ! dev ) {
         log_error( "Cannot open file/device '%s' - aborting...\n",
                    test_data->image_filename );
@@ -119,20 +119,20 @@ int test_hlink_read ( reading_test_t * test_data )
         exit(1);
     }
 
-    ADF_RETCODE rc = adfDevMount ( dev );
+    ADF_RETCODE rc = adfDevMount( dev );
     if ( rc != ADF_RC_OK ) {
         log_error( "Cannot mount image %s - aborting the test...\n",
                    test_data->image_filename );
-        adfDevClose ( dev );
+        adfDevClose( dev );
         return 1;
     }
 
-    struct AdfVolume * const vol = adfVolMount ( dev, 0, ADF_ACCESS_MODE_READONLY );
+    struct AdfVolume * const vol = adfVolMount( dev, 0, ADF_ACCESS_MODE_READONLY );
     if ( ! vol ) {
         log_error( "Cannot mount volume 0 from image %s - aborting the test...\n",
                    test_data->image_filename );
-        adfDevUnMount ( dev );
-        adfDevClose ( dev );
+        adfDevUnMount( dev );
+        adfDevClose( dev );
         return 1;
     }
 
@@ -141,23 +141,23 @@ int test_hlink_read ( reading_test_t * test_data )
 #endif
 
     int status = 0;
-    adfToRootDir ( vol );
+    adfToRootDir( vol );
     char * dir = test_data->hlink_dir;
     if ( dir ) {
         log_info( "Entering directory %s...\n", dir );
 
-        int chdir_st = adfChangeDir ( vol, dir );
+        int chdir_st = adfChangeDir( vol, dir );
         if ( chdir_st != ADF_RC_OK ) {
             log_error( " -> Cannot chdir to %s, status %d - aborting...\n",
                        dir, chdir_st );
-            adfToRootDir ( vol );
+            adfToRootDir( vol );
             status = 1;
             goto clean_up;
         }
     }
 
-    struct AdfFile * const file_adf = adfFileOpen ( vol, test_data->hlink_name,
-                                                    ADF_FILE_MODE_READ );
+    struct AdfFile * const file_adf = adfFileOpen( vol, test_data->hlink_name,
+                                                   ADF_FILE_MODE_READ );
     if ( ! file_adf ) {
         log_error( " -> Cannot open hard link file %s - aborting...\n",
                    test_data->hlink_name );
@@ -166,35 +166,35 @@ int test_hlink_read ( reading_test_t * test_data )
     }
 
     for ( unsigned int i = 0 ; i < test_data->nchecks ; ++i ) {
-        status += test_single_read ( file_adf,
-                                     test_data->checks[i].offset,
-                                     test_data->checks[i].value );
+        status += test_single_read( file_adf,
+                                    test_data->checks[i].offset,
+                                    test_data->checks[i].value );
     }
 
-    adfFileClose ( file_adf );
+    adfFileClose( file_adf );
 
     // clean-up
 clean_up:
     //adfToRootDir ( vol );
-    adfVolUnMount ( vol );
-    adfDevUnMount ( dev );
-    adfDevClose ( dev );
+    adfVolUnMount( vol );
+    adfDevUnMount( dev );
+    adfDevClose( dev );
 
     return status;
 }
 
 
-int test_single_read ( struct AdfFile * const file_adf,
-                       unsigned int           offset,
-                       unsigned char          expected_value )
+int test_single_read( struct AdfFile * const  file_adf,
+                      unsigned int            offset,
+                      unsigned char           expected_value )
 {
     log_info( "  Reading data after seek to position 0x%x (%d)...",
               offset, offset );
 
-    adfFileSeek ( file_adf, offset );
+    adfFileSeek( file_adf, offset );
 
     unsigned char c;
-    unsigned n = adfFileRead ( file_adf, 1, &c );
+    unsigned n = adfFileRead( file_adf, 1, &c );
 
     if ( n != 1 ) {
         log_error( " -> Reading data failed!!!\n" );
