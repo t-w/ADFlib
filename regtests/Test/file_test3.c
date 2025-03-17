@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 #include "log.h"
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         goto cleanup_env;
     }
 
-    ADF_RETCODE rc = adfDevMount ( hd );
+    ADF_RETCODE rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
         status = 1;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
     /* write one file */
     struct AdfFile * file = adfFileOpen( vol, "moon_gif", ADF_FILE_MODE_WRITE );
-    if (!file) {
+    if ( ! file ) {
         log_error( "can't open file 'moon_gif' for writing\n" );
         status = 1;
         goto cleanup_vol;
@@ -81,23 +81,23 @@ int main(int argc, char *argv[])
     
     unsigned len = 600;
     unsigned char buf[600];
-    unsigned n = (unsigned) fread(buf,sizeof(unsigned char),len,out);
-    while(!feof(out)) {
-        adfFileWrite ( file, n, buf );
-        n = (unsigned) fread(buf,sizeof(unsigned char),len,out);
+    unsigned n = (unsigned) fread( buf, sizeof(unsigned char), len, out );
+    while ( ! feof( out ) ) {
+        adfFileWrite( file, n, buf );
+        n = (unsigned) fread( buf, sizeof(unsigned char), len, out );
     }
-    if (n>0)
-        adfFileWrite ( file, n, buf );
+    if ( n > 0 )
+        adfFileWrite( file, n, buf );
 
-    fclose(out);
+    fclose( out );
 
-    adfFileClose ( file );
+    adfFileClose( file );
 
     /* the directory */
     showDirEntries( vol, vol->curDirPtr );
 
     /* re read this file */
-    file = adfFileOpen ( vol, "moon_gif", ADF_FILE_MODE_READ );
+    file = adfFileOpen( vol, "moon_gif", ADF_FILE_MODE_READ );
     if ( ! file ) {
         log_error( "can't open file 'moon_gif' for reading\n" );
         status = 1;
@@ -112,24 +112,23 @@ int main(int argc, char *argv[])
     }
 
     len = 300;
-    n = adfFileRead ( file, len, buf );
-    while(!adfFileAtEOF(file)) {
-        fwrite(buf,sizeof(unsigned char),n,out);
-        n = adfFileRead ( file, len, buf );
+    n = adfFileRead( file, len, buf );
+    while ( ! adfFileAtEOF( file ) ) {
+        fwrite( buf, sizeof(unsigned char), n, out );
+        n = adfFileRead( file, len, buf );
     }
-    if (n>0)
-        fwrite(buf,sizeof(unsigned char),n,out);
+    if ( n > 0 )
+        fwrite( buf, sizeof(unsigned char), n, out );
 
-    fclose(out);
-
-    adfFileClose ( file );
+    fclose( out );
+    adfFileClose( file );
 
 cleanup_vol:
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
