@@ -12,7 +12,8 @@ for A_TEST in \
    ./hd_test.sh \
    ./hd_test2.sh \
    ./hd_test3.sh \
-   ./hardfile.sh
+   ./hardfile.sh \
+   ./hardfile2
 do
     echo "---------------------------------------------------"
     echo "    Executing: ${A_TEST}"
