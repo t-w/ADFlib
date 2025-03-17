@@ -33,10 +33,10 @@ int verify_file_data( struct AdfVolume * const  vol,
                       const int                 max_errors );
 
 void pattern_AMIGAMIG( unsigned char *  buf,
-                       const unsigned   BUFSIZE );
+                       const unsigned   bufsize );
 
 void pattern_random( unsigned char *  buf,
-                     const unsigned   BUFSIZE );
+                     const unsigned   bufsize );
 
 
 int main(void)
@@ -217,9 +217,9 @@ int verify_file_data( struct AdfVolume * const  vol,
 
 
 void pattern_AMIGAMIG( unsigned char *  buf,
-                       const unsigned   BUFSIZE )
+                       const unsigned   bufsize )
 {
-    for ( unsigned i = 0 ; i < BUFSIZE ; i += 4 ) {
+    for ( unsigned i = 0 ; i < bufsize ; i += 4 ) {
         buf[i]   = 'A';
         buf[i+1] = 'M';
         buf[i+2] = 'I';
@@ -228,9 +228,9 @@ void pattern_AMIGAMIG( unsigned char *  buf,
 }
 
 void pattern_random( unsigned char *  buf,
-                     const unsigned   BUFSIZE )
+                     const unsigned   bufsize )
 {
-    for ( unsigned i = 0 ; i < BUFSIZE ; ++i ) {
+    for ( unsigned i = 0 ; i < bufsize ; ++i ) {
         buf[i] = (unsigned char) ( rand() & 0xff );
     }
 }
