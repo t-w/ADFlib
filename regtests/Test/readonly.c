@@ -29,6 +29,8 @@ int main(int argc, char *argv[])
 {
     log_init( stderr, TEST_VERBOSITY );
 
+    int status = 0;
+
     if ( argc < 2 ) {
         log_error( "missing parameter (image/device) - aborting...\n");
         return 1;
@@ -40,23 +42,22 @@ int main(int argc, char *argv[])
     struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_env;
     }
 
     ADF_RETCODE rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showVolInfo( vol );
@@ -92,10 +93,13 @@ int main(int argc, char *argv[])
     showVolInfo( vol );
 
     adfVolUnMount(vol);
+
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_env:
     adfEnvCleanUp();
 
-    return 0;
+    return status;
 }
