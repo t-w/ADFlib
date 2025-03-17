@@ -174,7 +174,7 @@ fl_test_SOURCES = fl_test.c common.c common.h log.c log.h
 fl_test_LDADD = $(ADFLIBS)
 fl_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-fl_test2_SOURCES = fl_test2.c common.c common.h
+fl_test2_SOURCES = fl_test2.c common.c common.h log.c log.h
 fl_test2_LDADD = $(ADFLIBS)
 fl_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
