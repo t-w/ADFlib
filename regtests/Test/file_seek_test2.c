@@ -94,7 +94,7 @@ int run_multiple_seek_tests ( test_file_t * test_data )
 
     int status = 0;
 
-    ADF_RETCODE rc = adfDevMount( dev );
+    const ADF_RETCODE rc = adfDevMount( dev );
     if ( rc != ADF_RC_OK ) {
         log_error( "Cannot mount image %s - aborting the test...\n",
                    test_data->image_filename );
@@ -122,7 +122,7 @@ int run_multiple_seek_tests ( test_file_t * test_data )
         goto cleanup_vol;
     }
 
-    FILE * file_local = fopen( test_data->filename_local, "rb" );
+    FILE * const file_local = fopen( test_data->filename_local, "rb" );
     if ( ! file_local ) {
         log_error( "Cannot open local file %s - aborting...\n",
                    test_data->filename_local );
@@ -161,7 +161,7 @@ int test_single_seek( struct AdfFile * const  file_adf,
     log_info( "  Reading data after seek to position 0x%x (%d)...", offset, offset );
     //fflush(stdout);
 
-    ADF_RETCODE rc = adfFileSeek( file_adf, offset );
+    const ADF_RETCODE rc = adfFileSeek( file_adf, offset );
     if ( rc != ADF_RC_OK ) {
         log_error( " -> seeking to 0x%x (%d) failed!!!\n", offset, offset );
         //fflush(stderr);
@@ -169,7 +169,7 @@ int test_single_seek( struct AdfFile * const  file_adf,
     }
 
     unsigned char c;
-    unsigned n = adfFileRead( file_adf, 1, &c );
+    const unsigned n = adfFileRead( file_adf, 1, &c );
     if ( n != 1 ) {
         log_error( " -> Reading data failed!!!\n" );
         //fflush(stderr);
@@ -185,7 +185,7 @@ int test_single_seek( struct AdfFile * const  file_adf,
     }
 
     unsigned char expected_value;
-    size_t items_read = fread( &expected_value, 1, 1, file_local );
+    const size_t  items_read = fread( &expected_value, 1, 1, file_local );
     if ( items_read != 1 ) {
         log_error( " -> Error reading local file at %u (0x%08x), items read %lu.\n",
                    offset, offset, items_read );
