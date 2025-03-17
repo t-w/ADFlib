@@ -9,6 +9,9 @@
 
 #include"adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 1
 
 
 void MyVer(char *msg)
@@ -24,6 +27,9 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
+
+    log_init( stderr, TEST_VERBOSITY );
+
     struct AdfVolume *vol;
 
     adfEnvInitDefault();
@@ -32,7 +38,7 @@ int main(int argc, char *argv[])
     struct AdfDevice * const hd = adfDevCreate ( "dump", "hardfile2-newdev",
                                                  256, 2, 32 );
     if (!hd) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't create device\n" );
         adfEnvCleanUp(); exit(1);
     }
 
@@ -43,9 +49,9 @@ int main(int argc, char *argv[])
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
     showVolInfo( vol );

@@ -186,7 +186,7 @@ hardfile_SOURCES = hardfile.c common.c common.h
 hardfile_LDADD = $(ADFLIBS)
 hardfile_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-hardfile2_SOURCES = hardfile2.c common.c common.h
+hardfile2_SOURCES = hardfile2.c common.c common.h log.c log.h
 hardfile2_LDADD = $(ADFLIBS)
 hardfile2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

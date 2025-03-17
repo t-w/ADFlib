@@ -93,7 +93,7 @@ target_link_libraries ( floppy_overfilling_test adf )
 add_executable ( hardfile hardfile.c common.c common.h )
 target_link_libraries ( hardfile adf )
 
-add_executable ( hardfile2 hardfile2.c common.c common.h )
+add_executable ( hardfile2 hardfile2.c common.c common.h log.c log.h )
 target_link_libraries ( hardfile2 adf )
 
 add_executable ( hd_test hd_test.c common.c common.h )
