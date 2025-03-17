@@ -138,17 +138,9 @@ dispsect_SOURCES = dispsect.c common.c common.h log.c log.h
 dispsect_LDADD = $(ADFLIBS)
 dispsect_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-file_test_SOURCES = file_test.c common.c common.h log.c log.h
-file_test_LDADD = $(ADFLIBS)
-file_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-file_test2_SOURCES = file_test2.c common.c common.h log.c log.h
-file_test2_LDADD = $(ADFLIBS)
-file_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-file_test3_SOURCES = file_test3.c common.c common.h
-file_test3_LDADD = $(ADFLIBS)
-file_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
+file_read_hard_link_test_SOURCES = file_read_hard_link_test.c
+file_read_hard_link_test_LDADD = $(ADFLIBS)
+file_read_hard_link_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 file_seek_test_SOURCES = file_seek_test.c
 file_seek_test_LDADD = $(ADFLIBS)
@@ -162,9 +154,17 @@ file_seek_after_write_SOURCES = file_seek_after_write.c
 file_seek_after_write_LDADD = $(ADFLIBS)
 file_seek_after_write_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-file_read_hard_link_test_SOURCES = file_read_hard_link_test.c
-file_read_hard_link_test_LDADD = $(ADFLIBS)
-file_read_hard_link_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+file_test_SOURCES = file_test.c common.c common.h log.c log.h
+file_test_LDADD = $(ADFLIBS)
+file_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+file_test2_SOURCES = file_test2.c common.c common.h log.c log.h
+file_test2_LDADD = $(ADFLIBS)
+file_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+file_test3_SOURCES = file_test3.c common.c common.h
+file_test3_LDADD = $(ADFLIBS)
+file_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 fl_test_SOURCES = fl_test.c common.c common.h log.c log.h
 fl_test_LDADD = $(ADFLIBS)

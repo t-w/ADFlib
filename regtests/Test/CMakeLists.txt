@@ -57,14 +57,8 @@ target_link_libraries ( dir_test_chdir adf )
 add_executable ( dispsect dispsect.c common.c common.h log.c log.h )
 target_link_libraries ( dispsect adf )
 
-add_executable ( file_test file_test.c common.c common.h log.c log.h )
-target_link_libraries ( file_test adf )
-
-add_executable ( file_test2 file_test2.c common.c common.h log.c log.h )
-target_link_libraries ( file_test2 adf )
-
-add_executable ( file_test3 file_test3.c common.c common.h )
-target_link_libraries ( file_test3 adf )
+add_executable ( file_read_hard_link_test file_read_hard_link_test.c )
+target_link_libraries ( file_read_hard_link_test adf )
 
 add_executable ( file_seek_test file_seek_test.c )
 target_link_libraries ( file_seek_test adf )
@@ -75,8 +69,14 @@ target_link_libraries ( file_seek_test2 adf )
 add_executable ( file_seek_after_write file_seek_after_write.c log.c log.h )
 target_link_libraries ( file_seek_after_write adf )
 
-add_executable ( file_read_hard_link_test file_read_hard_link_test.c )
-target_link_libraries ( file_read_hard_link_test adf )
+add_executable ( file_test file_test.c common.c common.h log.c log.h )
+target_link_libraries ( file_test adf )
+
+add_executable ( file_test2 file_test2.c common.c common.h log.c log.h )
+target_link_libraries ( file_test2 adf )
+
+add_executable ( file_test3 file_test3.c common.c common.h )
+target_link_libraries ( file_test3 adf )
 
 add_executable ( fl_test fl_test.c common.c common.h log.c log.h )
 target_link_libraries ( fl_test adf )
