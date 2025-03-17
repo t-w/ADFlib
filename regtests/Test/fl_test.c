@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 #include "log.h"
 
@@ -37,14 +37,14 @@ int main(int argc, char *argv[])
 //	adfEnvSetFct(0,0,MyVer,0);
 
     /* open and mount existing device */
-    struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
+    struct AdfDevice * hd = adfDevOpen( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         status = 1;
         goto cleanup_env;
     }
 
-    ADF_RETCODE rc = adfDevMount ( hd );
+    ADF_RETCODE rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
         status = 1;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
@@ -60,15 +60,15 @@ int main(int argc, char *argv[])
 
     showVolInfo( vol );
 
-    adfVolUnMount(vol);
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfVolUnMount( vol );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
     log_info("\n");
 
     /* create and mount one device */
-    hd = adfDevCreate ( "dump", "fl_test-newdev", 80, 2, 11 );
-    if (!hd) {
+    hd = adfDevCreate( "dump", "fl_test-newdev", 80, 2, 11 );
+    if ( ! hd ) {
         log_error( "can't create device\n" );
         status = 1;
         goto cleanup_env;
@@ -76,35 +76,35 @@ int main(int argc, char *argv[])
 
     showDevInfo( hd );
 
-    adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
-                                 ADF_DOSFS_DIRCACHE );
+    adfCreateFlop( hd, "empty", ADF_DOSFS_FFS |
+                                ADF_DOSFS_DIRCACHE );
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
 
     FILE * const boot = fopen( argv[2], "rb" );
-    if (!boot) {
+    if ( ! boot ) {
         log_error( "can't open bootblock file\n" );
         status = 1;
         goto cleanup_vol;
     }
     unsigned char bootcode[1024];
-    fread(bootcode, sizeof(unsigned char), 1024, boot);
-    adfVolInstallBootBlock ( vol, bootcode );
-    fclose(boot);
+    fread( bootcode, sizeof(unsigned char), 1024, boot );
+    adfVolInstallBootBlock( vol, bootcode );
+    fclose( boot );
 
     showVolInfo( vol );
 
 cleanup_vol:
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
