@@ -35,10 +35,11 @@ int main(int argc, char *argv[])
     int status = 0;
 
     /* create and mount one device : 4194304 bytes */
-    struct AdfDevice * const hd = adfDevCreate( "dump", "hardfile2-newdev",
+    const char * const hdfname = "hardfile2-newdev";
+    struct AdfDevice * const hd = adfDevCreate( "dump", hdfname,
                                                 256, 2, 32 );
     if ( ! hd ) {
-        log_error( "can't create device\n" );
+        log_error( "can't create device '%s'\n", hdfname );
         status = 1;
         goto cleanup_env;
     }
@@ -70,6 +71,8 @@ cleanup_dev:
 
 cleanup_env:
     adfEnvCleanUp();
+
+    remove( hdfname);
 
     return status;
 }
