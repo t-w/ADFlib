@@ -39,7 +39,7 @@ void pattern_random( unsigned char *  buf,
                      const unsigned   BUFSIZE );
 
 
-int main (void)
+int main(void)
 {
     log_init( stderr, TEST_VERBOSITY );
 
@@ -50,7 +50,7 @@ int main (void)
 #else
     const unsigned BUF_SIZE = 1024 * 1024;
 #endif
-    unsigned char * const buf = malloc ( BUF_SIZE );
+    unsigned char * const buf = malloc( BUF_SIZE );
     if ( buf == NULL )
         return 1;
 
@@ -108,13 +108,13 @@ int test_floppy_overfilling( test_data_t * const  tdata )
         return 1;
     adfCreateFlop( device, "OverfillTest", tdata->fstype );
 
-    struct AdfVolume * vol = adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
     if ( ! vol )
         return 1;
 
     log_info( "\nFree blocks: %d\n", adfCountFreeBlocks( vol ) );
 
-    struct AdfFile * output = adfFileOpen( vol, tdata->filename, ADF_FILE_MODE_WRITE );
+    struct AdfFile * const output = adfFileOpen( vol, tdata->filename, ADF_FILE_MODE_WRITE );
     if ( ! output )
         return 1;
 
@@ -124,11 +124,11 @@ int test_floppy_overfilling( test_data_t * const  tdata )
     while ( bytes_written + tdata->blocksize < tdata->bufsize ) {  /* <- assumption:
                                                                       bufsize must be larger than
                                                                       floppy size + blocksize */
-        unsigned block_bytes_written = adfFileWrite( output, tdata->blocksize, bufferp );
+        const unsigned block_bytes_written = adfFileWrite( output, tdata->blocksize, bufferp );
         bytes_written += block_bytes_written;
         if ( block_bytes_written != tdata->blocksize ) {
             // OK, end of the disk space hit and not all bytes written
-            status = 0;   
+            status = 0;
             break;
         }
         bufferp += block_bytes_written; //tdata->blocksize;
@@ -146,7 +146,7 @@ int test_floppy_overfilling( test_data_t * const  tdata )
 
     log_info( "\nFree blocks: %d\n", adfCountFreeBlocks( vol ) );
 
-    unsigned free_blocks = adfCountFreeBlocks( vol );
+    const unsigned free_blocks = adfCountFreeBlocks( vol );
     if ( free_blocks != 0 ) {
         log_error( "\n%d blocks still free after 'overfilling'!\n", free_blocks );
         status++;
@@ -171,7 +171,7 @@ int verify_file_data( struct AdfVolume * const  vol,
                       const unsigned            bytes_written,
                       const int                 max_errors )
 {
-    struct AdfFile * output = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
+    struct AdfFile * const output = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
     if ( ! output )
         return 1;
 
@@ -227,11 +227,10 @@ void pattern_AMIGAMIG( unsigned char *  buf,
      }
 }
 
-
 void pattern_random( unsigned char *  buf,
                      const unsigned   BUFSIZE )
 {
     for ( unsigned i = 0 ; i < BUFSIZE ; ++i ) {
-        buf[i]   = (unsigned char) ( rand() & 0xff );
+        buf[i] = (unsigned char) ( rand() & 0xff );
     }
 }
