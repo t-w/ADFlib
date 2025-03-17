@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 
 #include "log.h"
@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
     adfEnvInitDefault();
 
     /* open and mount existing device */
-    struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
+    struct AdfDevice * hd = adfDevOpen( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         status = 1;
         goto cleanup_env;
     }
 
-    ADF_RETCODE rc = adfDevMount ( hd );
+    ADF_RETCODE rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
         status = 1;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
@@ -64,39 +64,39 @@ int main(int argc, char *argv[])
     showDirEntries( vol, vol->curDirPtr );
     log_info("\n");
 
-    adfCreateDir(vol,vol->curDirPtr,"newdir");
+    adfCreateDir( vol, vol->curDirPtr, "newdir" );
 
     /* cd dir_2 */
     //ADF_SECTNUM nSect = adfChangeDir(vol, "same_hash");
-    adfChangeDir(vol, "same_hash");
+    adfChangeDir( vol, "same_hash" );
     showDirEntries( vol, vol->curDirPtr );
     log_info("\n");
 
     /* not empty */
-    adfRemoveEntry(vol, vol->curDirPtr, "mon.paradox");
+    adfRemoveEntry( vol, vol->curDirPtr, "mon.paradox" );
 
     /* first in same hash linked list */
-    adfRemoveEntry(vol, vol->curDirPtr, "file_3a");
+    adfRemoveEntry( vol, vol->curDirPtr, "file_3a" );
     /* second */
-    adfRemoveEntry(vol, vol->curDirPtr, "dir_3");
+    adfRemoveEntry( vol, vol->curDirPtr, "dir_3" );
     /* last */
-    adfRemoveEntry(vol, vol->curDirPtr, "dir_1a");
+    adfRemoveEntry( vol, vol->curDirPtr, "dir_1a" );
 
     showDirEntries( vol, vol->curDirPtr );
     log_info("\n");
 
-    adfParentDir(vol);
-    adfRemoveEntry(vol, vol->curDirPtr, "mod.And.DistantCall");
+    adfParentDir( vol );
+    adfRemoveEntry( vol, vol->curDirPtr, "mod.And.DistantCall" );
     showDirEntries( vol, vol->curDirPtr );
     log_info("\n");
 
     showVolInfo( vol );
 
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
