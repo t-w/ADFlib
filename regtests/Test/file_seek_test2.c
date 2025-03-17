@@ -5,8 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include"adflib.h"
+#include "log.h"
 
-#define TEST_VERBOSITY 0
+#define TEST_VERBOSITY 2
 
 #define NUM_TESTS  1000
 #define MAX_ERRORS 10
@@ -55,6 +56,8 @@ int main ( int argc, char * argv[] )
 { 
     (void) argc;
 
+    log_init( stderr, TEST_VERBOSITY );
+
     adfEnvInitDefault();
 
 //	adfEnvSetFct(0,0,MyVer,0);
@@ -74,40 +77,38 @@ int main ( int argc, char * argv[] )
 
 int run_multiple_seek_tests ( test_file_t * test_data )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "\n*** Testing multiple file seeking"
-             "\n\timage file:\t%s\n\tfilename:\t%s\n\tlocal file:\t%s\n",
-             test_data->image_filename,
-             test_data->filename_adf,
-             test_data->filename_local );
-#endif
+    log_info( "\n*** Testing multiple file seeking"
+              "\n\timage file:\t%s\n\tfilename:\t%s\n\tlocal file:\t%s\n",
+              test_data->image_filename,
+              test_data->filename_adf,
+              test_data->filename_local );
 
     struct AdfDevice * const dev = adfDevOpen ( test_data->image_filename,
                                                 ADF_ACCESS_MODE_READONLY );
     if ( ! dev ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  test_data->image_filename );
+        log_error( "Cannot open file/device '%s' - aborting...\n",
+                   test_data->image_filename );
         adfEnvCleanUp();
         exit(1);
     }
 
     ADF_RETCODE rc = adfDevMount ( dev );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, "Cannot mount image %s - aborting the test...\n",
-                  test_data->image_filename );
+        log_error( "Cannot mount image %s - aborting the test...\n",
+                   test_data->image_filename );
         adfDevClose ( dev );
         return 1;
     }
 
     struct AdfVolume * const vol = adfVolMount ( dev, 0, ADF_ACCESS_MODE_READONLY );
     if ( ! vol ) {
-        fprintf ( stderr, "Cannot mount volume 0 from image %s - aborting the test...\n",
-                 test_data->image_filename );
+        log_error( "Cannot mount volume 0 from image %s - aborting the test...\n",
+                   test_data->image_filename );
         adfDevUnMount ( dev );
         adfDevClose ( dev );
         return 1;
     }
-#if TEST_VERBOSITY > 0
+#if TEST_VERBOSITY > 3
     showVolInfo( vol );
 #endif
 
@@ -115,16 +116,16 @@ int run_multiple_seek_tests ( test_file_t * test_data )
     struct AdfFile * const file_adf = adfFileOpen ( vol, test_data->filename_adf,
                                                     ADF_FILE_MODE_READ );
     if ( ! file_adf ) {
-        fprintf ( stderr, "Cannot open adf file %s - aborting...\n",
-                  test_data->filename_adf );
+        log_error( "Cannot open adf file %s - aborting...\n",
+                   test_data->filename_adf );
         status = 1;
         goto cleanup;
     }
 
     FILE * file_local = fopen ( test_data->filename_local, "rb" );
     if ( ! file_local ) {
-        fprintf ( stderr, "Cannot open local file %s - aborting...\n",
-                  test_data->filename_local );
+        log_error( "Cannot open local file %s - aborting...\n",
+                   test_data->filename_local );
         goto cleanup_adffile;
     }
 
@@ -155,55 +156,48 @@ int test_single_seek ( struct AdfFile * const file_adf,
                        FILE * const           file_local,
                        unsigned int           offset )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "  Reading data after seek to position 0x%x (%d)...",
-             offset, offset );
-    fflush(stdout);
-#endif
+    log_info( "  Reading data after seek to position 0x%x (%d)...", offset, offset );
+    //fflush(stdout);
 
     ADF_RETCODE rc = adfFileSeek ( file_adf, offset );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, " -> seeking to 0x%x (%d) failed!!!\n",
-                  offset, offset );
-        fflush(stderr);
+        log_error( " -> seeking to 0x%x (%d) failed!!!\n", offset, offset );
+        //fflush(stderr);
         return 1;
     }
 
     unsigned char c;
     unsigned n = adfFileRead ( file_adf, 1, &c );
     if ( n != 1 ) {
-        fprintf ( stderr, " -> Reading data failed!!!\n" );
-        fflush(stderr);
+        log_error( " -> Reading data failed!!!\n" );
+        //fflush(stderr);
         return 1;
     }
 
     if ( fseek ( file_local, offset, SEEK_SET ) != 0 ) {
-        fprintf ( stderr, " -> fseek error on local file at %u (0x%08x).",
-                  offset, offset );
-        perror (" -> ");
-        fflush(stderr);
+        log_error( " -> fseek error on local file at %u (0x%08x).",
+                   offset, offset );
+        //perror (" -> ");
+        //fflush(stderr);
         return 1;
     }
 
     unsigned char expected_value;
     size_t items_read = fread ( &expected_value, 1, 1, file_local );
     if ( items_read != 1 ) {
-        fprintf ( stderr, " -> Error reading local file at %u (0x%08x), items read %lu.\n",
-                  offset, offset, items_read );
-        fflush(stderr);
+        log_error( " -> Error reading local file at %u (0x%08x), items read %lu.\n",
+                   offset, offset, items_read );
+        //fflush(stderr);
         return 1;
     }
     
     if ( c != expected_value ) {
-        fprintf ( stderr, " -> Incorrect data read:  expected 0x%x != read 0x%x\n",
-                 (int) expected_value, (int) c );
-        fflush(stderr);
+        log_error( " -> Incorrect data read:  expected 0x%x != read 0x%x\n",
+                   (int) expected_value, (int) c );
+        //fflush(stderr);
         return 1;
     }
 
-#if TEST_VERBOSITY > 0
-    printf ( " -> OK.\n" );
-#endif
-
+    log_info ( " -> OK.\n" );
     return 0;
 }
