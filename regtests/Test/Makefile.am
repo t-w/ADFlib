@@ -206,7 +206,7 @@ readonly_SOURCES = readonly.c common.c common.h
 readonly_LDADD = $(ADFLIBS)
 readonly_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-rename_SOURCES = rename.c common.c common.h
+rename_SOURCES = rename.c common.c common.h log.c log.h
 rename_LDADD = $(ADFLIBS)
 rename_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
