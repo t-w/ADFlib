@@ -75,6 +75,9 @@ target_link_libraries ( file_test adf )
 add_executable ( file_test2 file_test2.c common.c common.h log.c log.h )
 target_link_libraries ( file_test2 adf )
 
+#add_executable ( file_test2a file_test2a.c common.c common.h log.c log.h )
+#target_link_libraries ( file_test2a adf )
+
 add_executable ( file_test3 file_test3.c common.c common.h )
 target_link_libraries ( file_test3 adf )
 
