@@ -34,11 +34,6 @@ int main(int argc, char *argv[])
     }
 
     int status = 0;
-
-    struct AdfVolume *vol;
-    struct AdfFile *file;
-    unsigned char buf[600];
-    FILE *out;
  
     adfEnvInitDefault();
 
@@ -59,7 +54,7 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         status = 1;
@@ -68,13 +63,13 @@ int main(int argc, char *argv[])
 
     showVolInfo( vol );
 
-    file = adfFileOpen ( vol, "mod.and.distantcall", ADF_FILE_MODE_READ );
+    struct AdfFile * file = adfFileOpen( vol, "mod.and.distantcall", ADF_FILE_MODE_READ );
     if (!file) {
         log_error( "can't open file mod.and.distantcall\n" );
         status = 1;
         goto cleanup_vol;
     }
-    out = fopen("mod.distant","wb");
+    FILE * out = fopen( "mod.distant", "wb" );
     if (!out) {
         log_error( "can't open file mod.distant\n" );
         status = 1;
@@ -83,6 +78,7 @@ int main(int argc, char *argv[])
     }
     
     unsigned len = 600;
+    unsigned char buf[600];
     unsigned n = adfFileRead ( file, len, buf );
     while ( ! adfFileAtEOF( file ) ) {
         fwrite(buf,sizeof(unsigned char),n,out);
