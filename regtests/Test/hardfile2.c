@@ -34,12 +34,15 @@ int main(int argc, char *argv[])
 
     adfEnvInitDefault();
 
+    int status = 0;
+
     /* create and mount one device : 4194304 bytes */
     struct AdfDevice * const hd = adfDevCreate ( "dump", "hardfile2-newdev",
                                                  256, 2, 32 );
     if (!hd) {
         log_error( "can't create device\n" );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_env;
     }
 
     adfCreateHdFile ( hd, "empty", ADF_DOSFS_FFS |
@@ -50,19 +53,21 @@ int main(int argc, char *argv[])
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
     showVolInfo( vol );
     showDirEntries( vol, vol->curDirPtr );
 
     /* unmounts */
     adfVolUnMount(vol);
+
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_env:
     adfEnvCleanUp();
 
-    return 0;
+    return status;
 }
