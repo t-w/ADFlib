@@ -45,8 +45,12 @@ int main(int argc, char *argv[])
         goto cleanup_env;
     }
 
-    adfCreateHdFile ( hd, "empty", ADF_DOSFS_FFS |
-                                   ADF_DOSFS_DIRCACHE );
+    if ( adfCreateHdFile ( hd, "empty", ADF_DOSFS_FFS |
+                                        ADF_DOSFS_DIRCACHE ) != ADF_RC_OK ) {
+        log_error( "can't create hdfile (format)\n" );
+        status = 1;
+        goto cleanup_dev;
+    }
 
     showDevInfo( hd );
 
