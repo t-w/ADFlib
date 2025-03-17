@@ -5,8 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "adflib.h"
+#include "log.h"
 
-#define TEST_VERBOSITY 0
+#define TEST_VERBOSITY 3
 
 typedef struct check_s {
     unsigned int  offset;
@@ -103,9 +104,10 @@ int test_seek_eof ( struct AdfFile * file,
 
 int main ( int argc, char * argv[] )
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 3 ) {
-        fprintf ( stderr,
-                  "%s requires 2 parameters\n", argv[0] );
+        log_error( "%s requires 2 parameters\n", argv[0] );
         return 1;
     }
 
@@ -129,38 +131,36 @@ int main ( int argc, char * argv[] )
 
 int run_single_seek_tests ( reading_test_t * test_data )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "\n*** Test file seeking on image: %s, filename: %s\n",
-             test_data->image_filename, test_data->filename );
-    fflush ( stdout );
-#endif
+    log_info( "\n*** Test file seeking on image: %s, filename: %s\n",
+              test_data->image_filename, test_data->filename );
+    //fflush( stdout );
 
     struct AdfDevice * const dev = adfDevOpen ( test_data->image_filename,
                                                 ADF_ACCESS_MODE_READONLY );
     if ( ! dev ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  test_data->image_filename );
+        log_error( "Cannot open file/device '%s' - aborting...\n",
+                   test_data->image_filename );
         adfEnvCleanUp();
         exit(1);
     }
 
     ADF_RETCODE rc = adfDevMount ( dev );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, "Cannot mount image %s - aborting the test...\n",
-                  test_data->image_filename );
+        log_error( "Cannot mount image %s - aborting the test...\n",
+                   test_data->image_filename );
         adfDevClose ( dev );
         return 1;
     }
 
     struct AdfVolume * const vol = adfVolMount ( dev, 0, ADF_ACCESS_MODE_READONLY );
     if ( ! vol ) {
-        fprintf ( stderr, "Cannot mount volume 0 from image %s - aborting the test...\n",
-                 test_data->image_filename );
+        log_error( "Cannot mount volume 0 from image %s - aborting the test...\n",
+                   test_data->image_filename );
         adfDevUnMount ( dev );
         adfDevClose ( dev );
         return 1;
     }
-#if TEST_VERBOSITY > 0
+#if TEST_VERBOSITY > 3
     showVolInfo( vol );
 #endif
 
@@ -169,7 +169,7 @@ int run_single_seek_tests ( reading_test_t * test_data )
 
         struct AdfFile * file = adfFileOpen ( vol, test_data->filename, ADF_FILE_MODE_READ );
         if ( ! file ) {
-            printf ("Cannot open file %s - aborting...\n", test_data->filename );
+            log_error( "Cannot open file %s - aborting...\n", test_data->filename );
             status = 1;
             goto cleanup;
         }
@@ -183,7 +183,7 @@ int run_single_seek_tests ( reading_test_t * test_data )
     // test EOF
     struct AdfFile * file = adfFileOpen ( vol, test_data->filename, ADF_FILE_MODE_READ );
     if ( ! file ) {
-        printf ("Cannot open file %s - aborting...\n", test_data->filename );
+        log_error( "Cannot open file %s - aborting...\n", test_data->filename );
         status = 1;
         goto cleanup;
     }
@@ -205,15 +205,12 @@ int test_single_seek ( struct AdfFile *    file,
                        unsigned int        offset,
                        const unsigned char expected_value )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "  Reading data after seek to position 0x%x (%d)...",
-             offset, offset );
-    fflush ( stdout );
-#endif
+    log_info( "  Reading data after seek to position 0x%x (%d)...", offset, offset );
+    //fflush( stdout );
+
     ADF_RETCODE rc = adfFileSeek ( file, offset );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, "Seeking to position 0x%x (%d) failed!!!\n",
-                  offset, offset );
+        log_error( "Seeking to position 0x%x (%d) failed!!!\n", offset, offset );
         return 1;
     }
 
@@ -221,21 +218,20 @@ int test_single_seek ( struct AdfFile *    file,
     unsigned n = adfFileRead ( file, 1, &c );
 
     if ( n != 1 ) {
-        fprintf ( stderr, "Reading data failed after seeking to position 0x%x (%d)!!!\n",
-                  offset, offset );
+        log_error( "Reading data failed after seeking to position 0x%x (%d)!!!\n",
+                   offset, offset );
         return 1;
     }
 
     if ( c != expected_value ) {
-        fprintf ( stderr, "Incorrect data read after seeking to position 0x%x (%d):\n"
-                  "\texpected 0x%x != read 0x%x\n",
-                  offset, offset, (int) expected_value, (int) c );
+        log_error( "Incorrect data read after seeking to position 0x%x (%d):\n"
+                   "\texpected 0x%x != read 0x%x\n",
+                   offset, offset, (int) expected_value, (int) c );
         return 1;
     }
 
-#if TEST_VERBOSITY > 0
-    printf ( " -> OK.\n" );
-#endif
+    log_info( " -> OK.\n" );
+
     return 0;
 }
 
@@ -243,61 +239,54 @@ int test_single_seek ( struct AdfFile *    file,
 int test_seek_eof ( struct AdfFile * file,
                     unsigned int     offset )
 {
-#if TEST_VERBOSITY > 0
-    printf ( "  Seeking to EOF position 0x%x (%d)...", offset, offset );
-    fflush ( stdout );
-    fflush ( stderr );
-#endif
+    log_info( "  Seeking to EOF position 0x%x (%d)...", offset, offset );
+    //fflush( stdout );
+    //fflush( stderr );
 
     // seek to end and check EOF
     ADF_RETCODE rc = adfFileSeek ( file, offset );
     if ( rc != ADF_RC_OK ) {
-        fprintf ( stderr, " -> seeking to 0x%x (%d) failed!!!\n",
-                  offset, offset );
+        log_error( " -> seeking to 0x%x (%d) failed!!!\n", offset, offset );
         return 1;
     }
 
     if ( ! adfFileAtEOF( file ) ) {
-        fprintf ( stderr, " -> EOF false after seeking to EOF ( 0x%x / %d )!!!\n",
-                  offset, offset );
+        log_error( " -> EOF false after seeking to EOF ( 0x%x / %d )!!!\n",
+                   offset, offset );
         return 1;
     }
 
     uint32_t fsize = file->fileHdr->byteSize;
     if ( file->pos != fsize ) {
-        fprintf ( stderr, " -> Incorrect file position at EOF: pos 0x%x (%d), size 0x%x (%d)\n",
-                  file->pos, file->pos, fsize, fsize );
+        log_error( " -> Incorrect file position at EOF: pos 0x%x (%d), size 0x%x (%d)\n",
+                   file->pos, file->pos, fsize, fsize );
         return 1;
     }
-#if TEST_VERBOSITY > 0
-    printf ( " -> OK.\n" );
-#endif
+
+    log_info( " -> OK.\n" );
 
     // try to read at EOF
-#if TEST_VERBOSITY > 0
-    printf ( "  Reading at EOF position 0x%x (%d)...", file->pos, file->pos );
-#endif
+    log_info( "  Reading at EOF position 0x%x (%d)...", file->pos, file->pos );
+
     unsigned char c;
     unsigned n = adfFileRead ( file, 1, &c );
     if ( n != 0 ) {
-        fprintf ( stderr, " -> Length of data read at EOF not zero (%d)!!!\n", n );
+        log_error( " -> Length of data read at EOF not zero (%d)!!!\n", n );
         return 1;
     }
 
     if ( ! adfFileAtEOF( file ) ) {
-        fprintf ( stderr, " -> no EOF after reading at EOF!!!\n" );
+        log_error( " -> no EOF after reading at EOF!!!\n" );
         return 1;
     }
 
     if ( file->pos != fsize ) {
-        fprintf ( stderr, " -> Incorrect file position at EOF: pos 0x%x (%d), size 0x%x (%d)\n",
-                  file->pos, file->pos, fsize, fsize );
+        log_error( " -> Incorrect file position at EOF: pos 0x%x (%d), size 0x%x (%d)\n",
+                   file->pos, file->pos, fsize, fsize );
         return 1;
     }
 
-#if TEST_VERBOSITY > 0
-    printf ( " -> OK.\n" );
-#endif
+    log_info( " -> OK.\n" );
     return 0;
 }
 
