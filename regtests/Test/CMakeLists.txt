@@ -78,7 +78,7 @@ target_link_libraries ( file_seek_after_write adf )
 add_executable ( file_read_hard_link_test file_read_hard_link_test.c )
 target_link_libraries ( file_read_hard_link_test adf )
 
-add_executable ( fl_test fl_test.c common.c common.h )
+add_executable ( fl_test fl_test.c common.c common.h log.c log.h )
 target_link_libraries ( fl_test adf )
 
 add_executable ( fl_test2 fl_test2.c common.c common.h )
