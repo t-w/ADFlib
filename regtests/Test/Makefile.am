@@ -150,7 +150,7 @@ file_seek_test2_SOURCES = file_seek_test2.c
 file_seek_test2_LDADD = $(ADFLIBS)
 file_seek_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-file_seek_after_write_SOURCES = file_seek_after_write.c
+file_seek_after_write_SOURCES = file_seek_after_write.c log.c log.h
 file_seek_after_write_LDADD = $(ADFLIBS)
 file_seek_after_write_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
