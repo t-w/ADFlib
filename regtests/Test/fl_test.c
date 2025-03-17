@@ -31,10 +31,6 @@ int main(int argc, char *argv[])
     log_init( stderr, TEST_VERBOSITY );
 
     int status = 0;
-
-    struct AdfVolume *vol;
-    FILE* boot;
-    unsigned char bootcode[1024];
  
     adfEnvInitDefault();
 
@@ -55,7 +51,7 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         status = 1;
@@ -90,12 +86,13 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    boot=fopen(argv[2],"rb");
+    FILE * const boot = fopen( argv[2], "rb" );
     if (!boot) {
         log_error( "can't open bootblock file\n" );
         status = 1;
         goto cleanup_vol;
     }
+    unsigned char bootcode[1024];
     fread(bootcode, sizeof(unsigned char), 1024, boot);
     adfVolInstallBootBlock ( vol, bootcode );
     fclose(boot);
