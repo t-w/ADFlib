@@ -236,6 +236,7 @@ and such, very likely release branch(es) will also appear).
 
 ### Projects using ADFlib
 - [adfExplorer in R](https://github.com/pepijn-devries/adfExplorer)
+- [DiskFlashBack](https://robsmithdev.co.uk/diskflashback) ([GitHub](https://github.com/RobSmithDev/DiskFlashback)) - Windows app for viewing and editing misc. disk formats (ADF among them).
 - [`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
 to mount and access ADF images in read/write mode.
 - [`patool`](https://pypi.org/project/patool/) - an archive file manager written
