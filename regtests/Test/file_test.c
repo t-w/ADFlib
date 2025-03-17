@@ -9,6 +9,9 @@
 
 #include"adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 1
 
 
 void MyVer(char *msg)
@@ -23,9 +26,10 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 2 ) {
-        fprintf ( stderr,
-                  "required parameter (image/device) absent - aborting...\n");
+        log_error( "missingparameter (image/device) - aborting...\n" );
         return 1;
     }
 
@@ -41,33 +45,38 @@ int main(int argc, char *argv[])
     /* open and mount existing device : FFS */
     struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  argv[1] );
+        log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         adfEnvCleanUp();
         exit(1);
     }
 
     ADF_RETCODE rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't mount device\n" );
         adfDevClose ( hd );
         adfEnvCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
 
     showVolInfo( vol );
 
     file = adfFileOpen ( vol, "mod.and.distantcall", ADF_FILE_MODE_READ );
-    if (!file) return 1;
+    if (!file) {
+        log_error( "can't open file mod.and.distantcall\n" );
+        return 1;
+    }
     out = fopen("mod.distant","wb");
-    if (!out) return 1;
+    if (!out) {
+        log_error( "can't open file mod.distant\n" );
+        return 1;
+    }
     
     unsigned len = 600;
     unsigned n = adfFileRead ( file, len, buf );
@@ -84,10 +93,10 @@ int main(int argc, char *argv[])
 
     file = adfFileOpen ( vol, "emptyfile", ADF_FILE_MODE_READ );
     if (!file) { 
+        log_error( "can't open file emptyfile\n" );
         adfVolUnMount(vol);
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't open file\n");
         exit(1);
     }
  
@@ -104,33 +113,38 @@ int main(int argc, char *argv[])
 
     hd = adfDevOpen ( argv[2], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
-        fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  argv[2] );
+        log_error( "Cannot open file/device '%s' - aborting...\n", argv[2] );
         adfEnvCleanUp();
         exit(1);
     }
 
     rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
-        fprintf(stderr, "can't mount device\n");
+        log_error( "can't mount device\n" );
         adfDevClose ( hd );
         adfEnvCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
+        log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        fprintf(stderr, "can't mount volume\n");
         adfEnvCleanUp(); exit(1);
     }
 
     showVolInfo( vol );
 
     file = adfFileOpen ( vol, "moon.gif", ADF_FILE_MODE_READ );
-    if (!file) return 1;
+    if (!file) {
+        log_error( "can't open file moon.gif for reading\n" );
+        return 1;
+    }
     out = fopen("moon_gif","wb");
-    if (!out) return 1;
+    if (!out) {
+        log_error( "can't open file moon.gif for writing\n" );
+        return 1;
+    }
 
     len = 300;
     n = adfFileRead ( file, len, buf );
