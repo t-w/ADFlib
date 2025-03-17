@@ -29,15 +29,13 @@ int main(int argc, char *argv[])
     (void) argc, (void) argv;
 
     log_init( stderr, TEST_VERBOSITY );
-
-    struct AdfVolume *vol;
  
     adfEnvInitDefault();
 
 //	adfEnvSetFct(0,0,MyVer,0);
 
     /* open and mount existing device */
-    struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
+    struct AdfDevice * const hd = adfDevOpen( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
         adfEnvCleanUp();
@@ -51,7 +49,7 @@ int main(int argc, char *argv[])
         adfEnvCleanUp(); exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
         adfDevUnMount ( hd );
