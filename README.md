@@ -23,16 +23,35 @@ It should be possible to build on (or cross-compile for) other systems.
 
 
 ## Features
+The main purpose of the library is to allow read and write Amiga-formatted
+devices and files being byte-level copies of such devices, called disk images
+or dumps. In case of classic Amiga systems, such files are most often
+[ADFs](https://en.wikipedia.org/wiki/Amiga_Disk_File) or HDFs ("Hard Disk
+Files") contaning
+[OFS](https://en.wikipedia.org/wiki/Amiga_Old_File_System) or
+[FFS](https://en.wikipedia.org/wiki/Amiga_Fast_File_System) (there are also
+other Amiga filesystems, for instance
+[PFS](https://en.wikipedia.org/wiki/Professional_File_System)).
+
+ADFlib allows accesing the aforementioned devices on 3 levels:
+1. device level - access to blocks (storage units) of the whole device
+2. volume level - access to blocks of the logical parts of the device,
+   which, in case of the Amiga ecosystem, are called volumes
+3. filesystem level - access to files and directories stored inside volumes.
+
 The library supports:
-- floppy and hard disk images ("dumps")
-- mount, unmount, create a device image (an adf file) or a volume (a partition
-  inside a device)
-- create, open, close, delete, rename/move a file or a directory
-- file operations: read, write, truncate
-- directory operations: get contents, change current, get parent
-- volume operations: rebuild block allocation bitmap
-- use dir cache to get directory contents
-- hard- and softlinks for accessing files and directories
+- ADF/HDF devices - floppy disks (DD/HD) and hard disks (up to 2GB)
+  - create devices and volumes and read/write blocks
+  - device types: files, physical ("native") devices and ramdisk
+    - possibility to implement other types via "drivers"
+- filesystem:
+  - "classic" Amiga filesystems: OFS and FFS
+  - file operations: read, write, truncate
+  - directory operations: get contents, create, remove, rename, move files
+    and directories
+  - use dir cache to get directory contents
+  - use hard- and softlinks for accessing files and directories
+  - rebuild block allocation bitmap
 
 Untested and/or experimental support exists for:
 - WinNT and Linux physical devices (with the 'native driver')
@@ -169,10 +188,10 @@ testing/experimental and treat as such (ie. use in a safe environment,
 like a VM).
 
 ### Write support
-The file read and write support are rather well tested, but still, writing
-is a new and potentially harmul feature so do not experiment on a unique
-copy of an ADF image with your precious data. Do it on a copy (and report
-if any issues are encountered).
+The file read and write support are rather well tested (except dir. cache,
+see below!), but still, writing is a new and potentially harmul feature
+so do not experiment on a unique copy of an ADF image with your precious
+data. Do it on a copy (and report if any issues are encountered).
 
 Update: The notice above is especially actual as it was discovered that
 the version `0.8.0` and earlier **do not rebuild the block allocation bitmap
@@ -190,7 +209,7 @@ one with dircache set on the volume is one of the test floppies for the ADFlib
 (testffs.adf)...
 
 While dircache support is implemented in ADFlib (at least, to certain extent),
-so far, there are no tests of dircache. As such, assume that this feature is
+so far, there are no tests of dircache. Assume that, as such, this feature is
 practically **not tested**.
 While it can be used rather safely in read-only mode, be very careful with
 write mode using a volume with dircache enabled.
