@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 #include "log.h"
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         goto cleanup_env;
     }
 
-    ADF_RETCODE rc = adfDevMount ( hd );
+    ADF_RETCODE rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
         status = 1;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
-    if (!vol) {
+    if ( ! vol ) {
         log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
@@ -61,11 +61,11 @@ int main(int argc, char *argv[])
     showVolInfo( vol );
     showDirEntries( vol, vol->curDirPtr );
 
-    adfVolUnMount(vol);
+    adfVolUnMount( vol );
 
 cleanup_dev:
-    adfDevUnMount ( hd );
-    adfDevClose ( hd );
+    adfDevUnMount( hd );
+    adfDevClose( hd );
 
 cleanup_env:
     adfEnvCleanUp();
