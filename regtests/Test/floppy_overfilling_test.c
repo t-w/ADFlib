@@ -8,7 +8,7 @@
 
 #include "log.h"
 
-#define TEST_VERBOSITY 3
+#define TEST_VERBOSITY 2
 
 #include <stdio.h>
 #include <stdlib.h>
