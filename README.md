@@ -242,10 +242,10 @@ to mount and access ADF images in read/write mode.
 - [`patool`](https://pypi.org/project/patool/) - an archive file manager written
 in Python.
 
-#### Older projects (possibly not maintained)
+#### Older projects (not sure if maintained)
 - [AdfView](https://www.viksoe.dk/code/adfview.htm) - Windows shell extension
-- [AdfOpus](https://adfopus.sourceforge.net/) - Windows file management tool for ADF
-  ADF files.
+- [AdfOpus](https://adfopus.sourceforge.net/) - Windows file management tool for ADF files.
+- [CopyToAdf](https://www.pouet.net/prod_nfo.php?which=65625&font=4) - part of WinUAE Demo Toolchain 5
 - [pyadf](https://sourceforge.net/projects/pyadf/) - Python bindings (for older versions)
   - note that this is neither
     [scripting framework for multiscale quantum chemistry](https://onlinelibrary.wiley.com/doi/full/10.1002/jcc.21810)
