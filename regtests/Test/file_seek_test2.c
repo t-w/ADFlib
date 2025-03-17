@@ -89,38 +89,37 @@ int run_multiple_seek_tests ( test_file_t * test_data )
     if ( ! dev ) {
         log_error( "Cannot open file/device '%s' - aborting...\n",
                    test_data->image_filename );
-        adfEnvCleanUp();
-        exit(1);
+        return 1;
     }
+
+    int status = 0;
 
     ADF_RETCODE rc = adfDevMount( dev );
     if ( rc != ADF_RC_OK ) {
         log_error( "Cannot mount image %s - aborting the test...\n",
                    test_data->image_filename );
-        adfDevClose( dev );
-        return 1;
+        status = 1;
+        goto cleanup_dev;
     }
 
     struct AdfVolume * const vol = adfVolMount( dev, 0, ADF_ACCESS_MODE_READONLY );
     if ( ! vol ) {
         log_error( "Cannot mount volume 0 from image %s - aborting the test...\n",
                    test_data->image_filename );
-        adfDevUnMount( dev );
-        adfDevClose( dev );
-        return 1;
+        status = 1;
+        goto cleanup_dev;
     }
 #if TEST_VERBOSITY > 3
     showVolInfo( vol );
 #endif
 
-    int status = 0;
     struct AdfFile * const file_adf = adfFileOpen( vol, test_data->filename_adf,
                                                    ADF_FILE_MODE_READ );
     if ( ! file_adf ) {
         log_error( "Cannot open adf file %s - aborting...\n",
                    test_data->filename_adf );
         status = 1;
-        goto cleanup;
+        goto cleanup_vol;
     }
 
     FILE * file_local = fopen( test_data->filename_local, "rb" );
@@ -144,8 +143,10 @@ int run_multiple_seek_tests ( test_file_t * test_data )
 cleanup_adffile:
     adfFileClose( file_adf );
 
-cleanup:
+cleanup_vol:
     adfVolUnMount( vol );
+
+cleanup_dev:
     adfDevUnMount( dev );
     adfDevClose( dev );
 
