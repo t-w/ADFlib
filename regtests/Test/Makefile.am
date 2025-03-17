@@ -178,7 +178,7 @@ fl_test2_SOURCES = fl_test2.c common.c common.h log.c log.h
 fl_test2_LDADD = $(ADFLIBS)
 fl_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-floppy_overfilling_test_SOURCES = floppy_overfilling_test.c
+floppy_overfilling_test_SOURCES = floppy_overfilling_test.c log.c log.h
 floppy_overfilling_test_LDADD = $(ADFLIBS)
 floppy_overfilling_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

@@ -6,10 +6,12 @@
 
 #include "adflib.h"
 
+#include "log.h"
+
+#define TEST_VERBOSITY 3
+
 #include <stdio.h>
 #include <stdlib.h>
-
-#define TEST_VERBOSITY 1
 
 typedef struct test_data_s {
     char * const          adfname;
@@ -39,6 +41,8 @@ void pattern_random( unsigned char *  buf,
 
 int main (void)
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     adfEnvInitDefault();
 
 #ifdef _MSC_VER   // visual studio do not understand that const is const...
@@ -96,10 +100,8 @@ int main (void)
 int test_floppy_overfilling( test_data_t * const  tdata )
 {
     const char * const fstype_info[] = { "OFS", "FFS" };
-#if TEST_VERBOSITY > 0
-    printf( "Test floppy overfilling, filesystem: %s, blocksize: %d",
-            fstype_info[ tdata->fstype ], tdata->blocksize );
-#endif
+    log_info( "Test floppy overfilling, filesystem: %s, blocksize: %d",
+              fstype_info[ tdata->fstype ], tdata->blocksize );
 
     struct AdfDevice * device = adfDevCreate( "dump", tdata->adfname, 80, 2, 11 );
     if ( ! device )
@@ -110,9 +112,7 @@ int test_floppy_overfilling( test_data_t * const  tdata )
     if ( ! vol )
         return 1;
 
-#if TEST_VERBOSITY > 1
-    printf( "\nFree blocks: %d\n", adfCountFreeBlocks( vol ) );
-#endif
+    log_info( "\nFree blocks: %d\n", adfCountFreeBlocks( vol ) );
 
     struct AdfFile * output = adfFileOpen( vol, tdata->filename, ADF_FILE_MODE_WRITE );
     if ( ! output )
@@ -136,21 +136,19 @@ int test_floppy_overfilling( test_data_t * const  tdata )
     }
 
     if ( output->pos != bytes_written ) {
-        fprintf( stderr, "written_file->pos (%u) != bytes_written (%u) - ERROR!\n",
-                 output->pos, bytes_written );
+        log_error( "written_file->pos (%u) != bytes_written (%u) - ERROR!\n",
+                   output->pos, bytes_written );
         status++;
     }
 
     //adfFlushFile ( output );
     adfFileClose( output );
 
-#if TEST_VERBOSITY > 1
-    printf( "\nFree blocks: %d\n", adfCountFreeBlocks( vol ) );
-#endif
+    log_info( "\nFree blocks: %d\n", adfCountFreeBlocks( vol ) );
+
     unsigned free_blocks = adfCountFreeBlocks( vol );
     if ( free_blocks != 0 ) {
-        fprintf( stderr, "\n%d blocks still free after 'overfilling'!\n",
-                 free_blocks );
+        log_error( "\n%d blocks still free after 'overfilling'!\n", free_blocks );
         status++;
     }
 
@@ -161,9 +159,7 @@ int test_floppy_overfilling( test_data_t * const  tdata )
     adfDevUnMount( device );
     adfDevClose( device );
 
-#if TEST_VERBOSITY > 0
-    printf( " -> %s\n", status ? "ERROR" : "OK" );
-#endif
+    log_info( " -> %s\n", status ? "ERROR" : "OK" );
 
     return status;
 }
@@ -195,10 +191,10 @@ int verify_file_data( struct AdfVolume * const  vol,
         bytes_read += block_bytes_read;
         for ( unsigned i = 0 ; i < block_bytes_read ; ++i ) {
             if ( readbuf[ offset % READ_BUFSIZE ] != buffer[ offset ] ) {
-                fprintf( stderr, "Data differ at %u ( 0x%x ): orig. 0x%x, read 0x%x\n",
-                         offset, offset,
-                         buffer[ offset ],
-                         readbuf[ offset % READ_BUFSIZE ] );
+                log_error( "Data differ at %u ( 0x%x ): orig. 0x%x, read 0x%x\n",
+                           offset, offset,
+                           buffer[ offset ],
+                           readbuf[ offset % READ_BUFSIZE ] );
                 nerrors++;
                 if ( nerrors > max_errors )
                     break;
@@ -211,8 +207,8 @@ int verify_file_data( struct AdfVolume * const  vol,
     adfFileClose( output );
 
     if ( bytes_read != bytes_written ) {
-        fprintf( stderr, "bytes read (%u) != bytes written (%u) -> ERROR!!!\n",
-                 bytes_read, bytes_written );
+        log_error( "bytes read (%u) != bytes written (%u) -> ERROR!!!\n",
+                   bytes_read, bytes_written );
         nerrors++;
     }
 

@@ -87,7 +87,7 @@ target_link_libraries ( fl_test adf )
 add_executable ( fl_test2 fl_test2.c common.c common.h log.c log.h )
 target_link_libraries ( fl_test2 adf )
 
-add_executable ( floppy_overfilling_test floppy_overfilling_test.c )
+add_executable ( floppy_overfilling_test floppy_overfilling_test.c log.c log.h )
 target_link_libraries ( floppy_overfilling_test adf )
 
 add_executable ( hardfile hardfile.c common.c common.h )
