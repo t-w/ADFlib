@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
         return 1;
     }
  
+    int status = 0;
+
     adfEnvInitDefault();
 
 //	adfEnvSetFct(0,0,MyVer,0);
@@ -41,23 +43,22 @@ int main(int argc, char *argv[])
     struct AdfDevice * const hd = adfDevOpen( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
-        adfEnvCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_env;
     }
 
     ADF_RETCODE rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         log_error( "can't mount volume\n" );
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showVolInfo( vol );
@@ -67,12 +68,15 @@ int main(int argc, char *argv[])
     struct AdfFile * file = adfFileOpen( vol, "moon_gif", ADF_FILE_MODE_WRITE );
     if (!file) {
         log_error( "can't open file 'moon_gif' for writing\n" );
-        return 1;
+        status = 1;
+        goto cleanup_vol;
     }
     FILE * out = fopen( argv[2], "rb" );
     if ( ! out ) {
         log_error( "can't open file '%s' for reading\n", argv[2] );
-        return 1;
+        adfFileClose( file );
+        status = 1;
+        goto cleanup_vol;
     }
     
     unsigned len = 600;
@@ -96,12 +100,15 @@ int main(int argc, char *argv[])
     file = adfFileOpen ( vol, "moon_gif", ADF_FILE_MODE_READ );
     if ( ! file ) {
         log_error( "can't open file 'moon_gif' for reading\n" );
-        return 1;
+        status = 1;
+        goto cleanup_vol;
     }
     out = fopen("moon__gif","wb");
     if ( ! out ) {
         log_error( "can't open file 'moon__gif' for writing\n" );
-        return 1;
+        adfFileClose( file );
+        status = 1;
+        goto cleanup_vol;
     }
 
     len = 300;
@@ -117,11 +124,15 @@ int main(int argc, char *argv[])
 
     adfFileClose ( file );
 
+cleanup_vol:
     adfVolUnMount(vol);
+
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_env:
     adfEnvCleanUp();
 
-    return 0;
+    return status;
 }
