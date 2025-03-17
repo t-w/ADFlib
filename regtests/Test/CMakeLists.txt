@@ -60,7 +60,7 @@ target_link_libraries ( dispsect adf )
 add_executable ( file_test file_test.c common.c common.h log.c log.h )
 target_link_libraries ( file_test adf )
 
-add_executable ( file_test2 file_test2.c common.c common.h )
+add_executable ( file_test2 file_test2.c common.c common.h log.c log.h )
 target_link_libraries ( file_test2 adf )
 
 add_executable ( file_test3 file_test3.c common.c common.h )

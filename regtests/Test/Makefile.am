@@ -142,7 +142,7 @@ file_test_SOURCES = file_test.c common.c common.h log.c log.h
 file_test_LDADD = $(ADFLIBS)
 file_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-file_test2_SOURCES = file_test2.c common.c common.h
+file_test2_SOURCES = file_test2.c common.c common.h log.c log.h
 file_test2_LDADD = $(ADFLIBS)
 file_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
