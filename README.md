@@ -282,8 +282,6 @@ in Python.
     nor [a Python library to help with Atlassian Document Format](https://github.com/tamus-cyber/pyadf)
 	(what a popular name this is...)
 
-### Ports to other languages
-- [adflib in Rust](https://github.com/vschwaberow/adflib)
-
 ### Other
+- [adflib in Rust](https://github.com/vschwaberow/adflib)
 - [affs Linux kernel module](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/filesystems/affs.rst)
