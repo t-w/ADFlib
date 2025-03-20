@@ -206,9 +206,9 @@ int main ( void )
     Suite * s = adflib_suite();
     SRunner * sr = srunner_create ( s );
 
-    adfEnvInitDefault();
+    adfLibInit();
     srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     int number_failed = srunner_ntests_failed ( sr );
     srunner_free ( sr );

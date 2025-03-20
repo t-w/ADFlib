@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     fread( bootcode, sizeof(unsigned char), 1024, boot );
     fclose( boot );
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "bootdisk-newdev", 80, 2, 11 );
@@ -83,7 +83,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

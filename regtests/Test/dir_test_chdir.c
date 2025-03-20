@@ -31,7 +31,7 @@ int count_dir_entries ( struct AdfVolume * vol );
 int main ( int argc, char * argv[] )
 { 
     (void) argc;
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
     int status = 0;
@@ -75,7 +75,7 @@ int main ( int argc, char * argv[] )
     status += run_chdir_tests ( &test_chdir_testffs );
     status += run_chdir_tests ( &test_chdir_link_chains );
     // clean-up
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }
@@ -95,7 +95,7 @@ int run_chdir_tests ( chdir_test_t * test_data )
     if ( ! dev ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
                   test_data->image );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 

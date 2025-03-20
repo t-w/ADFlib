@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
  
     int status = 0;
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
 
@@ -131,7 +131,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

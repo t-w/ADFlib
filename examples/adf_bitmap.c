@@ -82,7 +82,7 @@ int main( const int                  argc,
 
     int status = 0;
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     AdfAccessMode devMode = ( command == COMMAND_REBUILD ? ADF_ACCESS_MODE_READWRITE :
                                                            ADF_ACCESS_MODE_READONLY );
@@ -138,7 +138,7 @@ dev_mount_cleanup:
 dev_cleanup:
     adfDevClose( dev );
 env_cleanup:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

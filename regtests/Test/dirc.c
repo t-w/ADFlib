@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     struct AdfVolume *vol;
     struct AdfList *list, *cell;
  
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     hd = adfMountDev ( argv[1], ADF_ACCESS_MODE_READWRITE );
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
         adfUnMountDev(hd);
         adfCloseDev(hd);
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showVolInfo( vol );
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     adfUnMountDev(hd);
     adfCloseDev(hd);
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }

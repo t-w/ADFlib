@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     (void) argc, (void) argv;
     struct AdfVolume *vol;
  
-    adfEnvInitDefault();
+    adfLibInit();
 
     adfEnvSetProperty ( ADF_PR_USEDIRC, true );
 
@@ -38,7 +38,7 @@ puts("\ncreate dumpdevice");
     struct AdfDevice * const hd = adfDevCreate ( "dump", "progbar-newdev", 80, 2, 11 );
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showDevInfo( hd );
@@ -50,7 +50,7 @@ puts("\ncreate floppy");
 		fprintf(stderr, "can't create floppy\n");
         adfDevUnMount ( hd );
         adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
@@ -58,7 +58,7 @@ puts("\ncreate floppy");
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showVolInfo( vol );
@@ -67,7 +67,7 @@ puts("\ncreate floppy");
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }

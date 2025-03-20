@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     int status = 0;
  
-    adfEnvInitDefault();
+    adfLibInit();
 
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "rename-newdev", 80, 2, 11 );
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         adfVolUnMount(vol);
         adfUnMountDev(hd);
         adfCloseDev(hd);
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
     adfWriteFile(fic,1,buf);
@@ -141,7 +141,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

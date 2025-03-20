@@ -43,7 +43,7 @@ int main(void)
 {
     log_init( stderr, TEST_VERBOSITY );
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 #ifdef _MSC_VER   // visual studio do not understand that const is const...
 #define BUF_SIZE 1024 * 1024
@@ -92,7 +92,7 @@ int main(void)
     }
 
     free( buf );
-    adfEnvCleanUp();
+    adfLibCleanUp();
     return status;
 }
 

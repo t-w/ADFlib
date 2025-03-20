@@ -59,7 +59,7 @@ int main( int argc, char * argv[] )
 
     log_init( stderr, TEST_VERBOSITY );
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
     int status = 0;
@@ -70,7 +70,7 @@ int main( int argc, char * argv[] )
     test_file_ffs.image_filename = argv[2];
     status += run_multiple_seek_tests( &test_file_ffs );
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

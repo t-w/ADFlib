@@ -107,7 +107,7 @@ int main( const int     argc,
 
     int status = 0;
 
-    adfEnvInitDefault();
+    adfLibInit();
     adfEnvSetProperty( ADF_PR_USEDIRC, true );
  
     struct AdfDevice * const dev = adfDevOpen( options.adfDevName,
@@ -178,7 +178,7 @@ clean_up_dev_close:
     adfDevClose( dev );
 
 clean_up_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
 
     return status;

@@ -83,7 +83,7 @@ int main( const int                   argc,
     
     printf( "Creating floppy disk image: '%s'\n", adfname );
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     struct AdfDevice * const device =
         adfDevCreate( "dump", adfname, tracks, HEADS, sectors_per_track );
@@ -101,7 +101,7 @@ int main( const int                   argc,
 
     adfDevUnMount( device );
     adfDevClose( device );
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }

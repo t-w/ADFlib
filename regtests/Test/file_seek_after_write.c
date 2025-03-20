@@ -220,7 +220,7 @@ int main(void)
     };
 
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     unsigned errors = test_seek_after_write( &test_dblock_1_overlap_ofs );
     errors         += test_seek_after_write( &test_dblock_1_overlap_ffs );
@@ -231,7 +231,7 @@ int main(void)
     errors         += test_seek_after_write( &test_37380_3_overlap_ffs );
     errors         += test_seek_after_write( &test_37380_7_overlap_ffs );
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return (int) errors;
 }

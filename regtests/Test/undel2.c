@@ -41,7 +41,7 @@ int main ( const int          argc,
     if ( fileHeaderSector < 2 )
         exit(3);
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     adfEnvSetProperty ( ADF_PR_USEDIRC, true );
  
@@ -173,7 +173,7 @@ clean_up_dev_close:
     adfDevClose ( hd );
 
 clean_up_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

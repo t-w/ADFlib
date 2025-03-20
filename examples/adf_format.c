@@ -95,7 +95,7 @@ int main( const int            argc,
         exit( EXIT_SUCCESS );
     }
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     struct AdfDevice * const device = adfDevOpen( options.adfName,
                                                   ADF_ACCESS_MODE_READWRITE );
@@ -161,7 +161,7 @@ int main( const int            argc,
     if ( rc != ADF_RC_OK ) {
         fprintf( stderr, "Error formatting '%s'!", options.adfName );
         adfDevClose( device );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         return 1;
     }
     printf( "Done!\n" );
@@ -173,7 +173,7 @@ int main( const int            argc,
     }
 
     adfDevClose( device );
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }

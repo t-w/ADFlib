@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
     long len;
     struct AdfList *list;
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 
     /* create and mount one device */
     hd = adfCreateDumpDevice("flfile_test-newdev", 80, 11, 2);
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
     adfCreateFlop ( hd, "empty", ADF_DOSFS_FFS |
                                  ADF_DOSFS_DIRCACHE );
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         adfUnMountDev(hd);
         adfCloseDev(hd);
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showVolInfo( vol );
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     adfUnMountDev(hd);
     adfCloseDev(hd);
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }

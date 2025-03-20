@@ -43,6 +43,7 @@ endif ( CMAKE_BUILD_TYPE MATCHES DEBUG )
 
 
 add_library ( adf
+  adflib.c
   adflib.h
   adf_bitm.c
   adf_bitm.h

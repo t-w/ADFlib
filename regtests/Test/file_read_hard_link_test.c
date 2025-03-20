@@ -38,7 +38,7 @@ int main( int argc, char * argv[] )
 
     log_init( stderr, TEST_VERBOSITY );
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
     int status = 0;
@@ -94,7 +94,7 @@ int main( int argc, char * argv[] )
     log_info( status ? " -> ERROR\n" : " -> PASSED\n" );
 
     // clean-up
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }
@@ -115,7 +115,7 @@ int test_hlink_read( reading_test_t *  test_data )
     if ( ! dev ) {
         log_error( "Cannot open file/device '%s' - aborting...\n",
                    test_data->image_filename );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 

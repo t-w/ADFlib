@@ -16,6 +16,7 @@ endif
 lib_LTLIBRARIES = libadf.la
 
 libadf_la_SOURCES = \
+    adflib.c \
     adf_bitm.c \
     adf_byteorder.h \
     adf_cache.c \

@@ -25,14 +25,14 @@ int main( const int          argc,
     if ( argc < 2 )
         return 1;
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
     bool error_status = false;
     struct AdfDevice * const dev = adfDevOpen( argv[1], ADF_ACCESS_MODE_READONLY );
     if ( ! dev ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[1] );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
     ADF_RETCODE rc = adfDevMount( dev );
@@ -62,7 +62,7 @@ close_dev:
     adfDevClose( dev );
 
 //clean_up:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return error_status;
 }

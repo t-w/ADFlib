@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     bool ok = false;
 
     if (argc <= 1) return 1;
-    adfEnvInitDefault();
+    adfLibInit();
     adfEnvSetProperty ( ADF_PR_IGNORE_CHECKSUM_ERRORS, true );
     if ((dev = adfDevOpen(argv[1], ADF_ACCESS_MODE_READONLY))) {
         if (adfDevMount(dev) == ADF_RC_OK) {
@@ -30,6 +30,6 @@ int main(int argc, char *argv[]) {
         }
         adfDevClose(dev);
     }
-    adfEnvCleanUp();
+    adfLibCleanUp();
     return ok ? 0 : 1;
 }

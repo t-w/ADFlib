@@ -32,14 +32,14 @@ int main(int argc, char *argv[])
     struct AdfVolume *vol, *vol2;
 
     /* initialisation */
-    adfEnvInitDefault();
+    adfLibInit();
 
     /*** a real harddisk ***/
     struct AdfDevice * hd = adfDevOpen ( argv[1], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
                   argv[1] );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     if ( rc != ADF_RC_OK ) {
         fprintf(stderr, "can't mount device\n");
         adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
     showDevInfo( hd );
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         fprintf(stderr, "can't mount volume 0\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
     showVolInfo( vol );
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         fprintf(stderr, "can't mount volume 1\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
     showVolInfo( vol2 );
 
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     if ( ! hd ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
                   argv[2] );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     if ( rc != ADF_RC_OK ) {
         fprintf(stderr, "can't mount device\n");
         adfDevClose ( hd );
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showDevInfo( hd );
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
     showVolInfo( vol );
 
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     adfDevClose ( hd );
 
     /* clean up */
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }

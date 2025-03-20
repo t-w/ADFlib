@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     struct Partition part2;
     struct Partition **partList;
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     const char tmpdevname[] = "hd_test3-newdev";
 
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     struct AdfDevice * hd = adfDevCreate ( "dump", tmpdevname, 980, 10, 17 );
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showDevInfo( hd );
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         fprintf ( stderr, "adfCreateHd returned error %d\n", rc );
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         adfDevUnMount ( hd );
         adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
     vol2 = adfVolMount ( hd, 1, ADF_ACCESS_MODE_READWRITE );
     if (!vol2) {
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         adfDevUnMount( hd );
         adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showVolInfo( vol );
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     if ( ! hd ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
                   tmpdevname );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     if ( rc != ADF_RC_OK ) {
         adfDevClose ( hd );
         fprintf(stderr, "can't mount device\n");
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     showDevInfo( hd );
@@ -116,6 +116,6 @@ int main(int argc, char *argv[])
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
     return 0;
 }

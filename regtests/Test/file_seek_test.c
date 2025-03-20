@@ -112,7 +112,7 @@ int main( int argc, char * argv[] )
         return 1;
     }
 
-    adfEnvInitDefault();
+    adfLibInit();
 
 //	adfEnvSetFct(0,0,MyVer,0);
     int status = 0;
@@ -123,7 +123,7 @@ int main( int argc, char * argv[] )
     test_ffs.image_filename = argv[2];
     status += run_single_seek_tests( &test_ffs );
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }
@@ -140,7 +140,7 @@ int run_single_seek_tests ( reading_test_t * test_data )
     if ( ! dev ) {
         log_error( "Cannot open file/device '%s' - aborting...\n",
                    test_data->image_filename );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 

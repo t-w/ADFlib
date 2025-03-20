@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
     log_init( stderr, TEST_VERBOSITY );
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     int status = 0;
 
@@ -70,7 +70,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     remove( hdfname);
 

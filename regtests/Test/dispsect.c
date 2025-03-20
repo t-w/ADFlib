@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     int status = 0;
     unsigned char buf[1];
  
-    adfEnvInitDefault();
+    adfLibInit();
 
     adfEnvSetProperty( ADF_PR_USEDIRC, true );
 
@@ -118,7 +118,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

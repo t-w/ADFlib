@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     log_init( stderr, TEST_VERBOSITY );
  
-    adfEnvInitDefault();
+    adfLibInit();
 
     /* create and mount one device */
     struct AdfDevice * const hd = adfDevCreate( "dump", "access-newdev", 80, 2, 11 );
@@ -100,7 +100,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

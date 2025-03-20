@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         return 1;
     }
  
-    adfEnvInitDefault();
+    adfLibInit();
 
     /* open and mount existing device */
     struct AdfDevice * hd = adfDevOpen( argv[1], ADF_ACCESS_MODE_READWRITE );
@@ -99,7 +99,7 @@ cleanup_dev:
     adfDevClose( hd );
 
 cleanup_env:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

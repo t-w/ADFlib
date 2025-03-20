@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     struct AdfVolume *vol = NULL;
     struct AdfList *list, *node;
 
-    adfEnvInitDefault();
+    adfLibInit();
     parse_args(argc, argv);
 
     /* open device */
@@ -171,7 +171,7 @@ error_handler:
     if (dev && dev->mounted) adfDevUnMount(dev);
     if (dev) adfDevClose(dev);
     if (file_list) adfListFree(file_list);
-    adfEnvCleanUp();
+    adfLibCleanUp();
     return 0;
 }
 

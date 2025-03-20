@@ -32,11 +32,20 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include "adf_byteorder.h"
+
 /* Windows - a DLL-specific function declaration prefix (to import/export library symbols) */
 #include "adf_prefix.h"
 
 #include "adf_types.h"
 #include "adf_version.h"
+#include "adf_err.h"
+
+ADF_PREFIX char * adfGetVersionNumber(void);
+ADF_PREFIX char * adfGetVersionDate(void);
+
+ADF_PREFIX ADF_RETCODE adfLibInit(void);
+ADF_PREFIX void adfLibCleanUp(void);
 
 /* util */
 //#include "adf_util.h"

@@ -60,7 +60,7 @@ int main( const int          argc,
     }
 
     /* init adflib */
-    adfEnvInitDefault();
+    adfLibInit();
     adfEnvSetProperty( ADF_PR_IGNORE_CHECKSUM_ERRORS, true );
 //	adfEnvSetFct(0,0,MyVer,0);
 
@@ -184,7 +184,7 @@ close_dev_orig:
     adfDevClose( devOrig );
 
 clean_up:
-    adfEnvCleanUp();
+    adfLibCleanUp();
     
 delete_adf_copy:
     log_info( "Removing %s\n", adfUpdate );

@@ -64,7 +64,7 @@ int main( const int                  argc,
     if ( ( status = parse_args(argc, argv, &args ) ) != 0 )
         return status;
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     printf( "\nOpening image/device:\t'%s'\n", args.adfname );
     struct AdfDevice * const dev = adfDevOpen( args.adfname, ADF_ACCESS_MODE_READONLY );
@@ -111,7 +111,7 @@ dev_mount_cleanup:
 dev_cleanup:
     adfDevClose( dev );
 env_cleanup:
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return status;
 }

@@ -90,8 +90,6 @@ ADF_PREFIX ADF_RETCODE adfEnvSetProperty( const ADF_ENV_PROPERTY  property,
 
 ADF_PREFIX intptr_t adfEnvGetProperty( const ADF_ENV_PROPERTY  property );
 
-ADF_PREFIX char * adfGetVersionNumber(void);
-ADF_PREFIX char * adfGetVersionDate(void);
 
 ADF_PREFIX extern struct AdfEnv  adfEnv;
 

@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
     fread(bootcode, sizeof(unsigned char), 1024, boot);
     fclose(boot);
 
-    adfEnvInitDefault();
+    adfLibInit();
 
     struct AdfDevice * const hd = adfDevOpen( argv[2], ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         log_error( "Cannot open file/device '%s' - aborting...\n", argv[2] );
-        adfEnvCleanUp();
+        adfLibCleanUp();
         exit(1);
     }
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     if ( rc != ADF_RC_OK ) {
         log_error( "can't mount device\n" );
         adfDevClose( hd );
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 	
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
         log_error( "can't mount volume\n" );
         adfDevUnMount( hd );
         adfDevClose( hd );
-        adfEnvCleanUp(); exit(1);
+        adfLibCleanUp(); exit(1);
     }
 
     adfVolInstallBootBlock ( vol, bootcode );
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
-    adfEnvCleanUp();
+    adfLibCleanUp();
 
     return 0;
 }
