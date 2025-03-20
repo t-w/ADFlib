@@ -182,7 +182,7 @@ floppy_overfilling_test_SOURCES = floppy_overfilling_test.c log.c log.h
 floppy_overfilling_test_LDADD = $(ADFLIBS)
 floppy_overfilling_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-hardfile_SOURCES = hardfile.c common.c common.h
+hardfile_SOURCES = hardfile.c common.c common.h log.c log.h
 hardfile_LDADD = $(ADFLIBS)
 hardfile_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
@@ -190,19 +190,19 @@ hardfile2_SOURCES = hardfile2.c common.c common.h log.c log.h
 hardfile2_LDADD = $(ADFLIBS)
 hardfile2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-hd_test_SOURCES = hd_test.c common.c common.h
+hd_test_SOURCES = hd_test.c common.c common.h log.c log.h
 hd_test_LDADD = $(ADFLIBS)
 hd_test_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-hd_test2_SOURCES = hd_test2.c common.c common.h
+hd_test2_SOURCES = hd_test2.c common.c common.h log.c log.h
 hd_test2_LDADD = $(ADFLIBS)
 hd_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-hd_test3_SOURCES = hd_test3.c common.c common.h
+hd_test3_SOURCES = hd_test3.c common.c common.h log.c log.h
 hd_test3_LDADD = $(ADFLIBS)
 hd_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-progbar_SOURCES = progbar.c common.c common.h
+progbar_SOURCES = progbar.c common.c common.h log.c log.h
 progbar_LDADD = $(ADFLIBS)
 progbar_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
@@ -222,10 +222,10 @@ test_update_datasize_ofs_SOURCES = test_update_datasize_ofs.c
 test_update_datasize_ofs_LDADD = $(ADFLIBS)
 test_update_datasize_ofs_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-undel_SOURCES = undel.c common.c common.h
+undel_SOURCES = undel.c common.c common.h log.c log.h
 undel_LDADD = $(ADFLIBS)
 undel_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-undel2_SOURCES = undel2.c common.c common.h
+undel2_SOURCES = undel2.c common.c common.h log.c log.h
 undel2_LDADD = $(ADFLIBS)
 undel2_DEPENDENCIES = $(top_builddir)/src/libadf.la

@@ -1,6 +1,8 @@
 
 #include "common.h"
 
+#include "log.h"
+
 #include <adflib.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +10,7 @@
 
 static inline void showInfo( char * const info )
 {
-    printf( "%s", info );
+    log_info( "%s", info );
     free( info );
 }
 

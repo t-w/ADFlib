@@ -90,19 +90,19 @@ target_link_libraries ( fl_test2 adf )
 add_executable ( floppy_overfilling_test floppy_overfilling_test.c log.c log.h )
 target_link_libraries ( floppy_overfilling_test adf )
 
-add_executable ( hardfile hardfile.c common.c common.h )
+add_executable ( hardfile hardfile.c common.c common.h log.c log.h )
 target_link_libraries ( hardfile adf )
 
 add_executable ( hardfile2 hardfile2.c common.c common.h log.c log.h )
 target_link_libraries ( hardfile2 adf )
 
-add_executable ( hd_test hd_test.c common.c common.h )
+add_executable ( hd_test hd_test.c common.c common.h log.c log.h )
 target_link_libraries ( hd_test adf )
 
-add_executable ( hd_test2 hd_test2.c common.c common.h )
+add_executable ( hd_test2 hd_test2.c common.c common.h log.c log.h )
 target_link_libraries ( hd_test2 adf )
 
-add_executable ( hd_test3 hd_test3.c common.c common.h )
+add_executable ( hd_test3 hd_test3.c common.c common.h log.c log.h )
 target_link_libraries ( hd_test3 adf )
 
 add_executable ( readonly readonly.c common.c common.h log.c log.h )
@@ -114,13 +114,13 @@ target_link_libraries ( rename adf )
 add_executable ( rename2 rename2.c common.c common.h log.c log.h )
 target_link_libraries ( rename2 adf )
 
-add_executable ( undel undel.c common.c common.h )
+add_executable ( undel undel.c common.c common.h log.c log.h )
 target_link_libraries ( undel adf )
 
-add_executable ( undel2 undel2.c common.c common.h )
+add_executable ( undel2 undel2.c common.c common.h log.c log.h )
 target_link_libraries ( undel2 adf )
 
-add_executable ( progbar progbar.c common.c common.h )
+add_executable ( progbar progbar.c common.c common.h log.c log.h )
 target_link_libraries ( progbar adf )
 
 add_executable ( test_update_datasize_ofs test_update_datasize_ofs.c )
