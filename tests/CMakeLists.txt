@@ -40,6 +40,9 @@ message ( STATUS "Check LDFLAGS: ${CHECK_LDFLAGS}" )
 add_compile_options ( ${CHECK_CFLAGS} )
 #endif()
 
+add_executable ( test_adfenv
+                 test_adfenv.c )
+
 add_executable ( test_test_util
                  test_test_util.c
                  test_util.c )
@@ -107,6 +110,8 @@ else()
   #set (CHECK_LIBRARIES "${CHECK_LIBRARIES} -pthread")
   set (CHECK_LIBRARIES "${CHECK_LDFLAGS}")
 endif()
+
+target_link_libraries ( test_adfenv PUBLIC adf ${CHECK_LIBRARIES} )
 
 target_link_libraries ( test_test_util PUBLIC
   adf ${CHECK_LIBRARIES}
@@ -182,6 +187,7 @@ target_link_libraries ( test_libinit PUBLIC
 
 # this should be done first
 add_test ( test_libinit test_libinit )
+add_test ( test_adfenv test_adfenv )
 
 # utils (independent code)
 add_test ( test_test_util test_test_util )

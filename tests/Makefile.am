@@ -36,6 +36,11 @@ test_libinit_CFLAGS = $(CHECK_CFLAGS)
 test_libinit_LDADD = $(ADFLIBS) $(CHECK_LIBS)
 test_libinit_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
+test_adfenv_SOURCES = test_adfenv.c
+test_adfenv_CFLAGS = $(CHECK_CFLAGS)
+test_adfenv_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_adfenv_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 
 #
 # utils (independent code)

@@ -11,21 +11,35 @@ START_TEST( test_check_framework )
 END_TEST
 
 
-START_TEST( test_adflib_init )
+START_TEST( test_adfenv_init )
 {
-    ADF_RETCODE rc = adfLibInit();
-    ck_assert( rc == ADF_RC_OK );
+    adfEnvInitDefault();
 
-    adfLibCleanUp();
+    ck_assert( adfEnv.wFct != NULL );
+    ck_assert( adfEnv.eFct != NULL );
+    ck_assert( adfEnv.vFct != NULL );
+
+    ck_assert( adfEnv.notifyFct   != NULL );
+    ck_assert( adfEnv.rwhAccess   != NULL );
+    ck_assert( adfEnv.progressBar != NULL );
+
+    adfEnvCleanUp();
 }
 END_TEST
 
-START_TEST( test_adflib_cleanup )
+START_TEST( test_adfenv_cleanup )
 {
-    ck_assert( adfLibInit() == ADF_RC_OK );
+    adfEnvInitDefault();
 
-    adfLibCleanUp();
-    // so far, nothing to check here
+    adfEnvCleanUp();
+
+    ck_assert( adfEnv.wFct == NULL );
+    ck_assert( adfEnv.eFct == NULL );
+    ck_assert( adfEnv.vFct == NULL );
+
+    ck_assert( adfEnv.notifyFct   == NULL );
+    ck_assert( adfEnv.rwhAccess   == NULL );
+    ck_assert( adfEnv.progressBar == NULL );
 }
 END_TEST
 
@@ -38,12 +52,12 @@ Suite * adflib_suite(void)
     tcase_add_test( tcase, test_check_framework );
     suite_add_tcase( suite, tcase );
 
-    tcase = tcase_create( "adflib init" );
-    tcase_add_test( tcase, test_adflib_init  );
+    tcase = tcase_create( "adf env init" );
+    tcase_add_test( tcase, test_adfenv_init );
     suite_add_tcase( suite, tcase );
 
-    tcase = tcase_create( "adflib cleanup" );
-    tcase_add_test( tcase, test_adflib_cleanup );
+    tcase = tcase_create( "adf env cleanup" );
+    tcase_add_test( tcase, test_adfenv_cleanup );
     suite_add_tcase( suite, tcase );
 
     return suite;
