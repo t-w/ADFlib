@@ -6,7 +6,8 @@ AM_CPPFLAGS = -std=c99 -Wall -Wextra -pedantic \
     -I$(top_srcdir)/src -I$(top_srcdir)/src/$(NATIVE_DIR)
 
 check_PROGRAMS = \
-    test_libinit \
+    test_adflib \
+    test_adfenv \
     test_adfDays2Date \
     test_adfPos2DataBlock \
     test_dev_open \
@@ -31,10 +32,10 @@ ADFLIBS = $(top_builddir)/src/libadf.la
 #
 # this should be done first
 #
-test_libinit_SOURCES = test_libinit.c
-test_libinit_CFLAGS = $(CHECK_CFLAGS)
-test_libinit_LDADD = $(ADFLIBS) $(CHECK_LIBS)
-test_libinit_DEPENDENCIES = $(top_builddir)/src/libadf.la
+test_adflib_SOURCES = test_adflib.c
+test_adflib_CFLAGS = $(CHECK_CFLAGS)
+test_adflib_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_adflib_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 test_adfenv_SOURCES = test_adfenv.c
 test_adfenv_CFLAGS = $(CHECK_CFLAGS)

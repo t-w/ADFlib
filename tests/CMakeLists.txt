@@ -40,6 +40,10 @@ message ( STATUS "Check LDFLAGS: ${CHECK_LDFLAGS}" )
 add_compile_options ( ${CHECK_CFLAGS} )
 #endif()
 
+
+add_executable ( test_adflib
+                 test_adflib.c )
+
 add_executable ( test_adfenv
                  test_adfenv.c )
 
@@ -101,8 +105,6 @@ add_executable ( test_file_truncate2
                  test_file_truncate2.c
                  test_util.c )
 
-add_executable ( test_libinit
-                 test_libinit.c )
 
 if ( "${CHECK_LIBRARIES}" STREQUAL "" )
   set (CHECK_LIBRARIES Check::check)
@@ -111,7 +113,8 @@ else()
   set (CHECK_LIBRARIES "${CHECK_LDFLAGS}")
 endif()
 
-target_link_libraries ( test_adfenv PUBLIC adf ${CHECK_LIBRARIES} )
+target_link_libraries( test_adflib PUBLIC adf ${CHECK_LIBRARIES} )
+target_link_libraries( test_adfenv PUBLIC adf ${CHECK_LIBRARIES} )
 
 target_link_libraries ( test_test_util PUBLIC
   adf ${CHECK_LIBRARIES}
@@ -181,12 +184,8 @@ target_link_libraries ( test_file_truncate2 PUBLIC
   adf ${CHECK_LIBRARIES}
 )
 
-target_link_libraries ( test_libinit PUBLIC
-  adf ${CHECK_LIBRARIES}
-)
-
 # this should be done first
-add_test ( test_libinit test_libinit )
+add_test ( test_adflib test_adflib )
 add_test ( test_adfenv test_adfenv )
 
 # utils (independent code)
