@@ -55,7 +55,6 @@ dist_check_SCRIPTS = \
 	fl_test.sh \
 	fl_test2.sh \
 	floppy.sh \
-	floppy_overfilling_test.sh \
 	file_test.sh \
 	file_test2.sh \
 	file_test3.sh \
@@ -73,6 +72,7 @@ dist_check_SCRIPTS = \
 TESTS = \
     floppy.sh \
     bigdev.sh \
+    floppy_overfilling_test \
     test_update_datasize_ofs
 
 ADFLIBS = $(top_builddir)/src/libadf.la

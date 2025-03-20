@@ -145,7 +145,6 @@ foreach ( a_file
     file_test2.sh
     file_test3.sh
     file_test.sh
-    floppy_overfilling_test.sh
     floppy.sh
     fl_test2.sh
     fl_test.sh
@@ -182,4 +181,5 @@ file (
 
 add_test ( floppy.sh ${BASH_PROGRAM} floppy.sh )
 add_test ( bigdev.sh ${BASH_PROGRAM} bigdev.sh )
+add_test ( floppy_overfilling_test floppy_overfilling_test )
 add_test ( test_update_datasize_ofs test_update_datasize_ofs )

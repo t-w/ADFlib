@@ -29,7 +29,7 @@ for A_TEST in \
     rename.sh \
     undel.sh \
     undel2.sh \
-    floppy_overfilling_test.sh
+    floppy_overfilling_test
 do
     echo "---------------------------------------------------"
     echo "    Executing: ${A_TEST}"
