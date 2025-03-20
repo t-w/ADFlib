@@ -71,11 +71,6 @@ void adfLibCleanUp(void)
  * Internal checks
  ****************************************************************************/
 
-union u {
-    int32_t l;
-    char    c[ 4 ];
-};
-
 static void assertInternal( bool                cnd,
                             const char * const  msg )
 {
@@ -88,7 +83,10 @@ static void assertInternal( bool                cnd,
 static void checkInternals(void)
 {
 /*    char str[80];*/
-    union u val;
+    union u {
+        int32_t l;
+        char    c[ 4 ];
+    } val;
 
     /* internal checking */
 
