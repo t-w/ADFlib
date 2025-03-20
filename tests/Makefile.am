@@ -6,6 +6,7 @@ AM_CPPFLAGS = -std=c99 -Wall -Wextra -pedantic \
     -I$(top_srcdir)/src -I$(top_srcdir)/src/$(NATIVE_DIR)
 
 check_PROGRAMS = \
+    test_libinit \
     test_adfDays2Date \
     test_adfPos2DataBlock \
     test_dev_open \
@@ -27,6 +28,18 @@ TESTS = $(check_PROGRAMS)
 
 ADFLIBS = $(top_builddir)/src/libadf.la
 
+#
+# this should be done first
+#
+test_libinit_SOURCES = test_libinit.c
+test_libinit_CFLAGS = $(CHECK_CFLAGS)
+test_libinit_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_libinit_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+
+#
+# utils (independent code)
+#
 test_adfDays2Date_SOURCES = test_adfDays2Date.c
 test_adfDays2Date_CFLAGS = $(CHECK_CFLAGS)
 test_adfDays2Date_LDADD = $(ADFLIBS) $(CHECK_LIBS)
@@ -38,6 +51,15 @@ test_adfPos2DataBlock_CFLAGS = $(CHECK_CFLAGS)
 test_adfPos2DataBlock_LDADD = $(ADFLIBS) $(CHECK_LIBS)
 test_adfPos2DataBlock_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
+test_test_util_SOURCES = test_test_util.c test_util.c test_util.h
+test_test_util_CFLAGS = $(CHECK_CFLAGS)
+test_test_util_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_test_util_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+
+#
+# library functions
+#
 test_dev_open_SOURCES = test_dev_open.c
 test_dev_open_CFLAGS = $(CHECK_CFLAGS)
 test_dev_open_LDADD = $(ADFLIBS) $(CHECK_LIBS)
@@ -102,8 +124,3 @@ test_file_truncate2_SOURCES = test_file_truncate2.c test_util.c test_util.h
 test_file_truncate2_CFLAGS = $(CHECK_CFLAGS)
 test_file_truncate2_LDADD = $(ADFLIBS) $(CHECK_LIBS)
 test_file_truncate2_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-test_test_util_SOURCES = test_test_util.c test_util.c test_util.h
-test_test_util_CFLAGS = $(CHECK_CFLAGS)
-test_test_util_LDADD = $(ADFLIBS) $(CHECK_LIBS)
-test_test_util_DEPENDENCIES = $(top_builddir)/src/libadf.la

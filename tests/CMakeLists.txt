@@ -98,6 +98,9 @@ add_executable ( test_file_truncate2
                  test_file_truncate2.c
                  test_util.c )
 
+add_executable ( test_libinit
+                 test_libinit.c )
+
 if ( "${CHECK_LIBRARIES}" STREQUAL "" )
   set (CHECK_LIBRARIES Check::check)
 else()
@@ -173,9 +176,19 @@ target_link_libraries ( test_file_truncate2 PUBLIC
   adf ${CHECK_LIBRARIES}
 )
 
+target_link_libraries ( test_libinit PUBLIC
+  adf ${CHECK_LIBRARIES}
+)
+
+# this should be done first
+add_test ( test_libinit test_libinit )
+
+# utils (independent code)
 add_test ( test_test_util test_test_util )
 add_test ( test_adfPos2DataBlock test_adfPos2DataBlock )
 add_test ( test_adfDays2Date test_adfDays2Date )
+
+# library functions
 add_test ( test_dev_open test_dev_open )
 add_test ( test_dev_mount test_dev_mount )
 add_test ( test_adf_file_util test_adf_file_util )
