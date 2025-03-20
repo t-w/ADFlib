@@ -14,6 +14,7 @@
 #include <stdlib.h>
 
 typedef struct test_data_s {
+    char * const          devtype;
     char * const          adfname;
     char * const          filename;
     unsigned char * const buffer;
@@ -62,6 +63,8 @@ int main(void)
     const unsigned nblocksizes = sizeof(test_blocksize) / sizeof(unsigned);
 
     test_data_t tdata_ofs = {
+        //.devtype = "dump",
+        .devtype    = "ramdisk",
         .adfname    = "test_floppy_overfilling_ofs.adf",
         .filename   = "testfile1.dat",
         .buffer     = buf,
@@ -72,6 +75,8 @@ int main(void)
     };
 
     test_data_t tdata_ffs = {
+        //.adfdevtype = "dump",
+        .devtype    = "ramdisk",
         .adfname    = "test_floppy_overfilling_ffs.adf",
         .filename   = "testfile1.dat",
         .buffer     = buf,
@@ -103,7 +108,8 @@ int test_floppy_overfilling( test_data_t * const  tdata )
     log_info( "Test floppy overfilling, filesystem: %s, blocksize: %d",
               fstype_info[ tdata->fstype ], tdata->blocksize );
 
-    struct AdfDevice * device = adfDevCreate( "dump", tdata->adfname, 80, 2, 11 );
+    struct AdfDevice * device = adfDevCreate( tdata->devtype,
+                                              tdata->adfname, 80, 2, 11 );
     if ( ! device )
         return 1;
 
@@ -167,6 +173,9 @@ test_floppy_overfilling_cleanup_vol:
 test_floppy_overfilling_cleanup_dev:
     adfDevUnMount( device );
     adfDevClose( device );
+
+    if ( strcmp( tdata->devtype , "dump" ) == 0 )
+        remove( tdata->adfname );
 
     log_info( " -> %s\n", status ? "ERROR" : "OK" );
 
