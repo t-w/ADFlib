@@ -31,6 +31,7 @@
 typedef enum {
     ADF_RC_OK              = 0,
     ADF_RC_ERROR           = -1,
+    ADF_RC_ERROR_INTERNAL  = -2,
 
     ADF_RC_MALLOC          = 1,
     ADF_RC_VOLFULL         = 2,
