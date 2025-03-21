@@ -377,16 +377,33 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
         adfEnv.eFct( "%s: invalid dev type %d", __func__, dev->devType );
         return ADF_RC_ERROR;
     }
+
+    const uint32_t sizeFromGeometry = dev->cylinders * dev->heads * dev->sectors * 512;
+    if ( sizeFromGeometry != dev->size ) {
+        adfEnv.wFct( "%s: size from geometry %u != device size %u\n"
+                     "(%u bytes left over geometry)\n"
+                     "This is most likely due to size of the device (%u) not divisible\n"
+                     "by sector size (512): real size(%u) %% 512 = %u bytes left unused\n",
+                     __func__, sizeFromGeometry, dev->size,
+                     dev->size % 512,
+                     dev->size, dev->size, dev->size % 512 );
+        assert( dev->size % 512 == dev->size - sizeFromGeometry );
+    }
+
     return ADF_RC_OK;
 }
 
 
 static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev )
 {
-    return ( dev->cylinders > 0 &&
-             dev->heads > 0    &&
-             dev->sectors > 0  &&
-             dev->cylinders * dev->heads * dev->sectors * 512 == dev->size );
+    const uint32_t sizeFromGeometry = dev->cylinders * dev->heads * dev->sectors * 512;
+    //return ( dev->cylinders > 0 &&
+    //         dev->heads > 0    &&
+    //         dev->sectors > 0
+    //         && sizeFromGeometry == dev->size );
+
+    // what is the minimal device size? (guessing: 10 blocks(?))
+    return ( sizeFromGeometry >= 512 * 10 );
 }
 
 
