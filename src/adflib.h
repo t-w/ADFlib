@@ -32,8 +32,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "adf_byteorder.h"
-
 /* Windows - a DLL-specific function declaration prefix (to import/export library symbols) */
 #include "adf_prefix.h"
 

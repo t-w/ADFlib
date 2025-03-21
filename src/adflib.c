@@ -28,6 +28,7 @@
 
 #include "adflib.h"
 
+#include "adf_byteorder.h"
 #include "adf_dev_drivers.h"
 #include "adf_dev_driver_dump.h"
 #include "adf_dev_driver_ramdisk.h"
