@@ -1,9 +1,10 @@
-bin_PROGRAMS = unadf \
+bin_PROGRAMS = \
 	adfbitmap \
-	adfimgcreate \
 	adfformat \
+	adfimgcreate \
+	adfinfo \
 	adfsalvage \
-	adfinfo
+	unadf
 
 dist_check_SCRIPTS = \
 	tests/test_examples_basic.sh \
@@ -64,27 +65,20 @@ TESTS = $(dist_check_SCRIPTS)
 
 ADFLIBS = $(top_builddir)/src/libadf.la
 
-unadf_SOURCES = unadf.c
-unadf_LDADD = $(ADFLIBS)
-unadf_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 adfbitmap_SOURCES = adfbitmap.c
 adfbitmap_LDADD = $(ADFLIBS)
 adfbitmap_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+adfformat_SOURCES = adfformat.c
+adfformat_LDADD = $(ADFLIBS)
+adfformat_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 adfimgcreate_SOURCES = adfimgcreate.c \
   pathutils.c \
   pathutils.h
 adfimgcreate_LDADD = $(ADFLIBS)
 adfimgcreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-adfformat_SOURCES = adfformat.c
-adfformat_LDADD = $(ADFLIBS)
-adfformat_DEPENDENCIES = $(top_builddir)/src/libadf.la
-
-adfsalvage_SOURCES = adfsalvage.c
-adfsalvage_LDADD = $(ADFLIBS)
-adfsalvage_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 adfinfo_SOURCES = adfinfo.c \
   adfinfo_common.c \
@@ -101,6 +95,15 @@ adfinfo_SOURCES = adfinfo.c \
   pathutils.h
 adfinfo_LDADD = $(ADFLIBS)
 adfinfo_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+adfsalvage_SOURCES = adfsalvage.c
+adfsalvage_LDADD = $(ADFLIBS)
+adfsalvage_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+unadf_SOURCES = unadf.c
+unadf_LDADD = $(ADFLIBS)
+unadf_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/$(NATIVE_DIR)
 
