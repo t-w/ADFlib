@@ -1,8 +1,8 @@
-#examples/.libs/adf_bitmap		/usr/bin
+#examples/.libs/adfbitmap		/usr/bin
 #examples/.libs/adfimgcreate		/usr/bin
 #examples/.libs/adf_format		/usr/bin
 #examples/.libs/adf_show_metadata	/usr/bin
-usr/bin/adf_bitmap
+usr/bin/adfbitmap
 usr/bin/adfimgcreate
 usr/bin/adf_format
 usr/bin/adf_salvage

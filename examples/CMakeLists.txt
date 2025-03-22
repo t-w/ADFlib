@@ -60,9 +60,9 @@ set_target_properties ( adf_show_metadata PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable ( adf_bitmap adf_bitmap.c )
-target_link_libraries ( adf_bitmap adf )
-set_target_properties ( adf_bitmap PROPERTIES
+add_executable ( adfbitmap adfbitmap.c )
+target_link_libraries ( adfbitmap adf )
+set_target_properties ( adfbitmap PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -97,6 +97,6 @@ install ( TARGETS
   adfimgcreate
   adf_format
   adf_show_metadata
-  adf_bitmap
+  adfbitmap
   adf_salvage
 )

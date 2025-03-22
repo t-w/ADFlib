@@ -61,7 +61,7 @@ CMDS[5]="adfimgcreate -t dd testflopdd1.adf"
 CMDS[6]="adf_format -t 1 -l TestFlopDD1 testflopdd1.adf"
 CMDS[7]="adf_show_metadata testflopdd1.adf"
 CMDS[8]="rm -v testflopdd1.adf"
-CMDS[9]="adf_bitmap show $TEST_ADF"
+CMDS[9]="adfbitmap show $TEST_ADF"
 
 for CMD in "${CMDS[@]}"
 do

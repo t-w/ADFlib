@@ -110,7 +110,7 @@ image or a file/directory inside the Amiga filesystem. In particular, it shows
 contents of Amiga filesystem metadata blocks, it can help understand structure
 of Amiga filesystems (for anyone curious...).
 
-### adf_bitmap
+### adfbitmap
 
 A low-level utility / diagnostic tool for block allocation bitmap of ADF volumes.
 It can display the bitmap or rebuild it (in fact, enforce rebuilding it, even if
@@ -152,7 +152,7 @@ See INSTALL file.
 - `doc/` :	The library developer's documentation, man pages for utilities
 - `doc/FAQ/` : The Amiga Filesystem explained
 - `examples/` : utilities: `unadf`, `adfimgcreate`, `adf_format`,
-`adf_show_metadata`, `adf_bitmap`, `adf_salvage`
+`adf_show_metadata`, `adfbitmap`, `adf_salvage`
 - `packaging` : misc. packaging configurations (so far - deb only)
 - `regtests/` : regression tests
 - `tests/` : unit tests

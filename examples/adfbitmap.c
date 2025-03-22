@@ -1,5 +1,5 @@
 /*
- * adf_bitmap
+ * adfbitmap
  *
  * an utility for showing and rebuilding block allocation bitmap
  * on Amiga disk images (ADF)
@@ -47,8 +47,8 @@ typedef enum {
 
 void usage(void)
 {
-    printf( "\nadf_bitmap - show or rebuild block allocation bitmap\n\n"
-            "Usage:  adf_bitmap <command> adf_device\n\n"
+    printf( "\nadfbitmap - show or rebuild block allocation bitmap\n\n"
+            "Usage:  adfbitmap <command> adf_device\n\n"
             "where:\n  command      - 'show', 'rebuild' or 'help'\n"
             "  adf_device   - an adf file (image) or a native (real) device\n\n"
             "(using adflib version %s)\n", adfGetVersionNumber() );
@@ -73,7 +73,7 @@ int main( const int                  argc,
         return 0;
     } else {
         fprintf( stderr, "\nUnknown command '%s'  "
-                 "(use 'adf_bitmap help' for usage info)\n\n",
+                 "(use 'adfbitmap help' for usage info)\n\n",
                  argv[ 1 ] );
         return 1;
     }
