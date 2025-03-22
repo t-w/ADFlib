@@ -221,6 +221,12 @@ ADF_RETCODE adfReadBootBlock( struct AdfVolume * const     vol,
         return ADF_RC_ERROR;
     }
 
+    ADF_SECTNUM rootSectCalculated = adfVolCalcRootBlk( vol );
+    if ( boot->rootBlock != rootSectCalculated ) {
+        adfEnv.wFct( " %s : non-standard rootBlock value: %u != expected %u.\n",
+                     __func__, boot->rootBlock, rootSectCalculated );
+    }
+
     if ( boot->data[ 0 ] != 0 ) {
         const uint32_t checksumCalculated = adfBootSum( buf );
 /*printf("compsum=%lx sum=%lx\n",	adfBootSum(buf),boot->checkSum );*/		/* BV */
