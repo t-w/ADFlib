@@ -128,7 +128,7 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
     dev->name    = strdup( name );
     dev->drv     = &adfDeviceDriverNative;
 
-    return ADF_RC_OK;
+    return dev;
 }
 
 
