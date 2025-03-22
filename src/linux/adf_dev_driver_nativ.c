@@ -51,6 +51,7 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
                                               const AdfAccessMode  mode )
 {
     if ( ! adfLinuxIsBlockDevice( name ) ) {
+        //adfEnv.vFct("%s: %s is not a linux block device", __func__, name );
         return NULL;
     }
 
@@ -111,15 +112,23 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
     // https://docs.kernel.org/userspace-api/ioctl/hdio.html
     struct hd_geometry geom;
     if ( ioctl( *fd, HDIO_GETGEO, &geom ) == 0 ) {
+        //adfEnv.vFct( "%s: geometry from ioctl: cylinders %u, heads %u, sectors %u\n",
+        //             __func__, geom.cylinders, geom.heads, geom.sectors );
         dev->heads     = geom.heads;
         dev->sectors   = geom.sectors;
         dev->cylinders = geom.cylinders;
+
+        adfEnv.vFct( "%s: geometry read from the device", __func__ );
     } else {
         // no data from hardware, so guessing (is whatever matches the size OK?)
         dev->heads     = 1;
         dev->sectors   = dev->size / 512;
         dev->cylinders = 1;
+
+        adfEnv.vFct( "%s: geometry calculated from the device size", __func__ );
     }
+    adfEnv.vFct( "%s: geometry: cylinders %u, heads %u, sectors %u",
+                 __func__, dev->cylinders, dev->heads, dev->sectors );
 
     dev->devType = adfDevType( dev );
     dev->nVol    = 0;
