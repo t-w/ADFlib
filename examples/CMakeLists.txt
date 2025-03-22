@@ -13,10 +13,19 @@ else()
   set ( ADFLIB_CUSTOM_GETOPT_SRC "")
 endif()
 
-add_executable ( unadf unadf.c )
-target_link_libraries ( unadf adf )
-set_target_properties ( unadf PROPERTIES
-  #  INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}"
+
+add_executable ( adfbitmap adfbitmap.c )
+target_link_libraries ( adfbitmap adf )
+set_target_properties ( adfbitmap PROPERTIES
+  INSTALL_RPATH "/usr/local/lib"
+)
+
+add_executable ( adfformat
+  adfformat.c
+  ${ADFLIB_CUSTOM_GETOPT_SRC}
+)
+target_link_libraries ( adfformat adf )
+set_target_properties ( adfformat PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -28,15 +37,6 @@ add_executable( adfimgcreate
 )
 target_link_libraries ( adfimgcreate adf )
 set_target_properties ( adfimgcreate PROPERTIES
-  INSTALL_RPATH "/usr/local/lib"
-)
-
-add_executable ( adfformat
-  adfformat.c
-  ${ADFLIB_CUSTOM_GETOPT_SRC}
-)
-target_link_libraries ( adfformat adf )
-set_target_properties ( adfformat PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -60,12 +60,6 @@ set_target_properties ( adfinfo PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable ( adfbitmap adfbitmap.c )
-target_link_libraries ( adfbitmap adf )
-set_target_properties ( adfbitmap PROPERTIES
-  INSTALL_RPATH "/usr/local/lib"
-)
-
 add_executable ( adfsalvage
   adfsalvage.c
   ${ADFLIB_CUSTOM_GETOPT_SRC}
@@ -74,6 +68,14 @@ target_link_libraries ( adfsalvage adf )
 set_target_properties ( adfsalvage PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
+
+add_executable ( unadf unadf.c )
+target_link_libraries ( unadf adf )
+set_target_properties ( unadf PROPERTIES
+  #  INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}"
+  INSTALL_RPATH "/usr/local/lib"
+)
+
 
 file (
   COPY ${PROJECT_SOURCE_DIR}/examples/tests
@@ -92,11 +94,12 @@ if ( ADFLIB_ENABLE_TESTS )
                tests/unadf-test.sh )
 endif()
 
+
 install ( TARGETS
-  unadf
-  adfimgcreate
-  adfformat
-  adfinfo
   adfbitmap
+  adfformat
+  adfimgcreate
+  adfinfo
   adfsalvage
+  unadf
 )
