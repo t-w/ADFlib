@@ -145,7 +145,12 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
             dev->nVol = 0;
             return ADF_RC_ERROR;
         }
-        vol->lastBlock = vol->rootBlock * 2 - 1;
+
+        // hdf is a single volume, should cover all device (unless it has size
+        // not expressible in blocks - there is a remainder after the last block,
+        // smaller than the block size)
+        //vol->lastBlock = vol->rootBlock * 2 - 1;
+        vol->lastBlock = (int32_t) ( dev->cylinders * dev->heads * dev->sectors - 1 );
 
         struct AdfRootBlock root;
         vol->mounted = true;    // must be set to read the root block
