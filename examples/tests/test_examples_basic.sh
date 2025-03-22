@@ -52,14 +52,14 @@ run_cmd()
 }
 
 CMDS[0]="unadf -r $TEST_ADF"
-CMDS[1]="adf_show_metadata $TEST_ADF"
-CMDS[2]="adf_show_metadata $TEST_ADF 0"
-CMDS[2]="adf_show_metadata $TEST_ADF 0 CSH"
-CMDS[3]="adf_show_metadata $TEST_ADF 0 c/"
-CMDS[4]="adf_show_metadata $TEST_ADF 0 l"
+CMDS[1]="adfinfo $TEST_ADF"
+CMDS[2]="adfinfo $TEST_ADF 0"
+CMDS[2]="adfinfo $TEST_ADF 0 CSH"
+CMDS[3]="adfinfo $TEST_ADF 0 c/"
+CMDS[4]="adfinfo $TEST_ADF 0 l"
 CMDS[5]="adfimgcreate -t dd testflopdd1.adf"
 CMDS[6]="adfformat -t 1 -l TestFlopDD1 testflopdd1.adf"
-CMDS[7]="adf_show_metadata testflopdd1.adf"
+CMDS[7]="adfinfo testflopdd1.adf"
 CMDS[8]="rm -v testflopdd1.adf"
 CMDS[9]="adfbitmap show $TEST_ADF"
 

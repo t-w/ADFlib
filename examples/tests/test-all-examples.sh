@@ -11,6 +11,6 @@ fi
 
 basedir=`dirname "$0"`
 cmd_path="$1" "$basedir/adf-floppy-test.sh"
-cmd_path="$1" "$basedir/adf-show-metadata-test.sh"
+cmd_path="$1" "$basedir/adfinfo-test.sh"
 cmd_path="$1" "$basedir/unadf-test.sh"
 

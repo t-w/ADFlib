@@ -1,9 +1,9 @@
 #doc/adfbitmap.1
 #doc/adfimgcreate.1
 #doc/adfformat.1
-#doc/adf_show_metadata.1
+#doc/adfinfo.1
 usr/share/man/man1/adfbitmap.1
 usr/share/man/man1/adfimgcreate.1
 usr/share/man/man1/adfformat.1
 usr/share/man/man1/adfsalvage.1
-usr/share/man/man1/adf_show_metadata.1
+usr/share/man/man1/adfinfo.1

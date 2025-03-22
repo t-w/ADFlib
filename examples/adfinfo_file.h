@@ -1,6 +1,6 @@
 
-#ifndef ADF_SHOW_METADATA_FILE_H
-#define ADF_SHOW_METADATA_FILE_H
+#ifndef ADFINFO_FILE_H
+#define ADFINFO_FILE_H
 
 #include <adflib.h>
 

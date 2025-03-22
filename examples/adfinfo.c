@@ -1,5 +1,5 @@
 /*
- * adf_show_metadata
+ * adfinfo
  *
  * an utility for displaying Amiga disk images (ADF) metadata
  *
@@ -25,9 +25,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "adf_show_metadata_volume.h"
-#include "adf_show_metadata_dir.h"
-#include "adf_show_metadata_file.h"
+#include "adfinfo_volume.h"
+#include "adfinfo_dir.h"
+#include "adfinfo_file.h"
 #include "pathutils.h"
 
 struct args {
@@ -47,8 +47,8 @@ void show_dentry_metadata( struct AdfVolume * const  vol,
 
 void usage(void)
 {
-    printf( "\nadf_show_metadata - show metadata of an adf device or a file/directory\n\n"
-            "Usage:  adf_show_metadata adf_device [vol] [path]\n\n"
+    printf( "\nadfinfo - show metadata of an adf device or a file/directory\n\n"
+            "Usage:  adfinfo adf_device [vol] [path]\n\n"
             "where:\n  adf_device - an adf file (image) or a native (real) device\n"
             "  vol        - (optional) partition/volume number\n"
             "  path       - (optional) a file/directory inside the ADF device\n\n"

@@ -3,12 +3,12 @@ bin_PROGRAMS = unadf \
 	adfimgcreate \
 	adfformat \
 	adfsalvage \
-	adf_show_metadata
+	adfinfo
 
 dist_check_SCRIPTS = \
 	tests/test_examples_basic.sh \
 	tests/adf-floppy-test.sh \
-	tests/adf-show-metadata-test.sh \
+	tests/adfinfo-test.sh \
 	tests/unadf-test.sh
 dist_check_DATA = \
 	tests/arccsh.adf \
@@ -18,11 +18,11 @@ dist_check_DATA = \
 	tests/results/adf-floppy-test_2 \
 	tests/results/adf-floppy-test_3 \
 	tests/results/adf-floppy-test_4 \
-	tests/results/adf-show-metadata-test_1 \
-	tests/results/adf-show-metadata-test_2 \
-	tests/results/adf-show-metadata-test_3 \
-	tests/results/adf-show-metadata-test_4 \
-	tests/results/adf-show-metadata-test_5 \
+	tests/results/adfinfo-test_1 \
+	tests/results/adfinfo-test_2 \
+	tests/results/adfinfo-test_3 \
+	tests/results/adfinfo-test_4 \
+	tests/results/adfinfo-test_5 \
 	tests/results/unadf_no_args \
 	tests/results/unadf_help \
 	tests/results/unadf_invalid_args_1 \
@@ -39,11 +39,11 @@ dist_check_DATA = \
 	tests/results_msys/adf-floppy-test_2 \
 	tests/results_msys/adf-floppy-test_3 \
 	tests/results_msys/adf-floppy-test_4 \
-	tests/results_msys/adf-show-metadata-test_1 \
-	tests/results_msys/adf-show-metadata-test_2 \
-	tests/results_msys/adf-show-metadata-test_3 \
-	tests/results_msys/adf-show-metadata-test_4 \
-	tests/results_msys/adf-show-metadata-test_5 \
+	tests/results_msys/adfinfo-test_1 \
+	tests/results_msys/adfinfo-test_2 \
+	tests/results_msys/adfinfo-test_3 \
+	tests/results_msys/adfinfo-test_4 \
+	tests/results_msys/adfinfo-test_5 \
 	tests/results_msys/unadf_no_args \
 	tests/results_msys/unadf_help \
 	tests/results_msys/unadf_invalid_args_1 \
@@ -86,21 +86,21 @@ adfsalvage_SOURCES = adfsalvage.c
 adfsalvage_LDADD = $(ADFLIBS)
 adfsalvage_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-adf_show_metadata_SOURCES = adf_show_metadata.c \
-  adf_show_metadata_common.c \
-  adf_show_metadata_common.h \
-  adf_show_metadata_dir.c \
-  adf_show_metadata_dir.h \
-  adf_show_metadata_dircache.c \
-  adf_show_metadata_dircache.h \
-  adf_show_metadata_file.c \
-  adf_show_metadata_file.h \
-  adf_show_metadata_volume.c \
-  adf_show_metadata_volume.h \
+adfinfo_SOURCES = adfinfo.c \
+  adfinfo_common.c \
+  adfinfo_common.h \
+  adfinfo_dir.c \
+  adfinfo_dir.h \
+  adfinfo_dircache.c \
+  adfinfo_dircache.h \
+  adfinfo_file.c \
+  adfinfo_file.h \
+  adfinfo_volume.c \
+  adfinfo_volume.h \
   pathutils.c \
   pathutils.h
-adf_show_metadata_LDADD = $(ADFLIBS)
-adf_show_metadata_DEPENDENCIES = $(top_builddir)/src/libadf.la
+adfinfo_LDADD = $(ADFLIBS)
+adfinfo_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/$(NATIVE_DIR)
 

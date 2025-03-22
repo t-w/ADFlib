@@ -1,5 +1,5 @@
 /*
- * adf_show_metadata
+ * adfinfo
  *
  * an utility for displaying Amiga disk images (ADF) metadata
  *
@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 
-#include "adf_show_metadata_common.h"
+#include "adfinfo_common.h"
 
 void show_hashtable( const uint32_t hashtable[ ADF_HT_SIZE ] )
 {

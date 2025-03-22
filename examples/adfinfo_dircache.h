@@ -1,6 +1,6 @@
 
-#ifndef ADF_SHOW_METADATA_DIRCACHE_H
-#define ADF_SHOW_METADATA_DIRCACHE_H
+#ifndef ADFINFO_DIRCACHE_H
+#define ADFINFO_DIRCACHE_H
 
 #include <adflib.h>
 

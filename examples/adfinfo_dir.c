@@ -1,8 +1,8 @@
 
-#include "adf_show_metadata_dir.h"
+#include "adfinfo_dir.h"
 
-#include "adf_show_metadata_common.h"
-#include "adf_show_metadata_dircache.h"
+#include "adfinfo_common.h"
+#include "adfinfo_dircache.h"
 
 #include <adf_dir.h>
 #include <stdio.h>

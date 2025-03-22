@@ -1,6 +1,6 @@
 
-#ifndef ADF_SHOW_METADATA_VOLUME_H
-#define ADF_SHOW_METADATA_VOLUME_H
+#ifndef ADFINFO_VOLUME_H
+#define ADFINFO_VOLUME_H
 
 #include <adflib.h>
 #include <adf_blk.h>

@@ -1,5 +1,5 @@
 /*
- * adf_show_metadata
+ * adfinfo
  *
  * an utility for displaying Amiga disk images (ADF) metadata
  *
@@ -21,7 +21,7 @@
  *
  */
 
-#include "adf_show_metadata_file.h"
+#include "adfinfo_file.h"
 
 #include <adf_file_util.h>
 #include <stdio.h>

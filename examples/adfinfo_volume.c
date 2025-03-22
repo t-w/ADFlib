@@ -1,5 +1,5 @@
 /*
- * adf_show_metadata
+ * adfinfo
  *
  * an utility for displaying Amiga disk images (ADF) metadata
  *
@@ -27,10 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "adf_show_metadata_volume.h"
+#include "adfinfo_volume.h"
 
-#include "adf_show_metadata_common.h"
-#include "adf_show_metadata_dircache.h"
+#include "adfinfo_common.h"
+#include "adfinfo_dircache.h"
 
 static void show_bmpages( struct AdfVolume * const           vol,
                           const struct AdfRootBlock * const  rblock );

@@ -40,23 +40,23 @@ set_target_properties ( adfformat PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable ( adf_show_metadata
-  adf_show_metadata.c
-  adf_show_metadata_common.c
-  adf_show_metadata_common.h
-  adf_show_metadata_dir.c
-  adf_show_metadata_dir.h
-  adf_show_metadata_dircache.c
-  adf_show_metadata_dircache.h
-  adf_show_metadata_file.c
-  adf_show_metadata_file.h
-  adf_show_metadata_volume.c
-  adf_show_metadata_volume.h
+add_executable ( adfinfo
+  adfinfo.c
+  adfinfo_common.c
+  adfinfo_common.h
+  adfinfo_dir.c
+  adfinfo_dir.h
+  adfinfo_dircache.c
+  adfinfo_dircache.h
+  adfinfo_file.c
+  adfinfo_file.h
+  adfinfo_volume.c
+  adfinfo_volume.h
   pathutils.c
   pathutils.h
 )
-target_link_libraries ( adf_show_metadata adf )
-set_target_properties ( adf_show_metadata PROPERTIES
+target_link_libraries ( adfinfo adf )
+set_target_properties ( adfinfo PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -86,8 +86,8 @@ if ( ADFLIB_ENABLE_TESTS )
                tests/test_examples_basic.sh . )
     add_test ( tests/adf-floppy-test.sh ${BASH_PROGRAM}
                tests/adf-floppy-test.sh )
-    add_test ( tests/adf-show-metadata-test.sh ${BASH_PROGRAM}
-               tests/adf-show-metadata-test.sh )
+    add_test ( tests/adfinfo-test.sh ${BASH_PROGRAM}
+               tests/adfinfo-test.sh )
     add_test ( tests/unadf-test.sh ${BASH_PROGRAM}
                tests/unadf-test.sh )
 endif()
@@ -96,7 +96,7 @@ install ( TARGETS
   unadf
   adfimgcreate
   adfformat
-  adf_show_metadata
+  adfinfo
   adfbitmap
   adfsalvage
 )

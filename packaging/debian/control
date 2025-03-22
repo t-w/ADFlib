@@ -48,9 +48,9 @@ Description: Utilities for Amiga disk image files (ADF).
  adfbitmap         - show or reconstruct volume's block allocation bitmap
  adfimgcreate      - create a new disk image file (ADF or HDF)
  adfformat         - format a volume of an ADF device
- adfsalvage        - show or recover/extract deleted files
- adf_show_metadata - display low-level info about a device/adf file
+ adfinfo           - display low-level info about a device/adf file
                      or a file/directory
+ adfsalvage        - show or recover/extract deleted files
 
 Package: unadf
 Architecture: any

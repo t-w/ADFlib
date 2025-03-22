@@ -103,7 +103,7 @@ Only devices with a single volume on the whole device, so only floppy disks
 (ADF) or unpartitioned hard disk file (HDF) devices can be formatted.
 
 
-### adf_show_metadata
+### adfinfo
 
 A low-level utility / diagnostic tool, showing metadata about a device / device
 image or a file/directory inside the Amiga filesystem. In particular, it shows
@@ -152,7 +152,7 @@ See INSTALL file.
 - `doc/` :	The library developer's documentation, man pages for utilities
 - `doc/FAQ/` : The Amiga Filesystem explained
 - `examples/` : utilities: `unadf`, `adfimgcreate`, `adfformat`,
-`adf_show_metadata`, `adfbitmap`, `adfsalvage`
+`adfinfo`, `adfbitmap`, `adfsalvage`
 - `packaging` : misc. packaging configurations (so far - deb only)
 - `regtests/` : regression tests
 - `tests/` : unit tests

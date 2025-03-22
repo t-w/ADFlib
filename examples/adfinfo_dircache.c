@@ -1,5 +1,5 @@
 /*
- * adf_show_metadata_dircache
+ * adfinfo_dircache
  *
  * an utility for displaying Amiga disk images (ADF) metadata
  * dircache module
@@ -27,9 +27,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "adf_show_metadata_dircache.h"
+#include "adfinfo_dircache.h"
 
-//#include "adf_show_metadata_common.h"
+//#include "adfinfo_common.h"
 
 static void show_dircache_block( const struct AdfDirCacheBlock * const  block );
 
