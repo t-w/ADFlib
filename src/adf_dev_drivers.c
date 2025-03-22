@@ -114,8 +114,11 @@ const struct AdfDeviceDriver * adfGetDeviceDriverByDevName ( const char * const 
         if ( node->driver->isDevice == NULL )
             continue;
 
-        if ( node->driver->isDevice ( name ) )
+        if ( node->driver->isDevice ( name ) ) {
+            //adfEnv.vFct( "%s: matched device %s for name %s",
+            //             __func__, node->driver->name, name );
             return node->driver;
+        }
     }
 
     /* if nothing matched -> default to dump file */
