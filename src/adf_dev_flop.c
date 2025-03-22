@@ -27,6 +27,7 @@
 
 #include "adf_dev_flop.h"
 
+#include "adf_byteorder.h"
 #include "adf_env.h"
 #include "adf_raw.h"
 #include "adf_util.h"
@@ -62,7 +63,8 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
 
     /* set filesystem info (read from bootblock) */
     struct AdfBootBlock boot;
-    ADF_RETCODE rc = adfDevReadBlock(
+    ADF_RETCODE rc =
+        adfDevReadBlock(   // reading as raw(!), to avoid errors (can have an unknown fs)
         dev, (uint32_t) vol->firstBlock, 512, (uint8_t *) &boot );
     if ( rc != ADF_RC_OK ) {
         adfEnv.eFct( "%s: error reading BootBlock, device %s, volume %d",
@@ -75,13 +77,28 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
     vol->fs.type = (uint8_t) boot.dosType[ 3 ];
 
     if ( adfVolIsDosFS( vol ) ) {
+#ifdef LITT_ENDIAN
+        // boot was read as raw, must change byte order
+        adfSwapEndian( (uint8_t *) &boot, ADF_SWBL_BOOT );
+#endif
         vol->datablockSize = adfVolIsOFS( vol ) ? 488 : 512;
 
-        vol->rootBlock = adfVolCalcRootBlk( vol );
+        // read root block (to get the volume's name)
         struct AdfRootBlock root;
-        vol->mounted = true;    // must be set to read the root block
-        rc = adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root );
-        vol->mounted = false;
+        if ( boot.rootBlock > 1 ) {  // make sure it is not pointing to bootBlock(!)
+            // try from sector set in boot block
+            vol->rootBlock = boot.rootBlock;
+            vol->mounted = true;    // must be set to read the root block
+            rc = adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root );
+            vol->mounted = false;
+        }
+        if ( boot.rootBlock <= 1  ||  rc != ADF_RC_OK ) {
+            // try from calculated position
+            vol->rootBlock = adfVolCalcRootBlk( vol );
+            vol->mounted = true;    // must be set to read the root block
+            rc = adfReadRootBlock( vol, (uint32_t) vol->rootBlock, &root );
+            vol->mounted = false;
+        }
         if ( rc != ADF_RC_OK ) {
             free( vol );
             return rc;
@@ -90,6 +107,12 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
         vol->volName = strndup( root.diskName,
                                 min( root.nameLen,
                                      (unsigned) ADF_MAX_NAME_LEN ) );
+
+        if ( boot.rootBlock != vol->rootBlock ) {
+            adfEnv.eFct( "%s: invalid rootBlock value in bootblock %d, "
+                         "valid calculated %d, volume '%s'",
+                         __func__, boot.rootBlock, vol->rootBlock, vol->volName );
+        }
     } else { // if ( adfVolIsPFS ( vol ) ) {
         vol->datablockSize = 0; //512;
         vol->volName       = NULL;
