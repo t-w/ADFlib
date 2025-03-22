@@ -5,5 +5,5 @@
 usr/bin/adfbitmap
 usr/bin/adfimgcreate
 usr/bin/adfformat
-usr/bin/adf_salvage
+usr/bin/adfsalvage
 usr/bin/adf_show_metadata

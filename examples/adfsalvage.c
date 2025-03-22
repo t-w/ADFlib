@@ -1,5 +1,5 @@
 /*
- * adf_salvage
+ * adfsalvage
  *
  * show and restore deleted files on Amiga disk images (ADF)
  *
@@ -74,7 +74,7 @@ ADF_RETCODE undeleteFile( struct AdfVolume * const  vol,
 
 void usage(void)
 {
-    printf( "\nUsage:  adf_salvage  [-p volume] adf_device [file header block to undelete]...\n\n"
+    printf( "\nUsage:  adfsalvage  [-p volume] adf_device [file header block to undelete]...\n\n"
             "Salvage files from an ADF (Amiga Disk File) or an HDF (Hard Disk File) volume.\n\n"
             "Options:\n"
             "  -p volume  volume/partition index, counting from 0, default: 0\n"
@@ -89,7 +89,7 @@ int main( const int     argc,
 {
     CmdlineOptions options;
     if ( ! parse_args( &argc, argv, &options ) ) {
-        fprintf( stderr, "Usage info:  adf_salvage -h\n" );
+        fprintf( stderr, "Usage info:  adfsalvage -h\n" );
         exit( EXIT_FAILURE );
     }
 

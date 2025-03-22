@@ -25,6 +25,6 @@ dist_man_MANS = \
 	adfbitmap.1 \
 	adfimgcreate.1 \
 	adfformat.1 \
-	adf_salvage.1 \
+	adfsalvage.1 \
 	adf_show_metadata.1 \
 	unadf.1

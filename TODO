@@ -36,7 +36,7 @@ To do and/or consider (no particular order):
   to utility programs - like in case of any repair/recovery tools, where
   algorithms/methods used can differ).
 
-  - undelete is partially done with adf_salvage (and src/adf_salv.c)
+  - undelete is partially done with adfsalvage (and src/adf_salv.c)
     the main things left are:
     - add extracting files (do not change the filesystem on ADF, but just
       save files outside, on the local filesystem)

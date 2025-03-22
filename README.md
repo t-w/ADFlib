@@ -116,7 +116,7 @@ A low-level utility / diagnostic tool for block allocation bitmap of ADF volumes
 It can display the bitmap or rebuild it (in fact, enforce rebuilding it, even if
 the volume's flag says that the bitmap is valid).
 
-### adf_salvage
+### adfsalvage
 
 An utility allowing to list deleted entries (files, directories) on a volume
 and undelete them (in the future possibly also extract them to local filesystem).
@@ -152,7 +152,7 @@ See INSTALL file.
 - `doc/` :	The library developer's documentation, man pages for utilities
 - `doc/FAQ/` : The Amiga Filesystem explained
 - `examples/` : utilities: `unadf`, `adfimgcreate`, `adfformat`,
-`adf_show_metadata`, `adfbitmap`, `adf_salvage`
+`adf_show_metadata`, `adfbitmap`, `adfsalvage`
 - `packaging` : misc. packaging configurations (so far - deb only)
 - `regtests/` : regression tests
 - `tests/` : unit tests

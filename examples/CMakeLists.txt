@@ -66,12 +66,12 @@ set_target_properties ( adfbitmap PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable ( adf_salvage
-  adf_salvage.c
+add_executable ( adfsalvage
+  adfsalvage.c
   ${ADFLIB_CUSTOM_GETOPT_SRC}
 )
-target_link_libraries ( adf_salvage adf )
-set_target_properties ( adf_salvage PROPERTIES
+target_link_libraries ( adfsalvage adf )
+set_target_properties ( adfsalvage PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -98,5 +98,5 @@ install ( TARGETS
   adfformat
   adf_show_metadata
   adfbitmap
-  adf_salvage
+  adfsalvage
 )

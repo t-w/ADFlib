@@ -2,7 +2,7 @@ bin_PROGRAMS = unadf \
 	adfbitmap \
 	adfimgcreate \
 	adfformat \
-	adf_salvage \
+	adfsalvage \
 	adf_show_metadata
 
 dist_check_SCRIPTS = \
@@ -82,9 +82,9 @@ adfformat_SOURCES = adfformat.c
 adfformat_LDADD = $(ADFLIBS)
 adfformat_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-adf_salvage_SOURCES = adf_salvage.c
-adf_salvage_LDADD = $(ADFLIBS)
-adf_salvage_DEPENDENCIES = $(top_builddir)/src/libadf.la
+adfsalvage_SOURCES = adfsalvage.c
+adfsalvage_LDADD = $(ADFLIBS)
+adfsalvage_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 adf_show_metadata_SOURCES = adf_show_metadata.c \
   adf_show_metadata_common.c \
