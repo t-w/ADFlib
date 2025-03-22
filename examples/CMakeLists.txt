@@ -20,13 +20,14 @@ set_target_properties ( unadf PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable( adf_floppy_create
-  adf_floppy_create.c
+add_executable( adfimgcreate
+  adfimgcreate.c
   pathutils.c
   pathutils.h
+  ${ADFLIB_CUSTOM_GETOPT_SRC}
 )
-target_link_libraries ( adf_floppy_create adf )
-set_target_properties ( adf_floppy_create PROPERTIES
+target_link_libraries ( adfimgcreate adf )
+set_target_properties ( adfimgcreate PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -93,7 +94,7 @@ endif()
 
 install ( TARGETS
   unadf
-  adf_floppy_create
+  adfimgcreate
   adf_format
   adf_show_metadata
   adf_bitmap

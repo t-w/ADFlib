@@ -1,6 +1,6 @@
 bin_PROGRAMS = unadf \
 	adf_bitmap \
-	adf_floppy_create \
+	adfimgcreate \
 	adf_format \
 	adf_salvage \
 	adf_show_metadata
@@ -72,11 +72,11 @@ adf_bitmap_SOURCES = adf_bitmap.c
 adf_bitmap_LDADD = $(ADFLIBS)
 adf_bitmap_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-adf_floppy_create_SOURCES = adf_floppy_create.c \
+adfimgcreate_SOURCES = adfimgcreate.c \
   pathutils.c \
   pathutils.h
-adf_floppy_create_LDADD = $(ADFLIBS)
-adf_floppy_create_DEPENDENCIES = $(top_builddir)/src/libadf.la
+adfimgcreate_LDADD = $(ADFLIBS)
+adfimgcreate_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 adf_format_SOURCES = adf_format.c
 adf_format_LDADD = $(ADFLIBS)

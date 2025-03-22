@@ -2,12 +2,12 @@
 basedir=`dirname "$0"`
 . $basedir/common.sh
 
-adf_floppy_create=`get_test_cmd adf_floppy_create`
+ADFIMGCREATE=`get_test_cmd adfimgcreate`
 adf_floppy_format=`get_test_cmd adf_format`
 adf_show_metadata=`get_test_cmd adf_show_metadata`
 
-$adf_floppy_create $tmpdir/testflopdd1.adf dd >$actual
-compare_with "adf floppy create dd" adf-floppy-test_1
+$ADFIMGCREATE -t dd $tmpdir/testflopdd1.adf >$actual
+compare_with "adfimgcreate -t dd" adf-floppy-test_1
 
 $adf_floppy_format -t 1 -l TestFlopDD1 -v $tmpdir/testflopdd1.adf >$actual 2>/dev/null
 compare_with "adf floppy format dd" adf-floppy-test_2

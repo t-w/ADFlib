@@ -1,7 +1,7 @@
 /*
- * adf_floppy_create
+ * adfimgcreate
  *
- * an utility for creating an empty Amiga disk image (ADF)
+ * an utility for creating an empty Amiga disk images (ADF or HDF)
  *
  *  This file is part of ADFLib.
  *
