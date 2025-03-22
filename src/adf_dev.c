@@ -259,13 +259,17 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         return NULL;
 
     struct AdfDevice * const  dev = driver->openDev( name, mode );
-    if ( dev == NULL )
+    if ( dev == NULL ) {
+        adfEnv.eFct( " %s: openDev failed, dev. name '%s'", __func__, name );
         return NULL;
+    }
 
     dev->devType = adfDevType( dev );
 
     if ( ! dev->drv->isNative() ) {
         if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
+            adfEnv.eFct( " %s: setting calc. geometry failed, dev. name '%s'",
+                         __func__, name );
             dev->drv->closeDev( dev );
             return NULL;
         }
