@@ -12,7 +12,7 @@ ADF volume info:
 
 Bootblock:
   dosType:	DOS. (0x1)
-  rootBlock:	0x0 (0)
+  rootBlock:	0x370 (880)
 
 Root block sector:	880
 
