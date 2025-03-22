@@ -72,7 +72,9 @@ adf_bitmap_SOURCES = adf_bitmap.c
 adf_bitmap_LDADD = $(ADFLIBS)
 adf_bitmap_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
-adf_floppy_create_SOURCES = adf_floppy_create.c
+adf_floppy_create_SOURCES = adf_floppy_create.c \
+  pathutils.c \
+  pathutils.h
 adf_floppy_create_LDADD = $(ADFLIBS)
 adf_floppy_create_DEPENDENCIES = $(top_builddir)/src/libadf.la
 

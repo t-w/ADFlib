@@ -20,7 +20,11 @@ set_target_properties ( unadf PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable ( adf_floppy_create adf_floppy_create.c )
+add_executable( adf_floppy_create
+  adf_floppy_create.c
+  pathutils.c
+  pathutils.h
+)
 target_link_libraries ( adf_floppy_create adf )
 set_target_properties ( adf_floppy_create PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
