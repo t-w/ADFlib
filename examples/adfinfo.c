@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "adf_dev_driver_nativ.h"
 #include "adfinfo_volume.h"
 #include "adfinfo_dir.h"
 #include "adfinfo_file.h"
@@ -65,6 +66,8 @@ int main( const int                  argc,
         return status;
 
     adfLibInit();
+
+    adfAddDeviceDriver( &adfDeviceDriverNative );
 
     printf( "\nOpening image/device:\t'%s'\n", args.adfname );
     struct AdfDevice * const dev = adfDevOpen( args.adfname, ADF_ACCESS_MODE_READONLY );
