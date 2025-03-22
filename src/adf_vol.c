@@ -105,6 +105,7 @@ struct AdfVolume * adfVolCreate( struct AdfDevice * const  dev,
     memset( &boot, 0, 1024 );
     //strncpy ( boot.dosType, "DOS", 3 ); /// done in adfWriteBootBlock
     boot.dosType[ 3 ] = (char) volType;
+    boot.rootBlock    = vol->rootBlock;
 /*printf("first=%d last=%d\n", vol->firstBlock, vol->lastBlock);
 printf("name=%s root=%d\n", vol->volName, vol->rootBlock);
 */
