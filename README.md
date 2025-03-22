@@ -89,12 +89,8 @@ Usage:  unadf [-lrcsmpwV] [-v n] [-d extractdir] dumpname.adf [files-with-path]
     -d dir : extract to 'dir' directory
 ```
 
-### adf_floppy_create
-
-Creates an image of a floppy disk (empty, not formatted). It can create
-standard DD (double density) 880K floppy image, HD (high density) 1760K, or
-special formats extended number of tracks (like DD with 81-83 tracks).
-
+### adfimgcreate
+Create empty (not formatted!) ADF/HDF image files of specified type or size.
 
 ### adf_format
 
@@ -155,8 +151,8 @@ See INSTALL file.
 - `regtests/Boot/` :	Bootblocks that might by used to put on floppy disks
 - `doc/` :	The library developer's documentation, man pages for utilities
 - `doc/FAQ/` : The Amiga Filesystem explained
-- `examples/` : utilities: `unadf`, `adf_floppy_create/format`, `adf_show_metadata`,
-`adf_bitmap`, `adf_salvage`
+- `examples/` : utilities: `unadf`, `adfimgcreate`, `adf_format`,
+`adf_show_metadata`, `adf_bitmap`, `adf_salvage`
 - `packaging` : misc. packaging configurations (so far - deb only)
 - `regtests/` : regression tests
 - `tests/` : unit tests
