@@ -115,10 +115,10 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
         dev->sectors   = geom.sectors;
         dev->cylinders = geom.cylinders;
     } else {
-        // guessing: is whatever matches the size OK?
-        dev->heads     = 2;
-        dev->sectors   = dev->size / 4;
-        dev->cylinders = dev->size / ( dev->sectors * dev->heads * 512 );
+        // no data from hardware, so guessing (is whatever matches the size OK?)
+        dev->heads     = 1;
+        dev->sectors   = dev->size / 512;
+        dev->cylinders = 1;
     }
 
     dev->devType = adfDevType( dev );
