@@ -31,12 +31,12 @@ set_target_properties ( adfimgcreate PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-add_executable ( adf_format
-  adf_format.c
+add_executable ( adfformat
+  adfformat.c
   ${ADFLIB_CUSTOM_GETOPT_SRC}
 )
-target_link_libraries ( adf_format adf )
-set_target_properties ( adf_format PROPERTIES
+target_link_libraries ( adfformat adf )
+set_target_properties ( adfformat PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
@@ -95,7 +95,7 @@ endif()
 install ( TARGETS
   unadf
   adfimgcreate
-  adf_format
+  adfformat
   adf_show_metadata
   adfbitmap
   adf_salvage

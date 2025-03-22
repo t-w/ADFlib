@@ -24,7 +24,7 @@ nobase_dist_doc_DATA = \
 dist_man_MANS = \
 	adfbitmap.1 \
 	adfimgcreate.1 \
-	adf_format.1 \
+	adfformat.1 \
 	adf_salvage.1 \
 	adf_show_metadata.1 \
 	unadf.1

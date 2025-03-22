@@ -1,5 +1,5 @@
 /*
- * adf_format
+ * adfformat
  *
  * an utility for creating filesystem (OFS/FFS) on Amiga disk images (ADF)
  *
@@ -54,7 +54,7 @@ bool parse_args( const int * const     argc,
 
 void usage(void)
 {
-    printf( "\nUsage:  adf_format [-f] [-l label] [-p volume] [-t fstype] adf_device\n\n"
+    printf( "\nUsage:  adfformat [-f] [-l label] [-p volume] [-t fstype] adf_device\n\n"
             "Quick-format an ADF (Amiga Disk File) or an HDF (Hard Disk File) volume.\n\n"
             "Options:\n"
             "  -f         force formatting even if a filesystem already present\n"
@@ -79,7 +79,7 @@ int main( const int            argc,
 {
     CmdlineOptions options;
     if ( ! parse_args( &argc, argv, &options ) ) {
-        fprintf( stderr, "Usage info:  adf_format -h\n" );
+        fprintf( stderr, "Usage info:  adfformat -h\n" );
         exit( EXIT_FAILURE );
     }
 

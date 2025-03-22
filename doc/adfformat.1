@@ -1,8 +1,8 @@
-.TH ADF_FORMAT 1 "Mar 2024"
+.TH ADFFORMAT 1 "Mar 2025"
 .SH NAME
-adf_format \- create a classic AmigaDOS filesystem (OFS/FFS) on an ADF or HDF volume.
+adfformat \- create a classic AmigaDOS filesystem (OFS/FFS) on an ADF or HDF volume.
 .SH SYNOPSIS
-.B adf_format
+.B adfformat
 .RB [ -l \fIlabel\fP ]
 .RB [ -p \fIvolume\fP ]
 .RB [ -t \fIfstype\fP ]
@@ -11,7 +11,7 @@ adf_format \- create a classic AmigaDOS filesystem (OFS/FFS) on an ADF or HDF vo
 
 
 .SH DESCRIPTION
-\fBadf_format\fR is a simple utility allowing to create a classic AmigaDos-type
+\fBadfformat\fR is a simple utility allowing to create a classic AmigaDos-type
 filesystem (OFS or FFS) on the selected volume of an ADF (Amiga Disk File)
 or HDF (hard disk file) device.
 .SH OPTIONS
@@ -51,7 +51,7 @@ Shows help info.
 Shows version.
 
 .SH EXAMPLES
-\fBadf_format -l MyDisk1 -t 3 myamigadisk1.adf\fR
+\fBadfformat -l MyDisk1 -t 3 myamigadisk1.adf\fR
     - creates:
       - filesystem:           FFS+INTL (1+2)
       - with the label:       MyDisk1
@@ -65,6 +65,6 @@ a single volume using the whole device (so ADF/floppy disks and HDF/hard disk fi
 .SH NOTES
 Detailed info about Commodore Amiga filesystems: http://lclevy.free.fr/adflib/adf_info.html#p41
 .SH AUTHOR
-\fBadf_format\fR was written by \fBTomasz Wolak\fR <tomas.wolak@gmail.com>,
+\fBadfformat\fR was written by \fBTomasz Wolak\fR <tomas.wolak@gmail.com>,
 as part of the ADFlib (https://github.com/adflib/ADFlib).
 .PP

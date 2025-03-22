@@ -92,7 +92,7 @@ Usage:  unadf [-lrcsmpwV] [-v n] [-d extractdir] dumpname.adf [files-with-path]
 ### adfimgcreate
 Create empty (not formatted!) ADF/HDF image files of specified type or size.
 
-### adf_format
+### adfformat
 
 Create a classic AmigaDOS filesystem (OFS or FFS) on the specified volume
 of an ADF/HDF device.
@@ -151,7 +151,7 @@ See INSTALL file.
 - `regtests/Boot/` :	Bootblocks that might by used to put on floppy disks
 - `doc/` :	The library developer's documentation, man pages for utilities
 - `doc/FAQ/` : The Amiga Filesystem explained
-- `examples/` : utilities: `unadf`, `adfimgcreate`, `adf_format`,
+- `examples/` : utilities: `unadf`, `adfimgcreate`, `adfformat`,
 `adf_show_metadata`, `adfbitmap`, `adf_salvage`
 - `packaging` : misc. packaging configurations (so far - deb only)
 - `regtests/` : regression tests
