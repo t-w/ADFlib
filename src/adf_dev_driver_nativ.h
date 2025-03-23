@@ -25,7 +25,8 @@
 #define ADF_DEV_DRIVER_NATIV_H
 
 #include "adf_dev_driver.h"
+#include "adf_prefix.h"
 
-extern const struct AdfDeviceDriver adfDeviceDriverNative;
+ADF_PREFIX extern const struct  AdfDeviceDriver adfDeviceDriverNative;
 
 #endif  /* ADF_DEV_DRIVER_NATIV_H */

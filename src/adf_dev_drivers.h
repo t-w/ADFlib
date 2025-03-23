@@ -29,9 +29,9 @@
 #include "adf_err.h"
 
 
-ADF_RETCODE adfAddDeviceDriver ( const struct AdfDeviceDriver * const driver );
+ADF_PREFIX ADF_RETCODE adfAddDeviceDriver ( const struct AdfDeviceDriver * const driver );
 
-ADF_RETCODE adfRemoveDeviceDriver ( const struct AdfDeviceDriver * const driver );
+ADF_PREFIX ADF_RETCODE adfRemoveDeviceDriver ( const struct AdfDeviceDriver * const driver );
 
 void adfRemoveDeviceDrivers ( void );
 
