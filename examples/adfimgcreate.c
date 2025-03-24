@@ -63,6 +63,8 @@ const struct devtype {
     { "pc720",  { 80, 2,  9 }, "PC 720 KiB floppy 3.5\""          },
     { "pc1440", { 80, 2, 18 }, "PC 1.440 MiB floppy 3.5\""        },
     { "pc2880", { 80, 2, 36 }, "PC 2.80 MiB floppy 3.5\""         },
+
+    { "a590",  { 782, 2, 27 }, "Western Digital WD93028-X A (A590)" },
     { NULL,     {  0, 0,  0 }, NULL                               }
 };
 
