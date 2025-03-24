@@ -76,7 +76,7 @@ const char * prgname;
 void usage( FILE * const stream )
 {
     fprintf( stream, "\nadfimgcreate - create empty (not formatted!) ADF/HDF image files\n"
-             "\nUsage:  adfimgcreate [-k sizeKiB | -m sizeMiB | -g tracks heads sectors"
+             "\nUsage:  adfimgcreate [-k sizeKiB | -m sizeMiB | -g tracks,heads,sectors"
              " | -t type] filename\n\n"
              "  where the type can be:\n\n" );
     /*
@@ -145,6 +145,11 @@ int main( const int                   argc,
 
 
 
+bool chscsvtostr( char * const chscsv,
+                  const char * chsstr[3] );
+
+bool chsstrtounsigned( const char * const chsstr[3],
+                       unsigned           chs[3] );
 
 /* return value: true - valid, false - invalid */
 bool parse_args( const int * const           argc,
@@ -160,36 +165,22 @@ bool parse_args( const int * const           argc,
     const char * valid_options = "g:k:m:t:h";
     int opt;
     while ( ( opt = getopt( *argc, (char * const *) argv, valid_options ) ) != -1 ) {
-        //printf( "optind %d, opt %c, optarg %s\n", optind, (char) opt, optarg );
+        //fprintf( stderr, "optind %d, opt %c, optarg %s\n", optind, (char) opt, optarg );
         switch ( opt ) {
         case 'g': {
-
-            // tracks
-            char * endptr = NULL;
-            devreq->geometry.tracks = (unsigned) strtoul( optarg, &endptr, 10 );
-            if ( endptr == optarg || devreq->geometry.tracks < 1 ) {
-                fprintf( stderr, "Invalid number of tracks '%s'.\n", optarg );
-                exit( 1 );
-            }
-
-            // heads
-            endptr = NULL;
-            devreq->geometry.heads = (unsigned) strtoul( ++optarg, &endptr, 10 );
-            if ( endptr == optarg || devreq->geometry.heads < 1 ) {
-                fprintf( stderr, "Invalid number of heads '%s'.\n", optarg );
-                exit( 1 );
-            }
-
-            // sectors
-            endptr = NULL;
-            devreq->geometry.sectors = (unsigned) strtoul( ++optarg, &endptr, 10 );
-            if ( endptr == optarg ||
-                 devreq->geometry.sectors < 10 )    // what is real min?
+            const char *  chsstr[3];
+            unsigned      chs[3];
+            if ( ! chscsvtostr( optarg, chsstr ) ||
+                 ! chsstrtounsigned( chsstr, chs ) )
             {
-                fprintf( stderr, "Invalid number of sectors '%s'.\n", optarg );
+                fprintf( stderr, "Invalid geometry: cyliders %s, heads %s, sectors %s.\n",
+                         chsstr[0], chsstr[1], chsstr[2] );
                 exit( 1 );
             }
-            optarg++;
+
+            devreq->geometry.tracks  = chs[0];
+            devreq->geometry.heads   = chs[1];;
+            devreq->geometry.sectors = chs[2];
 
             if ( options_set.k || options_set.m || options_set.t ) {
                 fprintf( stderr, "Ambiguous options provided\n" );
@@ -324,4 +315,58 @@ void check_not_exist( const char * const filename )
         fprintf( stderr, "'%s' already exists - aborting...\n", filename );
         exit(1);
     }
+}
+
+
+// - changes:  chscsv = "123,345,678\0" to "123\0345\0678\0"
+// - returns (updates) array of pointers to csv field (a substring)
+bool chscsvtostr( char * const chscsv,
+                  const char * chsstr[3] )
+{
+    chsstr[0] = chscsv;
+    chsstr[1] = chsstr[2] = NULL;
+
+    unsigned i = 1;
+    char * ch = chscsv;
+    for ( ; *ch != '\0' && i < 3 ; ch++ )
+        if ( *ch == ',' ) {
+            *ch = '\0';
+            chsstr[ i ] = ch + 1;
+            i++;
+        }
+
+    if (  i != 3 ) {
+        //fprintf (stderr,"%s\n", __func__ );
+        return false;
+    }
+
+    return true;
+}
+
+
+unsigned strtounsigned( const char * const numasstr );
+
+bool chsstrtounsigned( const char * const chsstr[3],
+                       unsigned           chs[3] )
+{
+    for ( unsigned i = 0; i < 3; i++ ) {
+        chs[ i ] = strtounsigned( chsstr[ i ] );
+        if ( chs[ i ] == 0 ) {
+            //fprintf (stderr,"%s\n", __func__ );
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// returns unsigned > 0 (0 means error)
+unsigned strtounsigned( const char * const numasstr )
+{
+    char * endptr = NULL;
+    unsigned num = (unsigned) strtoul( numasstr, &endptr, 10 );
+    //fprintf( stderr, "%s: %u\n", __func__, num );
+    if ( endptr == numasstr )
+        num = 0;   // error(!) (not a valid number!!!)
+    return num;
 }
