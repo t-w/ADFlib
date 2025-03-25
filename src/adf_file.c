@@ -819,7 +819,7 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove(
 
         struct AdfFileExtBlock * const extBlock = malloc( sizeof ( struct AdfFileExtBlock ) );
         if ( extBlock == NULL ) {
-            blocksToRemove->destroy( &blocksToRemove );
+            blocksToRemove->destroy( blocksToRemove );
             return ADF_RC_MALLOC;
         }
 
@@ -845,7 +845,7 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove(
                 file, (int32_t) newLastExtBlockIndex, extBlock );
             if ( rc != ADF_RC_OK ) {
                 free( extBlock );
-                blocksToRemove->destroy( &blocksToRemove );
+                blocksToRemove->destroy( blocksToRemove );
                 return rc;
             }
 
@@ -893,7 +893,7 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove(
                 file->volume, (ADF_SECTNUM) nextExt, extBlock );
             if ( rc != ADF_RC_OK ) {
                 free( extBlock );
-                blocksToRemove->destroy( &blocksToRemove );
+                blocksToRemove->destroy( blocksToRemove );
                 return rc;
             }
 
@@ -943,7 +943,7 @@ ADF_RETCODE adfFileTruncateGetBlocksToRemove(
                  __func__, blocksCount, blocksToRemove->len, dataBlocksCount );
         fflush( stderr );
 #endif
-        blocksToRemove->destroy( &blocksToRemove );
+        blocksToRemove->destroy( blocksToRemove );
         return ADF_RC_ERROR;
     }
     return ADF_RC_OK;
