@@ -132,19 +132,11 @@ add_subdirectory ( src )
 add_subdirectory ( examples )
 
 option ( ADFLIB_ENABLE_TESTS "Enable tests" ON )
-option ( ADFLIB_ENABLE_UNIT_TESTS "Enable units tests (require Check framework >= 0.11" ON )
 
 if ( ADFLIB_ENABLE_TESTS )
     message ( STATUS "Testing enabled" )
     enable_testing()
-    add_subdirectory ( regtests/Test )
-    if ( ADFLIB_ENABLE_UNIT_TESTS AND
-	 NOT ( UNIX AND MINGW ) )       # cannot build tests (ie. Check) cross-compiling
-        message ( STATUS "Unit tests (in tests/) enabled." )
-        add_subdirectory ( tests )
-    else()
-        message ( STATUS "Unit tests (in tests/) disabled." )
-    endif()
+    add_subdirectory( tests )
 else()
     message ( STATUS "Testing disabled" )
 endif()

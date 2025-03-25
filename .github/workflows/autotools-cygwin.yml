@@ -54,6 +54,7 @@ jobs:
         name: cygwin_autotools_native_logs_failed_tests
         path: |
           examples/tests/*.log
-          regtests/Test/*.log
           tests/*.log
+          tests/regr/*.log
+          tests/unit/*.log
 #          C:\cygwin\var\log\setup.log.full

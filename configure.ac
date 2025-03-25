@@ -138,7 +138,8 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  doc/Makefile
                  examples/Makefile
-                 regtests/Test/Makefile
                  tests/Makefile
+                 tests/regr/Makefile
+                 tests/unit/Makefile
                  adflib.pc])
 AC_OUTPUT

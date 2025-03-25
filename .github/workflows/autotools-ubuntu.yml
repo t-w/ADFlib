@@ -46,5 +46,6 @@ jobs:
         name: ubuntu_autotools_logs_failed_tests
         path: |
           examples/tests/*.log
-          regtests/Test/*.log
           tests/*.log
+          tests/regr/*.log
+          tests/unit/*.log

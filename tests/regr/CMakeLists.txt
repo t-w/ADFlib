@@ -58,6 +58,7 @@ add_executable ( dispsect dispsect.c common.c common.h log.c log.h )
 target_link_libraries ( dispsect adf )
 
 add_executable ( file_read_hard_link_test file_read_hard_link_test.c log.c log.h )
+
 target_link_libraries ( file_read_hard_link_test adf )
 
 add_executable ( file_seek_test file_seek_test.c common.c common.h log.c log.h )
@@ -158,21 +159,6 @@ foreach ( a_file
     undel.sh )
   configure_file ( ${a_file} ${a_file} COPYONLY )
 endforeach ( a_file )
-
-file (
-  COPY ${PROJECT_SOURCE_DIR}/regtests/Boot
-  DESTINATION ${PROJECT_BINARY_DIR}/regtests/
-)
-
-file (
-  COPY ${PROJECT_SOURCE_DIR}/regtests/Dumps
-  DESTINATION ${PROJECT_BINARY_DIR}/regtests/
-)
-
-file (
-  COPY ${PROJECT_SOURCE_DIR}/regtests/Files
-  DESTINATION ${PROJECT_BINARY_DIR}/regtests/
-)
 
 
 #

@@ -9,6 +9,7 @@ AM_CFLAGS = -std=c99 -pedantic -Wall -Wextra \
 check_PROGRAMS = \
 	access \
 	bootdisk \
+	bootdisk2 \
 	bitmap_read_segfault \
 	bitmap_recreate \
 	cache_crash \

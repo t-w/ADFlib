@@ -12,14 +12,16 @@ then
     TESTS_DIR=${srcdir}/${TESTS_DIR}
 fi
 
-DUMPS=${TESTS_DIR}/Dumps
+DATA_DIR=${TESTS_DIR}/data
+
+DUMPS=${DATA_DIR}/Dumps
 
 FFSDUMP=$DUMPS/testffs.adf
 OFSDUMP=$DUMPS/testofs.adf
 HDDUMP=$DUMPS/testhd.adf
 LINK_CHAINS_DUMP=$DUMPS/test_link_chains.adf
 
-BOOTDIR=${TESTS_DIR}/Boot
+BOOTDIR=${DATA_DIR}/Boot
 BOOTBLK=$BOOTDIR/stdboot3.bbk
 
-CHECK=${TESTS_DIR}/Check
+CHECK=${DATA_DIR}/Check
