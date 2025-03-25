@@ -1,5 +1,5 @@
-Device : Floppy DD. Cylinders = 80, Heads = 2, Sectors = 11. Volumes = 1
-Volume : Floppy 880 KBytes, "win32-names" between sectors [0-1759]. FFS DIRCACHE. Filled at 5.0%.
+Device : 880 KiB floppy. Cylinders = 80, Heads = 2, Sectors = 11. Volumes = 1
+Volume : 880 KiB floppy, "win32-names" between sectors [0-1759]. FFS DIRCACHE. Filled at 5.0%.
    3398  2023/05/26  11:43:32  win32-names.sh
          2023/05/26  11:43:32  forbidden-files/
       0  2023/05/26  11:43:32  forbidden-files/com6.txt

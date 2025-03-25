@@ -5,6 +5,7 @@
 #include "adf_types.h"
 #include "adf_err.h"
 #include "adf_dev_driver.h"
+#include "adf_dev_type.h"
 #include "adf_prefix.h"
 #include "adf_vol.h"
 
@@ -20,22 +21,15 @@ struct Partition {
 
 /* ----- DEVICES ----- */
 
-typedef enum {
-    ADF_DEVTYPE_FLOPDD   = 1,
-    ADF_DEVTYPE_FLOPHD   = 2,
-    ADF_DEVTYPE_HARDDISK = 3,
-    ADF_DEVTYPE_HARDFILE = 4
-} AdfDeviceType;
-
 struct AdfDevice {
     char *         name;
-    AdfDeviceType  devType;
+    AdfDevType     type;
+    AdfDevClass    class;            // flop / hdf / hdd (with RDB)
     bool           readOnly;
     uint32_t       size;             /* in bytes */
 
-    uint32_t       cylinders;        /* geometry */
-    uint32_t       heads;
-    uint32_t       sectors;
+    struct AdfDevGeometry
+                   geometry;
 
     const struct AdfDeviceDriver *
                    drv;
@@ -117,5 +111,14 @@ ADF_PREFIX ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
  */
 
 ADF_PREFIX char * adfDevGetInfo( const struct AdfDevice * const  dev );
+
+
+static inline bool adfDevIsGeometryValid( const struct AdfDevGeometry * const  geometry,
+                                          const uint32_t                       devSize )
+{
+    return ( devSize == geometry->cylinders *
+                        geometry->heads *
+                        geometry->sectors * 512 );
+}
 
 #endif  /* ADF_DEV_H */

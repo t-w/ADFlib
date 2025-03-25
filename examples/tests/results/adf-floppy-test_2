@@ -1,6 +1,6 @@
 
 ADF device info:
-  Type:		floppy dd
+  Type:		880 KiB floppy
   Driver:	dump
   Geometry:
     Cylinders	80
@@ -11,10 +11,10 @@ ADF device info:
    idx  first bl.     last bl.    filesystem    name
      0          0         1759    ???(???)      ""
 
-Formatting DD floppy (880k) 'TEMPDIR/testflopdd1.adf', volume 0, DOS fstype 1, label 'TestFlopDD1'... Done!
+Formatting 880 KiB floppy 'TEMPDIR/testflopdd1.adf', volume 0, DOS fstype 1, label 'TestFlopDD1'... Done!
 
 ADF device info:
-  Type:		floppy dd
+  Type:		880 KiB floppy
   Driver:	dump
   Geometry:
     Cylinders	80

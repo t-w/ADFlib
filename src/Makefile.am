@@ -27,6 +27,7 @@ libadf_la_SOURCES = \
     adf_dev_flop.c \
     adf_dev_hd.c \
     adf_dev_hdfile.c \
+    adf_dev_type.c \
     adf_dir.c \
     adf_env.c \
     adf_file_block.c \
@@ -64,6 +65,7 @@ adfinc_HEADERS = \
     adf_dev.h \
     adf_dev_hd.h \
     adf_dev_hdfile.h \
+    adf_dev_type.h \
     adf_dir.h \
     adf_env.h \
     adf_err.h \

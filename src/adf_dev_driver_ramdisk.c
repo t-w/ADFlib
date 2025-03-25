@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "adf_dev_driver_ramdisk.h"
+#include "adf_dev_type.h"
 #include "adf_env.h"
 
 static struct AdfDevice * ramdiskCreate( const char * const  name,
@@ -40,10 +41,10 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
     }
 
     dev->readOnly  = false; // ( mode != ADF_ACCESS_MODE_READWRITE );
-    dev->heads     = heads;
-    dev->sectors   = sectors;
-    dev->cylinders = cylinders;
-    dev->size      = cylinders * heads * sectors * 512;
+    dev->geometry.cylinders = cylinders;
+    dev->geometry.heads     = heads;
+    dev->geometry.sectors   = sectors;
+    dev->size               = cylinders * heads * sectors * ADF_LOGICAL_BLOCK_SIZE;
 
     dev->drvData = malloc( dev->size );
     if ( dev->drvData == NULL ) {
@@ -52,7 +53,12 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
         return NULL;
     }
 
-    dev->devType   = adfDevType( dev );
+    //dev->devType   = adfDevType( dev );
+    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
+    dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
+        adfDevTypeGetClass( dev->type ) :
+        adfDevGetClassBySize( dev->size );
+
     dev->nVol      = 0;
     dev->volList   = NULL;
     dev->mounted   = false;

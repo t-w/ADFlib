@@ -4,7 +4,7 @@ Mounted volume:		0
 
 ADF volume info:
   Name:		cshell                        
-  Type:		Floppy Double Density, 880 KBytes
+  Type:		880 KiB floppy
   Filesystem:	OFS  
   Free blocks:	436
   R/W:		Read only

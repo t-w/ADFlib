@@ -27,7 +27,6 @@
 
 #include "adf_dev.h"
 
-#include "adf_blk_hd.h"
 #include "adf_dev_drivers.h"
 #include "adf_dev_flop.h"
 #include "adf_dev_hd.h"
@@ -45,7 +44,6 @@ static struct AdfDevice * adfDevOpenWithDrv_(
     const AdfAccessMode                   mode );
 
 static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev );
-static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev );
 
 
 /*****************************************************************************
@@ -111,30 +109,6 @@ void adfDevClose( struct AdfDevice * const  dev )
 
 
 /*
- * adfDevType
- *
- * returns the type of a device
- * only based of the field 'dev->size'
- */
-int adfDevType( const struct AdfDevice * const  dev )
-{
-    if ( ( dev->size == 512 * 11 * 2 * 80 ) ||		/* BV */
-         ( dev->size == 512 * 11 * 2 * 81 ) ||		/* BV */
-         ( dev->size == 512 * 11 * 2 * 82 ) || 	/* BV */
-         ( dev->size == 512 * 11 * 2 * 83 ) )		/* BV */
-        return ADF_DEVTYPE_FLOPDD;
-    else if ( dev->size == 512 * 22 * 2 * 80 )
-        return ADF_DEVTYPE_FLOPHD;
-    else if ( dev->size > 512 * 22 * 2 * 80 )
-        return ADF_DEVTYPE_HARDDISK;
-    else {
-        adfEnv.eFct("%: unknown device type", __func__ );
-        return -1;
-    }
-}
-
-
-/*
  * adfDevMount
  *
  * mount a dump file (.adf) or a real device (uses adf_nativ.c and .h)
@@ -148,18 +122,17 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
 
     ADF_RETCODE rc;
 
-    switch( dev->devType ) {
+    switch( dev->class ) {
 
-    case ADF_DEVTYPE_FLOPDD:
-    case ADF_DEVTYPE_FLOPHD: {
+    case ADF_DEVCLASS_FLOP: {
         rc = adfMountFlop ( dev );
         if ( rc != ADF_RC_OK )
             return rc;
         }
         break;
 
-    case ADF_DEVTYPE_HARDDISK:
-    case ADF_DEVTYPE_HARDFILE: {
+    case ADF_DEVCLASS_HARDDISK:
+    case ADF_DEVCLASS_HARDFILE: {
         uint8_t buf[512];
         rc = adfDevReadBlock( dev, 0, 512, buf );
         if ( rc != ADF_RC_OK ) {
@@ -168,10 +141,10 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
         }
 
         if ( strncmp( "RDSK", (char *) buf, 4 ) == 0 ) {
-            dev->devType = ADF_DEVTYPE_HARDDISK;
+            dev->class = ADF_DEVCLASS_HARDDISK;
             rc = adfMountHd( dev );
         } else {
-            dev->devType = ADF_DEVTYPE_HARDFILE;
+            dev->class = ADF_DEVCLASS_HARDFILE;
             rc = adfMountHdFile( dev );
         }
 
@@ -264,7 +237,7 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         return NULL;
     }
 
-    dev->devType = adfDevType( dev );
+    dev->class = adfDevGetClassBySize( dev->size );
 
     if ( ! dev->drv->isNative() ) {
         if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
@@ -275,16 +248,33 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         }
     }
 
-    if ( ! adfDevIsGeometryValid_( dev ) ) {
-        adfEnv.eFct( "%s: invalid geometry: cyliders %u, "
-                     "heads: %u, sectors: %u, size: %u, device: %s",
-                     __func__, dev->cylinders,
-                     dev->heads, dev->sectors, dev->size, dev->name );
-        dev->drv->closeDev( dev );
-        return NULL;
+    if ( ! adfDevIsGeometryValid( &dev->geometry, dev->size ) ) {
+        if ( dev->drv->isNative()
+             || dev->type != ADF_DEVTYPE_UNKNOWN )   // from the predefined list should be valid...
+        {
+            adfEnv.eFct( "%s: invalid geometry: cyliders %u, "
+                         "heads: %u, sectors: %u, size: %u, device: %s",
+                         __func__, dev->geometry.cylinders, dev->geometry.heads,
+                         dev->geometry.sectors, dev->size, dev->name );
+            dev->drv->closeDev( dev );
+            return NULL;
+        } else {
+            // only a warning (many exsting HDFs are like this...)
+            const uint32_t sizeFromGeometry = dev->geometry.cylinders *
+                                              dev->geometry.heads *
+                                              dev->geometry.sectors * 512;
+            adfEnv.wFct( "%s: size from geometry %u != device size %u\n"
+                     "(%u bytes left over geometry)\n"
+                     "This is most likely due to size of the device (%u) not divisible\n"
+                     "by sector size (512): real size(%u) %% 512 = %u bytes left unused\n",
+                     __func__, sizeFromGeometry, dev->size,
+                     dev->size % 512,
+                     dev->size, dev->size, dev->size % 512 );
+            //assert( dev->size % 512 == dev->size - sizeFromGeometry );
+        }
     }
 
-    if ( dev->devType == ADF_DEVTYPE_HARDDISK ) {
+    if ( dev->class == ADF_DEVCLASS_HARDDISK ) {
         ADF_RETCODE rc = adfDevUpdateGeometryFromRDSK( dev );
         if ( rc != ADF_RC_OK ) {
             dev->drv->closeDev( dev );
@@ -292,75 +282,42 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         }
     }
 
+    // update device and type after having final geometry set
+    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
+    dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
+        adfDevTypeGetClass( dev->type ) :
+        adfDevGetClassBySize( dev->size );
+
     return dev;
 }
 
 
 static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
 {
-    /* set geometry (based on already set size) */
-    switch ( dev->devType ) {
-    case ADF_DEVTYPE_FLOPDD:
-        dev->heads     = 2;
-        dev->sectors   = 11;
-        dev->cylinders = dev->size / ( dev->heads * dev->sectors * 512 );
-        if ( dev->cylinders < 80 || dev->cylinders > 83 ) {
-            adfEnv.eFct( "%s: invalid size %u", __func__, dev->size );
-            return ADF_RC_ERROR;
-        }
-        break;
+    // set geometry (based on already set size)
 
-    case ADF_DEVTYPE_FLOPHD:
-        dev->heads     = 2;
-        dev->sectors   = 22;
-        dev->cylinders = dev->size / ( dev->heads * dev->sectors * 512 );
-        if ( dev->cylinders != 80 ) {
-            adfEnv.eFct( "%s: invalid size %u", __func__, dev->size );
-            return ADF_RC_ERROR;
-        }
-        break;
+    // first - check predefined types
+    dev->type = adfDevGetTypeBySize( dev->size );
+    if ( dev->type != ADF_DEVTYPE_UNKNOWN ) {
+        dev->geometry = adfDevTypeGetGeometry( dev->type );
+        return ADF_RC_OK;
+    }
 
-    case ADF_DEVTYPE_HARDDISK:
-    case ADF_DEVTYPE_HARDFILE:
-        //dev->heads = 2;
-        //dev->sectors   = dev->size / 4;
-        //dev->cylinders = dev->size / ( dev->sectors * dev->heads * 512 );
-        dev->heads     = 1;
-        dev->sectors   = 1;
-        dev->cylinders = dev->size / 512;
-        break;
-
-    default:
-        adfEnv.eFct( "%s: invalid dev type %d", __func__, dev->devType );
+    // if not found on the predefined list - guess something reasonable...
+    if ( dev->class == ADF_DEVCLASS_HARDDISK ||
+         dev->class == ADF_DEVCLASS_HARDFILE )
+    {
+        // partitions must be aligned with cylinders(tracks) - this gives most
+        // flexibility
+        dev->geometry.cylinders = dev->size / 512;
+        dev->geometry.heads     = 1;
+        dev->geometry.sectors   = 1;
+    } else {
+        adfEnv.eFct( "%s: invalid dev class %d", __func__, dev->class );
         return ADF_RC_ERROR;
     }
 
-    const uint32_t sizeFromGeometry = dev->cylinders * dev->heads * dev->sectors * 512;
-    if ( sizeFromGeometry != dev->size ) {
-        adfEnv.wFct( "%s: size from geometry %u != device size %u\n"
-                     "(%u bytes left over geometry)\n"
-                     "This is most likely due to size of the device (%u) not divisible\n"
-                     "by sector size (512): real size(%u) %% 512 = %u bytes left unused\n",
-                     __func__, sizeFromGeometry, dev->size,
-                     dev->size % 512,
-                     dev->size, dev->size, dev->size % 512 );
-        assert( dev->size % 512 == dev->size - sizeFromGeometry );
-    }
-
     return ADF_RC_OK;
-}
-
-
-static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev )
-{
-    const uint32_t sizeFromGeometry = dev->cylinders * dev->heads * dev->sectors * 512;
-    //return ( dev->cylinders > 0 &&
-    //         dev->heads > 0    &&
-    //         dev->sectors > 0
-    //         && sizeFromGeometry == dev->size );
-
-    // what is the minimal device size? (guessing: 10 blocks(?))
-    return ( sizeFromGeometry >= 512 * 10 );
 }
 
 
@@ -373,21 +330,21 @@ static bool adfDevIsGeometryValid_( const struct AdfDevice * const  dev )
 char * adfDevGetInfo( const struct AdfDevice * const  dev )
 {
     const char * devTypeInfo = NULL;
-    switch ( dev->devType ) {
-    case ADF_DEVTYPE_FLOPDD:
-        devTypeInfo = "floppy dd";
-        break;
-    case ADF_DEVTYPE_FLOPHD:
-        devTypeInfo = "floppy hd";
-        break;
-    case ADF_DEVTYPE_HARDDISK:
-        devTypeInfo = "harddisk";
-        break;
-    case ADF_DEVTYPE_HARDFILE:
-        devTypeInfo = "hardfile";
-        break;
-    default:
-        devTypeInfo = "unknown device type!";
+    if ( dev->type != ADF_DEVTYPE_UNKNOWN ) {
+        devTypeInfo = adfDevTypeGetDescription( dev->type );
+    } else {
+        switch ( dev->class ) {
+            // floppies must be covered above
+
+        case ADF_DEVCLASS_HARDDISK:
+            devTypeInfo = "harddisk";
+            break;
+        case ADF_DEVCLASS_HARDFILE:
+            devTypeInfo = "hardfile";
+            break;
+        default:
+            devTypeInfo = "unknown device type!";
+        }
     }
 
     char * const info = malloc( DEVINFO_SIZE + 1 );
@@ -404,7 +361,7 @@ char * adfDevGetInfo( const struct AdfDevice * const  dev )
             "    Cylinders\t%d\n"
             "    Heads\t%d\n"
             "    Sectors\t%d\n\n",
-            dev->cylinders, dev->heads, dev->sectors );
+            dev->geometry.cylinders, dev->geometry.heads, dev->geometry.sectors );
 
     infoptr += snprintf(
         infoptr, (size_t) ( DEVINFO_SIZE - ( infoptr - info ) ),

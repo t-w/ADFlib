@@ -74,8 +74,10 @@ struct AdfVolume * adfVolCreate( struct AdfDevice * const  dev,
     }
 
     vol->dev        = dev;
-    vol->firstBlock = (int32_t)( dev->heads * dev->sectors * start );
-    vol->lastBlock  = vol->firstBlock + (int32_t)( dev->heads * dev->sectors * len ) - 1;
+    vol->firstBlock = (int32_t)( dev->geometry.heads *
+                                 dev->geometry.sectors * start );
+    vol->lastBlock  = vol->firstBlock + (int32_t)( dev->geometry.heads *
+                                                   dev->geometry.sectors * len ) - 1;
     vol->blockSize  = 512;
     vol->rootBlock  = adfVolCalcRootBlk( vol );
 
@@ -355,8 +357,8 @@ ADF_RETCODE adfVolInstallBootBlock( struct AdfVolume * const  vol,
     int i;
     struct AdfBootBlock boot;
 
-    if ( vol->dev->devType != ADF_DEVTYPE_FLOPDD &&
-         vol->dev->devType != ADF_DEVTYPE_FLOPHD )
+    if ( vol->dev->class != ADF_DEVCLASS_FLOP )
+        //&& vol->dev->ype != ADF_DEVTYPE_HDF )   also HDF????
     {
         return ADF_RC_ERROR;
     }
@@ -496,23 +498,22 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
 
     #define TYPE_INFO_SIZE 64
     char typeInfo[ TYPE_INFO_SIZE ];
-    switch ( vol->dev->devType ) {
-    case ADF_DEVTYPE_FLOPDD:
-        snprintf( typeInfo, TYPE_INFO_SIZE, "Floppy Double Density, 880 KBytes\n" );
-        break;
-    case ADF_DEVTYPE_FLOPHD:
-        snprintf( typeInfo, TYPE_INFO_SIZE, "Floppy High Density, 1760 KBytes\n" );
-        break;
-    case ADF_DEVTYPE_HARDDISK:
-        snprintf( typeInfo, TYPE_INFO_SIZE, "Hard Disk partition, %3.1f KBytes\n",
-                ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
-        break;
-    case ADF_DEVTYPE_HARDFILE:
-        snprintf( typeInfo, TYPE_INFO_SIZE, "HardFile : %3.1f KBytes\n",
-                ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
-        break;
-    default:
-        snprintf( typeInfo, TYPE_INFO_SIZE, "Unknown devType!\n" );
+    if ( vol->dev->type != ADF_DEVTYPE_UNKNOWN ) {
+        snprintf( typeInfo, TYPE_INFO_SIZE, "%s\n",
+                  adfDevTypeGetDescription( vol->dev->type ) );
+    } else {
+        switch ( vol->dev->class ) {
+        case ADF_DEVCLASS_HARDDISK:
+            snprintf( typeInfo, TYPE_INFO_SIZE, "Hard Disk partition, %3.1f KBytes\n",
+                      ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
+            break;
+        case ADF_DEVCLASS_HARDFILE:
+            snprintf( typeInfo, TYPE_INFO_SIZE, "HardFile : %3.1f KBytes\n",
+                      ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
+            break;
+        default:
+            snprintf( typeInfo, TYPE_INFO_SIZE, "Unknown devType!\n" );
+        }
     }
 
     int cDays, cMonth, cYear,

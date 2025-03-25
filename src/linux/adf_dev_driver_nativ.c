@@ -34,6 +34,7 @@
 
 #include "adf_err.h"
 #include "adf_dev_driver_nativ.h"
+#include "adf_dev_type.h"
 #include "adf_env.h"
 
 
@@ -114,23 +115,28 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
     if ( ioctl( *fd, HDIO_GETGEO, &geom ) == 0 ) {
         //adfEnv.vFct( "%s: geometry from ioctl: cylinders %u, heads %u, sectors %u\n",
         //             __func__, geom.cylinders, geom.heads, geom.sectors );
-        dev->heads     = geom.heads;
-        dev->sectors   = geom.sectors;
-        dev->cylinders = geom.cylinders;
+        dev->geometry.cylinders = geom.cylinders;
+        dev->geometry.heads     = geom.heads;
+        dev->geometry.sectors   = geom.sectors;
 
         adfEnv.vFct( "%s: geometry read from the device", __func__ );
     } else {
         // no data from hardware, so guessing (is whatever matches the size OK?)
-        dev->heads     = 1;
-        dev->sectors   = dev->size / 512;
-        dev->cylinders = 1;
+        dev->geometry.cylinders = dev->size / 512;
+        dev->geometry.heads     = 1;
+        dev->geometry.sectors   = 1;
 
         adfEnv.vFct( "%s: geometry calculated from the device size", __func__ );
     }
     adfEnv.vFct( "%s: geometry: cylinders %u, heads %u, sectors %u",
-                 __func__, dev->cylinders, dev->heads, dev->sectors );
+                 __func__, dev->geometry.cylinders, dev->geometry.heads,
+                 dev->geometry.sectors );
 
-    dev->devType = adfDevType( dev );
+    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
+    dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
+        adfDevTypeGetClass( dev->type ) :
+        adfDevGetClassBySize( dev->size );
+
     dev->nVol    = 0;
     dev->volList = NULL;
     dev->mounted = false;

@@ -53,36 +53,56 @@ ADF_RETCODE adfDevUpdateGeometryFromRDSK( struct AdfDevice * const  dev )
         if ( rc == ADF_RC_OK ) {
             /* rigid block loaded -> check geometry */
             //if ( ! adfDevIsRDSKGeometryValid_ ( dev, &rdsk ) ) {
-            if  ( dev->cylinders != rdsk.cylinders ||
-                  dev->heads     != rdsk.heads     ||
-                  dev->sectors   != rdsk.sectors )
+            if ( dev->geometry.cylinders != rdsk.cylinders ||
+                 dev->geometry.heads     != rdsk.heads     ||
+                 dev->geometry.sectors   != rdsk.sectors )
             {
-                adfEnv.wFct(
-                    "%s: using geometry from Rigid Block, "
-                    "different than detected/calculated(!):\n"
-                    "                detected                rdsk block\n"
-                    " cyliders:      %8u                  %8u\n"
-                    " heads:         %8u                  %8u\n"
-                    " sectors:       %8u                  %8u\n"
-                    " size:        %10llu                %10llu",
-                    __func__,
-                    dev->cylinders, rdsk.cylinders,
-                    dev->heads,     rdsk.heads,
-                    dev->sectors,   rdsk.sectors,
-                    dev->size,
-                    (long long unsigned) rdsk.cylinders *
-                    (long long unsigned) rdsk.heads *
-                    (long long unsigned) rdsk.sectors * 512LLU );
-                dev->cylinders = rdsk.cylinders;
-                dev->heads     = rdsk.heads;
-                dev->sectors   = rdsk.sectors;
-                if ( ! adfDevIsGeometryValid_( dev ) ) {
-                    adfEnv.eFct( "%s: invalid geometry: cyliders %u, "
-                                 "heads: %u, sectors: %u, size: %u, device: %s",
-                                 __func__, dev->cylinders, dev->heads,
-                                 dev->sectors, dev->size, dev->name );
-                    dev->drv->closeDev( dev );
-                    return NULL;
+                if ( //adfDevIsGeometryValid( &dev->geometry, dev->size ) ) {
+                     dev->size == rdsk.cylinders *
+                                  rdsk.heads *
+                                  rdsk.sectors * 512 )
+                {
+                    adfEnv.wFct(
+                        "%s: using geometry from Rigid Block, "
+                        "different than detected/calculated(!):\n"
+                        "                detected                rdsk block\n"
+                        " cyliders:      %8u                  %8u\n"
+                        " heads:         %8u                  %8u\n"
+                        " sectors:       %8u                  %8u\n"
+                        " size:        %10llu                %10llu",
+                        __func__,
+                        dev->geometry.cylinders, rdsk.cylinders,
+                        dev->geometry.heads,     rdsk.heads,
+                        dev->geometry.sectors,   rdsk.sectors,
+                        dev->size,
+                        (long long unsigned) rdsk.cylinders *
+                        (long long unsigned) rdsk.heads *
+                        (long long unsigned) rdsk.sectors * 512LLU );
+                    dev->geometry.cylinders = rdsk.cylinders;
+                    dev->geometry.heads     = rdsk.heads;
+                    dev->geometry.sectors   = rdsk.sectors;
+                } else {
+                    adfEnv.wFct(
+                        "%s: invalid geometry read from Rigid Block, "
+                        "different than detected/calculated(!) and not consistent with size:\n"
+                        "                detected                rdsk block\n"
+                        " cyliders:      %8u                  %8u\n"
+                        " heads:         %8u                  %8u\n"
+                        " sectors:       %8u                  %8u\n"
+                        " size:        %10llu                %10llu\n\n"
+                        "(keeping detected geometry).",
+                        __func__,
+                        dev->geometry.cylinders, rdsk.cylinders,
+                        dev->geometry.heads,     rdsk.heads,
+                        dev->geometry.sectors,   rdsk.sectors,
+                        dev->size,
+                        (long long unsigned) rdsk.cylinders *
+                        (long long unsigned) rdsk.heads *
+                        (long long unsigned) rdsk.sectors * 512LLU );
+
+                    // return error or just issue a warning and keep detected?
+                    //dev->drv->closeDev( dev );
+                    //return ADF_RC_ERROR;
                 }
             }
         } else {
@@ -115,7 +135,7 @@ ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
         return ADF_RC_ERROR;
     }
 
-    dev->devType = ADF_DEVTYPE_HARDDISK;
+    dev->class = ADF_DEVCLASS_HARDDISK;
 
     dev->volList = (struct AdfVolume **) malloc(
         sizeof(struct AdfVolume *) * n );
@@ -174,14 +194,16 @@ ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
     memset( (uint8_t *) &rdsk, 0, sizeof(struct AdfRDSKblock) );
 
     rdsk.rdbBlockLo = 0;
-    rdsk.rdbBlockHi = ( dev->sectors * dev->heads * 2 ) - 1;
+    rdsk.rdbBlockHi = ( dev->geometry.sectors *
+                        dev->geometry.heads * 2 ) - 1;
     rdsk.loCylinder = 2;
-    rdsk.hiCylinder = dev->cylinders - 1;
-    rdsk.cylBlocks  = dev->sectors * dev->heads;
+    rdsk.hiCylinder = dev->geometry.cylinders - 1;
+    rdsk.cylBlocks  = dev->geometry.sectors *
+                      dev->geometry.heads;
 
-    rdsk.cylinders = dev->cylinders;
-    rdsk.sectors   = dev->sectors;
-    rdsk.heads     = dev->heads;
+    rdsk.cylinders = dev->geometry.cylinders;
+    rdsk.sectors   = dev->geometry.sectors;
+    rdsk.heads     = dev->geometry.heads;
 	
     rdsk.badBlockList   = -1;
     rdsk.partitionList  = 1;
@@ -207,8 +229,8 @@ ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
         part.nameLen = (char) len;
         strncpy( part.name, partList[ i ]->volName, len );
 
-        part.surfaces       = (int32_t) dev->heads;
-        part.blocksPerTrack = (int32_t) dev->sectors;
+        part.surfaces       = (int32_t) dev->geometry.heads;
+        part.blocksPerTrack = (int32_t) dev->geometry.sectors;
         part.lowCyl         = partList[ i ]->startCyl;
         part.highCyl        = partList[ i ]->startCyl +
                               partList[ i ]->lenCyl - 1;

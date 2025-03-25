@@ -27,6 +27,7 @@
 #include "adf_str.h"
 #include "adf_err.h"
 #include "adf_dev_driver_nativ.h"
+#include "adf_dev_type.h"
 #include "adf_env.h"
 #include "nt4_dev.h"
 
@@ -97,9 +98,9 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
         return NULL;
     }
 
-    dev->cylinders = geometry.cylinders;
-    dev->heads     = geometry.tracksPerCylinder;
-    dev->sectors   = geometry.sectorsPerTrack;
+    dev->geometry.cylinders = geometry.cylinders;
+    dev->geometry.heads     = geometry.tracksPerCylinder;
+    dev->geometry.sectors   = geometry.sectorsPerTrack;
 
     //dev->size = NT4GetDriveSize(nDev->hDrv);
     dev->size = geometry.cylinders *
@@ -107,7 +108,11 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
                 geometry.sectorsPerTrack *
                 geometry.bytesPerSector;
 
-    dev->devType = adfDevType( dev );
+    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
+    dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
+        adfDevTypeGetClass( dev->type ) :
+        adfDevGetClassBySize( dev->size );
+
     dev->nVol    = 0;
     dev->volList = NULL;
     dev->mounted = false;

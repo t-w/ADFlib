@@ -2,7 +2,7 @@
 Opening image/device:	'BASEDIR/arccsh.adf'
 
 ADF device info:
-  Type:		floppy dd
+  Type:		880 KiB floppy
   Driver:	dump
   Geometry:
     Cylinders	80

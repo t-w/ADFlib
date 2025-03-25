@@ -53,7 +53,10 @@ int main ( const int          argc,
         goto clean_up_env;
     }
 
-    if ( (unsigned) fileHeaderSector > hd->cylinders * hd->heads * hd->sectors ) {
+    if ( (unsigned) fileHeaderSector > hd->geometry.cylinders *
+                                       hd->geometry.heads *
+                                       hd->geometry.sectors )
+    {
         status = 5;
         goto clean_up_env;
     }

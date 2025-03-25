@@ -55,14 +55,15 @@ ADF_RETCODE adfCreateHdFile( struct AdfDevice * const  dev,
         return ADF_RC_MALLOC;
     }
 
-    dev->volList[ 0 ] = adfVolCreate( dev, 0L, dev->cylinders, volName, volType );
+    dev->volList[ 0 ] = adfVolCreate( dev, 0L, dev->geometry.cylinders,
+                                      volName, volType );
     if ( dev->volList[ 0 ] == NULL ) {
         free( dev->volList );
         return ADF_RC_ERROR;
     }
 
     dev->nVol    = 1;
-    dev->devType = ADF_DEVTYPE_HARDFILE;
+    dev->class   = ADF_DEVCLASS_HARDFILE;
     dev->mounted = true;
 
     return ADF_RC_OK;
@@ -146,11 +147,16 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
             return ADF_RC_ERROR;
         }
 
+        // why like this???? are there cases where root is lower than in half
+        // and then the remaining part of blocks at the end is not used?
+        // is AmigaDos expecting the end to be made after position of rootblock?
+        vol->lastBlock = vol->rootBlock * 2 - 1;
         // hdf is a single volume, should cover all device (unless it has size
         // not expressible in blocks - there is a remainder after the last block,
         // smaller than the block size)
-        //vol->lastBlock = vol->rootBlock * 2 - 1;
-        vol->lastBlock = (int32_t) ( dev->cylinders * dev->heads * dev->sectors - 1 );
+        //vol->lastBlock = (int32_t) ( dev->geometry.cylinders *
+        //                             dev->geometry.heads *
+        //                             dev->geometry.sectors - 1 );
 
         struct AdfRootBlock root;
         vol->mounted = true;    // must be set to read the root block
@@ -171,9 +177,9 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
         vol->datablockSize = 0; //512;
         vol->volName       = NULL;
         vol->rootBlock     = -1;
-        vol->lastBlock     = (int32_t) ( dev->cylinders *
-                                         dev->heads *
-                                         dev->sectors - 1 );
+        vol->lastBlock     = (int32_t) ( dev->geometry.cylinders *
+                                         dev->geometry.heads *
+                                         dev->geometry.sectors - 1 );
     }
 
     return ADF_RC_OK;

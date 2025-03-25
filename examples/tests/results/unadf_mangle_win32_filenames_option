@@ -1,5 +1,5 @@
-Device : Floppy DD. Cylinders = 80, Heads = 2, Sectors = 11. Volumes = 1
-Volume : Floppy 880 KBytes, "win32-names" between sectors [0-1759]. FFS DIRCACHE. Filled at 5.0%.
+Device : 880 KiB floppy. Cylinders = 80, Heads = 2, Sectors = 11. Volumes = 1
+Volume : 880 KiB floppy, "win32-names" between sectors [0-1759]. FFS DIRCACHE. Filled at 5.0%.
 x - TEMPDIR/x/win32-names.sh
 x - TEMPDIR/x/forbidden-files/
 x - TEMPDIR/x/forbidden-files/com6_.txt

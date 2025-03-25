@@ -55,7 +55,9 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
     }
 
     vol->firstBlock = 0;
-    vol->lastBlock  = (int32_t) ( dev->cylinders * dev->heads * dev->sectors - 1 );
+    vol->lastBlock  = (int32_t) ( dev->geometry.cylinders *
+                                  dev->geometry.heads *
+                                  dev->geometry.sectors - 1 );
     vol->blockSize  = 512;
     vol->dev        = dev;
     vol->volName    = NULL;
@@ -163,8 +165,10 @@ ADF_RETCODE adfCreateFlop( struct AdfDevice * const  dev,
         return ADF_RC_ERROR;
     }
     dev->nVol    = 1;
-    dev->devType = ( dev->sectors == 11 ? ADF_DEVTYPE_FLOPDD :
-                                          ADF_DEVTYPE_FLOPHD );
+
+    // must be already set in dev open
+    //dev->devType = ( dev->sectors == 11 ? ADF_DEVTYPE_FLOPDD :
+    //                                      ADF_DEVTYPE_FLOPHD );
     dev->mounted = true;
 
     return ADF_RC_OK;

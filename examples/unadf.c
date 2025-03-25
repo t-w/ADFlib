@@ -280,11 +280,10 @@ void help(FILE * const stream) {
 void print_device(struct AdfDevice *dev)
 {
     printf("Device : %s. Cylinders = %d, Heads = %d, Sectors = %d. Volumes = %d\n",
-        dev->devType == ADF_DEVTYPE_FLOPDD   ? "Floppy DD" :
-        dev->devType == ADF_DEVTYPE_FLOPHD   ? "Floppy HD" :
-        dev->devType == ADF_DEVTYPE_HARDDISK ? "Harddisk"  :
-        dev->devType == ADF_DEVTYPE_HARDFILE ? "Hardfile"  : "???",
-        dev->cylinders, dev->heads, dev->sectors, dev->nVol);
+        dev->type != ADF_DEVTYPE_UNKNOWN    ? adfDevTypeGetDescription( dev->type ) :
+        dev->class == ADF_DEVCLASS_HARDDISK ? "Harddisk"  :
+        dev->class == ADF_DEVCLASS_HARDFILE ? "Hardfile"  : "???",
+        dev->geometry.cylinders, dev->geometry.heads, dev->geometry.sectors, dev->nVol);
 }
 
 /* prints one line of information about a volume */
@@ -292,23 +291,20 @@ void print_volume(struct AdfVolume *vol)
 {
     ADF_SECTNUM num_blocks = vol->lastBlock - vol->firstBlock + 1;
 
-    switch (vol->dev->devType) {
-    case ADF_DEVTYPE_FLOPDD:
-        printf("Volume : Floppy 880 KBytes,");
-        break;
-    case ADF_DEVTYPE_FLOPHD:
-        printf("Volume : Floppy 1760 KBytes,");
-        break;
-    case ADF_DEVTYPE_HARDDISK:
-        printf("Volume : HD partition #%d %3.1f KBytes,", vol_number, num_blocks / 2.0);
-        break;
-    case ADF_DEVTYPE_HARDFILE:
-        printf("Volume : HardFile %3.1f KBytes,", num_blocks / 2.0);
-        break;
-    default:
-        printf("???,");
+    if (vol->dev->type != ADF_DEVTYPE_UNKNOWN)
+        printf("Volume : %s,", adfDevTypeGetDescription( vol->dev->type ) );
+    else {
+        switch (vol->dev->class) {
+        case ADF_DEVCLASS_HARDDISK:
+            printf("Volume : HD partition #%d %3.1f KBytes,", vol_number, num_blocks / 2.0);
+            break;
+        case ADF_DEVCLASS_HARDFILE:
+            printf("Volume : HardFile %3.1f KBytes,", num_blocks / 2.0);
+            break;
+        default:
+            printf("???,");
+        }
     }
-
     if (vol->volName) {
         printf(" \"%s\"", vol->volName);
     }

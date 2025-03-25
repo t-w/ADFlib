@@ -28,6 +28,7 @@
 #include "adf_dev_driver_dump.h"
 
 #include "adf_blk.h"
+#include "adf_dev_type.h"
 #include "adf_env.h"
 #include "adf_err.h"
 
@@ -113,18 +114,16 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
         adfEnv.eFct("%s: fopen", __func__ );
         return NULL;
     }
-    dev->cylinders = cylinders;
-    dev->heads     = heads;
-    dev->sectors   = sectors;
-    dev->size      = cylinders * heads * sectors * ADF_LOGICAL_BLOCK_SIZE;
+    dev->geometry.cylinders = cylinders;
+    dev->geometry.heads     = heads;
+    dev->geometry.sectors   = sectors;
+    dev->size               = cylinders * heads * sectors * ADF_LOGICAL_BLOCK_SIZE;
 
-    if ( dev->size == 80 * 11 * 2 * ADF_LOGICAL_BLOCK_SIZE )
-        dev->devType = ADF_DEVTYPE_FLOPDD;
-    else if ( dev->size == 80 * 22 * 2 * ADF_LOGICAL_BLOCK_SIZE )
-        dev->devType = ADF_DEVTYPE_FLOPHD;
-    else
-        dev->devType = ADF_DEVTYPE_HARDDISK;
-		
+    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
+    dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
+        adfDevTypeGetClass( dev->type ) :
+        adfDevGetClassBySize( dev->size );
+
     dev->nVol     = 0;
     dev->readOnly = false;
     dev->mounted  = false;
@@ -187,7 +186,8 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
     dev->size = (uint32_t) ftell( *fd );
     fseek( *fd, 0, SEEK_SET );
 
-    dev->devType = adfDevType( dev );
+    dev->class = adfDevGetClassBySize( dev->size );
+    dev->type  = ADF_DEVTYPE_UNKNOWN; // geometry unknown
     dev->nVol    = 0;
     dev->volList = NULL;
     dev->mounted = false;

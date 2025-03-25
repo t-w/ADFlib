@@ -1,5 +1,5 @@
-Device : Floppy DD. Cylinders = 80, Heads = 2, Sectors = 11. Volumes = 1
-Volume : Floppy 880 KBytes, "cshell" between sectors [0-1759]. OFS. Filled at 75.2%.
+Device : 880 KiB floppy. Cylinders = 80, Heads = 2, Sectors = 11. Volumes = 1
+Volume : 880 KiB floppy, "cshell" between sectors [0-1759]. OFS. Filled at 75.2%.
          1999/07/30  22:35:01  c/
          1999/07/30  22:14:46  l/
          1999/07/04  14:24:24  devs/
