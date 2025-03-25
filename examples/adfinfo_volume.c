@@ -41,7 +41,7 @@ static void show_bmpages_array( const int32_t * const  bmpages,
 
 void show_volume_metadata( struct AdfVolume * const  vol )
 {
-    const char * const volInfo = adfVolGetInfo( vol );
+    char * const volInfo = adfVolGetInfo( vol );
     printf( "%s", volInfo );
     free( volInfo );
 
