@@ -1220,7 +1220,7 @@ char * adfEntryGetInfo( const struct AdfEntry * const  entry )
         return NULL;
 
     char *infoptr = info;
-    infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+    infoptr += snprintf( infoptr, (size_t)( ENTRYINFO_SIZE - ( infoptr - info ) ),
                          "%-30s %2d %6d "
                          "%2d/%02d/%04d %2d:%02d:%02d",
                          entry->name, entry->type, entry->sector,
@@ -1229,10 +1229,10 @@ char * adfEntryGetInfo( const struct AdfEntry * const  entry )
 
 
    if ( entry->type == ADF_ST_FILE )
-       infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+       infoptr += snprintf( infoptr, (size_t)( ENTRYINFO_SIZE - ( infoptr - info ) ),
                             "%8d ",entry->size );
-    else
-       infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+   else
+       infoptr += snprintf( infoptr, (size_t)( ENTRYINFO_SIZE - ( infoptr - info ) ),
                             "         " );
 
     if ( entry->type == ADF_ST_FILE ||
@@ -1241,14 +1241,14 @@ char * adfEntryGetInfo( const struct AdfEntry * const  entry )
         char accessStr[ 8 + 1 ];
         adfAccess2String( entry->access, accessStr );
 
-        infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+        infoptr += snprintf( infoptr, (size_t)( ENTRYINFO_SIZE - ( infoptr - info ) ),
                              "%-s ", accessStr );
     }
 
     if ( entry->comment != NULL )
-        infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ),
+        infoptr += snprintf( infoptr, (size_t)( ENTRYINFO_SIZE - ( infoptr - info ) ),
                              "%s ",entry->comment );
-    infoptr += snprintf( infoptr, ENTRYINFO_SIZE - ( infoptr - info ), "\n" );
+    infoptr += snprintf( infoptr, (size_t)( ENTRYINFO_SIZE - ( infoptr - info ) ), "\n" );
 
     assert( infoptr - info < ENTRYINFO_SIZE );
     return info;
