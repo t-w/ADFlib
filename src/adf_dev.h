@@ -96,15 +96,15 @@ ADF_PREFIX ADF_RETCODE adfDevMount( struct AdfDevice * const dev );
 ADF_PREFIX void adfDevUnMount( struct AdfDevice * const dev );
 
 
-ADF_PREFIX ADF_RETCODE adfDevReadBlock( struct AdfDevice * const  dev,
-                                        const uint32_t            pSect,
-                                        const uint32_t            size,
-                                        uint8_t * const           buf );
+ADF_PREFIX ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
+                                        const uint32_t                  pSect,
+                                        const uint32_t                  size,
+                                        uint8_t * const                 buf );
 
-ADF_PREFIX ADF_RETCODE adfDevWriteBlock( struct AdfDevice * const  dev,
-                                         const uint32_t            pSect,
-                                         const uint32_t            size,
-                                         const uint8_t * const     buf );
+ADF_PREFIX ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
+                                         const uint32_t                  pSect,
+                                         const uint32_t                  size,
+                                         const uint8_t * const           buf );
 
 /*
  * adfDevGetInfo

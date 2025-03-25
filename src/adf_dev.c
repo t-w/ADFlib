@@ -217,10 +217,10 @@ void adfDevUnMount( struct AdfDevice * const  dev )
  * adfDevReadBlock
  *
  */
-ADF_RETCODE adfDevReadBlock( struct AdfDevice * const  dev,
-                             const uint32_t            pSect,
-                             const uint32_t            size,
-                             uint8_t * const           buf )
+ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
+                             const uint32_t                  pSect,
+                             const uint32_t                  size,
+                             uint8_t * const                 buf )
 {
 /*  printf("pSect R =%ld\n",pSect);
     ADF_RETCODE rc = dev->drv->readSector ( dev, pSect, size, buf );
@@ -234,10 +234,10 @@ ADF_RETCODE adfDevReadBlock( struct AdfDevice * const  dev,
  * adfDevWriteBlock
  *
  */
-ADF_RETCODE adfDevWriteBlock( struct AdfDevice * const  dev,
-                              const uint32_t            pSect,
-                              const uint32_t            size,
-                              const uint8_t * const     buf )
+ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
+                              const uint32_t                  pSect,
+                              const uint32_t                  size,
+                              const uint8_t * const           buf )
 {
 /*printf("nativ=%d\n",dev->isNativeDev);*/
     return dev->drv->writeSector( dev, pSect, size, buf );
