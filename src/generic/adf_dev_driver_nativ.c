@@ -46,10 +46,10 @@ static struct AdfDevice * myInitDevice( const char * const   name,
  * myReadSector
  *
  */
-ADF_RETCODE myReadSector( struct AdfDevice * const  dev,
-                          const uint32_t            n,
-                          const unsigned            size,
-                          uint8_t * const           buf )
+ADF_RETCODE myReadSector( const struct AdfDevice * const  dev,
+                          const uint32_t                  n,
+                          const unsigned                  size,
+                          uint8_t * const                 buf )
 {
     (void) dev, (void) n, (void) size, (void) buf;
     return ADF_RC_ERROR;
@@ -60,10 +60,10 @@ ADF_RETCODE myReadSector( struct AdfDevice * const  dev,
  * myWriteSector
  *
  */
-ADF_RETCODE myWriteSector( struct AdfDevice * const  dev,
-                           const uint32_t            n,
-                           const unsigned            size,
-                           const uint8_t * const     buf )
+ADF_RETCODE myWriteSector( const struct AdfDevice * const  dev,
+                           const uint32_t                  n,
+                           const unsigned                  size,
+                           const uint8_t * const           buf )
 {
     (void) dev, (void) n, (void) size, (void) buf;
     return ADF_RC_ERROR;
