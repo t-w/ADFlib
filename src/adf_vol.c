@@ -523,7 +523,7 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
     adfDays2Date( root.days,   &aYear, &aMonth, &aDays );
     adfDays2Date( root.cDays,  &mYear, &mMonth, &mDays );
 
-    const unsigned volInfoSize = snprintf(
+    const int volInfoSize = snprintf(
         NULL, 0,
         "\nADF volume info:\n  Name:\t\t%-30s\n"
         "  Type:\t\t%s"
@@ -553,13 +553,17 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
         root.cMins % 60,
         root.cTicks / 50 ) + 1;
 
+    if ( volInfoSize < 0 ) {
+        adfEnv.eFct( "%s: snprintf returned an error", __func__);
+        return NULL;
+    }
 
-    char * const volInfo = malloc( volInfoSize );
+    char * const volInfo = malloc( (size_t) volInfoSize );
     if ( volInfo == NULL )
         return NULL;
 
     snprintf(
-        volInfo, volInfoSize,
+        volInfo, (size_t) volInfoSize,
         "\nADF volume info:\n  Name:\t\t%-30s\n"
         "  Type:\t\t%s"
         "  Filesystem:\t%s %s %s\n"
