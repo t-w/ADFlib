@@ -442,11 +442,11 @@ char * adfDevGetInfo( const struct AdfDevice * const  dev )
         return NULL;
 
     char *infoptr = info;
-    infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+    infoptr += snprintf( infoptr, (size_t)( DEVINFO_SIZE - ( infoptr - info ) ),
                          "\nADF device info:\n  Type:\t\t%s\n  Driver:\t%s\n",
                          devTypeInfo, dev->drv->name );
 
-    infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+    infoptr += snprintf( infoptr, (size_t)( DEVINFO_SIZE - ( infoptr - info ) ),
                          "  Geometry:\n"
             "    Cylinders\t%d\n"
             "    Heads\t%d\n"
@@ -454,7 +454,7 @@ char * adfDevGetInfo( const struct AdfDevice * const  dev )
             dev->cylinders, dev->heads, dev->sectors );
 
     infoptr += snprintf(
-        infoptr, DEVINFO_SIZE - ( infoptr - info ),
+        infoptr, (size_t) ( DEVINFO_SIZE - ( infoptr - info ) ),
         "  Volumes:\t%d%s\n", dev->nVol,
         dev->nVol > 0 ? "\n   idx  first bl.     last bl.    filesystem    name" : "" );
 
@@ -463,7 +463,7 @@ char * adfDevGetInfo( const struct AdfDevice * const  dev )
         const char * const fstype = ( adfVolIsDosFS( vol ) ) ?
             ( adfVolIsOFS( vol ) ? "OFS" : "FFS" ) : "???";
         infoptr += snprintf(
-            infoptr, DEVINFO_SIZE - ( infoptr - info ),
+            infoptr, (size_t)( DEVINFO_SIZE - ( infoptr - info ) ),
             "    %2d  %9d    %9d    %s(%s)      \"%s\"", i,
                 vol->firstBlock,
                 vol->lastBlock,
@@ -471,12 +471,12 @@ char * adfDevGetInfo( const struct AdfDevice * const  dev )
                 fstype,
                 vol->volName ? vol->volName : "" );
         if ( vol->mounted )
-            infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+            infoptr += snprintf( infoptr, (size_t)( DEVINFO_SIZE - ( infoptr - info ) ),
                                  "    mounted");
-        infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+        infoptr += snprintf( infoptr, (size_t)( DEVINFO_SIZE - ( infoptr - info ) ),
                              "\n");
     }
-    infoptr += snprintf( infoptr, DEVINFO_SIZE - ( infoptr - info ),
+    infoptr += snprintf( infoptr, (size_t)( DEVINFO_SIZE - ( infoptr - info ) ),
                          "\n");
     assert( infoptr - info < DEVINFO_SIZE );
     return info;
