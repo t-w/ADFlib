@@ -340,8 +340,8 @@ ADF_RETCODE adfMountHd( struct AdfDevice * const  dev )
  * ReadRDSKblock
  *
  */
-ADF_RETCODE adfReadRDSKblock( struct AdfDevice * const     dev,
-                              struct AdfRDSKblock * const  blk )
+ADF_RETCODE adfReadRDSKblock( const struct AdfDevice * const  dev,
+                              struct AdfRDSKblock * const     blk )
 {
     uint8_t buf[ 256 ];
 
@@ -391,8 +391,8 @@ ADF_RETCODE adfReadRDSKblock( struct AdfDevice * const     dev,
  * adfWriteRDSKblock
  *
  */
-ADF_RETCODE adfWriteRDSKblock( struct AdfDevice * const     dev,
-                               struct AdfRDSKblock * const  rdsk )
+ADF_RETCODE adfWriteRDSKblock( const struct AdfDevice * const  dev,
+                               struct AdfRDSKblock * const     rdsk )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
 
@@ -428,9 +428,9 @@ ADF_RETCODE adfWriteRDSKblock( struct AdfDevice * const     dev,
  * ReadPARTblock
  *
  */
-ADF_RETCODE adfReadPARTblock( struct AdfDevice * const     dev,
-                              const int32_t                nSect,
-                              struct AdfPARTblock * const  blk )
+ADF_RETCODE adfReadPARTblock( const struct AdfDevice * const  dev,
+                              const int32_t                   nSect,
+                              struct AdfPARTblock * const     blk )
 {
     uint8_t buf[ sizeof(struct AdfPARTblock) ];
 
@@ -480,9 +480,9 @@ ADF_RETCODE adfReadPARTblock( struct AdfDevice * const     dev,
  * adfWritePARTblock
  *
  */
-ADF_RETCODE adfWritePARTblock ( struct AdfDevice * const    dev,
-                                const int32_t               nSect,
-                                struct AdfPARTblock * const part )
+ADF_RETCODE adfWritePARTblock ( const struct AdfDevice * const  dev,
+                                const int32_t                   nSect,
+                                struct AdfPARTblock * const     part )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
 	
@@ -517,9 +517,9 @@ ADF_RETCODE adfWritePARTblock ( struct AdfDevice * const    dev,
  * ReadFSHDblock
  *
  */
-ADF_RETCODE adfReadFSHDblock( struct AdfDevice * const     dev,
-                              const int32_t                nSect,
-                              struct AdfFSHDblock * const  blk )
+ADF_RETCODE adfReadFSHDblock( const struct AdfDevice * const  dev,
+                              const int32_t                   nSect,
+                              struct AdfFSHDblock * const     blk )
 {
     uint8_t buf[ sizeof(struct AdfFSHDblock) ];
 
@@ -563,9 +563,9 @@ ADF_RETCODE adfReadFSHDblock( struct AdfDevice * const     dev,
  *  adfWriteFSHDblock
  *
  */
-ADF_RETCODE adfWriteFSHDblock( struct AdfDevice * const     dev,
-                               const int32_t                nSect,
-                               struct AdfFSHDblock * const  fshd )
+ADF_RETCODE adfWriteFSHDblock( const struct AdfDevice * const  dev,
+                               const int32_t                   nSect,
+                               struct AdfFSHDblock * const     fshd )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
 
@@ -596,9 +596,9 @@ ADF_RETCODE adfWriteFSHDblock( struct AdfDevice * const     dev,
  * ReadLSEGblock
  *
  */
-ADF_RETCODE adfReadLSEGblock( struct AdfDevice * const     dev,
-                              const int32_t                nSect,
-                              struct AdfLSEGblock * const  blk )
+ADF_RETCODE adfReadLSEGblock( const struct AdfDevice * const  dev,
+                              const int32_t                   nSect,
+                              struct AdfLSEGblock * const     blk )
 {
     uint8_t buf[ sizeof(struct AdfLSEGblock) ];
 
@@ -643,9 +643,9 @@ ADF_RETCODE adfReadLSEGblock( struct AdfDevice * const     dev,
  * adfWriteLSEGblock
  *
  */
-ADF_RETCODE adfWriteLSEGblock( struct AdfDevice * const     dev,
-                               const int32_t                nSect,
-                               struct AdfLSEGblock * const  lseg )
+ADF_RETCODE adfWriteLSEGblock( const struct AdfDevice * const  dev,
+                               const int32_t                   nSect,
+                               struct AdfLSEGblock * const     lseg )
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
 
