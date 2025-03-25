@@ -26,6 +26,9 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    if ( argc < 2 )
+        return 1;
+
     log_init( stderr, TEST_VERBOSITY );
 
     struct AdfVolume *vol;
