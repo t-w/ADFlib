@@ -1,10 +1,10 @@
 #!/bin/sh
-basedir=`dirname "$0"`
+basedir=$(dirname "$0")
 . $basedir/common.sh
 
-adfimgcreate=`get_test_cmd adfimgcreate`
-adfformat=`get_test_cmd adfformat`
-adfinfo=`get_test_cmd adfinfo`
+adfimgcreate=$(get_test_cmd adfimgcreate)
+adfformat=$(get_test_cmd adfformat)
+adfinfo=$(get_test_cmd adfinfo)
 
 $adfimgcreate -t dd $tmpdir/testflopdd1.adf >$actual
 compare_with "adfimgcreate -t dd" adf-floppy-test_1

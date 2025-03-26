@@ -9,7 +9,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-basedir=`dirname "$0"`
+basedir=$(dirname "$0")
 cmd_path="$1" "$basedir/adf-floppy-test.sh"
 cmd_path="$1" "$basedir/adfinfo-test.sh"
 cmd_path="$1" "$basedir/unadf-test.sh"

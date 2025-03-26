@@ -1,8 +1,8 @@
 #!/bin/sh
-basedir=`dirname "$0"`
+basedir=$(dirname "$0")
 . $basedir/common.sh
 
-unadf=`get_test_cmd unadf`
+unadf=$(get_test_cmd unadf)
 
 # check no args
 check_no_args() {

@@ -7,7 +7,7 @@
 # fails if the execution is not possible.
 #
 
-basedir=`dirname $0`
+basedir=$(dirname $0)
 
 set -e
 
@@ -34,11 +34,11 @@ fi
 
 #[ -n "$srcdir" ] && test_adf="$srcdir/arccsh.adf"
 
-adfbitmap=`get_test_cmd adfbitmap`
-adfimgcreate=`get_test_cmd adfimgcreate`
-adfformat=`get_test_cmd adfformat`
-adfinfo=`get_test_cmd adfinfo`
-unadf=`get_test_cmd unadf`
+adfbitmap=$(get_test_cmd adfbitmap)
+adfimgcreate=$(get_test_cmd adfimgcreate)
+adfformat=$(get_test_cmd adfformat)
+adfinfo=$(get_test_cmd adfinfo)
+unadf=$(get_test_cmd unadf)
 
 
 run_cmd()

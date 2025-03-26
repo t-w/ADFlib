@@ -3,14 +3,14 @@ set -e
 . $basedir/config.sh
 
 mkdir -vp tmp
-tmpdir=`mktemp -d tmp/tmp.XXXXXX`
+tmpdir=$(mktemp -d tmp/tmp.XXXXXX)
 
 trap cleanup 0 1 2
 cleanup() {
     rm -rf $tmpdir
 }
 
-host_type=`uname | sed 's/_.*//'`
+host_type=$(uname | sed 's/_.*//')
 echo "Host type: '${host_type}'"
 if [ "x${host_type}" = 'xMINGW32' -o \
      "x${host_type}" = 'xMINGW64' ]
@@ -58,7 +58,7 @@ get_test_cmd() {
         echo "$cmd_path/$1.exe"
     else
         echo no-such-command
-        echo >&2 No $1 executable found in `cd "$cmd_path" && pwd`
+        echo >&2 No $1 executable found in $(cd "$cmd_path" && pwd)
         exit 1
     fi
 }

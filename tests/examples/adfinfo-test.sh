@@ -1,8 +1,8 @@
 #!/bin/sh
-basedir=`dirname "$0"`
+basedir=$(dirname "$0")
 . $basedir/common.sh
 
-adfinfo=`get_test_cmd adfinfo`
+adfinfo=$(get_test_cmd adfinfo)
 
 $adfinfo "$dumps_dir/arccsh.adf" >$actual
 compare_with "adfinfo device" adfinfo-test_1
