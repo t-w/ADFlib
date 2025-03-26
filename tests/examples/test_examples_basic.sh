@@ -11,33 +11,35 @@ basedir=`dirname $0`
 
 set -e
 
-#if [ $# -ne 1 ]
-#then
-#    echo 2>&1 "Usage: $0 <bin install path>"
-#    exit 1
-#fi
-#PATH=`pwd`/$1:$PATH
-
-#if [ $# -ne 1 ]
-if [ $# -eq 1 ]
+if [ $# -gt 1 ]
 then
-#    ADF_EXAMPLES_BIN="."
-#else
-    ADF_EXAMPLES_BIN="$1"
-fi
-
-. ${basedir}/config.sh
-
-PATH=$ADF_EXAMPLES_BIN:$PATH
-TEST_ADF=${DUMPS_DIR}/arccsh.adf
-
-if [ ! -f "${TEST_ADF}" ]
-then
-    echo "Test data not available ( ${TEST_ADF} )."
+    echo 2>&1 "Usage: $0 [bin install path]"
     exit 1
 fi
 
-#[ -n "$srcdir" ] && TEST_ADF="$srcdir/arccsh.adf"
+if [ $# -eq 1 ]
+then
+    examples_bin="$1"
+fi
+
+. ${basedir}/common.sh
+
+test_adf=${dumps_dir}/arccsh.adf
+
+if [ ! -f "${test_adf}" ]
+then
+    echo "Test data not available ( ${test_adf} )."
+    exit 1
+fi
+
+#[ -n "$srcdir" ] && test_adf="$srcdir/arccsh.adf"
+
+adfbitmap=`get_test_cmd adfbitmap`
+adfimgcreate=`get_test_cmd adfimgcreate`
+adfformat=`get_test_cmd adfformat`
+adfinfo=`get_test_cmd adfinfo`
+unadf=`get_test_cmd unadf`
+
 
 run_cmd()
 {
@@ -45,9 +47,9 @@ run_cmd()
     #stdbuf -oL
     if [ ${OSTYPE} == "msys" ]
     then
-	EXEC=${1}.exe
+	local EXEC=${1}.exe
     else
-	EXEC=${1}
+	local EXEC=${1}
     fi
     shift
     echo "executing:  ${EXEC} $@"
@@ -55,19 +57,19 @@ run_cmd()
     ${EXEC} $@
 }
 
-CMDS[0]="unadf -r $TEST_ADF"
-CMDS[1]="adfinfo $TEST_ADF"
-CMDS[2]="adfinfo $TEST_ADF 0"
-CMDS[2]="adfinfo $TEST_ADF 0 CSH"
-CMDS[3]="adfinfo $TEST_ADF 0 c/"
-CMDS[4]="adfinfo $TEST_ADF 0 l"
-CMDS[5]="adfimgcreate -t dd testflopdd1.adf"
-CMDS[6]="adfformat -t 1 -l TestFlopDD1 testflopdd1.adf"
-CMDS[7]="adfinfo testflopdd1.adf"
-CMDS[8]="rm -v testflopdd1.adf"
-CMDS[9]="adfbitmap show $TEST_ADF"
+cmds[0]="$unadf -r $test_adf"
+cmds[1]="$adfinfo $test_adf"
+cmds[2]="$adfinfo $test_adf 0"
+cmds[2]="$adfinfo $test_adf 0 CSH"
+cmds[3]="$adfinfo $test_adf 0 c/"
+cmds[4]="$adfinfo $test_adf 0 l"
+cmds[5]="$adfimgcreate -t dd testflopdd1.adf"
+cmds[6]="$adfformat -t 1 -l TestFlopDD1 testflopdd1.adf"
+cmds[7]="$adfinfo testflopdd1.adf"
+cmds[8]="rm -v testflopdd1.adf"
+cmds[9]="$adfbitmap show $test_adf"
 
-for CMD in "${CMDS[@]}"
+for cmd in "${cmds[@]}"
 do
-    run_cmd ${CMD}
+    run_cmd ${cmd}
 done

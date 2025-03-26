@@ -1,7 +1,7 @@
 
-ADF_EXAMPLES_BIN=${ADF_EXAMPLES_BIN:-../../examples}
-cmd_path=${cmd_path:-${ADF_EXAMPLES_BIN}}
+examples_bin=${examples_bin:-../../examples}
+cmd_path=${cmd_path:-${examples_bin}}
 
-TESTS_EXAMPLES_DIR=${basedir}
-DATA_DIR=${TESTS_EXAMPLES_DIR}/../data
-DUMPS_DIR=${DATA_DIR}/Dumps
+tests_examples_dir=${basedir}
+data_dir=${tests_examples_dir}/../data
+dumps_dir=${data_dir}/Dumps
