@@ -46,7 +46,7 @@ jobs:
     - name: check installation
       run: find /tmp/adflib -iname '*adf*'
     - name: test installed command-line utils
-      run: ./tests/examples/test-all-examples.sh /tmp/adflib/bin
+      run: ./tests/examples/test_all_examples.sh /tmp/adflib/bin
     - name: store logs from failed tests
       if: failure()
       uses: actions/upload-artifact@v4

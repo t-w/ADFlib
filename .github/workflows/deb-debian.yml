@@ -94,4 +94,4 @@ jobs:
     - name: test installed command-line utils
       run: |
         ./tests/examples/test_examples_basic.sh /usr/bin
-        ./tests/examples/test-all-examples.sh /usr/bin
+        ./tests/examples/test_all_examples.sh /usr/bin

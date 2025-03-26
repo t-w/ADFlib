@@ -38,7 +38,7 @@ jobs:
     - name: update ldconfig
       run: sudo ldconfig
     - name: test installed command-line utils
-      run: ./tests/examples/test-all-examples.sh /usr/local/bin
+      run: ./tests/examples/test_all_examples.sh /usr/local/bin
     - name: store logs from failed tests
       if: failure()
       uses: actions/upload-artifact@v4

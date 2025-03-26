@@ -1,22 +1,22 @@
 
 dist_check_SCRIPTS = \
 	test_examples_basic.sh \
-	adf-floppy-test.sh \
-	adfinfo-test.sh \
-	unadf-test.sh
+	adf_floppy_test.sh \
+	adfinfo_test.sh \
+	unadf_test.sh
 
 dist_check_DATA = \
 	config.sh \
 	common.sh \
-	results/adf-floppy-test_1 \
-	results/adf-floppy-test_2 \
-	results/adf-floppy-test_3 \
-	results/adf-floppy-test_4 \
-	results/adfinfo-test_1 \
-	results/adfinfo-test_2 \
-	results/adfinfo-test_3 \
-	results/adfinfo-test_4 \
-	results/adfinfo-test_5 \
+	results/adf_floppy_test_1 \
+	results/adf_floppy_test_2 \
+	results/adf_floppy_test_3 \
+	results/adf_floppy_test_4 \
+	results/adfinfo_test_1 \
+	results/adfinfo_test_2 \
+	results/adfinfo_test_3 \
+	results/adfinfo_test_4 \
+	results/adfinfo_test_5 \
 	results/unadf_no_args \
 	results/unadf_help \
 	results/unadf_invalid_args_1 \
@@ -29,15 +29,15 @@ dist_check_DATA = \
 	results/unadf_extract_to_pipe_option \
 	results/unadf_mangle_win32_filenames_option \
 	results/unadf_confirm_the_mangling \
-	results_msys/adf-floppy-test_1 \
-	results_msys/adf-floppy-test_2 \
-	results_msys/adf-floppy-test_3 \
-	results_msys/adf-floppy-test_4 \
-	results_msys/adfinfo-test_1 \
-	results_msys/adfinfo-test_2 \
-	results_msys/adfinfo-test_3 \
-	results_msys/adfinfo-test_4 \
-	results_msys/adfinfo-test_5 \
+	results_msys/adf_floppy_test_1 \
+	results_msys/adf_floppy_test_2 \
+	results_msys/adf_floppy_test_3 \
+	results_msys/adf_floppy_test_4 \
+	results_msys/adfinfo_test_1 \
+	results_msys/adfinfo_test_2 \
+	results_msys/adfinfo_test_3 \
+	results_msys/adfinfo_test_4 \
+	results_msys/adfinfo_test_5 \
 	results_msys/unadf_no_args \
 	results_msys/unadf_help \
 	results_msys/unadf_invalid_args_1 \

@@ -31,7 +31,7 @@ jobs:
     - name: update ldconfig
       run: sudo ldconfig
 #    - name: test command-line utils
-#      run: ./tests/examples/test-all-examples.sh /usr/local/bin
+#      run: ./tests/examples/test_all_examples.sh /usr/local/bin
 
   windows_build:
     runs-on: windows-latest
@@ -133,7 +133,7 @@ jobs:
     - name: test command-line utils
       shell: bash
 # these test does not work - output on windows is different (EOL is CR+LF)
-#      run: ./examples/tests/test-all-examples.sh bin
+#      run: ./examples/tests/test_all_examples.sh bin
 # for just check if they execute at all instead
       run: |
         tests/examples/test_examples_basic.sh bin/
