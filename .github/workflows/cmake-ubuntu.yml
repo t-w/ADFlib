@@ -1,0 +1,34 @@
+name: cmake-ubuntu
+
+on:
+  push:
+    branches: [ "master", "devel", "citest", "citest-cmake" ]
+    tags:
+      - '**'
+  pull_request:
+    branches: [ "master", "devel" ]
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [ shared, debug ]
+    steps:
+    - uses: actions/checkout@v4
+    - name: install prereq.
+      run: sudo apt-get update ; sudo apt-get install -y check
+    - name: cmake_${{ matrix.build_type }}_configure
+      run: util/cmake_${{ matrix.build_type }}_configure
+    - name: cmake_${{ matrix.build_type }}_build
+      run: util/cmake_${{ matrix.build_type }}_build
+    - name: cmake_${{ matrix.build_type }}_test
+      run: util/cmake_${{ matrix.build_type }}_test
+    - name: cmake_${{ matrix.build_type }}_install
+      run: sudo bash util/cmake_${{ matrix.build_type }}_install
+    - name: check installation
+      run: find /usr/local -iname '*adf*'
+    - name: update ldconfig
+      run: sudo ldconfig
+#    - name: test command-line utils
+#      run: ./tests/examples/test_all_examples.sh /usr/local/bin

@@ -1,0 +1,86 @@
+name: cmake-macos
+
+on:
+  push:
+    branches: [ "master", "devel", "citest", "citest-cmake" ]
+    tags:
+      - '**'
+  pull_request:
+    branches: [ "master", "devel" ]
+
+jobs:
+  macos_shared:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install prereq.
+      run: |
+        brew install cmake ninja coreutils
+        ninja --version
+        cmake --version
+        gstdbuf --version
+    - name: cmake_shared_configure
+      run: util/cmake_shared_configure
+    - name: cmake_shared_build
+      run: util/cmake_shared_build
+    - name: cmake_shared_test
+      run: util/cmake_shared_test
+    - name: show properties of binaries in the build tree (not installed)
+      run: otool -l build/shared/examples/unadf
+    - name: cmake_shared_install
+      run: sudo bash util/cmake_shared_install
+    - name: check installation
+      run: find /usr/local -iname '*adf*'
+#    - name: update ldconfig
+#      run: sudo ldconfig
+    - name: prepare artifact
+      run:
+        tar czvf adflib-macos.tgz
+            /usr/local/bin/*adf*
+            /usr/local/include/*adf*
+            /usr/local/lib/*adf*
+#            /usr/local/share/man/man3/*adf*
+    - uses: actions/upload-artifact@v4
+      with:
+#        name: adflib-${{ env.ADFLIB_TAG }}-windows
+        name: adflib-macos
+        path: |
+          adflib-macos.tgz
+    - name: archive tests/examples
+      run: |
+        mkdir -v artifact-tests
+        tar cvzf artifact-tests/tests_examples.tgz tests/examples/
+    - uses: actions/upload-artifact@v4
+      with:
+        name: adflib-macos-tests-examples
+        path: |
+          artifact-tests
+
+  macos_test:
+    needs: macos_shared
+    runs-on: macos-latest
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+#      name: adflib-${{ env.ADFLIB_TAG }}-macos
+        name: adflib-macos
+        path: .
+    - name: extract file from the artifact
+      run: sudo tar xzv -C / -f adflib-macos.tgz
+    - name: list files extracted from the artifact
+      run: find /usr/local -name "*adf*"
+    - name: list installed library files
+      run: ls -l /usr/local/lib/*adf*
+#    - name: update dyld's shared cache
+#      run: sudo update_dyld_shared_cache -debug
+    - name: show properties of binaries (installed)
+      run: otool -l /usr/local/bin/unadf
+    - uses: actions/download-artifact@v4
+      with:
+        name: adflib-macos-tests-examples
+        path: .
+    - name: extract tests/examples
+      run: tar xzvf tests_examples.tgz
+    - name: test command-line utils
+      run: |
+        tests/examples/test_examples_basic.sh bin/
