@@ -76,25 +76,6 @@ set_target_properties ( unadf PROPERTIES
   INSTALL_RPATH "/usr/local/lib"
 )
 
-
-file (
-  COPY ${PROJECT_SOURCE_DIR}/examples/tests
-  DESTINATION ${PROJECT_BINARY_DIR}/examples/
-)
-
-if ( ADFLIB_ENABLE_TESTS )
-    message ( STATUS "Enable tests in examples/" )
-    add_test ( tests/test_examples_basic.sh ${BASH_PROGRAM}
-               tests/test_examples_basic.sh . )
-    add_test ( tests/adf-floppy-test.sh ${BASH_PROGRAM}
-               tests/adf-floppy-test.sh )
-    add_test ( tests/adfinfo-test.sh ${BASH_PROGRAM}
-               tests/adfinfo-test.sh )
-    add_test ( tests/unadf-test.sh ${BASH_PROGRAM}
-               tests/unadf-test.sh )
-endif()
-
-
 install ( TARGETS
   adfbitmap
   adfformat

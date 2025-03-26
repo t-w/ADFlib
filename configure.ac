@@ -139,6 +139,7 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  examples/Makefile
                  tests/Makefile
+                 tests/examples/Makefile
                  tests/regr/Makefile
                  tests/unit/Makefile
                  adflib.pc])

@@ -7,6 +7,8 @@
 # fails if the execution is not possible.
 #
 
+EXAMPLES_TEST_PATH=`dirname $0`
+
 set -e
 
 #if [ $# -ne 1 ]
@@ -16,15 +18,17 @@ set -e
 #fi
 #PATH=`pwd`/$1:$PATH
 
-if [ $# -ne 1 ]
+#if [ $# -ne 1 ]
+if [ $# -eq 1 ]
 then
-    ADF_EXAMPLES_BIN="."
-else
+#    ADF_EXAMPLES_BIN="."
+#else
     ADF_EXAMPLES_BIN="$1"
 fi
 
+. ${EXAMPLES_TEST_PATH}/config.sh
+
 PATH=$ADF_EXAMPLES_BIN:$PATH
-EXAMPLES_TEST_PATH=`dirname $0`
 TEST_ADF=$EXAMPLES_TEST_PATH/arccsh.adf
 
 if [ ! -f $EXAMPLES_TEST_PATH/arccsh.adf ]

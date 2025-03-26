@@ -31,7 +31,7 @@ jobs:
     - name: update ldconfig
       run: sudo ldconfig
 #    - name: test command-line utils
-#      run: ./examples/test/test-all-examples.sh /usr/local/bin
+#      run: ./tests/examples/test-all-examples.sh /usr/local/bin
 
   windows_build:
     runs-on: windows-latest
@@ -100,14 +100,14 @@ jobs:
         name: adflib-windows
         path: |
           artifacts/
-    - name: archive examples/tests
+    - name: archive tests/examples
       shell: bash
       run: |
         mkdir -v artifact-tests
-        tar cvzf artifact-tests/examples_tests.tgz examples/tests/
+        tar cvzf artifact-tests/tests_examples.tgz tests/examples/
     - uses: actions/upload-artifact@v4
       with:
-        name: adflib-windows-examples-tests
+        name: adflib-windows-tests-examples
         path: |
           artifact-tests
 
@@ -125,18 +125,18 @@ jobs:
       run: find .
     - uses: actions/download-artifact@v4
       with:
-        name: adflib-windows-examples-tests
+        name: adflib-windows-tests-examples
         path: .
-    - name: extract examples/tests
+    - name: extract tests/examples
       shell: bash
-      run: tar xvzf examples_tests.tgz
+      run: tar xvzf tests_examples.tgz
     - name: test command-line utils
       shell: bash
 # these test does not work - output on windows is different (EOL is CR+LF)
 #      run: ./examples/tests/test-all-examples.sh bin
 # for just check if they execute at all instead
       run: |
-        examples/tests/test_examples_basic.sh bin/
+        tests/examples/test_examples_basic.sh bin/
 
   macos_shared:
     runs-on: macos-latest
@@ -176,13 +176,13 @@ jobs:
         name: adflib-macos
         path: |
           adflib-macos.tgz
-    - name: archive examples/tests
+    - name: archive tests/examples
       run: |
         mkdir -v artifact-tests
-        tar cvzf artifact-tests/examples_tests.tgz examples/tests/
+        tar cvzf artifact-tests/tests_examples.tgz tests/examples/
     - uses: actions/upload-artifact@v4
       with:
-        name: adflib-macos-examples-tests
+        name: adflib-macos-tests-examples
         path: |
           artifact-tests
 
@@ -208,10 +208,10 @@ jobs:
       run: otool -l /usr/local/bin/unadf
     - uses: actions/download-artifact@v4
       with:
-        name: adflib-macos-examples-tests
+        name: adflib-macos-tests-examples
         path: .
-    - name: extract examples/tests
-      run: tar xzvf examples_tests.tgz
+    - name: extract tests/examples
+      run: tar xzvf tests_examples.tgz
     - name: test command-line utils
       run: |
-        examples/tests/test_examples_basic.sh bin/
+        tests/examples/test_examples_basic.sh bin/

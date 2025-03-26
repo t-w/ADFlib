@@ -46,15 +46,15 @@ jobs:
     - name: check installation
       run: find /tmp/adflib -iname '*adf*'
     - name: test installed command-line utils
-      run: ./examples/tests/test-all-examples.sh /tmp/adflib/bin
+      run: ./tests/examples/test-all-examples.sh /tmp/adflib/bin
     - name: store logs from failed tests
       if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: cygwin_autotools_native_logs_failed_tests
         path: |
-          examples/tests/*.log
           tests/*.log
+          tests/examples/*.log
           tests/regr/*.log
           tests/unit/*.log
 #          C:\cygwin\var\log\setup.log.full

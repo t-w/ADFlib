@@ -1,6 +1,10 @@
 
 SUBDIRS =
 
+if EXAMPLES
+SUBDIRS += examples
+endif
+
 if REGTESTS
 SUBDIRS += regr
 endif

@@ -1,8 +1,9 @@
 
+add_subdirectory( examples )
+add_subdirectory( regr )
+
 #option ( ADFLIB_ENABLE_TESTS "Enable tests" ON )
 option ( ADFLIB_ENABLE_UNIT_TESTS "Enable units tests (require Check framework >= 0.11" ON )
-
-add_subdirectory( regr )
 
 if ( ADFLIB_ENABLE_UNIT_TESTS AND
     NOT ( UNIX AND MINGW ) )       # cannot build tests (ie. Check) cross-compiling

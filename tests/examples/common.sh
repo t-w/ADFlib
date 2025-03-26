@@ -1,5 +1,7 @@
 set -e
 
+. $basedir/config.sh
+
 mkdir -vp tmp
 tmpdir=`mktemp -d tmp/tmp.XXXXXX`
 
