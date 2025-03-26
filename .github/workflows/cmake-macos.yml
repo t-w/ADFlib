@@ -83,4 +83,4 @@ jobs:
       run: tar xzvf tests_examples.tgz
     - name: test command-line utils
       run: |
-        tests/examples/test_examples_basic.sh bin/
+        tests/examples/test_examples_basic.sh /usr/local/bin/
