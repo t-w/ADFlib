@@ -146,7 +146,7 @@ START_TEST ( test_file_create_empty_ofs_write )
         .volname = "Test_file_create_ofs",
         .fstype  = 0,          // OFS
         .openMode = ADF_FILE_MODE_WRITE,
-        .nVolumeBlocks = 1756
+        .nVolumeBlocks = 1756  // 1760 - bootblock(2) - rootblock(1) - bitmap(1)
     };
     setup ( &test_data );
     test_file_create ( &test_data );
@@ -162,7 +162,7 @@ START_TEST ( test_file_create_empty_ffs_write )
         .volname = "Test_file_create_ffs",
         .fstype  = 1,          // FFS
         .openMode = ADF_FILE_MODE_WRITE,
-        .nVolumeBlocks = 1756
+        .nVolumeBlocks = 1756  // 1760 - bootblock(2) - rootblock(1) - bitmap(1)
     };
     setup ( &test_data );
     test_file_create ( &test_data );
