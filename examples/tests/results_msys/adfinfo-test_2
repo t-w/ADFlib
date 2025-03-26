@@ -4,9 +4,10 @@ Mounted volume:		0
 
 ADF volume info:
   Name:		cshell                        
-  Type:		880 KiB floppy
+  Type:		Floppy disk
   Filesystem:	OFS  
-  Free blocks:	436
+  Size:		1760 blocks (0.86 MiB)
+  Free space:	436 blocks (0.21 MiB)
   R/W:		Read only
   Created:	24/03/1999 19:35:24
   Last access:	30/07/1999 22:35:04

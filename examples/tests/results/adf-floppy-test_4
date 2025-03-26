@@ -4,9 +4,10 @@ Mounted volume:		0
 
 ADF volume info:
   Name:		TestFlopDD1                   
-  Type:		880 KiB floppy
+  Type:		Floppy disk
   Filesystem:	FFS  
-  Free blocks:	1756
+  Size:		1760 blocks (0.86 MiB)
+  Free space:	1756 blocks (0.86 MiB)
   R/W:		Read only
 		1/01/1978 0:00:00
 

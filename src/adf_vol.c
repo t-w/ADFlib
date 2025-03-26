@@ -496,26 +496,10 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
     memset( diskName, 0, 35 );
     memcpy( diskName, root.diskName, root.nameLen );
 
-    #define TYPE_INFO_SIZE 64
-    char typeInfo[ TYPE_INFO_SIZE ];
-    if ( vol->dev->type != ADF_DEVTYPE_UNKNOWN ) {
-        snprintf( typeInfo, TYPE_INFO_SIZE, "%s\n",
-                  adfDevTypeGetDescription( vol->dev->type ) );
-    } else {
-        switch ( vol->dev->class ) {
-        case ADF_DEVCLASS_HARDDISK:
-            snprintf( typeInfo, TYPE_INFO_SIZE, "Hard Disk partition, %3.1f KBytes\n",
-                      ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
-            break;
-        case ADF_DEVCLASS_HARDFILE:
-            snprintf( typeInfo, TYPE_INFO_SIZE, "HardFile : %3.1f KBytes\n",
-                      ( vol->lastBlock - vol->firstBlock + 1 ) * 512.0 / 1024.0 );
-            break;
-        default:
-            snprintf( typeInfo, TYPE_INFO_SIZE, "Unknown devType!\n" );
-        }
-    }
-
+    const unsigned
+        sizeBlocks = (unsigned)( vol->lastBlock -
+                                 vol->firstBlock + 1 ),
+        freeBlocks = adfCountFreeBlocks( vol );
     int cDays, cMonth, cYear,
         aDays, aMonth, aYear,
         mDays, mMonth, mYear;
@@ -526,19 +510,24 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
     const int volInfoSize = snprintf(
         NULL, 0,
         "\nADF volume info:\n  Name:\t\t%-30s\n"
-        "  Type:\t\t%s"
+        "  Type:\t\t%s\n"
         "  Filesystem:\t%s %s %s\n"
-        "  Free blocks:\t%d\n"
+        "  Size:\t\t%u blocks (%4.2f MiB)\n"
+        "  Free space:\t%u blocks (%4.2f MiB)\n"
         "  R/W:\t\t%s\n"
         "  Created:\t%d/%02d/%02d %d:%02d:%02d\n"
         "  Last access:\t%d/%02d/%02d %d:%02d:%02d"
         "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
         vol->volName, // diskName ?
-        typeInfo,
+        vol->dev->class == ADF_DEVCLASS_FLOP     ? "Floppy disk" :
+        vol->dev->class == ADF_DEVCLASS_HARDDISK ? "Hard disk partition" :
+        vol->dev->class == ADF_DEVCLASS_HARDFILE ? "HardFile" :
+        "Unknown!",
         adfVolIsFFS( vol ) ? "FFS" : "OFS",
         adfVolHasINTL( vol ) ? "INTL " : "",
         adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
-        adfCountFreeBlocks( vol ),
+        sizeBlocks, sizeBlocks * 512.0 / ( 1024.0 * 1024.0 ),
+        freeBlocks, freeBlocks * 512.0 / ( 1024.0 * 1024.0 ),
         vol->readOnly ? "Read only" : "Read/Write",
         cDays, cMonth, cYear,
         root.coMins / 60,
@@ -565,19 +554,24 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
     snprintf(
         volInfo, (size_t) volInfoSize,
         "\nADF volume info:\n  Name:\t\t%-30s\n"
-        "  Type:\t\t%s"
+        "  Type:\t\t%s\n"
         "  Filesystem:\t%s %s %s\n"
-        "  Free blocks:\t%d\n"
+        "  Size:\t\t%u blocks (%4.2f MiB)\n"
+        "  Free space:\t%u blocks (%4.2f MiB)\n"
         "  R/W:\t\t%s\n"
         "  Created:\t%d/%02d/%02d %d:%02d:%02d\n"
         "  Last access:\t%d/%02d/%02d %d:%02d:%02d"
         "\n\t\t%d/%02d/%02d %d:%02d:%02d\n",
         vol->volName, // diskName ?
-        typeInfo,
+        vol->dev->class == ADF_DEVCLASS_FLOP     ? "Floppy disk" :
+        vol->dev->class == ADF_DEVCLASS_HARDDISK ? "Hard disk partition" :
+        vol->dev->class == ADF_DEVCLASS_HARDFILE ? "HardFile" :
+        "Unknown!",
         adfVolIsFFS( vol ) ? "FFS" : "OFS",
         adfVolHasINTL( vol ) ? "INTL " : "",
         adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
-        adfCountFreeBlocks( vol ),
+        sizeBlocks, sizeBlocks * 512.0 / ( 1024.0 * 1024.0 ),
+        freeBlocks, freeBlocks * 512.0 / ( 1024.0 * 1024.0 ),
         vol->readOnly ? "Read only" : "Read/Write",
         cDays, cMonth, cYear,
         root.coMins / 60,
