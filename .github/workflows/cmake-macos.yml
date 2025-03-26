@@ -49,7 +49,7 @@ jobs:
     - name: archive tests/examples
       run: |
         mkdir -v artifact-tests
-        tar cvzf artifact-tests/tests_examples.tgz tests/examples/
+        tar cvzf artifact-tests/tests_examples.tgz tests/examples/ tests/data
     - uses: actions/upload-artifact@v4
       with:
         name: adflib-macos-tests-examples
