@@ -833,13 +833,11 @@ ADF_RETCODE adfWriteBitmapExtBlock( struct AdfVolume * const                vol,
  */
 uint32_t adfCountFreeBlocks( const struct AdfVolume * const  vol )
 {
-    int j;
-
+    assert( vol->lastBlock - vol->firstBlock > 2 );
     uint32_t freeBlocks = 0L;
-    for ( j = vol->firstBlock + 2; j <= vol->lastBlock - vol->firstBlock ; j++ )
+    for ( int j = 2; j <= vol->lastBlock - vol->firstBlock; j++ )
         if ( adfIsBlockFree( vol, j ) )
             freeBlocks++;
-
     return freeBlocks;
 }
 
