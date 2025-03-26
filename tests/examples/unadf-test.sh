@@ -26,20 +26,20 @@ check_invalid_args() {
 
 # -l (list root directory) option
 check_list_root_directory_option() {
-    $UNADF -l "$basedir/arccsh.adf" >$actual 2>/dev/null
+    $UNADF -l "$DUMPS_DIR/arccsh.adf" >$actual 2>/dev/null
     compare_with "-l (list root directory) option" \
         unadf_list_root_directory_option
 }
 
 # -r (list entire disk) option
 check_list_entire_disk_option() {
-    $UNADF -r "$basedir/arccsh.adf" >$actual 2>/dev/null
+    $UNADF -r "$DUMPS_DIR/arccsh.adf" >$actual 2>/dev/null
     compare_with "-r (list entire disk) option" unadf_list_entire_disk_option
 }
 
 # -s (show logical block pointer) option
 check_show_logical_block_pointer_option() {
-    $UNADF -ls "$basedir/arccsh.adf" >$actual 2>/dev/null
+    $UNADF -ls "$DUMPS_DIR/arccsh.adf" >$actual 2>/dev/null
     compare_with "-s (show logical block pointer) option" \
         unadf_show_logical_block_pointer_option
 }
@@ -49,7 +49,7 @@ check_show_logical_block_pointer_option() {
 
 # -d (extract to dir)
 check_extract_to_dir() {
-    $UNADF -d $tmpdir/x "$basedir/arccsh.adf" >$actual 2>/dev/null
+    $UNADF -d $tmpdir/x "$DUMPS_DIR/arccsh.adf" >$actual 2>/dev/null
     compare_with "-d (extract to dir)" unadf_extract_to_dir
 
 # check permissions were set on extracted files
@@ -67,7 +67,7 @@ check_extract_to_dir() {
 
 # -d (extract to dir) with specific files, not all their original case
 check_extract_to_dir_with_specific_files() {
-    $UNADF -d $tmpdir/x "$basedir/arccsh.adf" csh s/startup-sequence \
+    $UNADF -d $tmpdir/x "$DUMPS_DIR/arccsh.adf" csh s/startup-sequence \
         devs/system-configuration >$actual 2>/dev/null
     compare_with "-d (extract to dir) with specific files, not all their original case" \
         unadf_extract_to_dir_with_specific_files
@@ -76,20 +76,20 @@ check_extract_to_dir_with_specific_files() {
 
 # -p (extract to pipe) option
 check_extract_to_pipe_option() {
-    $UNADF -p "$basedir/arccsh.adf" s/startup-sequence >$actual 2>/dev/null
+    $UNADF -p "$DUMPS_DIR/arccsh.adf" s/startup-sequence >$actual 2>/dev/null
     compare_with " -p (extract to pipe) option" unadf_extract_to_pipe_option
 }
 
 # -w (mangle win32 filenames) option
 check_mangle_win32_filenames_option() {
-    $UNADF -d $tmpdir/x -w "$basedir/win32-names.adf" >$actual 2>/dev/null
+    $UNADF -d $tmpdir/x -w "$DUMPS_DIR/win32-names.adf" >$actual 2>/dev/null
     compare_with "-w (mangle win32 filenames) option" \
         unadf_mangle_win32_filenames_option
 }
 
 # confirm the mangling (-w) only occurs on extraction
 check_confirm_the_mangling() {
-    $UNADF -r -w "$basedir/win32-names.adf" >$actual 2>/dev/null
+    $UNADF -r -w "$DUMPS_DIR/win32-names.adf" >$actual 2>/dev/null
     compare_with "confirm the mangling (-w) only occurs on extraction" \
         unadf_confirm_the_mangling
 }

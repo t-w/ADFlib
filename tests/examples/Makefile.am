@@ -6,10 +6,8 @@ dist_check_SCRIPTS = \
 	unadf-test.sh
 
 dist_check_DATA = \
-	arccsh.adf \
 	config.sh \
 	common.sh \
-	win32-names.adf \
 	results/adf-floppy-test_1 \
 	results/adf-floppy-test_2 \
 	results/adf-floppy-test_3 \

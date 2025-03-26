@@ -7,7 +7,7 @@
 # fails if the execution is not possible.
 #
 
-EXAMPLES_TEST_PATH=`dirname $0`
+basedir=`dirname $0`
 
 set -e
 
@@ -26,14 +26,14 @@ then
     ADF_EXAMPLES_BIN="$1"
 fi
 
-. ${EXAMPLES_TEST_PATH}/config.sh
+. ${basedir}/config.sh
 
 PATH=$ADF_EXAMPLES_BIN:$PATH
-TEST_ADF=$EXAMPLES_TEST_PATH/arccsh.adf
+TEST_ADF=${DUMPS_DIR}/arccsh.adf
 
-if [ ! -f $EXAMPLES_TEST_PATH/arccsh.adf ]
+if [ ! -f "${TEST_ADF}" ]
 then
-    echo "Test data not available ( $EXAMPLES_TEST_PATH/arccsh.adf )."
+    echo "Test data not available ( ${TEST_ADF} )."
     exit 1
 fi
 
