@@ -203,18 +203,20 @@ ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
                              const uint32_t                  size,
                              uint8_t * const                 buf )
 {
-    uint32_t bytesRead = 0;
-    uint8_t blockBuf[ dev->geometry.blockSize ];
-    for ( uint8_t * bufptr = buf; bytesRead < size; ) {
-        ADF_RETCODE rc = dev->drv->readSector( dev, pSect++, blockBuf );
+    const unsigned nFullBlocks = size / dev->geometry.blockSize;
+    ADF_RETCODE rc = dev->drv->readSectors( dev, pSect, nFullBlocks, buf );
+    if ( rc != ADF_RC_OK )
+        return rc;
+
+    const unsigned remainder = size % dev->geometry.blockSize;
+    if ( remainder != 0 ) {
+        uint8_t blockBuf[ dev->geometry.blockSize ];
+        ADF_RETCODE rc = dev->drv->readSector( dev, pSect + nFullBlocks, blockBuf );
         if ( rc != ADF_RC_OK )
             return rc;
-        const unsigned chunkSize = ( dev->geometry.blockSize <= size - bytesRead ?
-                                     dev->geometry.blockSize : size - bytesRead );
-        memcpy( bufptr, blockBuf, chunkSize );
-        bufptr    += chunkSize;
-        bytesRead += chunkSize;
+        memcpy( buf + size - remainder, blockBuf, remainder );
     }
+
     return ADF_RC_OK;
 }
 
@@ -227,22 +229,21 @@ ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
                               const uint32_t                  size,
                               const uint8_t * const           buf )
 {
-    uint32_t bytesWritten = 0;
-    uint8_t blockBuf[ dev->geometry.blockSize ];
-    for ( uint8_t * bufptr = buf; bytesWritten < size; ) {
-        const unsigned chunkSize = ( dev->geometry.blockSize <= size - bytesWritten ?
-                                     dev->geometry.blockSize : size - bytesWritten );
+    const unsigned nFullBlocks = size / dev->geometry.blockSize;
+    ADF_RETCODE rc = dev->drv->writeSectors( dev, pSect, nFullBlocks, buf );
+    if ( rc != ADF_RC_OK )
+        return rc;
 
-        memcpy( blockBuf, bufptr, chunkSize );
-        memset( blockBuf + chunkSize, 0, dev->geometry.blockSize - chunkSize );
-
-        ADF_RETCODE rc = dev->drv->writeSector( dev, pSect++, blockBuf );
+    const unsigned remainder = size % dev->geometry.blockSize;
+    if ( remainder != 0 ) {
+        uint8_t blockBuf[ dev->geometry.blockSize ];
+        memcpy( blockBuf, buf + size - remainder, remainder );
+        memset( blockBuf + remainder, 0, dev->geometry.blockSize - remainder );
+        ADF_RETCODE rc = dev->drv->writeSector( dev, pSect + nFullBlocks, blockBuf );
         if ( rc != ADF_RC_OK )
             return rc;
-
-        bufptr       += chunkSize;
-        bytesWritten += chunkSize;
     }
+
     return ADF_RC_OK;
 }
 
