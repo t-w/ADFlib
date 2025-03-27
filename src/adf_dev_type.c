@@ -11,35 +11,35 @@ static struct AdfDevMedium {
     const AdfDevClass            class;
     const char * const           descr;
 } adfDevMedia[ ADF_DEVTYPE_NUMTYPES + 1 ] = {
-    { "unknown",{  0, 0,  0 }, ADF_DEVCLASS_UNKNOWN,  "unknown"                         },
+    { "unknown",{  0, 0,  0, 512 }, ADF_DEVCLASS_UNKNOWN,  "unknown"                         },
 
-    { "dd",     { 80, 2, 11 }, ADF_DEVCLASS_FLOP,     "880 KiB floppy"                  },
+    { "dd",     { 80, 2, 11, 512 }, ADF_DEVCLASS_FLOP,     "880 KiB floppy"                  },
 
-    { "sd",     { 40, 2, 11 }, ADF_DEVCLASS_FLOP,     "440 KiB floppy (SD, 5.25\")"     },
-    { "hd1520", { 80, 2, 19 }, ADF_DEVCLASS_FLOP,     "1520 KiB floppy (HD)"            },
-    { "hd1760", { 80, 2, 22 }, ADF_DEVCLASS_FLOP,     "1760 KiB floppy (HD)"            },
+    { "sd",     { 40, 2, 11, 512 }, ADF_DEVCLASS_FLOP,     "440 KiB floppy (SD, 5.25\")"     },
+    { "hd1520", { 80, 2, 19, 512 }, ADF_DEVCLASS_FLOP,     "1520 KiB floppy (HD)"            },
+    { "hd1760", { 80, 2, 22, 512 }, ADF_DEVCLASS_FLOP,     "1760 KiB floppy (HD)"            },
 
-    { "dd81",   { 81, 2, 11 }, ADF_DEVCLASS_FLOP,     "891 KiB floppy (81 tracks)"      },
-    { "dd82",   { 82, 2, 11 }, ADF_DEVCLASS_FLOP,     "902 KiB floppy (82 tracks)"      },
-    { "dd83",   { 83, 2, 11 }, ADF_DEVCLASS_FLOP,     "913 KiB floppy (83 tracks)"      },
+    { "dd81",   { 81, 2, 11, 512 }, ADF_DEVCLASS_FLOP,     "891 KiB floppy (81 tracks)"      },
+    { "dd82",   { 82, 2, 11, 512 }, ADF_DEVCLASS_FLOP,     "902 KiB floppy (82 tracks)"      },
+    { "dd83",   { 83, 2, 11, 512 }, ADF_DEVCLASS_FLOP,     "913 KiB floppy (83 tracks)"      },
 
-    { "hd81",   { 81, 2, 22 }, ADF_DEVCLASS_FLOP,     "1782 KiB floppy (HD, 81 tracks)" },
-    { "hd82",   { 82, 2, 22 }, ADF_DEVCLASS_FLOP,     "1804 KiB floppy (HD, 82 tracks)" },
-    { "hd83",   { 83, 2, 22 }, ADF_DEVCLASS_FLOP,     "1826 KiB floppy (HD, 83 tracks)" },
+    { "hd81",   { 81, 2, 22, 512 }, ADF_DEVCLASS_FLOP,     "1782 KiB floppy (HD, 81 tracks)" },
+    { "hd82",   { 82, 2, 22, 512 }, ADF_DEVCLASS_FLOP,     "1804 KiB floppy (HD, 82 tracks)" },
+    { "hd83",   { 83, 2, 22, 512 }, ADF_DEVCLASS_FLOP,     "1826 KiB floppy (HD, 83 tracks)" },
 
-    { "pc360",  { 40, 2,  9 }, ADF_DEVCLASS_FLOP,     "PC 360 KiB floppy 5.25\""        },
-    { "pc1200", { 80, 2, 15 }, ADF_DEVCLASS_FLOP,     "PC 1,2 MiB floppy 5.25\""        },
-    { "pc720",  { 80, 2,  9 }, ADF_DEVCLASS_FLOP,     "PC 720 KiB floppy 3.5\""         },
-    { "pc1440", { 80, 2, 18 }, ADF_DEVCLASS_FLOP,     "PC 1.440 MiB floppy 3.5\""       },
-    { "pc2880", { 80, 2, 36 }, ADF_DEVCLASS_FLOP,     "PC 2.80 MiB floppy 3.5\""        },
+    { "pc360",  { 40, 2,  9, 512 }, ADF_DEVCLASS_FLOP,     "PC 360 KiB floppy 5.25\""        },
+    { "pc1200", { 80, 2, 15, 512 }, ADF_DEVCLASS_FLOP,     "PC 1,2 MiB floppy 5.25\""        },
+    { "pc720",  { 80, 2,  9, 512 }, ADF_DEVCLASS_FLOP,     "PC 720 KiB floppy 3.5\""         },
+    { "pc1440", { 80, 2, 18, 512 }, ADF_DEVCLASS_FLOP,     "PC 1.440 MiB floppy 3.5\""       },
+    { "pc2880", { 80, 2, 36, 512 }, ADF_DEVCLASS_FLOP,     "PC 2.80 MiB floppy 3.5\""        },
 
-    { "adf",    {  0, 0,  0 }, ADF_DEVCLASS_FLOP,     "Amiga disk file (ADF)"           },
-    { "hdf",    {  0, 0,  0 }, ADF_DEVCLASS_HARDFILE, "hard disk file (HDF)"            },
-    { "hd",     {  0, 0,  0 }, ADF_DEVCLASS_HARDDISK, "hard disk"                       },
+    { "adf",    {  0, 0,  0, 512 }, ADF_DEVCLASS_FLOP,     "Amiga disk file (ADF)"           },
+    { "hdf",    {  0, 0,  0, 512 }, ADF_DEVCLASS_HARDFILE, "hard disk file (HDF)"            },
+    { "hd",     {  0, 0,  0, 512 }, ADF_DEVCLASS_HARDDISK, "hard disk"                       },
 
-    { "a590",  { 782, 2, 27 }, ADF_DEVCLASS_HARDDISK, "Western Digital WD93028-X A (A590)" },
+    { "a590",  { 782, 2, 27, 512 }, ADF_DEVCLASS_HARDDISK, "Western Digital WD93028-X A (A590)" },
 
-    { NULL,     {  0, 0,  0 }, ADF_DEVCLASS_UNKNOWN,  NULL                              }
+    { NULL,     {  0, 0,  0, 512 }, ADF_DEVCLASS_UNKNOWN,  NULL                              }
 };
 
 

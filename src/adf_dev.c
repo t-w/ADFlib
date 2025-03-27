@@ -141,8 +141,8 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
 
     case ADF_DEVCLASS_HARDDISK:
     case ADF_DEVCLASS_HARDFILE: {
-        uint8_t buf[512];
-        rc = adfDevReadBlock( dev, 0, 512, buf );
+        uint8_t buf[ dev->geometry.blockSize ];
+        rc = adfDevReadBlock( dev, 0, dev->geometry.blockSize, buf );
         if ( rc != ADF_RC_OK ) {
             adfEnv.eFct( "%s: reading block 0 of %s failed", __func__, dev->name );
             return rc;
@@ -199,16 +199,23 @@ void adfDevUnMount( struct AdfDevice * const  dev )
  *
  */
 ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
-                             const uint32_t                  pSect,
+                             uint32_t                        pSect,
                              const uint32_t                  size,
                              uint8_t * const                 buf )
 {
-/*  printf("pSect R =%ld\n",pSect);
-    ADF_RETCODE rc = dev->drv->readSector ( dev, pSect, size, buf );
-    printf("rc=%ld\n",rc);
-    return rc;
-*/
-    return dev->drv->readSector( dev, pSect, size, buf );
+    uint32_t bytesRead = 0;
+    uint8_t blockBuf[ dev->geometry.blockSize ];
+    for ( uint8_t * bufptr = buf; bytesRead < size; ) {
+        ADF_RETCODE rc = dev->drv->readSector( dev, pSect++, blockBuf );
+        if ( rc != ADF_RC_OK )
+            return rc;
+        const unsigned chunkSize = ( dev->geometry.blockSize <= size - bytesRead ?
+                                     dev->geometry.blockSize : size - bytesRead );
+        memcpy( bufptr, blockBuf, chunkSize );
+        bufptr    += chunkSize;
+        bytesRead += chunkSize;
+    }
+    return ADF_RC_OK;
 }
 
 /*
@@ -216,12 +223,27 @@ ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
  *
  */
 ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
-                              const uint32_t                  pSect,
+                              uint32_t                        pSect,
                               const uint32_t                  size,
                               const uint8_t * const           buf )
 {
-/*printf("nativ=%d\n",dev->isNativeDev);*/
-    return dev->drv->writeSector( dev, pSect, size, buf );
+    uint32_t bytesWritten = 0;
+    uint8_t blockBuf[ dev->geometry.blockSize ];
+    for ( uint8_t * bufptr = buf; bytesWritten < size; ) {
+        const unsigned chunkSize = ( dev->geometry.blockSize <= size - bytesWritten ?
+                                     dev->geometry.blockSize : size - bytesWritten );
+
+        memcpy( blockBuf, bufptr, chunkSize );
+        memset( blockBuf + chunkSize, 0, dev->geometry.blockSize - chunkSize );
+
+        ADF_RETCODE rc = dev->drv->writeSector( dev, pSect++, blockBuf );
+        if ( rc != ADF_RC_OK )
+            return rc;
+
+        bufptr       += chunkSize;
+        bytesWritten += chunkSize;
+    }
+    return ADF_RC_OK;
 }
 
 

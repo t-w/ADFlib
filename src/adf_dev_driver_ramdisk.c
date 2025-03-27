@@ -45,9 +45,10 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
     dev->geometry.cylinders = cylinders;
     dev->geometry.heads     = heads;
     dev->geometry.sectors   = sectors;
+    dev->geometry.blockSize = ADF_DEV_BLOCK_SIZE;
     dev->sizeBlocks         = cylinders * heads * sectors;
 
-    dev->drvData = malloc( (size_t) dev->sizeBlocks * ADF_DEV_BLOCK_SIZE );
+    dev->drvData = malloc( (size_t) dev->sizeBlocks * dev->sizeBlocks );
     if ( dev->drvData == NULL ) {
         adfEnv.eFct( "%s: malloc data error", __func__ );
         free( dev );
@@ -81,25 +82,25 @@ static ADF_RETCODE ramdiskRelease( struct AdfDevice * const  dev )
 
 static ADF_RETCODE ramdiskReadSector( const struct AdfDevice * const  dev,
                                       const uint32_t                  n,
-                                      const unsigned                  size,
                                       uint8_t * const                 buf )
 {
-    if ( size > ADF_DEV_BLOCK_SIZE || n >= dev->sizeBlocks )
+    if ( n >= dev->sizeBlocks )
         return ADF_RC_ERROR;
 
-    memcpy( buf, &( (uint8_t *) dev->drvData )[ n * ADF_DEV_BLOCK_SIZE ], size );
+    memcpy( buf, &( (uint8_t *) dev->drvData )[ n * dev->geometry.blockSize ],
+            dev->geometry.blockSize  );
     return ADF_RC_OK;
 }
 
 static ADF_RETCODE ramdiskWriteSector( const struct AdfDevice * const  dev,
                                        const uint32_t                  n,
-                                       const unsigned                  size,
                                        const uint8_t * const           buf )
 {
-    if ( size > ADF_DEV_BLOCK_SIZE || n >= dev->sizeBlocks )
+    if ( n >= dev->sizeBlocks )
         return ADF_RC_ERROR;
 
-    memcpy( &( (uint8_t *) dev->drvData )[ n * ADF_DEV_BLOCK_SIZE ], buf, size );
+    memcpy( &( (uint8_t *) dev->drvData )[ n * dev->geometry.blockSize ], buf,
+            dev->geometry.blockSize  );
     return ADF_RC_OK;
 }
 

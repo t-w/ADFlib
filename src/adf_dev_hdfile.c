@@ -123,12 +123,14 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
 
     if ( adfVolIsDosFS( vol ) ) {
         vol->rootBlock = (int32_t) ( dev->sizeBlocks / 2 );
-        assert( vol->rootBlock == adfVolCalcRootBlk( vol ) );
+        //adfEnv.eFct( "%s: root block %d, root block calc %d",
+        //             __func__, vol->rootBlock, adfVolCalcRootBlk( vol ) );
+        //assert( vol->rootBlock == adfVolCalcRootBlk( vol ) );
 /*printf("root=%ld\n",vol->rootBlock);*/
         uint8_t buf[ 512 ];
         bool found = false;
         do {
-            rc = dev->drv->readSector( dev, (uint32_t) vol->rootBlock, 512, buf );
+            rc = dev->drv->readSector( dev, (uint32_t) vol->rootBlock, buf );
             if ( rc != ADF_RC_OK ) {
                 free( dev->volList );
                 dev->volList = NULL;

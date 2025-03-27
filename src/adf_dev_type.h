@@ -49,8 +49,8 @@ typedef enum {
 struct AdfDevGeometry {
     unsigned  cylinders,
               heads,
-              sectors;
-              // sectorSize;   // always 512?
+              sectors,
+              blockSize;   // always 512?
 };
 
 

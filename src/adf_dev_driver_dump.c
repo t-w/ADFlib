@@ -118,6 +118,7 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
     dev->geometry.cylinders = cylinders;
     dev->geometry.heads     = heads;
     dev->geometry.sectors   = sectors;
+    dev->geometry.blockSize = ADF_DEV_BLOCK_SIZE;
     dev->sizeBlocks         = cylinders * heads * sectors;
 
     dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
@@ -182,9 +183,11 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
         return NULL;
     }
 
+    dev->geometry.blockSize = ADF_DEV_BLOCK_SIZE;
+
     /* determines size */
     fseek( *fd, 0, SEEK_END );
-    dev->sizeBlocks = (uint32_t)( ftell( *fd ) / ADF_DEV_BLOCK_SIZE );
+    dev->sizeBlocks = (uint32_t)( ftell( *fd ) / dev->geometry.blockSize );
     fseek( *fd, 0, SEEK_SET );
 
     dev->class = adfDevGetClassBySizeBlocks( dev->sizeBlocks );
@@ -223,19 +226,18 @@ static ADF_RETCODE adfReleaseDumpDevice( struct AdfDevice * const  dev )
  */
 static ADF_RETCODE adfReadDumpSector( const struct AdfDevice * const  dev,
                                       const uint32_t                  n,
-                                      const unsigned                  size,
                                       uint8_t * const                 buf )
 {
 /*puts("adfReadDumpSector");*/
     FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
-    int pos = fseek( fd, ADF_DEV_BLOCK_SIZE * n, SEEK_SET );
+    int pos = fseek( fd, dev->geometry.blockSize * n, SEEK_SET );
 /*printf("nnn=%ld size=%d\n",n,size);*/
     if ( pos == -1 )
         return ADF_RC_ERROR;
 
-    size_t bytes_read = fread( buf, 1, size, fd );
+    size_t bytes_read = fread( buf, 1, dev->geometry.blockSize, fd );
 /*puts("123");*/
-    if ( bytes_read != size ) {
+    if ( bytes_read != dev->geometry.blockSize ) {
 /*printf("rr=%d\n",r);*/
         return ADF_RC_ERROR;
     }
@@ -251,15 +253,14 @@ static ADF_RETCODE adfReadDumpSector( const struct AdfDevice * const  dev,
  */
 static ADF_RETCODE adfWriteDumpSector( const struct AdfDevice * const  dev,
                                        const uint32_t                  n,
-                                       const unsigned                  size,
                                        const uint8_t * const           buf )
 {
     FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
-    int r = fseek( fd, ADF_DEV_BLOCK_SIZE * n, SEEK_SET );
+    int r = fseek( fd, dev->geometry.blockSize * n, SEEK_SET );
     if ( r == -1 )
         return ADF_RC_ERROR;
 
-    if ( fwrite( buf, 1, size, fd ) != (unsigned int) size )
+    if ( fwrite( buf, 1, dev->geometry.blockSize, fd ) != dev->geometry.blockSize )
         return ADF_RC_ERROR;
 /*puts("adfWriteDumpSector");*/
     return ADF_RC_OK;

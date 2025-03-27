@@ -36,6 +36,7 @@
 #include "adf_dev_driver_nativ.h"
 #include "adf_dev_type.h"
 #include "adf_env.h"
+#include "adf_limits.h"
 
 
 struct AdfNativeDevice {
@@ -90,6 +91,9 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
         return NULL;
     }
 
+    // set block size (always 512, add checking that the device returns the same)
+    dev->geometry.blockSize = ADF_DEV_BLOCK_SIZE;
+
     //
     // Get size in blocks
     //
@@ -98,11 +102,12 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
         // fall-back to lseek
         const unsigned long size = (unsigned long) lseek( *fd, 0, SEEK_END );
         lseek( *fd, 0, SEEK_SET );
-        sizeBlocks = size / 512;
-        if ( sizeBlocks * 512 != size ) {
-            adfEnv.eFct( "%s: the size of device '%s' (%lu) is unaligned to 512-byte blocks,"
+        sizeBlocks = size / dev->geometry.blockSize;
+        if ( sizeBlocks * dev->geometry.blockSize != size ) {
+            adfEnv.eFct( "%s: the size of device '%s' (%lu) is unaligned to %u-byte blocks,"
                          "%u bytes outside of the last block",
-                         __func__, name, size, size % 512 );
+                         __func__, name, size, dev->geometry.blockSize,
+                         size % dev->geometry.blockSize );
         }
     }
 
@@ -180,18 +185,20 @@ static ADF_RETCODE adfLinuxReleaseDevice( struct AdfDevice * const  dev )
  */
 static ADF_RETCODE adfLinuxReadSector( const struct AdfDevice * const  dev,
                                        const uint32_t                  n,
-                                       const unsigned                  size,
                                        uint8_t * const                 buf )
 {
     const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
 
-    off_t offset = (off_t) n * 512;
+    off_t offset = (off_t) n * dev->geometry.blockSize;
     if ( lseek( fd, offset, SEEK_SET ) != offset ) {
         return ADF_RC_ERROR;
     }
 
-    if ( read( fd, buf, (size_t) size ) != (ssize_t) size )
+    if ( read( fd, buf, (size_t) dev->geometry.blockSize ) !=
+         (ssize_t) dev->geometry.blockSize )
+    {
         return ADF_RC_ERROR;
+    }
 
     return ADF_RC_OK;   
 }
@@ -203,18 +210,20 @@ static ADF_RETCODE adfLinuxReadSector( const struct AdfDevice * const  dev,
  */
 static ADF_RETCODE adfLinuxWriteSector( const struct AdfDevice * const  dev,
                                         const uint32_t                  n,
-                                        const unsigned                  size,
                                         const uint8_t * const           buf )
 {
     const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
 
-    off_t offset = (off_t) n * 512;
+    off_t offset = (off_t) n * dev->geometry.blockSize;
     if ( lseek( fd, offset, SEEK_SET ) != offset ) {
         return ADF_RC_ERROR;
     }
 
-    if ( write( fd, (void *) buf, (size_t) size ) != size )
+    if ( write( fd, (void *) buf, (size_t) dev->geometry.blockSize ) !=
+         (ssize_t) dev->geometry.blockSize )
+    {
         return ADF_RC_ERROR;
+    }
 
     return ADF_RC_OK;
 }
