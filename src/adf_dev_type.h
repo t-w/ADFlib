@@ -60,7 +60,7 @@ ADF_PREFIX const char * adfDevTypeGetDescription( AdfDevType type );
 
 ADF_PREFIX AdfDevType adfDevGetTypeByGeometry(
     const struct AdfDevGeometry * const geometry );
-ADF_PREFIX AdfDevType adfDevGetTypeBySize( uint64_t size );
-ADF_PREFIX AdfDevClass adfDevGetClassBySize( uint64_t size );
+ADF_PREFIX AdfDevType adfDevGetTypeBySizeBlocks( uint32_t sizeBlocks );
+ADF_PREFIX AdfDevClass adfDevGetClassBySizeBlocks( uint32_t sizeBlocks );
 
 #endif

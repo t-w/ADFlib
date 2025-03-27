@@ -33,6 +33,7 @@
 #include "adf_util.h"
 #include "adf_vol.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -101,7 +102,7 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
 
     vol->firstBlock = 0;
 
-    const unsigned size = dev->size + 512 - ( dev->size % 512 );
+    //const unsigned size = dev->size + 512 - ( dev->size % 512 );
 /*printf("size=%ld\n",size);*/
 
     /* set filesystem info (read from bootblock) */
@@ -121,7 +122,8 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
     vol->datablockSize = ( adfVolIsOFS( vol ) ? 488 : 512 );
 
     if ( adfVolIsDosFS( vol ) ) {
-        vol->rootBlock = (int32_t) ( ( size / 512 ) / 2 );
+        vol->rootBlock = (int32_t) ( dev->sizeBlocks / 2 );
+        assert( vol->rootBlock == adfVolCalcRootBlk( vol ) );
 /*printf("root=%ld\n",vol->rootBlock);*/
         uint8_t buf[ 512 ];
         bool found = false;

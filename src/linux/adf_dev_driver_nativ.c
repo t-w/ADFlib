@@ -90,26 +90,35 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
         return NULL;
     }
 
-    unsigned long long size = 0;
-
-    /*
-    unsigned long blocks = 0;
-    if ( ioctl ( nDev->fd, BLKGETSIZE, &blocks ) < 0 ) {
+    //
+    // Get size in blocks
+    //
+    unsigned long sizeBlocks = 0;
+    if ( ioctl ( *fd, BLKGETSIZE, &sizeBlocks ) < 0 ) {
         // fall-back to lseek
-        size = ( unsigned long ) lseek ( nDev->fd, 0, SEEK_END );
-        lseek ( nDev->fd, 0, SEEK_SET );
-    } else {
-        size = blocks * 512;
+        const unsigned long size = (unsigned long) lseek( *fd, 0, SEEK_END );
+        lseek( *fd, 0, SEEK_SET );
+        sizeBlocks = size / 512;
+        if ( sizeBlocks * 512 != size ) {
+            adfEnv.eFct( "%s: the size of device '%s' (%lu) is unaligned to 512-byte blocks,"
+                         "%u bytes outside of the last block",
+                         __func__, name, size, size % 512 );
+        }
     }
-    */
+
+    /*unsigned long long size = 0;
     if ( ioctl( *fd, BLKGETSIZE64, &size ) < 0 ) {
         // fall-back to lseek
         size = ( unsigned long long ) lseek( *fd, 0, SEEK_END );
         lseek( *fd, 0, SEEK_SET );
-    }
+    }*/
+    //dev->size = (uint32_t) size;
 
-    dev->size = (uint32_t) size;
     
+    //
+    // Get geometry
+    //
+
     // https://docs.kernel.org/userspace-api/ioctl/hdio.html
     struct hd_geometry geom;
     if ( ioctl( *fd, HDIO_GETGEO, &geom ) == 0 ) {
@@ -122,7 +131,7 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
         adfEnv.vFct( "%s: geometry read from the device", __func__ );
     } else {
         // no data from hardware, so guessing (is whatever matches the size OK?)
-        dev->geometry.cylinders = dev->size / 512;
+        dev->geometry.cylinders = dev->sizeBlocks;
         dev->geometry.heads     = 1;
         dev->geometry.sectors   = 1;
 
@@ -132,10 +141,13 @@ static struct AdfDevice * adfLinuxInitDevice( const char * const   name,
                  __func__, dev->geometry.cylinders, dev->geometry.heads,
                  dev->geometry.sectors );
 
+    //
+    // Set device class and type
+    //
     dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
     dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
         adfDevTypeGetClass( dev->type ) :
-        adfDevGetClassBySize( dev->size );
+        adfDevGetClassBySizeBlocks( dev->sizeBlocks );
 
     dev->nVol    = 0;
     dev->volList = NULL;
@@ -173,7 +185,7 @@ static ADF_RETCODE adfLinuxReadSector( const struct AdfDevice * const  dev,
 {
     const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
 
-    off_t offset = n * 512;
+    off_t offset = (off_t) n * 512;
     if ( lseek( fd, offset, SEEK_SET ) != offset ) {
         return ADF_RC_ERROR;
     }
@@ -196,7 +208,7 @@ static ADF_RETCODE adfLinuxWriteSector( const struct AdfDevice * const  dev,
 {
     const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
 
-    off_t offset = n * 512;
+    off_t offset = (off_t) n * 512;
     if ( lseek( fd, offset, SEEK_SET ) != offset ) {
         return ADF_RC_ERROR;
     }

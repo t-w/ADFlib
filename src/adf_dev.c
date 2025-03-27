@@ -32,6 +32,7 @@
 #include "adf_dev_hd.h"
 #include "adf_dev_hdfile.h"
 #include "adf_env.h"
+#include "adf_limits.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -62,6 +63,13 @@ struct AdfDevice * adfDevCreate(  const char * const  driverName,
                                   const uint32_t      heads,
                                   const uint32_t      sectors )
 {
+    uint32_t sizeBlocks = cylinders * heads * sectors;
+    if ( sizeBlocks > ADF_DEV_SIZE_MAX_BLOCKS ) {
+        adfEnv.eFct( " %s: size %u blocks is bigger than max. %u blocks",
+                     sizeBlocks, ADF_DEV_SIZE_MAX_BLOCKS );
+        return NULL;
+    }
+
     const struct AdfDeviceDriver * const  driver = adfGetDeviceDriverByName( driverName );
     if ( driver == NULL || driver->createDev == NULL )
         return NULL;
@@ -237,7 +245,7 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         return NULL;
     }
 
-    dev->class = adfDevGetClassBySize( dev->size );
+    dev->class = adfDevGetClassBySizeBlocks( dev->sizeBlocks );
 
     if ( ! dev->drv->isNative() ) {
         if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
@@ -248,17 +256,17 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         }
     }
 
-    if ( ! adfDevIsGeometryValid( &dev->geometry, dev->size ) ) {
+    if ( ! adfDevIsGeometryValid( &dev->geometry, dev->sizeBlocks ) ) {
         if ( dev->drv->isNative()
              || dev->type != ADF_DEVTYPE_UNKNOWN )   // from the predefined list should be valid...
         {
             adfEnv.eFct( "%s: invalid geometry: cyliders %u, "
-                         "heads: %u, sectors: %u, size: %u, device: %s",
+                         "heads: %u, sectors: %u, size (in blocks): %u, device: %s",
                          __func__, dev->geometry.cylinders, dev->geometry.heads,
-                         dev->geometry.sectors, dev->size, dev->name );
+                         dev->geometry.sectors, dev->sizeBlocks, dev->name );
             dev->drv->closeDev( dev );
             return NULL;
-        } else {
+        } /*else {
             // only a warning (many exsting HDFs are like this...)
             const uint32_t sizeFromGeometry = dev->geometry.cylinders *
                                               dev->geometry.heads *
@@ -271,7 +279,7 @@ static struct AdfDevice * adfDevOpenWithDrv_(
                      dev->size % 512,
                      dev->size, dev->size, dev->size % 512 );
             //assert( dev->size % 512 == dev->size - sizeFromGeometry );
-        }
+            }*/
     }
 
     if ( dev->class == ADF_DEVCLASS_HARDDISK ) {
@@ -286,7 +294,7 @@ static struct AdfDevice * adfDevOpenWithDrv_(
     dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
     dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
         adfDevTypeGetClass( dev->type ) :
-        adfDevGetClassBySize( dev->size );
+        adfDevGetClassBySizeBlocks( dev->sizeBlocks );
 
     return dev;
 }
@@ -297,7 +305,7 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
     // set geometry (based on already set size)
 
     // first - check predefined types
-    dev->type = adfDevGetTypeBySize( dev->size );
+    dev->type = adfDevGetTypeBySizeBlocks( dev->sizeBlocks );
     if ( dev->type != ADF_DEVTYPE_UNKNOWN ) {
         dev->geometry = adfDevTypeGetGeometry( dev->type );
         return ADF_RC_OK;
@@ -309,7 +317,7 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
     {
         // partitions must be aligned with cylinders(tracks) - this gives most
         // flexibility
-        dev->geometry.cylinders = dev->size / 512;
+        dev->geometry.cylinders = dev->sizeBlocks;
         dev->geometry.heads     = 1;
         dev->geometry.sectors   = 1;
     } else {

@@ -103,10 +103,10 @@ static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
     dev->geometry.sectors   = geometry.sectorsPerTrack;
 
     //dev->size = NT4GetDriveSize(nDev->hDrv);
-    dev->size = geometry.cylinders *
-                geometry.tracksPerCylinder *
-                geometry.sectorsPerTrack *
-                geometry.bytesPerSector;
+    dev->sizeBlocks = geometry.cylinders *
+                      geometry.tracksPerCylinder *
+                      geometry.sectorsPerTrack;
+                   //* geometry.bytesPerSector;
 
     dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
     dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?

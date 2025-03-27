@@ -33,6 +33,7 @@ libadf_la_SOURCES = \
     adf_file_block.c \
     adf_file.c \
     adf_file_util.c \
+    adf_limits.h \
     adf_link.c \
     adf_link.h \
     adf_raw.c \
@@ -72,6 +73,7 @@ adfinc_HEADERS = \
     adf_file_block.h \
     adf_file.h \
     adf_file_util.h \
+    adf_limits.h \
     adf_prefix.h \
     adf_raw.h \
     adf_salv.h \

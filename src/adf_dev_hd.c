@@ -58,9 +58,9 @@ ADF_RETCODE adfDevUpdateGeometryFromRDSK( struct AdfDevice * const  dev )
                  dev->geometry.sectors   != rdsk.sectors )
             {
                 if ( //adfDevIsGeometryValid( &dev->geometry, dev->size ) ) {
-                     dev->size == rdsk.cylinders *
-                                  rdsk.heads *
-                                  rdsk.sectors * 512 )
+                     dev->sizeBlocks == rdsk.cylinders *
+                                        rdsk.heads *
+                                        rdsk.sectors )
                 {
                     adfEnv.wFct(
                         "%s: using geometry from Rigid Block, "
@@ -69,15 +69,15 @@ ADF_RETCODE adfDevUpdateGeometryFromRDSK( struct AdfDevice * const  dev )
                         " cyliders:      %8u                  %8u\n"
                         " heads:         %8u                  %8u\n"
                         " sectors:       %8u                  %8u\n"
-                        " size:        %10llu                %10llu",
+                        " size (blocks): %8u                  %8u",
                         __func__,
                         dev->geometry.cylinders, rdsk.cylinders,
                         dev->geometry.heads,     rdsk.heads,
                         dev->geometry.sectors,   rdsk.sectors,
-                        dev->size,
-                        (long long unsigned) rdsk.cylinders *
-                        (long long unsigned) rdsk.heads *
-                        (long long unsigned) rdsk.sectors * 512LLU );
+                        dev->sizeBlocks,         rdsk.cylinders *
+                                                 rdsk.heads *
+                                                 rdsk.sectors );
+
                     dev->geometry.cylinders = rdsk.cylinders;
                     dev->geometry.heads     = rdsk.heads;
                     dev->geometry.sectors   = rdsk.sectors;
@@ -89,16 +89,15 @@ ADF_RETCODE adfDevUpdateGeometryFromRDSK( struct AdfDevice * const  dev )
                         " cyliders:      %8u                  %8u\n"
                         " heads:         %8u                  %8u\n"
                         " sectors:       %8u                  %8u\n"
-                        " size:        %10llu                %10llu\n\n"
+                        " size (blocks): %8u                  %8u\n\n"
                         "(keeping detected geometry).",
                         __func__,
                         dev->geometry.cylinders, rdsk.cylinders,
                         dev->geometry.heads,     rdsk.heads,
                         dev->geometry.sectors,   rdsk.sectors,
-                        dev->size,
-                        (long long unsigned) rdsk.cylinders *
-                        (long long unsigned) rdsk.heads *
-                        (long long unsigned) rdsk.sectors * 512LLU );
+                        dev->sizeBlocks,         rdsk.cylinders *
+                                                 rdsk.heads *
+                                                 rdsk.sectors );
 
                     // return error or just issue a warning and keep detected?
                     //dev->drv->closeDev( dev );

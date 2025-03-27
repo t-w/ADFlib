@@ -180,6 +180,14 @@ bool parse_args( const int * const           argc,
                 exit( 1 );
             }
 
+            if ( chs[0] * chs[1] * chs[2] > ADF_DEV_SIZE_MAX_BLOCKS ) {
+                fprintf( stderr, "Size %u KiB is too large (%u KiB limit).\n",
+                         //chs[0] * chs[1] * chs[2] * 512 / ( 1024 * 1024 ) );
+                         chs[0] * chs[1] * chs[2] / 2,
+                         ADF_DEV_SIZE_MAX_BLOCKS / 2 );
+                exit( 1 );
+            }
+
             devreq->geometry.tracks  = chs[0];
             devreq->geometry.heads   = chs[1];;
             devreq->geometry.sectors = chs[2];
@@ -203,12 +211,13 @@ bool parse_args( const int * const           argc,
                 exit( 1 );
             }
 
-            if ( sizekib > 1024 * 1024 * 2 ) {
-                fprintf( stderr, "Size %u is too large (2GiB limit).\n", sizekib );
+            if ( sizekib > ADF_DEV_SIZE_MAX_BLOCKS / 2 ) {
+                fprintf( stderr, "Size %u KiB is too large (%u KiB limit).\n",
+                         sizekib, ADF_DEV_SIZE_MAX_BLOCKS / 2 );
                 exit( 1 );
             }
 
-            uint32_t sizeblocks = (uint32_t)( ( (uint64_t) sizekib * 1024 ) / 512 );
+            const uint32_t sizeblocks = sizekib * 2;
 
             devreq->geometry.tracks  = 1;
             devreq->geometry.heads   = 1;
@@ -233,12 +242,15 @@ bool parse_args( const int * const           argc,
                 return false;
             }
 
-            if ( sizemib > 1024 * 2 ) {
-                fprintf( stderr, "Size %u is too large (2GiB limit).\n", sizemib );
+            //if ( sizemib > ADF_DEV_SIZE_MAX_BLOCKS / ( 1024 * 1024 / 512 ) ) {
+            if ( sizemib > ADF_DEV_SIZE_MAX_BLOCKS / 2048 ) {
+                fprintf( stderr, "Size %u MiB is too large (%u KiB limit).\n",
+                         sizemib, ADF_DEV_SIZE_MAX_BLOCKS / 2 );
                 return false;
             }
 
-            uint32_t sizeblocks = (uint32_t)( ( (uint64_t) sizemib * 1024 * 1024 ) / 512 );
+            //uint32_t sizeblocks = (uint32_t)( ( (uint64_t) sizemib * 1024 * 1024 ) / 512 );
+            uint32_t sizeblocks = sizemib * 2048;
 
             devreq->geometry.tracks  = 1;
             devreq->geometry.heads   = 1;

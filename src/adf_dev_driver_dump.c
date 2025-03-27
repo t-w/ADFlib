@@ -31,6 +31,7 @@
 #include "adf_dev_type.h"
 #include "adf_env.h"
 #include "adf_err.h"
+#include "adf_limits.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -117,12 +118,12 @@ static struct AdfDevice * adfCreateDumpDevice( const char * const  filename,
     dev->geometry.cylinders = cylinders;
     dev->geometry.heads     = heads;
     dev->geometry.sectors   = sectors;
-    dev->size               = cylinders * heads * sectors * ADF_LOGICAL_BLOCK_SIZE;
+    dev->sizeBlocks         = cylinders * heads * sectors;
 
     dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
     dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
         adfDevTypeGetClass( dev->type ) :
-        adfDevGetClassBySize( dev->size );
+        adfDevGetClassBySizeBlocks( dev->sizeBlocks );
 
     dev->nVol     = 0;
     dev->readOnly = false;
@@ -183,10 +184,10 @@ static struct AdfDevice * adfDevDumpOpen( const char * const   name,
 
     /* determines size */
     fseek( *fd, 0, SEEK_END );
-    dev->size = (uint32_t) ftell( *fd );
+    dev->sizeBlocks = (uint32_t)( ftell( *fd ) / ADF_DEV_BLOCK_SIZE );
     fseek( *fd, 0, SEEK_SET );
 
-    dev->class = adfDevGetClassBySize( dev->size );
+    dev->class = adfDevGetClassBySizeBlocks( dev->sizeBlocks );
     dev->type  = ADF_DEVTYPE_UNKNOWN; // geometry unknown
     dev->nVol    = 0;
     dev->volList = NULL;
@@ -227,7 +228,7 @@ static ADF_RETCODE adfReadDumpSector( const struct AdfDevice * const  dev,
 {
 /*puts("adfReadDumpSector");*/
     FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
-    int pos = fseek( fd, 512 * n, SEEK_SET );
+    int pos = fseek( fd, ADF_DEV_BLOCK_SIZE * n, SEEK_SET );
 /*printf("nnn=%ld size=%d\n",n,size);*/
     if ( pos == -1 )
         return ADF_RC_ERROR;
@@ -254,7 +255,7 @@ static ADF_RETCODE adfWriteDumpSector( const struct AdfDevice * const  dev,
                                        const uint8_t * const           buf )
 {
     FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
-    int r = fseek( fd, 512 * n, SEEK_SET );
+    int r = fseek( fd, ADF_DEV_BLOCK_SIZE * n, SEEK_SET );
     if ( r == -1 )
         return ADF_RC_ERROR;
 

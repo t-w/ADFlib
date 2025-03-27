@@ -27,6 +27,7 @@
 #include "adf_dev_driver_ramdisk.h"
 #include "adf_dev_type.h"
 #include "adf_env.h"
+#include "adf_limits.h"
 
 static struct AdfDevice * ramdiskCreate( const char * const  name,
                                          const uint32_t      cylinders,
@@ -44,9 +45,9 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
     dev->geometry.cylinders = cylinders;
     dev->geometry.heads     = heads;
     dev->geometry.sectors   = sectors;
-    dev->size               = cylinders * heads * sectors * ADF_LOGICAL_BLOCK_SIZE;
+    dev->sizeBlocks         = cylinders * heads * sectors;
 
-    dev->drvData = malloc( dev->size );
+    dev->drvData = malloc( (size_t) dev->sizeBlocks * ADF_DEV_BLOCK_SIZE );
     if ( dev->drvData == NULL ) {
         adfEnv.eFct( "%s: malloc data error", __func__ );
         free( dev );
@@ -57,7 +58,7 @@ static struct AdfDevice * ramdiskCreate( const char * const  name,
     dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
     dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
         adfDevTypeGetClass( dev->type ) :
-        adfDevGetClassBySize( dev->size );
+        adfDevGetClassBySizeBlocks( dev->sizeBlocks );
 
     dev->nVol      = 0;
     dev->volList   = NULL;
@@ -83,13 +84,10 @@ static ADF_RETCODE ramdiskReadSector( const struct AdfDevice * const  dev,
                                       const unsigned                  size,
                                       uint8_t * const                 buf )
 {
-    unsigned int offset = n * 512;
-    if ( offset > dev->size ||
-         ( offset + size ) > dev->size )
-    {
+    if ( size > ADF_DEV_BLOCK_SIZE || n >= dev->sizeBlocks )
         return ADF_RC_ERROR;
-    }
-    memcpy( buf, &( (uint8_t *) dev->drvData )[ offset ], size );
+
+    memcpy( buf, &( (uint8_t *) dev->drvData )[ n * ADF_DEV_BLOCK_SIZE ], size );
     return ADF_RC_OK;
 }
 
@@ -98,13 +96,10 @@ static ADF_RETCODE ramdiskWriteSector( const struct AdfDevice * const  dev,
                                        const unsigned                  size,
                                        const uint8_t * const           buf )
 {
-    unsigned int offset = n * 512;
-    if ( offset > dev->size ||
-         ( offset + size ) > dev->size )
-    {
+    if ( size > ADF_DEV_BLOCK_SIZE || n >= dev->sizeBlocks )
         return ADF_RC_ERROR;
-    }
-    memcpy( &( (uint8_t *) dev->drvData )[ offset ], buf, size );
+
+    memcpy( &( (uint8_t *) dev->drvData )[ n * ADF_DEV_BLOCK_SIZE ], buf, size );
     return ADF_RC_OK;
 }
 

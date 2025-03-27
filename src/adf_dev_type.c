@@ -62,13 +62,13 @@ const char * adfDevTypeGetDescription( AdfDevType type )
 }
 
 
-AdfDevType adfDevGetTypeBySize( uint64_t size )
+AdfDevType adfDevGetTypeBySizeBlocks( uint32_t sizeBlocks )
 {
     for ( unsigned i = 0 ; i < ADF_DEVTYPE_NUMTYPES ; i++ ) {
         const struct AdfDevGeometry * const geometry = &adfDevMedia[i].geometry;
-        if ( (uint64_t) geometry->cylinders *
-             (uint64_t) geometry->heads *
-             (uint64_t) geometry->sectors * 512 == size )
+        if ( geometry->cylinders *
+             geometry->heads *
+             geometry->sectors == sizeBlocks )
         {
             return i;
         }
@@ -108,20 +108,20 @@ AdfDevType adfDevGetTypeByGeometry( const struct AdfDevGeometry * const geometry
 
 
 
-static const struct AdfDevMedium * adfDevGetMediumBySize( uint64_t size );
+static const struct AdfDevMedium * adfDevGetMediumBySizeBlocks( uint32_t sizeBlocks );
 
-AdfDevClass adfDevGetClassBySize( uint64_t size )
+AdfDevClass adfDevGetClassBySizeBlocks( uint32_t sizeBlocks )
 {
     // check the predefined list first
-    const struct AdfDevMedium * const dm = adfDevGetMediumBySize( size );
+    const struct AdfDevMedium * const dm = adfDevGetMediumBySizeBlocks( sizeBlocks );
     if ( dm != NULL )
         return dm->class;
 
     // if not found on the list - maybe it's an HD or HDF?
     const struct AdfDevMedium * const largestFlop = &adfDevMedia[ ADF_DEVTYPE_FHD83 ];
-    if ( size > largestFlop->geometry.cylinders *
-                largestFlop->geometry.heads *
-                largestFlop->geometry.sectors * 512 )
+    if ( sizeBlocks > largestFlop->geometry.cylinders *
+                      largestFlop->geometry.heads *
+                      largestFlop->geometry.sectors )
     {
         // means also HDF(!), cannot distinguish them by size
         return ADF_DEVCLASS_HARDDISK;
@@ -134,12 +134,12 @@ AdfDevClass adfDevGetClassBySize( uint64_t size )
 }
 
 
-static const struct AdfDevMedium * adfDevGetMediumBySize( uint64_t size )
+static const struct AdfDevMedium * adfDevGetMediumBySizeBlocks( uint32_t sizeBlocks )
 {
     for ( const struct AdfDevMedium * dm = &adfDevMedia[0]; dm->name ; dm++ ) {
-        if ( (uint64_t) dm->geometry.cylinders *
-             (uint64_t) dm->geometry.heads *
-             (uint64_t) dm->geometry.sectors * 512 == size )
+        if ( dm->geometry.cylinders *
+             dm->geometry.heads *
+             dm->geometry.sectors == sizeBlocks )
         {
             return dm;
         }

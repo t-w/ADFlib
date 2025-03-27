@@ -26,7 +26,7 @@ struct AdfDevice {
     AdfDevType     type;
     AdfDevClass    class;            // flop / hdf / hdd (with RDB)
     bool           readOnly;
-    uint32_t       size;             /* in bytes */
+    uint32_t       sizeBlocks;
 
     struct AdfDevGeometry
                    geometry;
@@ -113,12 +113,13 @@ ADF_PREFIX ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
 ADF_PREFIX char * adfDevGetInfo( const struct AdfDevice * const  dev );
 
 
-static inline bool adfDevIsGeometryValid( const struct AdfDevGeometry * const  geometry,
-                                          const uint32_t                       devSize )
+static inline bool adfDevIsGeometryValid(
+    const struct AdfDevGeometry * const  geometry,
+    const uint32_t                       devSizeBlocks )
 {
-    return ( devSize == geometry->cylinders *
-                        geometry->heads *
-                        geometry->sectors * 512 );
+    return ( devSizeBlocks == geometry->cylinders *
+                              geometry->heads *
+                              geometry->sectors );
 }
 
 #endif  /* ADF_DEV_H */
