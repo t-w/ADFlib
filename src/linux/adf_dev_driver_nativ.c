@@ -180,6 +180,59 @@ static ADF_RETCODE adfLinuxReleaseDevice( struct AdfDevice * const  dev )
 
 
 /*
+ * adfLinuxReadSectors
+ *
+ */
+static ADF_RETCODE adfLinuxReadSectors( const struct AdfDevice * const  dev,
+                                        const uint32_t                  block,
+                                        const uint32_t                  lenBlocks,
+                                        uint8_t * const                 buf )
+{
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
+    const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
+
+    off_t offset = (off_t) dev->geometry.blockSize * block;
+    if ( lseek( fd, offset, SEEK_SET ) != offset )
+        return ADF_RC_ERROR;
+
+    const size_t len = (size_t) dev->geometry.blockSize * lenBlocks;
+    if ( read( fd, buf, len ) != (ssize_t) len )
+        return ADF_RC_ERROR;
+
+    return ADF_RC_OK;   
+}
+
+
+/*
+ * adfLinuxWriteSectors
+ *
+ */
+static ADF_RETCODE adfLinuxWriteSectors( const struct AdfDevice * const  dev,
+                                         const uint32_t                  block,
+                                         const uint32_t                  lenBlocks,
+                                         const uint8_t * const           buf )
+{
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
+    const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
+
+    off_t offset = (off_t) dev->geometry.blockSize * block;
+    if ( lseek( fd, offset, SEEK_SET ) != offset )
+        return ADF_RC_ERROR;
+
+    const size_t len = (size_t) dev->geometry.blockSize * lenBlocks;
+    if ( write( fd, buf, len ) != (ssize_t) len ) {
+        return ADF_RC_ERROR;
+    }
+
+    return ADF_RC_OK;
+}
+
+
+/*
  * adfLinuxReadSector
  *
  */
@@ -187,20 +240,7 @@ static ADF_RETCODE adfLinuxReadSector( const struct AdfDevice * const  dev,
                                        const uint32_t                  n,
                                        uint8_t * const                 buf )
 {
-    const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
-
-    off_t offset = (off_t) n * dev->geometry.blockSize;
-    if ( lseek( fd, offset, SEEK_SET ) != offset ) {
-        return ADF_RC_ERROR;
-    }
-
-    if ( read( fd, buf, (size_t) dev->geometry.blockSize ) !=
-         (ssize_t) dev->geometry.blockSize )
-    {
-        return ADF_RC_ERROR;
-    }
-
-    return ADF_RC_OK;   
+    return adfLinuxReadSectors( dev, n, 1, buf );
 }
 
 
@@ -212,20 +252,7 @@ static ADF_RETCODE adfLinuxWriteSector( const struct AdfDevice * const  dev,
                                         const uint32_t                  n,
                                         const uint8_t * const           buf )
 {
-    const int fd = ( (struct AdfNativeDevice *) dev->drvData )->fd;
-
-    off_t offset = (off_t) n * dev->geometry.blockSize;
-    if ( lseek( fd, offset, SEEK_SET ) != offset ) {
-        return ADF_RC_ERROR;
-    }
-
-    if ( write( fd, (void *) buf, (size_t) dev->geometry.blockSize ) !=
-         (ssize_t) dev->geometry.blockSize )
-    {
-        return ADF_RC_ERROR;
-    }
-
-    return ADF_RC_OK;
+    return adfLinuxWriteSectors( dev, n, 1, buf );
 }
 
 
@@ -258,13 +285,15 @@ static bool adfLinuxIsBlockDevice( const char * const  devName )
 
 
 const struct AdfDeviceDriver  adfDeviceDriverNative = {
-    .name        = "native linux",
-    .data        = NULL,
-    .createDev   = NULL,
-    .openDev     = adfLinuxInitDevice,
-    .closeDev    = adfLinuxReleaseDevice,
-    .readSector  = adfLinuxReadSector,
-    .writeSector = adfLinuxWriteSector,
-    .isNative    = adfLinuxIsDevNative,
-    .isDevice    = adfLinuxIsBlockDevice
+    .name         = "native linux",
+    .data         = NULL,
+    .createDev    = NULL,
+    .openDev      = adfLinuxInitDevice,
+    .closeDev     = adfLinuxReleaseDevice,
+    .readSectors  = adfLinuxReadSectors,
+    .writeSectors = adfLinuxWriteSectors,
+    .readSector   = adfLinuxReadSector,
+    .writeSector  = adfLinuxWriteSector,
+    .isNative     = adfLinuxIsDevNative,
+    .isDevice     = adfLinuxIsBlockDevice
 };

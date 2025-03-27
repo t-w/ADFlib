@@ -80,29 +80,51 @@ static ADF_RETCODE ramdiskRelease( struct AdfDevice * const  dev )
 }
 
 
+static ADF_RETCODE ramdiskReadSectors( const struct AdfDevice * const  dev,
+                                       const uint32_t                  block,
+                                       const uint32_t                  lenBlocks,
+                                       uint8_t * const                 buf )
+{
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
+    memcpy( buf, &( (uint8_t *) dev->drvData )[ block * dev->geometry.blockSize ],
+            dev->geometry.blockSize * lenBlocks  );
+    return ADF_RC_OK;
+}
+
+
+static ADF_RETCODE ramdiskWriteSectors( const struct AdfDevice * const  dev,
+                                        const uint32_t                  block,
+                                        const uint32_t                  lenBlocks,
+                                        const uint8_t * const           buf )
+{
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
+    memcpy( &( (uint8_t *) dev->drvData )[ block * dev->geometry.blockSize ], buf,
+            dev->geometry.blockSize * lenBlocks );
+    return ADF_RC_OK;
+}
+
+
 static ADF_RETCODE ramdiskReadSector( const struct AdfDevice * const  dev,
                                       const uint32_t                  n,
                                       uint8_t * const                 buf )
 {
-    if ( n >= dev->sizeBlocks )
-        return ADF_RC_ERROR;
-
-    memcpy( buf, &( (uint8_t *) dev->drvData )[ n * dev->geometry.blockSize ],
-            dev->geometry.blockSize  );
-    return ADF_RC_OK;
+    return ramdiskReadSectors( dev, n, 1, buf );
 }
+
 
 static ADF_RETCODE ramdiskWriteSector( const struct AdfDevice * const  dev,
                                        const uint32_t                  n,
                                        const uint8_t * const           buf )
 {
-    if ( n >= dev->sizeBlocks )
-        return ADF_RC_ERROR;
-
-    memcpy( &( (uint8_t *) dev->drvData )[ n * dev->geometry.blockSize ], buf,
-            dev->geometry.blockSize  );
-    return ADF_RC_OK;
+    return ramdiskWriteSectors( dev, n, 1, buf );
 }
+
+
+
 
 
 static bool ramdiskIsDevNative( void )
@@ -112,13 +134,15 @@ static bool ramdiskIsDevNative( void )
 
 
 const struct AdfDeviceDriver adfDeviceDriverRamdisk = {
-    .name        = "ramdisk",
-    .data        = NULL,
-    .createDev   = ramdiskCreate,
-    .openDev     = NULL,
-    .closeDev    = ramdiskRelease,
-    .readSector  = ramdiskReadSector,
-    .writeSector = ramdiskWriteSector,
-    .isNative    = ramdiskIsDevNative,
-    .isDevice    = NULL
+    .name         = "ramdisk",
+    .data         = NULL,
+    .createDev    = ramdiskCreate,
+    .openDev      = NULL,
+    .closeDev     = ramdiskRelease,
+    .readSectors  = ramdiskReadSectors,
+    .writeSectors = ramdiskWriteSectors,
+    .readSector   = ramdiskReadSector,
+    .writeSector  = ramdiskWriteSector,
+    .isNative     = ramdiskIsDevNative,
+    .isDevice     = NULL
 };

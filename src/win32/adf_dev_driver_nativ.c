@@ -137,13 +137,17 @@ static ADF_RETCODE Win32ReleaseDevice( struct AdfDevice * const  dev )
 }
 
 
-static ADF_RETCODE Win32ReadSector( const struct AdfDevice * const  dev,
-                                    const uint32_t                  n,
-                                    uint8_t * const                 buf )
+static ADF_RETCODE Win32ReadSectors( const struct AdfDevice * const  dev,
+                                     const uint32_t                  block,
+                                     const uint32_t                  lenBlocks,
+                                     uint8_t * const                 buf )
 {
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
     void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
 
-    if ( ! NT4ReadSector( *hDrv, (long) n, dev->geometry.blockSize, buf ) ) {
+    if ( ! NT4ReadSector( *hDrv, (long) block, dev->geometry.blockSize * lenBlocks, buf ) ) {
         adfEnv.eFct( "%s: NT4ReadSector", __func__ );
         return ADF_RC_ERROR;				/* BV */
     }
@@ -152,18 +156,38 @@ static ADF_RETCODE Win32ReadSector( const struct AdfDevice * const  dev,
 }
 
 
-static ADF_RETCODE Win32WriteSector( const struct AdfDevice * const  dev,
-                                     const uint32_t                  n,
-                                     const uint8_t * const           buf )
+static ADF_RETCODE Win32WriteSectors( const struct AdfDevice * const  dev,
+                                      const uint32_t                  block,
+                                      const uint32_t                  lenBlocks,
+                                      const uint8_t * const           buf )
 {
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
     void ** const hDrv = &( ( (struct AdfNativeDevice *) dev->drvData )->hDrv );
 
-    if ( ! NT4WriteSector( *hDrv, (long) n, dev->geometry.blockSize, buf ) ) {
+    if ( ! NT4WriteSector( *hDrv, (long) block, dev->geometry.blockSize * lenBlocks, buf ) ) {
         adfEnv.eFct( "%s: NT4WriteSector", __func__ );
         return ADF_RC_ERROR;				/* BV */
     }
 
     return ADF_RC_OK;
+}
+
+
+static ADF_RETCODE Win32ReadSector( const struct AdfDevice * const  dev,
+                                    const uint32_t                  n,
+                                    uint8_t * const                 buf )
+{
+    return Win32ReadSectors( dev, n, 1, buf );
+}
+
+
+static ADF_RETCODE Win32WriteSector( const struct AdfDevice * const  dev,
+                                     const uint32_t                  n,
+                                     const uint8_t * const           buf )
+{
+    return Win32WriteSectors( dev, n, 1, buf );
 }
 
 
@@ -180,13 +204,15 @@ static bool Win32IsDevice( const char * const  devName )
 
 
 const struct AdfDeviceDriver adfDeviceDriverNative = {
-    .name        = "native win32",
-    .data        = NULL,
-    .createDev   = NULL,
-    .openDev     = Win32InitDevice,
-    .closeDev    = Win32ReleaseDevice,
-    .readSector  = Win32ReadSector,
-    .writeSector = Win32WriteSector,
-    .isNative    = Win32IsDevNative,
-    .isDevice    = Win32IsDevice
+    .name         = "native win32",
+    .data         = NULL,
+    .createDev    = NULL,
+    .openDev      = Win32InitDevice,
+    .closeDev     = Win32ReleaseDevice,
+    .readSectors  = Win32ReadSectors,
+    .writeSectors = Win32WriteSectors,
+    .readSector   = Win32ReadSector,
+    .writeSector  = Win32WriteSector,
+    .isNative     = Win32IsDevNative,
+    .isDevice     = Win32IsDevice
 };

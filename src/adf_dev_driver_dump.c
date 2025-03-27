@@ -221,6 +221,54 @@ static ADF_RETCODE adfReleaseDumpDevice( struct AdfDevice * const  dev )
 
 
 /*
+ * adfReadDumpSectors
+ *
+ */
+static ADF_RETCODE adfReadDumpSectors( const struct AdfDevice * const  dev,
+                                       const uint32_t                  block,
+                                       const uint32_t                  lenBlocks,
+                                       uint8_t * const                 buf )
+{
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
+    FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
+    int pos = fseek( fd, dev->geometry.blockSize * block, SEEK_SET );
+    if ( pos == -1 )
+        return ADF_RC_ERROR;
+
+    if ( fread( buf, dev->geometry.blockSize, lenBlocks, fd ) != lenBlocks )
+        return ADF_RC_ERROR;
+
+    return ADF_RC_OK;
+}
+
+
+/*
+ * adfWriteDumpSectors
+ *
+ */
+static ADF_RETCODE adfWriteDumpSectors( const struct AdfDevice * const  dev,
+                                        const uint32_t                  block,
+                                        const uint32_t                  lenBlocks,
+                                        const uint8_t * const           buf )
+{
+    if ( block + lenBlocks > dev->sizeBlocks )
+        return ADF_RC_ERROR;
+
+    FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
+    int r = fseek( fd, dev->geometry.blockSize * block, SEEK_SET );
+    if ( r == -1 )
+        return ADF_RC_ERROR;
+
+    if ( fwrite( buf, dev->geometry.blockSize, lenBlocks, fd ) != lenBlocks )
+        return ADF_RC_ERROR;
+
+    return ADF_RC_OK;
+}
+
+
+/*
  * adfReadDumpSector
  *
  */
@@ -228,22 +276,7 @@ static ADF_RETCODE adfReadDumpSector( const struct AdfDevice * const  dev,
                                       const uint32_t                  n,
                                       uint8_t * const                 buf )
 {
-/*puts("adfReadDumpSector");*/
-    FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
-    int pos = fseek( fd, dev->geometry.blockSize * n, SEEK_SET );
-/*printf("nnn=%ld size=%d\n",n,size);*/
-    if ( pos == -1 )
-        return ADF_RC_ERROR;
-
-    size_t bytes_read = fread( buf, 1, dev->geometry.blockSize, fd );
-/*puts("123");*/
-    if ( bytes_read != dev->geometry.blockSize ) {
-/*printf("rr=%d\n",r);*/
-        return ADF_RC_ERROR;
-    }
-/*puts("1234");*/
-
-    return ADF_RC_OK;
+    return adfReadDumpSectors( dev, n, 1, buf );
 }
 
 
@@ -255,15 +288,7 @@ static ADF_RETCODE adfWriteDumpSector( const struct AdfDevice * const  dev,
                                        const uint32_t                  n,
                                        const uint8_t * const           buf )
 {
-    FILE * const fd = ( (struct DevDumpData *) dev->drvData )->fd;
-    int r = fseek( fd, dev->geometry.blockSize * n, SEEK_SET );
-    if ( r == -1 )
-        return ADF_RC_ERROR;
-
-    if ( fwrite( buf, 1, dev->geometry.blockSize, fd ) != dev->geometry.blockSize )
-        return ADF_RC_ERROR;
-/*puts("adfWriteDumpSector");*/
-    return ADF_RC_OK;
+    return adfWriteDumpSectors( dev, n, 1, buf );
 }
 
 
@@ -273,15 +298,17 @@ static bool adfDevDumpIsNativeDevice( void )
 }
 
 const struct AdfDeviceDriver adfDeviceDriverDump = {
-    .name        = "dump",
-    .data        = NULL,
-    .createDev   = adfCreateDumpDevice,
-    .openDev     = adfDevDumpOpen,       // adfOpenDev + adfInitDumpDevice
-    .closeDev    = adfReleaseDumpDevice,
-    .readSector  = adfReadDumpSector,
-    .writeSector = adfWriteDumpSector,
-    .isNative    = adfDevDumpIsNativeDevice,
-    .isDevice    = NULL
+    .name         = "dump",
+    .data         = NULL,
+    .createDev    = adfCreateDumpDevice,
+    .openDev      = adfDevDumpOpen,       // adfOpenDev + adfInitDumpDevice
+    .closeDev     = adfReleaseDumpDevice,
+    .readSectors  = adfReadDumpSectors,
+    .writeSectors = adfWriteDumpSectors,
+    .readSector   = adfReadDumpSector,
+    .writeSector  = adfWriteDumpSector,
+    .isNative     = adfDevDumpIsNativeDevice,
+    .isDevice     = NULL
 };
 
 /*##################################################################################*/
