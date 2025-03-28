@@ -141,7 +141,11 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
 
     case ADF_DEVCLASS_HARDDISK:
     case ADF_DEVCLASS_HARDFILE: {
+#ifdef _MSC_VER
+        uint8_t* const buf = _alloca(dev->geometry.blockSize);
+#else
         uint8_t buf[ dev->geometry.blockSize ];
+#endif
         rc = adfDevReadBlock( dev, 0, dev->geometry.blockSize, buf );
         if ( rc != ADF_RC_OK ) {
             adfEnv.eFct( "%s: reading block 0 of %s failed", __func__, dev->name );
@@ -210,7 +214,11 @@ ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
 
     const unsigned remainder = size % dev->geometry.blockSize;
     if ( remainder != 0 ) {
+#ifdef _MSC_VER
+        uint8_t* const blockBuf = _alloca(dev->geometry.blockSize);
+#else
         uint8_t blockBuf[ dev->geometry.blockSize ];
+#endif
         ADF_RETCODE rc = dev->drv->readSector( dev, pSect + nFullBlocks, blockBuf );
         if ( rc != ADF_RC_OK )
             return rc;
@@ -236,7 +244,11 @@ ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
 
     const unsigned remainder = size % dev->geometry.blockSize;
     if ( remainder != 0 ) {
-        uint8_t blockBuf[ dev->geometry.blockSize ];
+#ifdef _MSC_VER
+        uint8_t * const blockBuf = _alloca( dev->geometry.blockSize );
+#else
+        uint8_t blockBuf[dev->geometry.blockSize];
+#endif
         memcpy( blockBuf, buf + size - remainder, remainder );
         memset( blockBuf + remainder, 0, dev->geometry.blockSize - remainder );
         ADF_RETCODE rc = dev->drv->writeSector( dev, pSect + nFullBlocks, blockBuf );
