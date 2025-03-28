@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "adf_limits.h"
 #include "adf_str.h"
 #include "adf_err.h"
 #include "adf_dev_driver_nativ.h"
