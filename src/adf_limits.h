@@ -3,6 +3,7 @@
 #define ADF_LIMITS_H
 
 #include <limits.h>
+#include <stdint.h>
 
 
 /**********************************
@@ -23,21 +24,27 @@
    (max value of long int meaning int32_t).
 */
 
-#if LONG_MAX < UINT_MAX
-// long int is 32bit -> 2GiB limit
-#define ADF_DEV_SIZE_MAX_BLOCKS  ( LONG_MAX / 512 + 1 )
-
+#if ( LONG_MAX / ADF_DEV_BLOCK_SIZE + 1 ) < UINT32_MAX
+// long int is 32bit -> 2GiB limit(!)
+#define ADF_DEV_SIZE_MAX_BLOCKS  ( LONG_MAX / ADF_DEV_BLOCK_SIZE + 1 )
 #else
-/* long int is 64bit -> the limit is the type of size (uint32_t) in AdfDevice.
+// the type of struct AdfDevice.sizeBlocks (uint32_t) makes the limit
+#define ADF_DEV_SIZE_MAX_BLOCKS UINT32_MAX
+#endif
 
-   To investigate if can be improved, eg. volume size could also be expressed
-   in 512-byte blocks.
+/*
+  Another limitation comes from the custom type ADF_SECT ("sector numer")
+  which is defined as int32_t (adf_types.h) and is used in adf_vol on device
+  level(!).
 
-   One of the problems to consider is that many existing devices (HDFs) have sizes
-   not rounded to 512-byte blocks (like 2000000 or 5000000).
+  This might(?) eventually be improved (type for specifying volume location
+  can be (maybe even - should be) the same as the type used for the blocks
+  in adf_dev (uint32_t). However, any calculations involving also other
+  values remaining ADF_SECT type would require attention...)
 */
-#define ADF_DEV_SIZE_MAX_BLOCKS  ( UINT_MAX / 512 + 1 )
-
+#if ADF_DEV_SIZE_MAX_BLOCKS > INT32_MAX
+#undef ADF_DEV_SIZE_MAX_BLOCKS
+#define ADF_DEV_SIZE_MAX_BLOCKS  INT32_MAX
 #endif
 
 
@@ -45,10 +52,8 @@
  * Volume
  **********************************/
 
-/* size of the volume is expressed in 512-byte blocks so, theoreticaly, it could
-   be bigger than device above... However, Amiga limitations seems to be 2GiB,
-   so INT_MAX */
-#define ADF_VOL_SIZE_MAX INT_MAX
+// The custom type ADF_SECT is int32_t. Also - Amiga OS limitation is 2GiB.
+#define ADF_VOL_SIZE_MAX_BLOCKS  INT32_MAX
 
 
 /**********************************
