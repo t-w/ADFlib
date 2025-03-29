@@ -84,7 +84,19 @@ struct AdfDevice * adfDevCreate(  const char * const  driverName,
 struct AdfDevice * adfDevOpen( const char * const   name,
                                const AdfAccessMode  mode )
 {
-    return adfDevOpenWithDrv_( adfGetDeviceDriverByDevName( name ), name, mode );
+    struct AdfDevice * const dev =
+        adfDevOpenWithDrv_( adfGetDeviceDriverByDevName( name ), name, mode );
+    if ( dev == NULL )
+        return NULL;
+
+    if ( dev->sizeBlocks > ADF_DEV_SIZE_MAX_BLOCKS ) {
+        adfEnv.eFct( " %s: size %u blocks is bigger than max. %u blocks",
+                     dev->sizeBlocks, ADF_DEV_SIZE_MAX_BLOCKS );
+        adfDevClose( dev );
+        return NULL;
+    }
+
+    return dev;
 }
 
 /*
