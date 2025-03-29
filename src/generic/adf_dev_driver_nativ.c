@@ -71,30 +71,6 @@ ADF_RETCODE myWriteSectors( const struct AdfDevice * const  dev,
 
 
 /*
- * myReadSector
- *
- */
-ADF_RETCODE myReadSector( const struct AdfDevice * const  dev,
-                          const uint32_t                  n,
-                          uint8_t * const                 buf )
-{
-    return myReadSectors( dev, n, 1, buf );
-}
-
-
-/*
- * myWriteSector
- *
- */
-ADF_RETCODE myWriteSector( const struct AdfDevice * const  dev,
-                           const uint32_t                  n,
-                           const uint8_t * const           buf )
-{
-    return myWriteSectors( dev, n, 1, buf );
-}
-
-
-/*
  * myReleaseDevice
  *
  * free native device
@@ -131,8 +107,6 @@ const struct AdfDeviceDriver  adfDeviceDriverNative = {
     .closeDev     = myReleaseDevice,
     .readSectors  = myReadSectors,
     .writeSectors = myWriteSectors,
-    .readSector   = myReadSector,
-    .writeSector  = myWriteSector,
     .isNative     = myIsDevNative,
     .isDevice     = myIsDevice
 };

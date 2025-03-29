@@ -55,14 +55,6 @@ struct AdfDeviceDriver {
                                  const uint32_t                  lenBlocks,
                                  const uint8_t * const           buf );
 
-    ADF_RETCODE (*readSector)( const struct AdfDevice * const  dev,
-                               const uint32_t                  n,
-                               uint8_t * const                 buf );
-
-    ADF_RETCODE (*writeSector)( const struct AdfDevice * const  dev,
-                                const uint32_t                  n,
-                                const uint8_t * const           buf );
-
     bool (*isNative)( void );   /* should return true only on a native block device driver,
                                    ie. such driver which can return real hardware
                                    geometry information */

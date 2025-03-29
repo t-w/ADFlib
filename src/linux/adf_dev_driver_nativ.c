@@ -233,30 +233,6 @@ static ADF_RETCODE adfLinuxWriteSectors( const struct AdfDevice * const  dev,
 
 
 /*
- * adfLinuxReadSector
- *
- */
-static ADF_RETCODE adfLinuxReadSector( const struct AdfDevice * const  dev,
-                                       const uint32_t                  n,
-                                       uint8_t * const                 buf )
-{
-    return adfLinuxReadSectors( dev, n, 1, buf );
-}
-
-
-/*
- * adfLinuxWriteSector
- *
- */
-static ADF_RETCODE adfLinuxWriteSector( const struct AdfDevice * const  dev,
-                                        const uint32_t                  n,
-                                        const uint8_t * const           buf )
-{
-    return adfLinuxWriteSectors( dev, n, 1, buf );
-}
-
-
-/*
  * adfLinuxIsDevNative
  *
  */
@@ -292,8 +268,6 @@ const struct AdfDeviceDriver  adfDeviceDriverNative = {
     .closeDev     = adfLinuxReleaseDevice,
     .readSectors  = adfLinuxReadSectors,
     .writeSectors = adfLinuxWriteSectors,
-    .readSector   = adfLinuxReadSector,
-    .writeSector  = adfLinuxWriteSector,
     .isNative     = adfLinuxIsDevNative,
     .isDevice     = adfLinuxIsBlockDevice
 };

@@ -176,22 +176,6 @@ static ADF_RETCODE Win32WriteSectors( const struct AdfDevice * const  dev,
 }
 
 
-static ADF_RETCODE Win32ReadSector( const struct AdfDevice * const  dev,
-                                    const uint32_t                  n,
-                                    uint8_t * const                 buf )
-{
-    return Win32ReadSectors( dev, n, 1, buf );
-}
-
-
-static ADF_RETCODE Win32WriteSector( const struct AdfDevice * const  dev,
-                                     const uint32_t                  n,
-                                     const uint8_t * const           buf )
-{
-    return Win32WriteSectors( dev, n, 1, buf );
-}
-
-
 static bool Win32IsDevNative(void)
 {
     return true;
@@ -212,8 +196,6 @@ const struct AdfDeviceDriver adfDeviceDriverNative = {
     .closeDev     = Win32ReleaseDevice,
     .readSectors  = Win32ReadSectors,
     .writeSectors = Win32WriteSectors,
-    .readSector   = Win32ReadSector,
-    .writeSector  = Win32WriteSector,
     .isNative     = Win32IsDevNative,
     .isDevice     = Win32IsDevice
 };

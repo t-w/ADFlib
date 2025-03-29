@@ -108,25 +108,6 @@ static ADF_RETCODE ramdiskWriteSectors( const struct AdfDevice * const  dev,
 }
 
 
-static ADF_RETCODE ramdiskReadSector( const struct AdfDevice * const  dev,
-                                      const uint32_t                  n,
-                                      uint8_t * const                 buf )
-{
-    return ramdiskReadSectors( dev, n, 1, buf );
-}
-
-
-static ADF_RETCODE ramdiskWriteSector( const struct AdfDevice * const  dev,
-                                       const uint32_t                  n,
-                                       const uint8_t * const           buf )
-{
-    return ramdiskWriteSectors( dev, n, 1, buf );
-}
-
-
-
-
-
 static bool ramdiskIsDevNative( void )
 {
     return false;
@@ -141,8 +122,6 @@ const struct AdfDeviceDriver adfDeviceDriverRamdisk = {
     .closeDev     = ramdiskRelease,
     .readSectors  = ramdiskReadSectors,
     .writeSectors = ramdiskWriteSectors,
-    .readSector   = ramdiskReadSector,
-    .writeSector  = ramdiskWriteSector,
     .isNative     = ramdiskIsDevNative,
     .isDevice     = NULL
 };

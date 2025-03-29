@@ -268,30 +268,6 @@ static ADF_RETCODE adfWriteDumpSectors( const struct AdfDevice * const  dev,
 }
 
 
-/*
- * adfReadDumpSector
- *
- */
-static ADF_RETCODE adfReadDumpSector( const struct AdfDevice * const  dev,
-                                      const uint32_t                  n,
-                                      uint8_t * const                 buf )
-{
-    return adfReadDumpSectors( dev, n, 1, buf );
-}
-
-
-/*
- * adfWriteDumpSector
- *
- */
-static ADF_RETCODE adfWriteDumpSector( const struct AdfDevice * const  dev,
-                                       const uint32_t                  n,
-                                       const uint8_t * const           buf )
-{
-    return adfWriteDumpSectors( dev, n, 1, buf );
-}
-
-
 static bool adfDevDumpIsNativeDevice( void )
 {
     return false;
@@ -305,8 +281,6 @@ const struct AdfDeviceDriver adfDeviceDriverDump = {
     .closeDev     = adfReleaseDumpDevice,
     .readSectors  = adfReadDumpSectors,
     .writeSectors = adfWriteDumpSectors,
-    .readSector   = adfReadDumpSector,
-    .writeSector  = adfWriteDumpSector,
     .isNative     = adfDevDumpIsNativeDevice,
     .isDevice     = NULL
 };

@@ -130,7 +130,7 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
         uint8_t buf[ 512 ];
         bool found = false;
         do {
-            rc = dev->drv->readSector( dev, (uint32_t) vol->rootBlock, buf );
+            rc = dev->drv->readSectors( dev, (uint32_t) vol->rootBlock, 1, buf );
             if ( rc != ADF_RC_OK ) {
                 free( dev->volList );
                 dev->volList = NULL;

@@ -231,7 +231,7 @@ ADF_RETCODE adfDevReadBlock( const struct AdfDevice * const  dev,
 #else
         uint8_t blockBuf[ dev->geometry.blockSize ];
 #endif
-        ADF_RETCODE rc = dev->drv->readSector( dev, pSect + nFullBlocks, blockBuf );
+        ADF_RETCODE rc = dev->drv->readSectors( dev, pSect + nFullBlocks, 1, blockBuf );
         if ( rc != ADF_RC_OK )
             return rc;
         memcpy( buf + size - remainder, blockBuf, remainder );
@@ -263,7 +263,7 @@ ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
 #endif
         memcpy( blockBuf, buf + size - remainder, remainder );
         memset( blockBuf + remainder, 0, dev->geometry.blockSize - remainder );
-        ADF_RETCODE rc = dev->drv->writeSector( dev, pSect + nFullBlocks, blockBuf );
+        ADF_RETCODE rc = dev->drv->writeSectors( dev, pSect + nFullBlocks, 1, blockBuf );
         if ( rc != ADF_RC_OK )
             return rc;
     }
