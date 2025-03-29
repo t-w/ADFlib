@@ -38,13 +38,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 static struct AdfDevice * adfDevOpenWithDrv_(
     const struct AdfDeviceDriver * const  driver,
     const char * const                    name,
     const AdfAccessMode                   mode );
 
 static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev );
+static ADF_RETCODE adfDevReadRdb( struct AdfDevice * const dev );
 
 
 /*****************************************************************************
@@ -73,7 +73,15 @@ struct AdfDevice * adfDevCreate(  const char * const  driverName,
     const struct AdfDeviceDriver * const  driver = adfGetDeviceDriverByName( driverName );
     if ( driver == NULL || driver->createDev == NULL )
         return NULL;
-    return driver->createDev( name, cylinders, heads, sectors );
+
+    struct AdfDevice * const dev = driver->createDev( name, cylinders, heads, sectors );
+    if ( dev == NULL )
+        return NULL;
+
+    dev->rdb.status = ADF_DEV_RDB_STATUS_NOTFOUND;  // better: ADF_DEV_RDB_STATUS_UNCHECKED ?
+    dev->rdb.block  = NULL;
+
+    return dev;
 }
 
 
@@ -84,19 +92,7 @@ struct AdfDevice * adfDevCreate(  const char * const  driverName,
 struct AdfDevice * adfDevOpen( const char * const   name,
                                const AdfAccessMode  mode )
 {
-    struct AdfDevice * const dev =
-        adfDevOpenWithDrv_( adfGetDeviceDriverByDevName( name ), name, mode );
-    if ( dev == NULL )
-        return NULL;
-
-    if ( dev->sizeBlocks > ADF_DEV_SIZE_MAX_BLOCKS ) {
-        adfEnv.eFct( " %s: size %u blocks is bigger than max. %u blocks",
-                     dev->sizeBlocks, ADF_DEV_SIZE_MAX_BLOCKS );
-        adfDevClose( dev );
-        return NULL;
-    }
-
-    return dev;
+    return adfDevOpenWithDrv_( adfGetDeviceDriverByDevName( name ), name, mode );
 }
 
 /*
@@ -121,6 +117,9 @@ void adfDevClose( struct AdfDevice * const  dev )
     if ( dev == NULL )
         return;
 
+    free( dev->rdb.block );
+    dev->rdb.block = NULL;
+
     if ( dev->mounted )
         adfDevUnMount( dev );
 
@@ -144,43 +143,25 @@ ADF_RETCODE adfDevMount( struct AdfDevice * const  dev )
 
     switch( dev->class ) {
 
-    case ADF_DEVCLASS_FLOP: {
+    case ADF_DEVCLASS_FLOP:
         rc = adfMountFlop ( dev );
-        if ( rc != ADF_RC_OK )
-            return rc;
-        }
         break;
 
     case ADF_DEVCLASS_HARDDISK:
-    case ADF_DEVCLASS_HARDFILE: {
-#ifdef _MSC_VER
-        uint8_t* const buf = _alloca(dev->geometry.blockSize);
-#else
-        uint8_t buf[ dev->geometry.blockSize ];
-#endif
-        rc = adfDevReadBlock( dev, 0, dev->geometry.blockSize, buf );
-        if ( rc != ADF_RC_OK ) {
-            adfEnv.eFct( "%s: reading block 0 of %s failed", __func__, dev->name );
-            return rc;
-        }
+        rc = adfMountHd( dev );
+        break;
 
-        if ( strncmp( "RDSK", (char *) buf, 4 ) == 0 ) {
-            dev->class = ADF_DEVCLASS_HARDDISK;
-            rc = adfMountHd( dev );
-        } else {
-            dev->class = ADF_DEVCLASS_HARDFILE;
-            rc = adfMountHdFile( dev );
-        }
-
-        if ( rc != ADF_RC_OK )
-            return rc;
-        }
+    case ADF_DEVCLASS_HARDFILE:
+        rc = adfMountHdFile( dev );
         break;
 
     default:
         adfEnv.eFct("%s: unknown device type", __func__ );
         return ADF_RC_ERROR;								/* BV */
     }
+
+    if ( rc != ADF_RC_OK )
+        return rc;
 
     dev->mounted = true;
     return ADF_RC_OK;
@@ -278,6 +259,7 @@ ADF_RETCODE adfDevWriteBlock( const struct AdfDevice * const  dev,
  *
  *****************************************************************************/
 
+
 static struct AdfDevice * adfDevOpenWithDrv_(
     const struct AdfDeviceDriver * const  driver,
     const char * const                    name,
@@ -292,8 +274,10 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         return NULL;
     }
 
+    // set class depending only on size (until more data available...)
     dev->class = adfDevGetClassBySizeBlocks( dev->sizeBlocks );
 
+    // if no geometry from the device (not native) set something reasonable
     if ( ! dev->drv->isNative() ) {
         if ( adfDevSetCalculatedGeometry_( dev ) != ADF_RC_OK ) {
             adfEnv.eFct( " %s: setting calc. geometry failed, dev. name '%s'",
@@ -303,6 +287,7 @@ static struct AdfDevice * adfDevOpenWithDrv_(
         }
     }
 
+    // check if the geometry (read or calculated) is a valid one
     if ( ! adfDevIsGeometryValid( &dev->geometry, dev->sizeBlocks ) ) {
         if ( dev->drv->isNative()
              || dev->type != ADF_DEVTYPE_UNKNOWN )   // from the predefined list should be valid...
@@ -329,19 +314,94 @@ static struct AdfDevice * adfDevOpenWithDrv_(
             }*/
     }
 
+    // check if the dev contains and RDB
+    dev->rdb.block = NULL;             // was not initialized yet
+    ADF_RETCODE rc = adfDevReadRdb( dev );
+    if ( rc != ADF_RC_OK ) {
+        // some critical error (mem alloc. or cannot read block 0)
+        adfDevClose( dev );
+        return NULL;
+    }
+
+    // classify device depending on having or not having RDB (HARDDISK vs. HARDFILE)
+    if ( dev->rdb.status >= ADF_DEV_RDB_STATUS_EXIST ) {
+        if ( dev->class == ADF_DEVCLASS_FLOP ) {
+            // This should not happen, but... theoretically should work, too.
+            // (still, at least warn...)
+            adfEnv.wFct( " %s: '%s' is a floppy but Rigid Device Block (RDB) was found"
+                         "(unusual, but let it be...)",
+                         __func__, name );
+        }
+
+        dev->class = ADF_DEVCLASS_HARDDISK;
+    } else {
+        if ( dev->class == ADF_DEVCLASS_HARDDISK )
+            dev->class = ADF_DEVCLASS_HARDFILE;
+    }
+
+    // if hard disk (has RDB) - update geometry from data stored in RDB
     if ( dev->class == ADF_DEVCLASS_HARDDISK ) {
-        ADF_RETCODE rc = adfDevUpdateGeometryFromRDSK( dev );
-        if ( rc != ADF_RC_OK ) {
-            dev->drv->closeDev( dev );
-            return NULL;
+        const struct AdfRDSKblock * const rdsk = dev->rdb.block;
+        assert( rdsk != NULL );
+
+        if ( dev->geometry.cylinders == rdsk->cylinders &&
+             dev->geometry.heads     == rdsk->heads     &&
+             dev->geometry.sectors   == rdsk->sectors )
+        {
+            dev->rdb.status = ADF_DEV_RDB_STATUS_SAMEGEOMETRY;
+        } else {
+            // not sure about some safety checks - but rather client code
+            // should do that (using state of RDB block)
+            /*if ( mode == ADF_ACCESS_MODE_READWRITE ) &&
+                   dev->rdb.status == ADF_DEV_RDB_STATUS_CHECKSUMERROR )
+            {
+                // inconsistent geometry might be dangerous - do not allow to write (?)
+                // (on the other hand - the lib might be used to repair it...)
+                adfDevClose( dev );
+                return NULL;
+            }*/
+
+            // use geometry from RDB as the disk structure layout should be
+            // according to it (if not - something to repair, beyond the lib...)
+            //
+            // (to consider, how to make it possible to specify (or even enforce)
+            // which geometry to use)
+            const unsigned sizeBlocksFromRdb = rdsk->cylinders *
+                                               rdsk->heads *
+                                               rdsk->sectors;
+            adfEnv.wFct(
+                "%s: using geometry from Rigid Block, "
+                "different than detected (or, if not a real disk, calculated):\n"
+                "                detected                rdsk block\n"
+                " cyliders:      %8u                  %8u\n"
+                " heads:         %8u                  %8u\n"
+                " sectors:       %8u                  %8u\n"
+                " size (blocks): %8u                  %8u  %s",
+                __func__,
+                dev->geometry.cylinders, rdsk->cylinders,
+                dev->geometry.heads,     rdsk->heads,
+                dev->geometry.sectors,   rdsk->sectors,
+                dev->sizeBlocks,         sizeBlocksFromRdb,
+                dev->sizeBlocks != sizeBlocksFromRdb ? " DIFFERENT SIZE(!)" : "" );
+            dev->geometry.cylinders = rdsk->cylinders;
+            dev->geometry.heads     = rdsk->heads;
+            dev->geometry.sectors   = rdsk->sectors;
         }
     }
 
     // update device and type after having final geometry set
-    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );
-    dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
-        adfDevTypeGetClass( dev->type ) :
-        adfDevGetClassBySizeBlocks( dev->sizeBlocks );
+    dev->type  = adfDevGetTypeByGeometry( &dev->geometry );  // do we have to?
+    //dev->class = ( dev->type != ADF_DEVTYPE_UNKNOWN ) ?
+    //    adfDevTypeGetClass( dev->type ) :
+    //    adfDevGetClassBySizeBlocks( dev->sizeBlocks );
+
+    // ensure the lib can handle the size
+    if ( dev->sizeBlocks > ADF_DEV_SIZE_MAX_BLOCKS ) {
+        adfEnv.eFct( " %s: size %u blocks is bigger than max. %u blocks",
+                     __func__, dev->sizeBlocks, ADF_DEV_SIZE_MAX_BLOCKS );
+        adfDevClose( dev );
+        return NULL;
+    }
 
     return dev;
 }
@@ -370,6 +430,44 @@ static ADF_RETCODE adfDevSetCalculatedGeometry_( struct AdfDevice * const  dev )
     } else {
         adfEnv.eFct( "%s: invalid dev class %d", __func__, dev->class );
         return ADF_RC_ERROR;
+    }
+
+    return ADF_RC_OK;
+}
+
+
+static ADF_RETCODE adfDevReadRdb( struct AdfDevice * const dev )
+{
+#ifdef _MSC_VER
+    uint8_t* const block = _alloca( dev->geometry.blockSize );
+#else
+    uint8_t block[ dev->geometry.blockSize ];
+#endif
+    ADF_RETCODE rc = adfDevReadBlock( dev, 0, dev->geometry.blockSize, block );
+    if ( rc != ADF_RC_OK ) {
+        adfEnv.eFct( "%s: reading block 0 of %s failed", __func__, dev->name );
+        dev->rdb.status = ADF_DEV_RDB_STATUS_UNREADABLE;
+        return rc;
+    }
+
+    if ( strncmp( "RDSK", (char *) block, 4 ) != 0 ) {
+        dev->rdb.status = ADF_DEV_RDB_STATUS_NOTFOUND;
+        return ADF_RC_OK;
+    }
+    dev->rdb.status = ADF_DEV_RDB_STATUS_EXIST;
+    if ( dev->rdb.block == NULL ) {
+        dev->rdb.block = malloc( sizeof(struct AdfRDSKblock) );
+        if ( dev->rdb.block == NULL )
+            return ADF_RC_MALLOC;
+    }
+
+    rc = adfReadRDSKblock( dev, dev->rdb.block );
+    if ( rc != ADF_RC_OK ) {
+        if ( rc == ADF_RC_BLOCKSUM )
+            dev->rdb.status = ADF_DEV_RDB_STATUS_CHECKSUMERROR;
+        //else  ->  some other error (keep status "EXIST")
+    } else {
+        dev->rdb.status = ADF_DEV_RDB_STATUS_OK;
     }
 
     return ADF_RC_OK;

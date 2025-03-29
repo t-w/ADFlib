@@ -12,6 +12,19 @@
 
 #include <stdio.h>
 
+typedef enum {
+    ADF_DEV_RDB_STATUS_UNKNOWN,       // nothing checked
+    ADF_DEV_RDB_STATUS_UNREADABLE,    // cannot read device's block 0, can't determine
+    ADF_DEV_RDB_STATUS_NOTFOUND,      // device's block 0 does not contain signature "RDSK"
+    ADF_DEV_RDB_STATUS_EXIST,         // "RDSK" signature exists in block 0
+    ADF_DEV_RDB_STATUS_CHECKSUMERROR, // blocks's checksum is not correct
+    ADF_DEV_RDB_STATUS_OK,            // RDSK block is read successfully
+    ADF_DEV_RDB_STATUS_SAMEGEOMETRY,  // geometry is the same as read from the device
+    //ADF_DEV_RDB_STATUS_VALID        // validity of data in RSDK block was verified
+                                      // (not certain if last one is needed...)
+} AdfDevRdbStatus;
+
+
 struct Partition {
     int32_t  startCyl;
     int32_t  lenCyl;
@@ -27,6 +40,11 @@ struct AdfDevice {
     AdfDevClass    class;            // flop / hdf / hdd (with RDB)
     bool           readOnly;
     uint32_t       sizeBlocks;
+
+    struct RigidDiskBlock {
+        AdfDevRdbStatus        status;
+        struct AdfRDSKblock *  block;
+    }              rdb;
 
     struct AdfDevGeometry
                    geometry;

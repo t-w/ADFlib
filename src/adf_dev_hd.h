@@ -34,9 +34,6 @@
 #include "adf_prefix.h"
 
 
-ADF_RETCODE adfDevUpdateGeometryFromRDSK( struct AdfDevice * const  dev );
-
-
 /* create and format hd volumes (erases data!) */
 ADF_PREFIX ADF_RETCODE adfCreateHd(
     struct AdfDevice * const                dev,
