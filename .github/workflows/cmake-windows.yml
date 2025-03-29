@@ -15,9 +15,10 @@ jobs:
     - uses: actions/checkout@v4
     - name: install prereq.
       run: |
-        choco install ninja cmake
+        choco install ninja cmake gzip
         ninja --version
         cmake --version
+        gzip --version
     - name: cmake_shared_configure
       shell: bash
       run: util/cmake_shared_configure
@@ -96,6 +97,10 @@ jobs:
 #        name: adflib-${{ env.ADFLIB_TAG }}-windows
         name: adflib-windows
         path: .
+    - name: install prereq.
+      run: |
+        choco install gzip
+        gzip --version
     - name: list files extracted from the artifact
       shell: bash
       run: find .
