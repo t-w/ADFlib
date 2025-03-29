@@ -2,7 +2,7 @@ name: cmake-macos
 
 on:
   push:
-    branches: [ "master", "devel", "citest", "citest-cmake" ]
+    branches: [ "master", "devel", "citest", "citest-cmake", "citest-cmake-macos" ]
     tags:
       - '**'
   pull_request:
@@ -29,6 +29,8 @@ jobs:
       run: otool -l build/shared/examples/unadf
     - name: cmake_shared_install
       run: sudo bash util/cmake_shared_install
+    - name: check project directory
+      run: find .
     - name: check installation
       run: find /usr/local -iname '*adf*'
 #    - name: update ldconfig
