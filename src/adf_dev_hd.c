@@ -673,6 +673,67 @@ ADF_RETCODE adfWriteLSEGblock( const struct AdfDevice * const  dev,
     return adfDevWriteBlock( dev, (uint32_t) nSect, ADF_LOGICAL_BLOCK_SIZE, buf );
 }
 
+
+/*
+ * adfReadBADBblock
+ *
+ */
+ADF_RETCODE adfReadBADBblock( const struct AdfDevice * const  dev,
+                              const int32_t                   nSect,
+                              struct AdfBADBblock * const     blk )
+{
+    uint8_t buf[ sizeof(struct AdfBADBblock) ];
+
+    ADF_RETCODE rc = adfDevReadBlock( dev, (uint32_t) nSect,
+                                      sizeof(struct AdfBADBblock), buf );
+    if ( rc != ADF_RC_OK )
+        return rc;
+
+    memcpy( blk, buf, sizeof(struct AdfBADBblock) );
+#ifdef LITT_ENDIAN
+    adfSwapEndian( (uint8_t *) blk, ADF_SWBL_BADB );
+#endif
+
+    if ( strncmp( blk->id, "BADB", 4 ) != 0 ) {
+        adfEnv.eFct( "%s: BADB id not found", __func__ );
+        return ADF_RC_ERROR;
+    }
+
+    const uint32_t checksumCalculated = adfNormalSum( buf, 8, sizeof(struct AdfBADBblock) );
+    if ( blk->checksum != checksumCalculated ) {
+        const char msg[] = "%s: invalid checksum 0x%x != 0x%x (calculated)"
+            ", block %d, device '%s'";
+        if ( adfEnv.ignoreChecksumErrors ) {
+            adfEnv.wFct( msg, __func__, blk->checksum, checksumCalculated,
+                         nSect, dev->name );
+        } else {
+            adfEnv.eFct( msg, __func__, blk->checksum, checksumCalculated,
+                         nSect, dev->name );
+            return ADF_RC_BLOCKSUM;
+        }
+    }
+
+    // copied from adfReadLSEGblock - to check/update for BADB
+    //if ( blk->next != -1 && blk->size != 128 )
+    //    adfEnv.wFct( "%s: size != 128", __func__ );
+
+    return ADF_RC_OK;
+}
+
+
+/*
+ * adfWriteBADBblock
+ *
+ */
+ADF_RETCODE adfWriteBADBblock( const struct AdfDevice * const  dev,
+                               const int32_t                   nSect,
+                               struct AdfBADBblock * const     blk )
+{
+    (void) dev, (void) nSect, (void) blk;
+    adfEnv.eFct( "%s: not implemented", __func__ );
+    return ADF_RC_ERROR;
+}
+
 /*##########################################################################*/
 
 /*

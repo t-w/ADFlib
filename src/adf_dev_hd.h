@@ -79,4 +79,13 @@ ADF_RETCODE adfReadLSEGblock( const struct AdfDevice * const  dev,
 ADF_RETCODE adfWriteLSEGblock( const struct AdfDevice * const  dev,
                                const int32_t                   nSect,
                                struct AdfLSEGblock * const     lseg );
+
+ADF_RETCODE adfReadBADBblock( const struct AdfDevice * const  dev,
+                              const int32_t                   nSect,
+                              struct AdfBADBblock * const     blk );
+
+ADF_RETCODE adfWriteBADBblock( const struct AdfDevice * const  dev,
+                               const int32_t                   nSect,
+                               struct AdfBADBblock * const     blk );
+
 #endif /* ADF_DEV_HD_H */
