@@ -128,6 +128,7 @@ AC_TYPE_UINT8_T
 
 # Check functions
 AC_CHECK_FUNCS(strndup, AC_DEFINE([HAVE_STRNDUP], [1]))
+AC_CHECK_FUNCS(stpncpy, AC_DEFINE([HAVE_STPNCPY], [1]))
 
 # Version
 AC_SUBST([ADFLIB_VERSION], [adflib_version])

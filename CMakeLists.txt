@@ -98,7 +98,16 @@ if ( ADFLIB_BUILD_DLL )
     add_definitions ( -DBUILD_DLL )
 endif ( ADFLIB_BUILD_DLL )
 
+#
+# Check available APIs
+#
+
 include ( CheckFunctionExists )
+include ( CheckSymbolExists )
+
+
+# Check backtrace
+
 check_function_exists ( backtrace HAVE_BACKTRACE )
 check_function_exists ( backtrace_symbols HAVE_BACKTRACE_SYMBOLS )
 #include(CheckCXXSymbolExists)
@@ -111,12 +120,22 @@ if ( ${HAVE_BACKTRACE} )
     add_link_options ( $<$<CONFIG:DEBUG>:-rdynamic> ) # for backtrace_symbols()
 endif()
 
-include ( CheckSymbolExists )
+
+# Check string functions
+
 check_symbol_exists ( strndup "string.h" HAVE_STRNDUP )
 if ( ${HAVE_STRNDUP} )
   add_compile_definitions ( HAVE_STRNDUP=1 )
 endif()
 
+check_symbol_exists ( stpncpy "string.h" HAVE_STPNCPY )
+if ( ${HAVE_STPNCPY} )
+  add_compile_definitions ( HAVE_STPNCPY=1 )
+endif()
+
+#
+# ADFlib config
+#
 option ( ADFLIB_ENABLE_NATIVE_DEV "Enable real native devices" OFF )
 
 option ( ADFLIB_ENABLE_SALVAGE_DIRCACHE
@@ -128,8 +147,18 @@ else()
   message ( STATUS "Disabling salvage for volumes with dircache." )
 endif()
 
+
+#
+# Subdirectories
+#
+
 add_subdirectory ( src )
 add_subdirectory ( examples )
+
+
+#
+# Tests
+#
 
 option ( ADFLIB_ENABLE_TESTS "Enable tests" ON )
 

@@ -230,4 +230,14 @@ char * strndup( const char * const  s,
 }
 #endif
 
-/*################################################################################*/
+
+#ifndef HAVE_STPNCPY
+/* stpncpy() custom implementation (used only where missing) */
+char * stpncpy( char * const         dst,
+                const char * const   src,
+                const size_t         sz )
+{
+    memset( dst, 0, sz );
+    return mempcpy( dst, src, strnlen( src, sz ) );
+}
+#endif
