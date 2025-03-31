@@ -154,9 +154,9 @@ ADF_RETCODE adfGetCacheEntry ( const struct AdfDirCacheBlock * const dirc,
     cEntry->header  = swapLong(  dirc->records + ptr );
     cEntry->size    = swapLong(  dirc->records + ptr + 4 );
     cEntry->protect = swapLong(  dirc->records + ptr + 8 );
-    cEntry->days    = swapShort( dirc->records + ptr + 16 );
-    cEntry->mins    = swapShort( dirc->records + ptr + 18 );
-    cEntry->ticks   = swapShort( dirc->records + ptr + 20 );
+    cEntry->days    = swapUint16fromPtr( dirc->records + ptr + 16 );
+    cEntry->mins    = swapUint16fromPtr( dirc->records + ptr + 18 );
+    cEntry->ticks   = swapUint16fromPtr( dirc->records + ptr + 20 );
 #else
     cEntry->header  = *( (uint32_t *) ( dirc->records + ptr ) );
     cEntry->size    = *( (uint32_t *) ( dirc->records + ptr + 4 ) );

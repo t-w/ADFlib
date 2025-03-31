@@ -87,7 +87,7 @@ void adfSwapEndian( uint8_t * const  buf,
                 p += 4;
                 break;
             case SW_SHORT:
-                *(uint16_t *)( buf + p ) = swapShort( buf + p );
+                *(uint16_t *)( buf + p ) = swapUint16fromPtr( buf + p );
                 p += 2;
                 break;
             case SW_CHAR:

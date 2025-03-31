@@ -98,13 +98,13 @@ static inline uint32_t swapUint32IfLittleEndianHost( const uint32_t n ) {
 }
 
 
-static inline uint16_t swapShort( const uint8_t * const p ) {
+static inline uint16_t swapUint16fromPtr( const uint8_t * const p ) {
     return (uint16_t) ( ( p[0] << 8 ) | p[1] );
 }
 
 static inline uint32_t swapLong( const uint8_t * const p ) {
-    return (uint32_t) ( ( swapShort(p) << 16 ) |
-                        swapShort( p + 2 ) );
+    return (uint32_t) ( ( swapUint16fromPtr( p ) << 16 ) |
+                        swapUint16fromPtr( p + 2 ) );
 }
 
 void swLong( uint8_t * const  buf,
