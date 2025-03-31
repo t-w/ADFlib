@@ -139,8 +139,8 @@ ADF_RETCODE adfReadGenBlock( struct AdfVolume * const  vol,
     if ( rc != ADF_RC_OK )
         return rc;
 
-    block->type    = (int) swapLong( buf );
-    block->secType = (int) swapLong( buf + vol->blockSize - 4 );
+    block->type    = (int) swapUint32fromPtr( buf );
+    block->secType = (int) swapUint32fromPtr( buf + vol->blockSize - 4 );
     block->sect    = nSect;
     block->name    = NULL;
 
@@ -155,7 +155,7 @@ ADF_RETCODE adfReadGenBlock( struct AdfVolume * const  vol,
             strncpy( name, (char *) buf + vol->blockSize - 79, len );
             name[ len ]   = '\0';
             block->name   = strdup( name );
-            block->parent = (int32_t) swapLong( buf + vol->blockSize - 12 );
+            block->parent = (int32_t) swapUint32fromPtr( buf + vol->blockSize - 12 );
             break;
         case ADF_ST_ROOT:
             break;

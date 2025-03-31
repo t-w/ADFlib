@@ -102,7 +102,7 @@ static inline uint16_t swapUint16fromPtr( const uint8_t * const p ) {
     return (uint16_t) ( ( p[0] << 8 ) | p[1] );
 }
 
-static inline uint32_t swapLong( const uint8_t * const p ) {
+static inline uint32_t swapUint32fromPtr( const uint8_t * const p ) {
     return (uint32_t) ( ( swapUint16fromPtr( p ) << 16 ) |
                         swapUint16fromPtr( p + 2 ) );
 }

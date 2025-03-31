@@ -83,7 +83,7 @@ void adfSwapEndian( uint8_t * const  buf,
         for ( int j = 0 ; j < swapTable[ type ][ i ] ; j++ )  {
             switch ( swapTable[ type ][ i + 1 ] ) {
             case SW_LONG:
-                *(uint32_t *)( buf + p ) = swapLong( buf + p );
+                *(uint32_t *)( buf + p ) = swapUint32fromPtr( buf + p );
                 p += 4;
                 break;
             case SW_SHORT:
@@ -183,7 +183,7 @@ ADF_RETCODE adfWriteRootBlock( struct AdfVolume * const     vol,
 #endif
     uint32_t newSum = adfNormalSum( buf, 20, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 20, newSum );
-/*	*(uint32_t*)(buf+20) = swapLong((uint8_t*)&newSum);*/
+/*	*(uint32_t*)(buf+20) = swapUint32fromPtr((uint8_t*)&newSum);*/
 /* 	dumpBlock(buf);*/
     return adfVolWriteBlock( vol, nSect, buf );
 }
@@ -270,7 +270,7 @@ ADF_RETCODE adfWriteBootBlock( struct AdfVolume * const     vol,
         uint32_t newSum = adfBootSum( buf );
 /*fprintf(stderr,"sum %x %x\n",newSum,adfBootSum2(buf));*/
         swLong( buf + 4, newSum );
-/*        *(uint32_t*)(buf+4) = swapLong((uint8_t*)&newSum);*/
+/*        *(uint32_t*)(buf+4) = swapUint32fromPtr((uint8_t*)&newSum);*/
     }
 
 /*	dumpBlock(buf);
@@ -307,7 +307,7 @@ uint32_t adfNormalSum( const uint8_t * const  buf,
     newsum = 0L;
     for ( i = 0; i < bufLen / 4; i++ )
         if ( i != offset / 4 )       /* old chksum */
-            newsum += swapLong( buf + i * 4 );
+            newsum += swapUint32fromPtr( buf + i * 4 );
     newsum = (uint32_t) ( - (int32_t) newsum );	/* WARNING */
 
     return newsum;
@@ -324,7 +324,7 @@ uint32_t adfBitmapSum( const uint8_t * const  buf )
 	
     newSum = 0L;
     for ( i = 1; i < 128; i++ )
-        newSum -= swapLong( buf + i * 4 );
+        newSum -= swapUint32fromPtr( buf + i * 4 );
     return newSum;
 }
 
@@ -341,7 +341,7 @@ uint32_t adfBootSum( const uint8_t * const  buf )
     newSum = 0L;
     for ( i = 0; i < 256; i++ ) {
         if ( i != 1 ) {
-            d = swapLong( buf + i * 4 );
+            d = swapUint32fromPtr( buf + i * 4 );
             if ( ( 0xffffffffU - newSum ) < d )
                 newSum++;
             newSum += d;
@@ -360,7 +360,7 @@ uint32_t adfBootSum2( const uint8_t * const  buf )
     for ( unsigned i = 0; i < 1024 / sizeof(uint32_t) ; i++ ) {
         if ( i != 1 ) {
             prevsum = newSum;
-            newSum += swapLong( buf + i * 4 );
+            newSum += swapUint32fromPtr( buf + i * 4 );
             if ( newSum < prevsum )
                 newSum++;
         }

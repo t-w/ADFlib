@@ -136,8 +136,8 @@ ADF_RETCODE adfMountHdFile( struct AdfDevice * const  dev )
                 dev->volList = NULL;
                 return rc;
             }
-            found = ( swapLong( buf ) == ADF_T_HEADER &&
-                      swapLong( buf + 508 ) == ADF_ST_ROOT );
+            found = ( swapUint32fromPtr( buf ) == ADF_T_HEADER &&
+                      swapUint32fromPtr( buf + 508 ) == ADF_ST_ROOT );
             if ( ! found )
                 (vol->rootBlock)--;
         } while ( vol->rootBlock > 1 && ! found );

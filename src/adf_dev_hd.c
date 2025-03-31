@@ -510,7 +510,7 @@ ADF_RETCODE adfWritePARTblock ( const struct AdfDevice * const  dev,
 
     const uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
-/*    *(int32_t*)(buf+8) = swapLong((uint8_t*)&newSum);*/
+/*    *(int32_t*)(buf+8) = swapUint32fromPtr((uint8_t*)&newSum);*/
 
     return adfDevWriteBlock( dev, (uint32_t) nSect, ADF_LOGICAL_BLOCK_SIZE, buf );
 }
@@ -588,7 +588,7 @@ ADF_RETCODE adfWriteFSHDblock( const struct AdfDevice * const  dev,
 
     uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
-/*    *(int32_t*)(buf+8) = swapLong((uint8_t*)&newSum);*/
+/*    *(int32_t*)(buf+8) = swapUint32fromPtr((uint8_t*)&newSum);*/
 
     return adfDevWriteBlock( dev, (uint32_t) nSect, ADF_LOGICAL_BLOCK_SIZE, buf );
 }
@@ -668,7 +668,7 @@ ADF_RETCODE adfWriteLSEGblock( const struct AdfDevice * const  dev,
 
     uint32_t newSum = adfNormalSum( buf, 8, ADF_LOGICAL_BLOCK_SIZE );
     swLong( buf + 8, newSum );
-/*    *(int32_t*)(buf+8) = swapLong((uint8_t*)&newSum);*/
+/*    *(int32_t*)(buf+8) = swapUint32fromPtr((uint8_t*)&newSum);*/
 
     return adfDevWriteBlock( dev, (uint32_t) nSect, ADF_LOGICAL_BLOCK_SIZE, buf );
 }

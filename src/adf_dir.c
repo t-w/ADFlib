@@ -901,7 +901,7 @@ ADF_RETCODE adfReadEntryBlock( const struct AdfVolume * const  vol,
 
     memcpy( ent, buf, 512 );
 #ifdef LITT_ENDIAN
-    int32_t  secType = (int32_t) swapLong( (uint8_t *) &ent->secType );
+    int32_t  secType = (int32_t) swapUint32fromPtr( (uint8_t *) &ent->secType );
     if ( secType == ADF_ST_LFILE ||
          secType == ADF_ST_LDIR ||
          secType == ADF_ST_LSOFT  )
