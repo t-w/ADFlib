@@ -34,15 +34,15 @@
 
 
 /*
- * swLong
+ * swapUint32ToPtr
  *
  * write an uint32_t value (val) (in) 
  * to an uint8_t* buffer (buf) (out)
  * 
  * used in adfWrite----Block() functions
  */
-void swLong( uint8_t * const  buf,
-             const uint32_t   val )
+void swapUint32ToPtr( uint8_t * const  buf,
+                      const uint32_t   val )
 {
 	buf[ 0 ] = (uint8_t)( ( val & 0xff000000 ) >> 24UL );
 	buf[ 1 ] = (uint8_t)( ( val & 0x00ff0000 ) >> 16UL );

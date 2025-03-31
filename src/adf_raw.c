@@ -182,7 +182,7 @@ ADF_RETCODE adfWriteRootBlock( struct AdfVolume * const     vol,
     adfSwapEndian( buf, ADF_SWBL_ROOT );
 #endif
     uint32_t newSum = adfNormalSum( buf, 20, ADF_LOGICAL_BLOCK_SIZE );
-    swLong( buf + 20, newSum );
+    swapUint32ToPtr( buf + 20, newSum );
 /*	*(uint32_t*)(buf+20) = swapUint32fromPtr((uint8_t*)&newSum);*/
 /* 	dumpBlock(buf);*/
     return adfVolWriteBlock( vol, nSect, buf );
@@ -269,7 +269,7 @@ ADF_RETCODE adfWriteBootBlock( struct AdfVolume * const     vol,
     if ( boot->rootBlock == 880 || boot->data[ 0 ] != 0 ) {
         uint32_t newSum = adfBootSum( buf );
 /*fprintf(stderr,"sum %x %x\n",newSum,adfBootSum2(buf));*/
-        swLong( buf + 4, newSum );
+        swapUint32ToPtr( buf + 4, newSum );
 /*        *(uint32_t*)(buf+4) = swapUint32fromPtr((uint8_t*)&newSum);*/
     }
 

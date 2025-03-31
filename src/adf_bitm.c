@@ -775,7 +775,7 @@ ADF_RETCODE adfWriteBitmapBlock( struct AdfVolume * const             vol,
 #endif
 
     const uint32_t newSum = adfNormalSum( buf, 0, ADF_LOGICAL_BLOCK_SIZE );
-    swLong( buf, newSum );
+    swapUint32ToPtr( buf, newSum );
 
 /*	dumpBlock((uint8_t*)buf);*/
 

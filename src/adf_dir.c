@@ -966,7 +966,7 @@ ADF_RETCODE adfWriteEntryBlock( const struct AdfVolume * const      vol,
     adfSwapEndian( buf, ADF_SWBL_ENTRY );
 #endif
     newSum = adfNormalSum( buf, 20, sizeof(struct AdfEntryBlock) );
-    swLong( buf + 20, newSum );
+    swapUint32ToPtr( buf + 20, newSum );
 
     return adfVolWriteBlock( vol, (uint32_t) nSect, buf );
 }
@@ -995,7 +995,7 @@ ADF_RETCODE adfWriteDirBlock( const struct AdfVolume * const  vol,
     adfSwapEndian( buf, ADF_SWBL_DIR );
 #endif
     newSum = adfNormalSum( buf, 20, sizeof(struct AdfDirBlock) );
-    swLong( buf + 20, newSum );
+    swapUint32ToPtr( buf + 20, newSum );
 
     if ( adfVolWriteBlock( vol, (uint32_t) nSect, buf ) != ADF_RC_OK )
         return ADF_RC_ERROR;

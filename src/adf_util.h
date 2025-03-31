@@ -107,8 +107,8 @@ static inline uint32_t swapUint32fromPtr( const uint8_t * const p ) {
                         swapUint16fromPtr( p + 2 ) );
 }
 
-void swLong( uint8_t * const  buf,
-             const uint32_t   val );
+void swapUint32ToPtr( uint8_t * const  buf,
+                      const uint32_t   val );
 
 void swShort( uint8_t * const  buf,
               const uint16_t   val );

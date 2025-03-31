@@ -224,9 +224,9 @@ int adfPutCacheEntry ( struct AdfDirCacheBlock * const    dirc,
     ptr = *p;
 
 #ifdef LITT_ENDIAN
-    swLong(dirc->records+ptr, cEntry->header);
-    swLong(dirc->records+ptr+4, cEntry->size);
-    swLong(dirc->records+ptr+8, cEntry->protect);
+    swapUint32ToPtr( dirc->records + ptr,     cEntry->header );
+    swapUint32ToPtr( dirc->records + ptr + 4, cEntry->size );
+    swapUint32ToPtr( dirc->records + ptr + 8, cEntry->protect );
     swShort(dirc->records+ptr+16, cEntry->days);
     swShort(dirc->records+ptr+18, cEntry->mins);
     swShort(dirc->records+ptr+20, cEntry->ticks);
@@ -669,7 +669,7 @@ ADF_RETCODE adfWriteDirCBlock( const struct AdfVolume * const   vol,
 #endif
 
     newSum = adfNormalSum(buf, 20, ADF_LOGICAL_BLOCK_SIZE);
-    swLong(buf+20,newSum);
+    swapUint32ToPtr( buf + 20, newSum );
 /*    *(int32_t*)(buf+20) = swapUint32fromPtr((uint8_t*)&newSum);*/
 
 /*puts("adfWriteDirCBlock");*/
