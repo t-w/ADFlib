@@ -83,11 +83,11 @@ void adfSwapEndian( uint8_t * const  buf,
         for ( int j = 0 ; j < swapTable[ type ][ i ] ; j++ )  {
             switch ( swapTable[ type ][ i + 1 ] ) {
             case SW_LONG:
-                *(uint32_t *)( buf + p ) = swapUint32fromPtr( buf + p );
+                swapUint32AtPtr( buf + p );
                 p += 4;
                 break;
             case SW_SHORT:
-                *(uint16_t *)( buf + p ) = swapUint16fromPtr( buf + p );
+                swapUint16AtPtr( buf + p );
                 p += 2;
                 break;
             case SW_CHAR:
