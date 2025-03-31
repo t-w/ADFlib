@@ -29,6 +29,7 @@
 #include "adfinfo_volume.h"
 #include "adfinfo_dir.h"
 #include "adfinfo_file.h"
+#include "adfinfo_hd.h"
 #include "pathutils.h"
 
 struct args {
@@ -41,7 +42,7 @@ int parse_args( const int                   argc,
                 const char * const * const  argv,
                 struct args * const         args );
 
-void show_device_metadata( struct AdfDevice * const  dev );
+void show_device_metadata( const struct AdfDevice * const  dev );
 
 void show_dentry_metadata( struct AdfVolume * const  vol,
                            const char * const        path );
@@ -96,7 +97,7 @@ int main( const int                  argc,
         fprintf( stderr, "Cannot mount volume %d - aborting...\n",
                  args.vol_id );
         status = 1;
-        goto dev_mount_cleanup;
+        goto dev_cleanup;
     }
     printf( "Mounted volume:\t\t%d\n", args.vol_id );
 
@@ -109,9 +110,8 @@ int main( const int                  argc,
 
     adfVolUnMount( vol );
 
-dev_mount_cleanup:
-    adfDevUnMount( dev );
 dev_cleanup:
+    adfDevUnMount( dev );
     adfDevClose( dev );
 env_cleanup:
     adfLibCleanUp();
@@ -149,11 +149,14 @@ int parse_args( const int                   argc,
 }
 
 
-void show_device_metadata( struct AdfDevice * const  dev )
+void show_device_metadata( const struct AdfDevice * const  dev )
 {
     char * const  info = adfDevGetInfo( dev );
     printf( "%s", info );
     free( info );
+
+    if ( dev->class == ADF_DEVCLASS_HARDDISK )
+        show_hd_info( dev );
 }
 
 

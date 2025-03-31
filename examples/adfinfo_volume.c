@@ -22,7 +22,6 @@
  */
 
 #include <adf_raw.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,13 +63,6 @@ void show_volume_metadata( struct AdfVolume * const  vol )
     show_bmpages( vol, &rblock );
 
     show_dircache_metadata( vol, rblock.extension );
-}
-
-
-// replace non-printable with a dot '.'
-static inline char printable( char c )
-{
-    return ( isalnum( c ) ? c : '.' );
 }
 
 
