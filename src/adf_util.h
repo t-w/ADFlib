@@ -130,6 +130,12 @@ struct DateTime adfGiveCurrentTime(void);
 void dumpBlock( const uint8_t * const  buf );
 
 
+#ifndef HAVE_STRNLEN
+#pragma message "Using the custom strnlen()"
+size_t strnlen( const char *  str,
+                const size_t  maxlen );
+#endif
+
 #ifndef HAVE_STRNDUP
 #pragma message "Using the custom strndup()"
 char * strndup( const char * const  s,
@@ -137,7 +143,7 @@ char * strndup( const char * const  s,
 #endif
 
 #ifndef HAVE_STPNCPY
-/* stpncpy() custom implementation (used only where missing) */
+#pragma message "Using the custom stpncpy()"
 char * stpncpy( char * const         dst,
                 const char * const   src,
                 const size_t         sz );

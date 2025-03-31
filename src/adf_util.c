@@ -215,6 +215,19 @@ void dumpBlock( const uint8_t * const  buf )
 }
 
 
+#ifndef HAVE_STRNLEN
+/* strndup() custom implementation (used only where missing) */
+//size_t strnlen(const char s[.maxlen], size_t maxlen);
+size_t strnlen( const char *  str,
+                const size_t  maxlen )
+{
+    size_t len = 0;
+    for ( ; len < maxlen && *str != "\0" ; len++, str++ );
+    return len;
+}
+#endif
+
+
 #ifndef HAVE_STRNDUP
 /* strndup() custom implementation (used only where missing) */
 char * strndup( const char * const  s,
@@ -238,6 +251,6 @@ char * stpncpy( char * const         dst,
                 const size_t         sz )
 {
     memset( dst, 0, sz );
-    return mempcpy( dst, src, strnlen( src, sz ) );
+    return memcpy( dst, src, strnlen( src, sz ) );
 }
 #endif

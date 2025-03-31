@@ -123,6 +123,11 @@ endif()
 
 # Check string functions
 
+check_symbol_exists ( strnlen "string.h" HAVE_STRNLEN )
+if ( ${HAVE_STRNLEN} )
+  add_compile_definitions ( HAVE_STRNLEN=1 )
+endif()
+
 check_symbol_exists ( strndup "string.h" HAVE_STRNDUP )
 if ( ${HAVE_STRNDUP} )
   add_compile_definitions ( HAVE_STRNDUP=1 )

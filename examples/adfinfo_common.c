@@ -21,9 +21,11 @@
  *
  */
 
-#include <stdio.h>
-
 #include "adfinfo_common.h"
+
+#include <stdio.h>
+#include <string.h>
+
 
 void show_hashtable( const uint32_t hashtable[ ADF_HT_SIZE ] )
 {
@@ -35,15 +37,3 @@ void show_hashtable( const uint32_t hashtable[ ADF_HT_SIZE ] )
                     i, hash_i, hash_i );
     }
 }
-
-
-#ifndef HAVE_STPNCPY
-/* stpncpy() custom implementation (used only where missing) */
-char * stpncpy( char * const         dst,
-                const char * const   src,
-                const size_t         sz )
-{
-    memset( dst, 0, sz );
-    return mempcpy( dst, src, strnlen( src, sz ) );
-}
-#endif
