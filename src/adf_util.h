@@ -136,4 +136,11 @@ char * strndup( const char * const  s,
                 size_t              n );
 #endif
 
+#ifndef HAVE_STPNCPY
+/* stpncpy() custom implementation (used only where missing) */
+char * stpncpy( char * const         dst,
+                const char * const   src,
+                const size_t         sz );
+#endif
+
 #endif  /* ADF_UTIL_H */

@@ -13,4 +13,12 @@ static inline char printable( char c )
     return ( isalnum( c ) ? c : '.' );
 }
 
+
+#ifndef HAVE_STPNCPY
+/* stpncpy() custom implementation (used only where missing) */
+char * stpncpy( char * const         dst,
+                const char * const   src,
+                const size_t         sz );
+#endif
+
 #endif

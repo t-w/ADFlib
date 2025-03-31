@@ -38,6 +38,7 @@ static struct AdfDevice * myInitDevice( const char * const   name,
                                         const AdfAccessMode  mode )
 {
     (void) name, (void) mode;
+    adfEnv.eFct( "%s: not implemented", __func__ );
     return NULL;
 }
 
@@ -52,6 +53,7 @@ ADF_RETCODE myReadSectors( const struct AdfDevice * const  dev,
                            uint8_t * const                 buf )
 {
     (void) dev, (void) block, (void) lenBlocks, (void) buf;
+    adfEnv.eFct( "%s: not implemented", __func__ );
     return ADF_RC_ERROR;
 }
 
@@ -66,6 +68,7 @@ ADF_RETCODE myWriteSectors( const struct AdfDevice * const  dev,
                             const uint8_t * const           buf )
 {
     (void) dev, (void) block, (void) lenBlocks, (void) buf;
+    adfEnv.eFct( "%s: not implemented", __func__ );
     return ADF_RC_ERROR;
 }
 
@@ -78,6 +81,7 @@ ADF_RETCODE myWriteSectors( const struct AdfDevice * const  dev,
 ADF_RETCODE myReleaseDevice( struct AdfDevice * const  dev )
 {
     (void) dev;
+    adfEnv.eFct( "%s: not implemented", __func__ );
     return ADF_RC_ERROR;
 }
 
@@ -88,6 +92,7 @@ ADF_RETCODE myReleaseDevice( struct AdfDevice * const  dev )
  */
 static bool myIsDevNative(void)
 {
+    adfEnv.eFct( "%s: not implemented", __func__ );
     return false;
 }
 
@@ -95,6 +100,7 @@ static bool myIsDevNative(void)
 static bool myIsDevice( const char * const  devName )
 {
     (void) devName;
+    adfEnv.eFct( "%s: not implemented", __func__ );
     return false;
 }
 

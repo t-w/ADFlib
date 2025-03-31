@@ -39,6 +39,7 @@ static void show_badb( const struct AdfBADBblock * const  badb,
 }
 
 
+
 void show_hd_info( const struct AdfDevice * const  dev )
 {
     struct AdfRDSKblock  rdsk;
