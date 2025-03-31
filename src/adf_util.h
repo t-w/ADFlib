@@ -113,6 +113,10 @@ void swapUint32ToPtr( uint8_t * const  buf,
 void swapUint16ToPtr( uint8_t * const  buf,
                       const uint16_t   val );
 
+void swapUint32AtPtr( uint8_t * const  buf );
+void swapUint16AtPtr( uint8_t * const  buf );
+
+
 void adfDays2Date( int32_t      days,
                    int * const  yy,
                    int * const  mm,

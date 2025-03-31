@@ -57,6 +57,26 @@ void swapUint16ToPtr( uint8_t * const buf,
     buf[ 1 ] = ( val & 0x00ffu );
 }
 
+
+void swapUint32AtPtr( uint8_t * const  buf )
+{
+    uint8_t tmp = buf[ 0 ];
+    buf[ 0 ] = buf[ 3 ];
+    buf[ 3 ] = tmp;
+
+    tmp = buf[ 1 ];
+    buf[ 1 ] = buf[ 2 ];
+    buf[ 2 ] = tmp;
+}
+
+void swapUint16AtPtr( uint8_t * const buf )
+{
+    uint8_t tmp = buf[ 0 ];
+    buf[ 0 ] = buf[ 1 ];
+    buf[ 1 ] = tmp;
+}
+
+
 /*
  * Days2Date
  *
