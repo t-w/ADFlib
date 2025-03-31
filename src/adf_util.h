@@ -26,6 +26,7 @@
 #ifndef ADF_UTIL_H
 #define ADF_UTIL_H
 
+#include "adf_byteorder.h"
 #include "adf_prefix.h"
 #include "adf_types.h"
 
@@ -70,6 +71,33 @@ struct DateTime {
 
 /* swap short and swap long macros for little endian machines */
 
+static inline uint16_t swapUint16( const uint16_t n ) {
+    return ( ( n << 8 ) |
+             ( n >> 8 ) );
+}
+
+static inline uint32_t swapUint32( const uint32_t n ) {
+    return ( ( ( (uint32_t) swapUint16( n & 0xffff ) ) << 16 ) |
+             swapUint16( (uint16_t) ( n >> 16 ) ) );
+}
+
+static inline uint16_t swapUint16IfLittleEndianHost( const uint16_t n ) {
+#ifdef LITT_ENDIAN
+    return swapUint16( n );
+#else
+    return n;
+#endif
+}
+
+static inline uint32_t swapUint32IfLittleEndianHost( const uint32_t n ) {
+#ifdef LITT_ENDIAN
+    return swapUint32( n );
+#else
+    return n;
+#endif
+}
+
+
 static inline uint16_t swapShort( const uint8_t * const p ) {
     return (uint16_t) ( ( p[0] << 8 ) | p[1] );
 }
@@ -78,7 +106,6 @@ static inline uint32_t swapLong( const uint8_t * const p ) {
     return (uint32_t) ( ( swapShort(p) << 16 ) |
                         swapShort( p + 2 ) );
 }
-
 
 void swLong( uint8_t * const  buf,
              const uint32_t   val );
