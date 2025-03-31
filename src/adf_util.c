@@ -50,8 +50,8 @@ void swapUint32ToPtr( uint8_t * const  buf,
 	buf[ 3 ] = (uint8_t)( val & 0x000000ff );
 }
 
-void swShort( uint8_t * const buf,
-              const uint16_t  val )
+void swapUint16ToPtr( uint8_t * const buf,
+                      const uint16_t  val )
 {
     buf[ 0 ] = (uint8_t) ( ( val & 0xff00u ) >> 8UL );
     buf[ 1 ] = ( val & 0x00ffu );

@@ -227,9 +227,9 @@ int adfPutCacheEntry ( struct AdfDirCacheBlock * const    dirc,
     swapUint32ToPtr( dirc->records + ptr,     cEntry->header );
     swapUint32ToPtr( dirc->records + ptr + 4, cEntry->size );
     swapUint32ToPtr( dirc->records + ptr + 8, cEntry->protect );
-    swShort(dirc->records+ptr+16, cEntry->days);
-    swShort(dirc->records+ptr+18, cEntry->mins);
-    swShort(dirc->records+ptr+20, cEntry->ticks);
+    swapUint16ToPtr( dirc->records + ptr + 16, cEntry->days );
+    swapUint16ToPtr( dirc->records + ptr + 18, cEntry->mins );
+    swapUint16ToPtr( dirc->records + ptr + 20, cEntry->ticks );
 #else
     memcpy(dirc->records+ptr,&(cEntry->header),4);
     memcpy(dirc->records+ptr+4,&(cEntry->size),4);

@@ -110,8 +110,8 @@ static inline uint32_t swapUint32fromPtr( const uint8_t * const p ) {
 void swapUint32ToPtr( uint8_t * const  buf,
                       const uint32_t   val );
 
-void swShort( uint8_t * const  buf,
-              const uint16_t   val );
+void swapUint16ToPtr( uint8_t * const  buf,
+                      const uint16_t   val );
 
 void adfDays2Date( int32_t      days,
                    int * const  yy,
