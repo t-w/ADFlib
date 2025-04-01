@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include"adflib.h"
+#include "adflib.h"
 #include "common.h"
 
 
@@ -45,25 +45,27 @@ int main(int argc, char *argv[])
 
     showDevInfo( hd );
 
-    struct AdfPartition ** const partList =
-        (struct AdfPartition **) malloc( sizeof(struct AdfPartition *) * 2 );
+    const struct AdfPartition ** const partList =
+        (const struct AdfPartition ** const ) malloc( sizeof(struct AdfPartition *) * 2 );
     if ( partList == NULL ) {
         fprintf( stderr, "malloc error\n" );
         status = 1;
         goto cleanup_lib;
     }
 
-    struct AdfPartition part1;
-    part1.startCyl =2;
-	part1.lenCyl = 100;
-	part1.volName = strdup("b");
-    part1.volType = ADF_DOSFS_FFS | ADF_DOSFS_DIRCACHE;
+    const struct AdfPartition part1 = {
+        .startCyl = 2,
+	.lenCyl   = 100,
+	.volName  = strdup("b"),
+        .volType  = ADF_DOSFS_FFS | ADF_DOSFS_DIRCACHE
+    };
 	
-    struct AdfPartition part2;
-    part2.startCyl =101;
-	part2.lenCyl = 878;
-	part2.volName = strdup("h");
-    part2.volType = ADF_DOSFS_FFS;
+    const struct AdfPartition part2 = {
+        .startCyl = 101,
+	.lenCyl   = 878,
+	.volName  = strdup("h"),
+        .volType  = ADF_DOSFS_FFS
+    };
 
     partList[0] = &part1;
     partList[1] = &part2;
