@@ -12,6 +12,7 @@ for A_TEST in \
    ./hd_test.sh \
    ./hd_test2.sh \
    ./hd_test3.sh \
+   ./hd_test_a590.sh \
    ./hardfile.sh \
    ./hardfile2
 do

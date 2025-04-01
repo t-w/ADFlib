@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     if ( ! hd ) {
         log_error( "can't create a zip disk device, name %s\n", tmpDevName );
         status = 1;
-        goto cleanup_dev;
+        goto cleanup_lib;
     }
 
     showDevInfo( hd );

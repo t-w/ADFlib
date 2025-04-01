@@ -34,6 +34,7 @@ check_PROGRAMS = \
 	hd_test \
 	hd_test2 \
 	hd_test3 \
+	hd_test_a590 \
 	progbar \
 	readonly \
 	rename \
@@ -66,6 +67,7 @@ dist_check_SCRIPTS = \
 	hd_test.sh \
 	hd_test2.sh \
 	hd_test3.sh \
+	hd_test_a590.sh \
 	rename.sh \
 	undel.sh \
 	undel2.sh
@@ -202,6 +204,10 @@ hd_test2_DEPENDENCIES = $(top_builddir)/src/libadf.la
 hd_test3_SOURCES = hd_test3.c common.c common.h log.c log.h
 hd_test3_LDADD = $(ADFLIBS)
 hd_test3_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
+hd_test_a590_SOURCES = hd_test_a590.c common.c common.h log.c log.h
+hd_test_a590_LDADD = $(ADFLIBS)
+hd_test_a590_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 progbar_SOURCES = progbar.c common.c common.h log.c log.h
 progbar_LDADD = $(ADFLIBS)

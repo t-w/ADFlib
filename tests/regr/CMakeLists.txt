@@ -106,6 +106,9 @@ target_link_libraries ( hd_test2 adf )
 add_executable ( hd_test3 hd_test3.c common.c common.h log.c log.h )
 target_link_libraries ( hd_test3 adf )
 
+add_executable ( hd_test_a590 hd_test_a590.c common.c common.h log.c log.h )
+target_link_libraries ( hd_test_a590 adf )
+
 add_executable ( readonly readonly.c common.c common.h log.c log.h )
 target_link_libraries ( readonly adf )
 
@@ -150,9 +153,10 @@ foreach ( a_file
     fl_test2.sh
     fl_test.sh
     hardfile.sh
+    hd_test.sh
     hd_test2.sh
     hd_test3.sh
-    hd_test.sh
+    hd_test_a590.sh
     rename2.sh
     rename.sh
     undel2.sh
