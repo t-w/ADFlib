@@ -3,7 +3,7 @@ dist_check_SCRIPTS = \
 	test_examples_basic.sh \
 	test_adf_floppy.sh \
 	test_adfinfo.sh \
-	unadf_test.sh
+	test_unadf.sh
 
 dist_check_DATA = \
 	config.sh \

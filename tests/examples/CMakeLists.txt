@@ -11,5 +11,5 @@ add_test( test_adf_floppy.sh ${BASH_PROGRAM}
           test_adf_floppy.sh )
 add_test( test_adfinfo.sh ${BASH_PROGRAM}
           test_adfinfo.sh )
-add_test( unadf_test.sh ${BASH_PROGRAM}
-          unadf_test.sh )
+add_test( test_unadf.sh ${BASH_PROGRAM}
+          test_unadf.sh )
