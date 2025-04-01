@@ -24,7 +24,6 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
-    struct AdfVolume *vol, *vol2;
 
     int status = 0;
 
@@ -76,13 +75,13 @@ int main(int argc, char *argv[])
         goto cleanup_dev;
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         fprintf(stderr, "can't mount volume\n");
         status = 1;
         goto cleanup_dev;
     }
-    vol2 = adfVolMount ( hd, 1, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * const vol2 = adfVolMount( hd, 1, ADF_ACCESS_MODE_READWRITE );
     if (!vol2) {
         fprintf(stderr, "can't mount volume\n");
         adfVolUnMount(vol);
