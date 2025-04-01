@@ -2,7 +2,7 @@
 dist_check_SCRIPTS = \
 	test_examples_basic.sh \
 	adf_floppy_test.sh \
-	adfinfo_test.sh \
+	test_adfinfo.sh \
 	unadf_test.sh
 
 dist_check_DATA = \
