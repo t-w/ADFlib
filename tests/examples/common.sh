@@ -3,12 +3,17 @@ set -e
 . $basedir/config.sh
 
 mkdir -vp tmp
-tmpdir=$(mktemp -d tmp/tmp.XXXXXX)
+cd tmp
+tmpsubdir=$(mktemp -d tmp.XXXXXX)
+cd ..
+tmpdir=tmp/${tmpsubdir}
 
 trap cleanup 0 1 2
 cleanup() {
-    rm -rf $tmpdir
+    rm -rfv tmp/${tmpsubdir}/*
+    rmdir tmp/${tmpsubdir}
 }
+
 
 host_type=$(uname | sed 's/_.*//')
 echo "Host type: '${host_type}'"
