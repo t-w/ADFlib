@@ -25,9 +25,6 @@ int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
     struct AdfVolume *vol, *vol2;
-    struct Partition part1;
-    struct Partition part2;
-    struct Partition **partList;
 
     adfLibInit();
 
@@ -43,14 +40,17 @@ int main(int argc, char *argv[])
 
     showDevInfo( hd );
 
-    partList = (struct Partition**)malloc(sizeof(struct Partition*)*2);
+    struct AdfPartition ** const partList =
+        (struct AdfPartition **) malloc( sizeof(struct AdfPartition *) * 2 );
     if (!partList) exit(1);
 
+    struct AdfPartition part1;
     part1.startCyl =2;
 	part1.lenCyl = 100;
 	part1.volName = strdup("b");
     part1.volType = ADF_DOSFS_FFS | ADF_DOSFS_DIRCACHE;
 	
+    struct AdfPartition part2;
     part2.startCyl =101;
 	part2.lenCyl = 878;
 	part2.volName = strdup("h");
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     partList[0] = &part1;
     partList[1] = &part2;
 
-    ADF_RETCODE rc = adfCreateHd ( hd, 2, (const struct Partition * const * const) partList );
+    ADF_RETCODE rc = adfCreateHd( hd, 2, (const struct AdfPartition * const * const) partList );
     free(partList);
     free(part1.volName);
     free(part2.volName);

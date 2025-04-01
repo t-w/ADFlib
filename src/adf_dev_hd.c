@@ -49,9 +49,9 @@ static void adfFreeTmpVolList( struct AdfList * const  root );
  * fills dev->volList[]
  *
  */
-ADF_RETCODE adfCreateHd( struct AdfDevice * const                dev,
-                         const unsigned                          n,
-                         const struct Partition * const * const  partList )
+ADF_RETCODE adfCreateHd( struct AdfDevice * const                   dev,
+                         const unsigned                             n,
+                         const struct AdfPartition * const * const  partList )
 {
 /*struct AdfVolume *vol;*/
 
@@ -106,9 +106,9 @@ printf("0first=%ld last=%ld root=%ld\n",vol->firstBlock,
  * do not fill dev->volList[]
  * called by adfCreateHd()
  */
-ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
-                               const int                               n,
-                               const struct Partition * const * const  partList )
+ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                   dev,
+                               const int                                  n,
+                               const struct AdfPartition * const * const  partList )
 {
     (void)               n;
     struct AdfRDSKblock  rdsk;

@@ -34,7 +34,7 @@
 #include "adf_prefix.h"
 
 
-struct Partition {
+struct AdfPartition {
     int32_t  startCyl;
     int32_t  lenCyl;
     char *   volName;
@@ -44,13 +44,14 @@ struct Partition {
 
 /* create and format hd volumes (erases data!) */
 ADF_PREFIX ADF_RETCODE adfCreateHd(
-    struct AdfDevice * const                dev,
-    const unsigned                          n,
-    const struct Partition * const * const  partList );
+    struct AdfDevice * const                   dev,
+    const unsigned                             n,
+    const struct AdfPartition * const * const  partList );
 
-ADF_RETCODE adfCreateHdHeader( struct AdfDevice * const                dev,
-                               const int                               n,
-                               const struct Partition * const * const  partList );
+ADF_RETCODE adfCreateHdHeader(
+    struct AdfDevice * const                   dev,
+    const int                                  n,
+    const struct AdfPartition * const * const  partList );
 
 /* mount hd volumes (called by adfDevMount) */
 ADF_RETCODE adfMountHd( struct AdfDevice * const  dev );
