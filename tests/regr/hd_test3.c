@@ -9,6 +9,9 @@
 
 #include "adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 3
 
 
 void MyVer(char *msg)
@@ -23,8 +26,10 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 2 ) {
-        fprintf( stderr, "Usage: hd_test3 diskDumpFileName\n" );
+        log_error( "Usage: hd_test3 diskDumpFileName\n" );
         return 1;
     }
 
@@ -38,7 +43,7 @@ int main(int argc, char *argv[])
 
     struct AdfDevice * hd = adfDevCreate( "dump", tmpDevName, 980, 10, 17 );
     if ( ! hd ) {
-        fprintf( stderr, "can't create device %s\n", tmpDevName );
+        log_error( "can't create device %s\n", tmpDevName );
         status = 1;
         goto cleanup_lib;
     }
@@ -48,7 +53,7 @@ int main(int argc, char *argv[])
     const struct AdfPartition ** const partList =
         (const struct AdfPartition ** const) malloc( sizeof(struct AdfPartition *) * 2 );
     if ( partList == NULL ) {
-        fprintf( stderr, "malloc error\n" );
+        log_error( "malloc error\n" );
         status = 1;
         goto cleanup_lib;
     }
@@ -75,20 +80,20 @@ int main(int argc, char *argv[])
     free( part1.volName );
     free( part2.volName );
     if ( rc != ADF_RC_OK ) {
-        fprintf( stderr, "adfCreateHd returned error %d\n", rc );
+        log_error( "adfCreateHd returned error %d\n", rc );
         status = 1;
         goto cleanup_dev;
     }
 
     struct AdfVolume * const vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if ( ! vol ) {
-        fprintf( stderr, "can't mount volume 0\n" );
+        log_error( "can't mount volume 0\n" );
         status = 1;
         goto cleanup_dev;
     }
     struct AdfVolume * const vol2 = adfVolMount( hd, 1, ADF_ACCESS_MODE_READWRITE );
     if ( ! vol2 ) {
-        fprintf( stderr, "can't mount volume 1\n" );
+        log_error( "can't mount volume 1\n" );
         adfVolUnMount( vol );
         status = 1;
         goto cleanup_dev;
@@ -106,15 +111,15 @@ int main(int argc, char *argv[])
     /* mount the created device */
     hd = adfDevOpen( tmpDevName, ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
-        fprintf( stderr, "Cannot open file/device '%s' - aborting...\n",
-                 tmpDevName );
+        log_error( "Cannot open file/device '%s' - aborting...\n",
+                   tmpDevName );
         status = 1;
         goto cleanup_lib;
     }
 
     rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
-        fprintf( stderr, "can't mount device\n" );
+        log_error( "can't mount device\n" );
         status = 1;
         goto cleanup_dev;
     }
