@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
     (void) argc, (void) argv;
     struct AdfVolume *vol, *vol2;
 
+    int status = 0;
+
     adfLibInit();
 
     const char tmpdevname[] = "hd_test3-newdev";
@@ -35,14 +37,19 @@ int main(int argc, char *argv[])
     struct AdfDevice * hd = adfDevCreate ( "dump", tmpdevname, 980, 10, 17 );
     if (!hd) {
         fprintf(stderr, "can't mount device\n");
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_lib;
     }
 
     showDevInfo( hd );
 
     struct AdfPartition ** const partList =
         (struct AdfPartition **) malloc( sizeof(struct AdfPartition *) * 2 );
-    if (!partList) exit(1);
+    if ( partList == NULL ) {
+        fprintf( stderr, "malloc error\n" );
+        status = 1;
+        goto cleanup_lib;
+    }
 
     struct AdfPartition part1;
     part1.startCyl =2;
@@ -64,26 +71,23 @@ int main(int argc, char *argv[])
     free(part1.volName);
     free(part2.volName);
     if ( rc != ADF_RC_OK ) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
         fprintf ( stderr, "adfCreateHd returned error %d\n", rc );
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
     vol2 = adfVolMount ( hd, 1, ADF_ACCESS_MODE_READWRITE );
     if (!vol2) {
-        adfVolUnMount(vol);
-        adfDevUnMount( hd );
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfLibCleanUp(); exit(1);
+        adfVolUnMount(vol);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showVolInfo( vol );
@@ -100,22 +104,25 @@ int main(int argc, char *argv[])
     if ( ! hd ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
                   tmpdevname );
-        adfLibCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_lib;
     }
 
     rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount device\n");
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showDevInfo( hd );
 
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_lib:
     adfLibCleanUp();
-    return 0;
+
+    return status;
 }
