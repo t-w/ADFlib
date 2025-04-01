@@ -7,8 +7,8 @@ file (
 message( STATUS "Enable tests in tests/examples/" )
 add_test( test_examples_basic.sh ${BASH_PROGRAM}
           test_examples_basic.sh ../../examples )
-add_test( adf_floppy_test.sh ${BASH_PROGRAM}
-          adf_floppy_test.sh )
+add_test( test_adf_floppy.sh ${BASH_PROGRAM}
+          test_adf_floppy.sh )
 add_test( test_adfinfo.sh ${BASH_PROGRAM}
           test_adfinfo.sh )
 add_test( unadf_test.sh ${BASH_PROGRAM}
