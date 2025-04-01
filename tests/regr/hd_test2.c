@@ -9,6 +9,9 @@
 
 #include "adflib.h"
 #include "common.h"
+#include "log.h"
+
+#define TEST_VERBOSITY 3
 
 
 void MyVer(char *msg)
@@ -23,8 +26,10 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
+    log_init( stderr, TEST_VERBOSITY );
+
     if ( argc < 2 ) {
-        fprintf( stderr, "Usage: hd_test2 ZipDiskFileName\n" );
+        log_error( "Usage: hd_test2 ZipDiskFileName\n" );
         return 1;
     }
 
@@ -37,8 +42,7 @@ int main(int argc, char *argv[])
     /* a zip disk */
     struct AdfDevice * hd = adfDevCreate( "dump", tmpDevName, 2891, 1, 68 );
     if ( ! hd ) {
-        fprintf( stderr, "can't create a zip disk device, name %s\n",
-                 tmpDevName );
+        log_error( "can't create a zip disk device, name %s\n", tmpDevName );
         status = 1;
         goto cleanup_dev;
     }
@@ -64,14 +68,14 @@ int main(int argc, char *argv[])
     free( partList );
     free( part1.volName );
     if ( rc != ADF_RC_OK ) {
-        fprintf( stderr, "adfCreateHd returned error %d\n", rc );
+        log_error( "adfCreateHd returned error %d\n", rc );
         status = 1;
         goto cleanup_dev;
     }
 
     struct AdfVolume * vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if ( ! vol ) {
-        fprintf( stderr, "can't mount volume\n" );
+        log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
@@ -84,7 +88,7 @@ int main(int argc, char *argv[])
     /* mount the created device */
     hd = adfDevOpen( tmpDevName, ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
-        fprintf( stderr, "Cannot open file/device '%s' - aborting...\n",
+        log_error( "Cannot open file/device '%s' - aborting...\n",
                  tmpDevName );
         status = 1;
         goto cleanup_lib;
@@ -92,7 +96,7 @@ int main(int argc, char *argv[])
 
     rc = adfDevMount( hd );
     if ( rc != ADF_RC_OK ) {
-        fprintf( stderr, "can't mount device\n" );
+        log_error( "can't mount device\n" );
         status = 1;
         goto cleanup_dev;
     }
@@ -101,7 +105,7 @@ int main(int argc, char *argv[])
 
     vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if ( ! vol ) {
-        fprintf( stderr, "can't mount volume\n" );
+        log_error( "can't mount volume\n" );
         status = 1;
         goto cleanup_dev;
     }
