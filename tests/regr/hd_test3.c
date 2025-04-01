@@ -24,7 +24,7 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     if ( argc < 2 ) {
-        fprintf( stderr, "Usage: hd_test2 ZipDiskFileName\n" );
+        fprintf( stderr, "Usage: hd_test3 diskDumpFileName\n" );
         return 1;
     }
 
