@@ -34,7 +34,7 @@ void log_error( const char * const  format, ... )
     //flog_error( logfile, ... );
 
     if ( loglevel < 1 )
-        return ;
+        return;
 
     va_list ap;
     va_start( ap, format );
@@ -49,7 +49,7 @@ void log_warning( const char * const  format, ... )
     //flog_warning( logfile, ... );
 
     if ( loglevel < 2 )
-        return ;
+        return;
 
     va_list ap;
     va_start( ap, format );
@@ -64,7 +64,7 @@ void log_info( const char * const format, ... )
     //flog_warning( logfile, ... );
 
     if ( loglevel < 3 )
-        return ;
+        return;
 
     va_list ap;
     va_start( ap, format );
@@ -79,7 +79,7 @@ void flog_error( FILE * const        file,
                  const char * const  format, ... )
 {
     if ( loglevel < 1 )
-        return ;
+        return;
 
     va_list ap;
     va_start( ap, format );
@@ -94,7 +94,7 @@ void flog_warning( FILE * const        file,
                    const char * const  format, ... )
 {
     if ( loglevel < 2 )
-        return ;
+        return;
 
     va_list ap;
     va_start( ap, format );
@@ -109,7 +109,7 @@ void flog_info( FILE * const       file,
                 const char * const format, ... )
 {
     if ( loglevel < 3 )
-        return ;
+        return;
 
     va_list ap;
     va_start( ap, format );
