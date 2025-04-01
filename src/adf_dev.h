@@ -25,13 +25,6 @@ typedef enum {
 } AdfDevRdbStatus;
 
 
-struct Partition {
-    int32_t  startCyl;
-    int32_t  lenCyl;
-    char *   volName;
-    uint8_t  volType;
-};
-
 /* ----- DEVICES ----- */
 
 struct AdfDevice {

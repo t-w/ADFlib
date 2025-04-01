@@ -34,6 +34,14 @@
 #include "adf_prefix.h"
 
 
+struct Partition {
+    int32_t  startCyl;
+    int32_t  lenCyl;
+    char *   volName;
+    uint8_t  volType;
+};
+
+
 /* create and format hd volumes (erases data!) */
 ADF_PREFIX ADF_RETCODE adfCreateHd(
     struct AdfDevice * const                dev,
