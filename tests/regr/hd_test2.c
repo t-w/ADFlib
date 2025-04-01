@@ -23,18 +23,22 @@ void MyVer(char *msg)
  */
 int main(int argc, char *argv[])
 {
-    (void) argc, (void) argv;
+    if ( argc < 2 ) {
+        fprintf( stderr, "Usage: hd_test2 ZipDiskFileName\n" );
+        return 1;
+    }
 
     int status = 0;
 
     adfLibInit();
 
-    const char tmpdevname[] = "hd_test2-newdev";
+    const char * const tmpDevName = argv[ 1 ];
 
     /* a zip disk */
-    struct AdfDevice * hd = adfDevCreate ( "dump", tmpdevname, 2891, 1, 68 );
+    struct AdfDevice * hd = adfDevCreate( "dump", tmpDevName, 2891, 1, 68 );
     if (!hd) {
-        fprintf(stderr, "can't create a zip disk device\n");
+        fprintf( stderr, "can't create a zip disk device, name %s\n",
+                 tmpDevName );
         status = 1;
         goto cleanup_dev;
     }
@@ -78,10 +82,10 @@ int main(int argc, char *argv[])
     adfDevClose ( hd );
 
     /* mount the created device */
-    hd = adfDevOpen ( tmpdevname, ADF_ACCESS_MODE_READWRITE );
+    hd = adfDevOpen ( tmpDevName, ADF_ACCESS_MODE_READWRITE );
     if ( ! hd ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
-                  tmpdevname );
+                  tmpDevName );
         status = 1;
         goto cleanup_lib;
     }

@@ -6,5 +6,5 @@
 set -e
 
 #echo "----- hd_test2"
-./hd_test2
-rm -v hd_test2-newdev
+./hd_test2 hd_test2-newdev
+rm -v      hd_test2-newdev
