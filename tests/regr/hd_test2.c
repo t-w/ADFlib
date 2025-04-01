@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
 
+    int status = 0;
+
     adfLibInit();
 
     const char tmpdevname[] = "hd_test2-newdev";
@@ -32,16 +34,19 @@ int main(int argc, char *argv[])
     /* a zip disk */
     struct AdfDevice * hd = adfDevCreate ( "dump", tmpdevname, 2891, 1, 68 );
     if (!hd) {
-        fprintf(stderr, "can't mount device\n");
-        adfLibCleanUp(); exit(1);
+        fprintf(stderr, "can't create a zip disk device\n");
+        status = 1;
+        goto cleanup_dev;
     }
 
     showDevInfo( hd );
 
     struct AdfPartition ** const partList =
         (struct AdfPartition **) malloc( sizeof(struct AdfPartition *) );
-    if (!partList) exit(1);
-
+    if ( partList == NULL ) {
+        status = 1;
+        goto cleanup_dev;
+    }
     const struct AdfPartition part1 = {
         .startCyl = 2,
         .lenCyl   = 2889,
@@ -55,18 +60,16 @@ int main(int argc, char *argv[])
     free(partList);
     free(part1.volName);
     if ( rc != ADF_RC_OK ) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
         fprintf ( stderr, "adfCreateHd returned error %d\n", rc );
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     struct AdfVolume * vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showVolInfo( vol );
@@ -79,34 +82,36 @@ int main(int argc, char *argv[])
     if ( ! hd ) {
         fprintf ( stderr, "Cannot open file/device '%s' - aborting...\n",
                   tmpdevname );
-        adfLibCleanUp();
-        exit(1);
+        status = 1;
+        goto cleanup_lib;
     }
 
     rc = adfDevMount ( hd );
     if ( rc != ADF_RC_OK ) {
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount device\n");
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showDevInfo( hd );
 
     vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
-        adfDevUnMount ( hd );
-        adfDevClose ( hd );
         fprintf(stderr, "can't mount volume\n");
-        adfLibCleanUp(); exit(1);
+        status = 1;
+        goto cleanup_dev;
     }
 
     showVolInfo( vol );
 
     adfVolUnMount(vol);
+
+cleanup_dev:
     adfDevUnMount ( hd );
     adfDevClose ( hd );
 
+cleanup_lib:
     adfLibCleanUp();
 
-    return 0;
+    return status;
 }
