@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
 
     showDevInfo( hd );
 
-    struct AdfPartition ** const partList =
-        (struct AdfPartition **) malloc( sizeof(struct AdfPartition *) );
+    const struct AdfPartition ** const partList =
+        (const struct AdfPartition **) malloc( sizeof(struct AdfPartition *) );
     if ( partList == NULL ) {
         status = 1;
         goto cleanup_dev;
