@@ -24,7 +24,6 @@ void MyVer(char *msg)
 int main(int argc, char *argv[])
 {
     (void) argc, (void) argv;
-    struct AdfVolume *vol;
 
     adfLibInit();
 
@@ -43,11 +42,13 @@ int main(int argc, char *argv[])
         (struct AdfPartition **) malloc( sizeof(struct AdfPartition *) );
     if (!partList) exit(1);
 
-    struct AdfPartition part1;
-    part1.startCyl = 2;
-	part1.lenCyl = 2889;
-	part1.volName = strdup("zip");
-    part1.volType = ADF_DOSFS_FFS | ADF_DOSFS_DIRCACHE;
+    const struct AdfPartition part1 = {
+        .startCyl = 2,
+        .lenCyl   = 2889,
+        .volName  = strdup("zip"),
+        .volType  = ADF_DOSFS_FFS |
+                    ADF_DOSFS_DIRCACHE
+    };
 
     partList[0] = &part1;
     ADF_RETCODE rc = adfCreateHd( hd, 1, (const struct AdfPartition * const * const) partList );
@@ -60,7 +61,7 @@ int main(int argc, char *argv[])
         adfLibCleanUp(); exit(1);
     }
 
-    vol = adfVolMount ( hd, 0, ADF_ACCESS_MODE_READWRITE );
+    struct AdfVolume * vol = adfVolMount( hd, 0, ADF_ACCESS_MODE_READWRITE );
     if (!vol) {
         adfDevUnMount ( hd );
         adfDevClose ( hd );
