@@ -38,7 +38,9 @@ static struct AdfDevMedium {
     { "hd",     {  0, 0,  0, 512 }, ADF_DEVCLASS_HARDDISK, "hard disk"                       },
 
     { "zip",  { 2891, 1, 68, 512 }, ADF_DEVCLASS_HARDDISK, "Zip Disk"                        },
+
     { "a590",  { 782, 2, 27, 512 }, ADF_DEVCLASS_HARDDISK, "Western Digital WD93028-X A (A590)" },
+    { "wdac280", { 980, 10, 17, 512 }, ADF_DEVCLASS_HARDDISK, "Western Digital WDAC280"      },
 
     { NULL,     {  0, 0,  0, 512 }, ADF_DEVCLASS_UNKNOWN,  NULL                              }
 };

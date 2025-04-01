@@ -41,7 +41,9 @@ typedef enum {
     ADF_DEVTYPE_HD,    
     
     ADF_DEVTYPE_HD_ZIPDISK,
+
     ADF_DEVTYPE_HD_A590_WD93028X,
+    ADF_DEVTYPE_HD_WDAC280,
 
     ADF_DEVTYPE_NUMTYPES
 } AdfDevType;
