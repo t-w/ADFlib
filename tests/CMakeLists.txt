@@ -1,5 +1,6 @@
 
 add_subdirectory( examples )
+add_subdirectory( examples2 )
 add_subdirectory( regr )
 
 #option ( ADFLIB_ENABLE_TESTS "Enable tests" ON )
@@ -18,3 +19,10 @@ file (
   COPY ${PROJECT_SOURCE_DIR}/tests/data
   DESTINATION ${PROJECT_BINARY_DIR}/tests/
 )
+
+file (
+  COPY ${PROJECT_SOURCE_DIR}/tests/config_default.sh
+  DESTINATION ${PROJECT_BINARY_DIR}/tests/
+)
+
+configure_file( config.sh.in_cmake config.sh )
