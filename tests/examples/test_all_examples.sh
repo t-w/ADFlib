@@ -10,6 +10,5 @@ if [ $# -ne 1 ]; then
 fi
 
 basedir=$(dirname "$0")
-cmd_path="$1" "$basedir/test_adf_floppy.sh"
 cmd_path="$1" "$basedir/test_unadf.sh"
 

@@ -1,18 +1,18 @@
 
-Opening image/device:	'TEMPDIR/testflopdd1.adf'
+Opening image/device:	'tmp/adf_floppy/testflopdd1.adf'
 Mounted volume:		0
 
 ADF volume info:
-  Name:		TestFlopDD1                   
+  Name:		TestFlopOFS                   
   Type:		Floppy disk
-  Filesystem:	FFS  
+  Filesystem:	OFS  
   Size:		1760 blocks (0.86 MiB)
   Free space:	1756 blocks (0.86 MiB)
   R/W:		Read only
 		1/01/1978 0:00:00
 
 Bootblock:
-  dosType:	DOS. (0x1)
+  dosType:	DOS. (0x0)
   rootBlock:	0x370 (880)
 
 Root block sector:	880
@@ -31,7 +31,7 @@ Rootblock:
   0x1a8  cMins:		0x0		0
   0x1ac  cTicks:	0x0		0
   0x1b0  nameLen:	0xb		11
-  0x1b1  diskName:	TestFlopDD1
+  0x1b1  diskName:	TestFlopOFS
   0x1d0  r2[8]:			(see below)
   0x1f0  nextSameHash:	0x0		0
   0x1f4  parent:	0x0		0

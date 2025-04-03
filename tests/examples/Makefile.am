@@ -1,16 +1,11 @@
 
 dist_check_SCRIPTS = \
 	test_examples_basic.sh \
-	test_adf_floppy.sh \
 	test_unadf.sh
 
 dist_check_DATA = \
 	config.sh \
 	common.sh \
-	results/adf_floppy_test_1 \
-	results/adf_floppy_test_2 \
-	results/adf_floppy_test_3 \
-	results/adf_floppy_test_4 \
 	results/unadf_no_args \
 	results/unadf_help \
 	results/unadf_invalid_args_1 \
@@ -23,10 +18,6 @@ dist_check_DATA = \
 	results/unadf_extract_to_pipe_option \
 	results/unadf_mangle_win32_filenames_option \
 	results/unadf_confirm_the_mangling \
-	results_msys/adf_floppy_test_1 \
-	results_msys/adf_floppy_test_2 \
-	results_msys/adf_floppy_test_3 \
-	results_msys/adf_floppy_test_4 \
 	results_msys/unadf_no_args \
 	results_msys/unadf_help \
 	results_msys/unadf_invalid_args_1 \

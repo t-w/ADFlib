@@ -1,4 +1,4 @@
-Creating disk image: 'TEMPDIR/testflopdd1.adf'
+Creating disk image: 'tmp/adf_floppy/testflopdd1.adf'
 
 ADF device info:
   Type:		880 KiB floppy

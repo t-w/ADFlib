@@ -1,5 +1,5 @@
 
-Opening image/device:	'TEMPDIR/testflopdd1.adf'
+Opening image/device:	'tmp/adf_floppy/testflopdd1.adf'
 
 ADF device info:
   Type:		880 KiB floppy
@@ -11,5 +11,5 @@ ADF device info:
 
   Volumes:	1
    idx  first bl.     last bl.    filesystem    name
-     0          0         1759    DOS(FFS)      "TestFlopDD1"
+     0          0         1759    DOS(OFS)      "TestFlopOFS"
 

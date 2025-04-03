@@ -1,9 +1,9 @@
 
-Opening image/device:	'TEMPDIR/testflopdd1.adf'
+Opening image/device:	'tmp/adf_floppy/testflopdd1.adf'
 Mounted volume:		0
 
 ADF volume info:
-  Name:		TestFlopDD1                   
+  Name:		TestFlopFFS                   
   Type:		Floppy disk
   Filesystem:	FFS  
   Size:		1760 blocks (0.86 MiB)
@@ -31,7 +31,7 @@ Rootblock:
   0x1a8  cMins:		0x0		0
   0x1ac  cTicks:	0x0		0
   0x1b0  nameLen:	0xb		11
-  0x1b1  diskName:	TestFlopDD1
+  0x1b1  diskName:	TestFlopFFS
   0x1d0  r2[8]:			(see below)
   0x1f0  nextSameHash:	0x0		0
   0x1f4  parent:	0x0		0

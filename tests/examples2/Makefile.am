@@ -8,7 +8,8 @@ TESTS_ENVIRONMENT = CONFIG_SH=$(abs_top_builddir)/tests/config.sh
 
 dist_check_SCRIPTS = \
 	test_adfinfo.sh \
-	test_adfinfo_hd.sh
+	test_adfinfo_hd.sh \
+	test_adf_floppy.sh
 
 dist_check_DATA = \
 	cmd/adfinfo_hd/adfinfo_hd_test_device \
@@ -35,6 +36,14 @@ dist_check_DATA = \
 	cmd/adfinfo/adfinfo_test_file \
 	cmd/adfinfo/adfinfo_test_dir_c \
 	cmd/adfinfo/adfinfo_test_dir_l \
+	cmd/adf_floppy/floppy_dev_create \
+	cmd/adf_floppy/floppy_dev_info \
+	cmd/adf_floppy/floppy_ffs_dev_format \
+	cmd/adf_floppy/floppy_ffs_dev_info \
+	cmd/adf_floppy/floppy_ffs_vol_info \
+	cmd/adf_floppy/floppy_ofs_dev_format \
+	cmd/adf_floppy/floppy_ofs_dev_info \
+	cmd/adf_floppy/floppy_ofs_vol_info \
 	func.sh \
 	gen_res_msys.sh \
 	test_common.sh \
@@ -86,7 +95,23 @@ dist_check_DATA = \
 	results/adfinfo/adfinfo_test_dir_c_msys \
 	results/adfinfo/adfinfo_test_dir_l_msys \
 	results/adfinfo/adfinfo_test_file_msys \
-	results/adfinfo/adfinfo_test_volume_msys
+	results/adfinfo/adfinfo_test_volume_msys \
+	results/adf_floppy/floppy_dev_create \
+	results/adf_floppy/floppy_dev_create_msys \
+	results/adf_floppy/floppy_dev_info \
+	results/adf_floppy/floppy_dev_info_msys \
+	results/adf_floppy/floppy_ffs_dev_format \
+	results/adf_floppy/floppy_ffs_dev_format_msys \
+	results/adf_floppy/floppy_ffs_dev_info \
+	results/adf_floppy/floppy_ffs_dev_info_msys \
+	results/adf_floppy/floppy_ffs_vol_info \
+	results/adf_floppy/floppy_ffs_vol_info_msys \
+	results/adf_floppy/floppy_ofs_dev_format \
+	results/adf_floppy/floppy_ofs_dev_format_msys \
+	results/adf_floppy/floppy_ofs_dev_info \
+	results/adf_floppy/floppy_ofs_dev_info_msys \
+	results/adf_floppy/floppy_ofs_vol_info \
+	results/adf_floppy/floppy_ofs_vol_info_msys
 
 check_SCRIPTS = $(dist_check_SCRIPTS)
 check_DATA = $(dist_check_DATA)
