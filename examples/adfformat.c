@@ -51,6 +51,8 @@ bool parse_args( const int * const     argc,
                  char * const * const  argv,
                  CmdlineOptions *      options );
 
+bool bootblockEmpty( const struct AdfDevice * const dev );
+
 
 void usage(void)
 {
@@ -129,9 +131,22 @@ int main( const int            argc,
     if ( ! options.force ) {
         if ( adfVolIsFsValid( device->volList[ options.volidx ] ) ) {
             fprintf( stderr, "Volume %u of %s already contains a filesystem (%s)"
-                     " - aborting... (use -f to enforce formatting anyway)\n",
+                     " - risk of data loss, aborting...\n"
+                     "(use -f to enforce formatting, ONLY IF 100%% SURE!)\n",
                      options.volidx, options.adfName,
                      adfVolGetFsStr( device->volList[ options.volidx ] ) );
+            adfDevClose( device );
+            exit( EXIT_FAILURE );
+        }
+
+        // check for any other possible filesystem (any data in bootblock)
+        if ( ! bootblockEmpty( device ) ) {
+            fprintf( stderr, "Non-zero data found in bootblock area (assuming"
+                     "first 2K of the volume).\n"
+                     "Volume %u of %s may contain a filesystem - risk of data "
+                     "loss, aborting...\n"
+                     "(use -f to enforce formatting, ONLY IF 100%% SURE!)\n",
+                     options.volidx, options.adfName );
             adfDevClose( device );
             exit( EXIT_FAILURE );
         }
@@ -277,4 +292,24 @@ bool parse_args( const int * const     argc,
 
     options->adfName = argv[ optind ];
     return true;
+}
+
+
+#define BOOTBLOCK_CHECK_SIZE 2048
+
+/* if there is any non-zero data found in "bootblock" (first 4 512-byte blocks),
+   then assume there can be some filesystem structure (return false) */
+bool bootblockEmpty( const struct AdfDevice * const dev )
+{
+    //uint8_t bblock[ dev->geometry.blockSize ];
+    uint8_t bblock[ BOOTBLOCK_CHECK_SIZE ];
+    ADF_RETCODE rc = adfDevReadBlock( dev, 0, BOOTBLOCK_CHECK_SIZE, bblock );
+    if ( rc != ADF_RC_OK )
+        return false;
+
+    unsigned sum = 0;
+    for ( unsigned i = 0; i < BOOTBLOCK_CHECK_SIZE; i++ )
+        sum += bblock[ i ];
+
+    return ( sum == 0 );
 }
