@@ -10,7 +10,8 @@ dist_check_SCRIPTS = \
 	test_adfbitmap.sh \
 	test_adfinfo.sh \
 	test_adfinfo_hd.sh \
-	test_adf_floppy.sh
+	test_adf_floppy.sh \
+	test_adfsalvage.sh
 
 dist_check_DATA = \
 	cmd/adfbitmap/1_show_invalid_bitmap \
@@ -48,6 +49,14 @@ dist_check_DATA = \
 	cmd/adf_floppy/floppy_ofs_dev_format \
 	cmd/adf_floppy/floppy_ofs_dev_info \
 	cmd/adf_floppy/floppy_ofs_vol_info \
+	cmd/adfsalvage/01_show_deleted_entries \
+	cmd/adfsalvage/02_show_bitmap \
+	cmd/adfsalvage/03_rebuild_bitmap \
+	cmd/adfsalvage/04_show_bitmap \
+	cmd/adfsalvage/05_salvage_deleted_file \
+	cmd/adfsalvage/06_show_deleted_entries \
+	cmd/adfsalvage/07_salvaged_file_info \
+	cmd/adfsalvage/08_show_bitmap \
 	func.sh \
 	gen_res_msys.sh \
 	test_common.sh \
@@ -121,7 +130,23 @@ dist_check_DATA = \
 	results/adf_floppy/floppy_ofs_dev_info \
 	results/adf_floppy/floppy_ofs_dev_info_msys \
 	results/adf_floppy/floppy_ofs_vol_info \
-	results/adf_floppy/floppy_ofs_vol_info_msys
+	results/adf_floppy/floppy_ofs_vol_info_msys \
+	results/adfsalvage/01_show_deleted_entries \
+	results/adfsalvage/01_show_deleted_entries_msys \
+	results/adfsalvage/02_show_bitmap \
+	results/adfsalvage/02_show_bitmap_msys \
+	results/adfsalvage/03_rebuild_bitmap \
+	results/adfsalvage/03_rebuild_bitmap_msys \
+	results/adfsalvage/04_show_bitmap \
+	results/adfsalvage/04_show_bitmap_msys \
+	results/adfsalvage/05_salvage_deleted_file \
+	results/adfsalvage/05_salvage_deleted_file_msys \
+	results/adfsalvage/06_show_deleted_entries \
+	results/adfsalvage/06_show_deleted_entries_msys \
+	results/adfsalvage/07_salvaged_file_info \
+	results/adfsalvage/07_salvaged_file_info_msys \
+	results/adfsalvage/08_show_bitmap \
+	results/adfsalvage/08_show_bitmap_msys
 
 check_SCRIPTS = $(dist_check_SCRIPTS)
 check_DATA = $(dist_check_DATA)
