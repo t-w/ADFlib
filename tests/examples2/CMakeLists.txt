@@ -6,6 +6,9 @@ file (
 
 message( STATUS "Enable tests in tests/examples2/" )
 
+add_test( test_adfbitmap.sh ${BASH_PROGRAM}
+          test_adfbitmap.sh )
+
 add_test( test_adfinfo.sh ${BASH_PROGRAM}
           test_adfinfo.sh )
 

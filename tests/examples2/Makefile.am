@@ -7,11 +7,15 @@ TESTS_ENVIRONMENT = CONFIG_SH=$(abs_top_builddir)/tests/config.sh
 
 
 dist_check_SCRIPTS = \
+	test_adfbitmap.sh \
 	test_adfinfo.sh \
 	test_adfinfo_hd.sh \
 	test_adf_floppy.sh
 
 dist_check_DATA = \
+	cmd/adfbitmap/1_show_invalid_bitmap \
+	cmd/adfbitmap/2_rebuild_bitmap \
+	cmd/adfbitmap/3_show_valid_bitmap \
 	cmd/adfinfo_hd/adfinfo_hd_test_device \
 	cmd/adfinfo_hd/adfinfo_hd_test_volume_0 \
 	cmd/adfinfo_hd/adfinfo_hd_test_volume_1 \
@@ -48,6 +52,12 @@ dist_check_DATA = \
 	gen_res_msys.sh \
 	test_common.sh \
 	test_runner.sh \
+	results/adfbitmap/1_show_invalid_bitmap \
+	results/adfbitmap/2_rebuild_bitmap \
+	results/adfbitmap/3_show_valid_bitmap \
+	results/adfbitmap/1_show_invalid_bitmap_msys \
+	results/adfbitmap/2_rebuild_bitmap_msys \
+	results/adfbitmap/3_show_valid_bitmap_msys \
 	results/adfinfo_hd/adfinfo_hd_test_device \
 	results/adfinfo_hd/adfinfo_hd_test_volume_0 \
 	results/adfinfo_hd/adfinfo_hd_test_volume_1 \
