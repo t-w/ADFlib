@@ -2,7 +2,6 @@
 dist_check_SCRIPTS = \
 	test_examples_basic.sh \
 	test_adf_floppy.sh \
-	test_adfinfo.sh \
 	test_unadf.sh
 
 dist_check_DATA = \
@@ -12,11 +11,6 @@ dist_check_DATA = \
 	results/adf_floppy_test_2 \
 	results/adf_floppy_test_3 \
 	results/adf_floppy_test_4 \
-	results/adfinfo_test_1 \
-	results/adfinfo_test_2 \
-	results/adfinfo_test_3 \
-	results/adfinfo_test_4 \
-	results/adfinfo_test_5 \
 	results/unadf_no_args \
 	results/unadf_help \
 	results/unadf_invalid_args_1 \
@@ -33,11 +27,6 @@ dist_check_DATA = \
 	results_msys/adf_floppy_test_2 \
 	results_msys/adf_floppy_test_3 \
 	results_msys/adf_floppy_test_4 \
-	results_msys/adfinfo_test_1 \
-	results_msys/adfinfo_test_2 \
-	results_msys/adfinfo_test_3 \
-	results_msys/adfinfo_test_4 \
-	results_msys/adfinfo_test_5 \
 	results_msys/unadf_no_args \
 	results_msys/unadf_help \
 	results_msys/unadf_invalid_args_1 \
