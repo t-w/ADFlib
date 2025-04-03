@@ -1,6 +1,6 @@
 
 # Add verbose output for test execution
-AM_TESTS_ENVIRONMENT = VERBOSE=1
+#AM_TESTS_ENVIRONMENT = VERBOSE=1
 
 # Define the script that needs to be generated
 TESTS_ENVIRONMENT = CONFIG_SH=$(abs_top_builddir)/tests/config.sh
@@ -38,8 +38,9 @@ EXTRA_DIST += data config_default.sh
 
 
 # Pre-test validation
-check-local:
-	@echo "Running pre-test validation..."
-	@test -f $(abs_top_builddir)/tests/config.sh && \
-            echo "config.sh is present" || \
-            echo "ERROR: config.sh is missing!"
+# (disabled: it works, but runs _after_ running tests...)
+#check-local:
+#	@echo "Running pre-test validation..."
+#	@test -f $(abs_top_builddir)/tests/config.sh && \
+#            echo "config.sh is present" || \
+#            echo "ERROR: config.sh is missing!"

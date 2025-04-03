@@ -1,7 +1,6 @@
 
-
 # Add verbose output for test execution
-AM_TESTS_ENVIRONMENT = VERBOSE=1
+#AM_TESTS_ENVIRONMENT = VERBOSE=1
 
 # Define the script that needs to be generated
 TESTS_ENVIRONMENT = CONFIG_SH=$(abs_top_builddir)/tests/config.sh
@@ -19,15 +18,16 @@ dist_check_DATA = \
 	results/adfinfo_hd/adfinfo_hd_test_device \
 	results/adfinfo_hd/adfinfo_hd_test_device_msys
 
-#check_SCRIPTS = $(dist_check_SCRIPTS)
+check_SCRIPTS = $(dist_check_SCRIPTS)
 check_DATA = $(dist_check_DATA)
 
 TESTS = $(dist_check_SCRIPTS)
 #TESTS = test_adfinfo_hd.sh
 
 # Pre-test validation
-check-local:
-	@echo "Running pre-test validation 2..."
-	@test -f $(abs_top_builddir)/tests/config.sh && \
-            echo "config.sh is present" || \
-            echo "ERROR: config.sh is missing!"
+# (disabled: it works, but runs _after_ running tests...)
+#check-local:
+#	@echo "Running pre-test validation 2..."
+#	@test -f $(abs_top_builddir)/tests/config.sh && \
+#            echo "config.sh is present" || \
+#            echo "ERROR: config.sh is missing!"
