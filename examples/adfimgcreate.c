@@ -77,17 +77,20 @@ const char * prgname;
 
 void usage( FILE * const stream )
 {
-    fprintf( stream, "\nadfimgcreate - create empty (not formatted!) ADF/HDF image files\n"
-             "\nUsage:  adfimgcreate [-k sizeKiB | -m sizeMiB | -g tracks,heads,sectors"
-             " | -t type] filename\n\n"
-             "  where the type can be:\n\n" );
+    fprintf(
+        stream, "\nadfimgcreate - create empty (not formatted!) ADF/HDF image files\n"
+        "\nUsage:  adfimgcreate [-k sizeKiB | -m sizeMiB | -g tracks,heads,sectors"
+        " | -t type] filename\n\n"
+        "where the type can be:\n\n"
+        "type       description                                 tracks  heads  sectors \n"
+        "------------------------------------------------------------------------------\n");
     /*
              "     'dd'                    880KiB floppy (DD)\n"
              "     'hd'                    1760KiB floppy (HD)\n"
              "     'dd81', 'dd82', 'dd83'  non-standard 81-83 tracks DD floppy\n"
              "     'hd81', 'hd82', 'hd83'  non-standard 81-83 tracks HD floppy\n\n" ); */
     for ( const struct devtype * dt = &devtypes[ 0 ] ; dt->name != NULL; dt++ ) {
-        fprintf( stream, "   %-6s     %-33s (%2u/%u/%2u)\n",  dt->name, dt->descr,
+        fprintf( stream, "%-11s%-40s%8u%8u%8u\n",  dt->name, dt->descr,
                  dt->geometry.tracks, dt->geometry.heads, dt->geometry.sectors );
 
     }
