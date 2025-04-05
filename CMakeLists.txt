@@ -22,6 +22,11 @@ set ( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 
 message ( STATUS "Compiler ID: ${CMAKE_C_COMPILER_ID}" )
 
+
+#
+# Compile options
+#
+
 add_compile_options (
     -Wall
     $<$<CONFIG:RELEASE>:-O3>
@@ -52,6 +57,10 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
       -Wno-gnu-statement-expression-from-macro-expansion
     )
 endif()
+
+#
+# Address sanitizer
+#
 
 option ( ADFLIB_ENABLE_ADDRESS_SANITIZER "Enable address sanitizer" OFF )
 
@@ -89,6 +98,9 @@ else()
     message ( STATUS "Address sanitizer disabled - not configuring" )
 endif()
 
+#
+# Build type options
+#
 add_compile_definitions ( BUILDING_WITH_CMAKE=1 )
 
 option ( ADFLIB_BUILD_DLL "Build Windows DLL" OFF )
@@ -97,6 +109,7 @@ if ( ADFLIB_BUILD_DLL )
     message ( STATUS "Building a Windows DLL" )
     add_definitions ( -DBUILD_DLL )
 endif ( ADFLIB_BUILD_DLL )
+
 
 #
 # Check available APIs
