@@ -4,12 +4,12 @@ run_tests() {
 
     echo success >$status
 
-#    for testCmd in cmd/${testName}/*
-    for testCmd in $(ls cmd/${testName}/*)
+    for testCmd in ${testExamples2Dir}/cmd/${testName}/*
     do
 	echo "Test command: $testCmd"
 	local cmdName=$(basename $testCmd)
 	local expectedResFile="${expectedDir}/${cmdName}${resultsOsPostfix}"
+	#echo "expectedResFile = '${expectedResFile}'"
 	if [ -f "${expectedResFile}" ]
 	then
 	    # test

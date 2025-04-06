@@ -11,5 +11,7 @@
 
 examplesBinDir=@abs_top_builddir@/examples
 
+testsSrcDir=@abs_srcdir@
+
 #testDataDir=@abs_top_srcdir@/tests/data
-testDataDir=@abs_srcdir@/data
+testDataDir=${testsSrcDir}/data

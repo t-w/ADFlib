@@ -11,10 +11,15 @@
 #examplesBinDir=@abs_builddir@/examples
 
 echo "examplesBinDir: "${examplesBinDir}
+echo "testsSrcDir: "${testsSrcDir}
 echo "testDataDir: "${testDataDir}
 
 examplesBinDir=${examplesBinDir:-$(pwd)/../../build/debug/examples}
-testDataDir=${testDataDir:-$(pwd)/../data}
+
+# assumming all tests are in subdirectories (1 level below)
+testsSrcDir=${testsSrcDir:-$(pwd)/..}
+
+testDataDir=${testsSrcDir}/data
 
 bootblocksDir=${testDataDir}/Bootblock
 dumpsDir=${testDataDir}/Dumps

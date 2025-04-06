@@ -1,6 +1,4 @@
 
-SUBDIRS = results
-
 # Add verbose output for test execution
 #AM_TESTS_ENVIRONMENT = VERBOSE=1
 
@@ -31,6 +29,8 @@ check_DATA = $(dist_check_DATA)
 
 TESTS = $(dist_check_SCRIPTS)
 #TESTS = test_adfinfo_hd.sh
+
+EXTRA_DIST = res
 
 # Pre-test validation
 # (disabled: it works, but runs _after_ running tests...)

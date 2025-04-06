@@ -11,4 +11,6 @@
 
 #projectBinDir=${PROJECT_BINARY_DIR}
 examplesBinDir=${PROJECT_BINARY_DIR}/examples
-testDataDir=${PROJECT_SOURCE_DIR}/tests/data
+
+testsSrcDir=${PROJECT_SOURCE_DIR}/tests
+testDataDir=${testsSrcDir}/data

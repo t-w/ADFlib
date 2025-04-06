@@ -9,7 +9,7 @@ main() {
     #local resultsOsPostfix=$(get_os_postfix)
     local resultsOsPostfix=_msys
 
-    for testResDir in results/*
+    for testResDir in res/*
     do
 	echo $testResDir
         local curDir=$(pwd)

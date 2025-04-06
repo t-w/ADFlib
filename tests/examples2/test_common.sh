@@ -42,5 +42,6 @@ fi
 # global const
 #dumpsDir=${dumpsDir:-../data/Dumps}
 resultsOsPostfix=$(get_os_postfix)
-expectedDir=results/$testName
+testExamples2Dir=${testsSrcDir}/examples2
+expectedDir=${testExamples2Dir}/res/$testName
 status=tmp/${testName}/status

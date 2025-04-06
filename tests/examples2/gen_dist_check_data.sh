@@ -14,7 +14,3 @@ find cmd/ -type f | sort \
     >>$output
 
 truncate -s -2 $output
-
-cd results
-./gen_dist_check_data.sh
-cd ..
