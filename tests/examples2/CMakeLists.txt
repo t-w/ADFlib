@@ -20,3 +20,12 @@ add_test( test_adf_floppy.sh ${BASH_PROGRAM}
 
 add_test( test_adfsalvage.sh ${BASH_PROGRAM}
           test_adfsalvage.sh )
+
+add_test( test_unadf.sh ${BASH_PROGRAM}
+          test_unadf.sh )
+
+add_test( test_unadf_hdd.sh ${BASH_PROGRAM}
+          test_unadf_hdd.sh )
+
+add_test( test_unadf_win32.sh ${BASH_PROGRAM}
+          test_unadf_win32.sh )

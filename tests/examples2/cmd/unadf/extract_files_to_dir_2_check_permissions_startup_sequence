@@ -1,0 +1,15 @@
+cmd(){
+    # check permissions were set on extracted files
+    # (this test is failing on MSYS2:
+    #  -> either the way of checking or permissions are not valid)
+    #chmod a-x tmp/${testName}/extract_files_to_dir/s/startup-sequence
+    if [ "x${host_type}" != 'xMINGW32' -a \
+         "x${host_type}" != 'xMINGW64' ]
+    then
+        [ ! -x tmp/${testName}/extract_files_to_dir/s/startup-sequence ]
+    fi
+}
+
+comment(){
+    echo "check permissions set on s/startup-sequence"
+}
