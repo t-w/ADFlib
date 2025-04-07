@@ -42,8 +42,8 @@ jobs:
     - name: test installed command-line utils (2)
       run: |
         cat tests/config.sh.in_cmake | \
-          sed -e "s/\${PROJECT_BINARY_DIR}/\/home\/runner\/work\/ADFlib\/ADFlib/" \
-              -e "s/\${PROJECT_SOURCE_DIR}/\/home\/runner\/work\/ADFlib\/ADFlib/" \
+          sed -e 's@\${PROJECT_BINARY_DIR}@'"$GITHUB_WORKSPACE"'@' \
+              -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
           > tests/config.sh
         cat tests/config.sh
         examplesBinDir=/usr/local/bin ./tests/examples2/run_all_tests.sh
