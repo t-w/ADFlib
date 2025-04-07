@@ -10,7 +10,7 @@
 #
 
 #projectBinDir=${PROJECT_BINARY_DIR}
-examplesBinDir=${PROJECT_BINARY_DIR}/examples
+examplesBinDir=${examplesBinDir:-${PROJECT_BINARY_DIR}/examples}
 
 testsSrcDir=${PROJECT_SOURCE_DIR}/tests
 testDataDir=${testsSrcDir}/data

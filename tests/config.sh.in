@@ -9,7 +9,7 @@
 
 #projectBinDir=@abs_top_builddir@
 
-examplesBinDir=@abs_top_builddir@/examples
+examplesBinDir=${examplesBinDir:-@abs_top_builddir@/examples}
 
 testsSrcDir=@abs_srcdir@
 
