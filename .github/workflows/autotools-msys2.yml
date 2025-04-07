@@ -42,6 +42,14 @@ jobs:
       run: find /tmp/adflib -iname '*adf*'
     - name: test installed command-line utils
       run: ./tests/examples/test_all_examples.sh /tmp/adflib/bin
+    - name: test installed command-line utils (2)
+      run: |
+        cat tests/config.sh.in_cmake | \
+          sed -e 's@\${PROJECT_BINARY_DIR}@'"$GITHUB_WORKSPACE"'@' \
+              -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
+          > tests/config.sh
+        cat tests/config.sh
+        examplesBinDir=/tmp/adflib/bin ./tests/examples2/run_all_tests.sh
     - name: store logs from failed tests
       if: failure()
       uses: actions/upload-artifact@v4
@@ -50,5 +58,6 @@ jobs:
         path: |
           tests/*.log
           tests/examples/*.log
+          tests/examples2/*.log
           tests/regr/*.log
           tests/unit/*.log
