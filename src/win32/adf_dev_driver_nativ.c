@@ -41,6 +41,15 @@ static bool Win32IsDevice( const char * const  devName );
 static ADF_RETCODE Win32ReleaseDevice( struct AdfDevice * const  dev );
 
 
+/*
+ * Open a physical disk device on Windows - (adflib device API)
+ *
+ * lpstrName:  a 3-character identification of the disk device:
+ *    [0] - if '|' it means that it is a physical device (on Windows)
+ *    [1] - if 'H' it means a disk drive
+ *    [2] - a numeric id of the disk drive (as, for instance, listed in
+ *          "Disk Management")
+ */
 static struct AdfDevice * Win32InitDevice( const char * const   lpstrName,
                                            const AdfAccessMode  mode )
 {

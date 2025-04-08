@@ -26,6 +26,20 @@
 #include <stdio.h>
 #include "nt4_dev.h"
 
+/*
+ * Open a physical disk device on Windows
+ *
+ * lpstrDrive[3]  - a 2-letter identification of the device:
+ *    [0]  - type (only 'H', meaning 'PhysicalDrive" in Win32 namespace,
+ *           is implemented)
+ *    [1]  - a numeric id of the disk drive (as, for instance, listed in
+ *           "Disk Management")
+ *    [2]  - '\0'
+ *
+ * Useful documentation:
+ * - https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
+ * - https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
+ */
 HANDLE NT4OpenDrive( const char * const  lpstrDrive )
 {
     char    strDriveFile[ 40 ];
