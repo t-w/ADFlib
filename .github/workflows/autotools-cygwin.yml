@@ -56,10 +56,10 @@ jobs:
 #        echo "**** find start"
 #        find 
 #        echo "**** find end"
-   - name: test installed command-line utils (2)
+    - name: test installed command-line utils (2)
       env:
         SHELLOPTS: igncr
-      run: |  
+      run: |
         export WORKSPACE_CYGWIN=$(cygpath -u "$GITHUB_WORKSPACE")
         cat tests/config.sh.in_cmake | sed -e 's@\${PROJECT_BINARY_DIR}@'"$WORKSPACE_CYGWIN"'@' -e 's@\${PROJECT_SOURCE_DIR}@'"$WORKSPACE_CYGWIN"'@' > tests/config.sh
         cat tests/config.sh
