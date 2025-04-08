@@ -291,20 +291,20 @@ void print_volume(struct AdfVolume *vol)
 {
     ADF_SECTNUM num_blocks = vol->lastBlock - vol->firstBlock + 1;
 
-    if (vol->dev->type != ADF_DEVTYPE_UNKNOWN)
+    switch (vol->dev->class) {
+    case ADF_DEVCLASS_FLOP:
         printf("Volume : %s,", adfDevTypeGetDescription( vol->dev->type ) );
-    else {
-        switch (vol->dev->class) {
-        case ADF_DEVCLASS_HARDDISK:
-            printf("Volume : HD partition #%d %3.1f KBytes,", vol_number, num_blocks / 2.0);
-            break;
-        case ADF_DEVCLASS_HARDFILE:
-            printf("Volume : HardFile %3.1f KBytes,", num_blocks / 2.0);
-            break;
-        default:
-            printf("???,");
-        }
+        break;
+    case ADF_DEVCLASS_HARDDISK:
+        printf("Volume : HD partition #%d %3.1f KBytes,", vol_number, num_blocks / 2.0);
+        break;
+    case ADF_DEVCLASS_HARDFILE:
+        printf("Volume : HardFile %3.1f KBytes,", num_blocks / 2.0);
+        break;
+    default:
+        printf("???,");
     }
+
     if (vol->volName) {
         printf(" \"%s\"", vol->volName);
     }
