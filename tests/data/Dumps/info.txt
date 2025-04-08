@@ -33,7 +33,7 @@ cache_crash.adf
   - used in regression test for debian bug 862740 (see: 3c5e7d37)
 
 ffdisk0049.adf.gz
-  - FredFisk disk 49, has 2 things useful for tests:
+  - Fred Fish disk 49, has 2 things useful for tests:
     - bootblock with an invalid root block value
     - bitmap allocation marked invalid (but OK, ie. the same after rebuilding).
     Added just renamed and compressed. The original file:
