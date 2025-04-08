@@ -92,7 +92,6 @@ ADF_RETCODE myReleaseDevice( struct AdfDevice * const  dev )
  */
 static bool myIsDevNative(void)
 {
-    adfEnv.eFct( "%s: not implemented", __func__ );
     return false;
 }
 
@@ -100,7 +99,6 @@ static bool myIsDevNative(void)
 static bool myIsDevice( const char * const  devName )
 {
     (void) devName;
-    adfEnv.eFct( "%s: not implemented", __func__ );
     return false;
 }
 
