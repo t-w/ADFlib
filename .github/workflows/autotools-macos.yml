@@ -41,7 +41,7 @@ jobs:
               -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
           > tests/config.sh
         cat tests/config.sh
-        examplesBinDir=/usr/local/bin ./tests/examples2/run_all_tests.sh
+        ./tests/examples2/run_all_tests.sh /usr/local/bin
     - name: store logs from failed tests
       if: failure()
       uses: actions/upload-artifact@v4

@@ -19,5 +19,5 @@ tests[7]="test_unadf_win32.sh"
 
 for i in "${tests[@]}"
 do
-    ${baseDir}/${i}
+    ${baseDir}/${i} $@
 done

@@ -63,7 +63,7 @@ jobs:
         export WORKSPACE_CYGWIN=$(cygpath -u "$GITHUB_WORKSPACE")
         cat tests/config.sh.in_cmake | sed -e 's@\${PROJECT_BINARY_DIR}@'"$WORKSPACE_CYGWIN"'@' -e 's@\${PROJECT_SOURCE_DIR}@'"$WORKSPACE_CYGWIN"'@' > tests/config.sh
         cat tests/config.sh
-        examplesBinDir=/tmp/adflib/bin ${WORKSPACE_CYGWIN}/tests/examples2/run_all_tests.sh
+        ${WORKSPACE_CYGWIN}/tests/examples2/run_all_tests.sh /tmp/adflib/bin
     - name: store logs from failed tests
       if: failure()
       uses: actions/upload-artifact@v4

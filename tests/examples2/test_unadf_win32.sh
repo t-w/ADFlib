@@ -24,6 +24,10 @@ baseDir=$(dirname "$0")
 
 . ${baseDir}/../config_default.sh
 
+# set examplesBinDir from command line arg. (if provided)
+[ "x${1}" != "x" ] && { echo "Using arg '"${1}"' as examplesBinDir";
+                        examplesBinDir="${1}"; }
+
 echo "Examples: $examplesBinDir"
 
 #
