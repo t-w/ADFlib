@@ -375,10 +375,6 @@ void extract_tree(struct AdfVolume *vol, struct AdfList *node, char *path)
         else if (e->type == ADF_ST_FILE) {
             extract_file(vol, e->name, out, permissions(e));
         }
-        if (!pipe_mode) {
-            set_file_date(out, e);
-        }
-        free(out);
 
         /* recurse into subdirectories */
         if (node->subdir) {
@@ -393,6 +389,13 @@ void extract_tree(struct AdfVolume *vol, struct AdfList *node, char *path)
             }
             free(newpath);
         }
+
+        // set timestamp
+        if (!pipe_mode) {
+            set_file_date(out, e);
+        }
+
+        free(out);
     }
 }
 
