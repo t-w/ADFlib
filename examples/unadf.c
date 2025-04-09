@@ -551,12 +551,6 @@ char *output_name(char *path, char *name) {
 
 /* set amiga file date on output file */
 void set_file_date(char *out, struct AdfEntry *e) {
-    time_t time;
-#ifdef WIN32
-    struct utimbuf times;
-#else
-    struct timeval times[2];
-#endif
 
     struct tm tm;
     tm.tm_sec = e->secs;
@@ -566,18 +560,22 @@ void set_file_date(char *out, struct AdfEntry *e) {
     tm.tm_mon = e->month - 1;
     tm.tm_year = e->year - 1900;
     tm.tm_isdst = -1;
-    time = mktime(&tm);
+
+    time_t time = mktime(&tm);
 
 #ifdef WIN32
     /* on Windows, don't allow dates earlier than 1 Jan 1980 */
     if (time < 315532800) {
         time = 315532800;
     }
+
+    struct utimbuf times;
     times.actime = times.modtime = time;
     if (utime(out, &times) != 0) {
         perror(out);
     }
 #else
+    struct timeval times[2];
     times[0].tv_sec = times[1].tv_sec = time;
     times[0].tv_usec = times[1].tv_usec = 0;
     if (utimes(out, times) != 0) {
