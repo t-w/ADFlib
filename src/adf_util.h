@@ -136,21 +136,21 @@ void dumpBlock( const uint8_t * const  buf );
 
 #ifndef HAVE_STRNLEN
 #pragma message "Using the custom strnlen()"
-size_t strnlen( const char *  str,
-                const size_t  maxlen );
+ADF_PREFIX size_t strnlen( const char *  str,
+                           const size_t  maxlen );
 #endif
 
 #ifndef HAVE_STRNDUP
 #pragma message "Using the custom strndup()"
-char * strndup( const char * const  s,
-                size_t              n );
+ADF_PREFIX char * strndup( const char * const  s,
+                           size_t              n );
 #endif
 
 #ifndef HAVE_STPNCPY
 #pragma message "Using the custom stpncpy()"
-char * stpncpy( char * const         dst,
-                const char * const   src,
-                const size_t         sz );
+ADF_PREFIX char * stpncpy( char * const         dst,
+                           const char * const   src,
+                           const size_t         sz );
 #endif
 
 #endif  /* ADF_UTIL_H */
