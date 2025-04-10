@@ -47,10 +47,10 @@ test_adfenv_DEPENDENCIES = $(top_builddir)/src/libadf.la
 #
 # utils (independent code)
 #
-test_adf_utils_SOURCES = test_adf_utils.c
-test_adf_utils_CFLAGS = $(CHECK_CFLAGS)
-test_adf_utils_LDADD = $(ADFLIBS) $(CHECK_LIBS)
-test_adf_utils_DEPENDENCIES = $(top_builddir)/src/libadf.la
+test_adf_util_SOURCES = test_adf_util.c
+test_adf_util_CFLAGS = $(CHECK_CFLAGS)
+test_adf_util_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_adf_util_DEPENDENCIES = $(top_builddir)/src/libadf.la
 
 test_adfDays2Date_SOURCES = test_adfDays2Date.c
 test_adfDays2Date_CFLAGS = $(CHECK_CFLAGS)
