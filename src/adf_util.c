@@ -264,11 +264,9 @@ char * strndup( const char * const  s,
 #endif
 
 
-
-
-
 #ifndef HAVE_STPNCPY
 
+#ifndef HAVE_MEMPCPY
 static void * mempcpy( void * const        dest,
                        const void * const  src,
                        const size_t        sz )
@@ -276,6 +274,7 @@ static void * mempcpy( void * const        dest,
     memcpy( dest, src, sz );
     return (uint8_t *) dest + sz;
 }
+#endif
 
 /* stpncpy() custom implementation (used only where missing) */
 char * stpncpy( char * const         dst,

@@ -146,6 +146,11 @@ if ( ${HAVE_STRNDUP} )
   add_compile_definitions ( HAVE_STRNDUP=1 )
 endif()
 
+check_symbol_exists ( mempcpy "string.h" HAVE_MEMPCPY )
+if ( ${HAVE_MEMPCPY} )
+  add_compile_definitions ( HAVE_MEMPCPY=1 )
+endif()
+
 check_symbol_exists ( stpncpy "string.h" HAVE_STPNCPY )
 if ( ${HAVE_STPNCPY} )
   add_compile_definitions ( HAVE_STPNCPY=1 )
