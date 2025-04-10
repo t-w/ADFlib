@@ -9,7 +9,24 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
-      "ctestCommandArgs": ""
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "ADFLIB_ENABLE_NATIVE_DEV",
+          "value": "true",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_BUILD_DLL",
+          "value": "false",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_ENABLE_ADDRESS_SANITIZER",
+          "value": "true",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "x64-Debug-Shared",
@@ -20,7 +37,19 @@
       "cmakeCommandArgs": "-DBUILD_SHARED_LIBS:BOOL=ON -DADFLIB_BUILD_DLL=ON",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "ADFLIB_ENABLE_NATIVE_DEV",
+          "value": "true",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_ENABLE_ADDRESS_SANITIZER",
+          "value": "true",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "x64-Release-Static",
@@ -32,7 +61,23 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "variables": [
+        {
+          "name": "ADFLIB_ENABLE_NATIVE_DEV",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_BUILD_DLL",
+          "value": "false",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_ENABLE_ADDRESS_SANITIZER",
+          "value": "false",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "x64-Release-Shared",
@@ -44,7 +89,23 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "variables": [
+        {
+          "name": "ADFLIB_ENABLE_ADDRESS_SANITIZER",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_ENABLE_NATIVE_DEV",
+          "value": "true",
+          "type": "BOOL"
+        },
+        {
+          "name": "ADFLIB_BUILD_DLL",
+          "value": "true",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }
