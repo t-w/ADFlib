@@ -8,6 +8,7 @@ AM_CPPFLAGS = -std=c99 -Wall -Wextra -pedantic \
 check_PROGRAMS = \
     test_adflib \
     test_adfenv \
+    test_adf_util \
     test_adfDays2Date \
     test_adfPos2DataBlock \
     test_dev_open \
@@ -46,6 +47,11 @@ test_adfenv_DEPENDENCIES = $(top_builddir)/src/libadf.la
 #
 # utils (independent code)
 #
+test_adf_utils_SOURCES = test_adf_utils.c
+test_adf_utils_CFLAGS = $(CHECK_CFLAGS)
+test_adf_utils_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_adf_utils_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 test_adfDays2Date_SOURCES = test_adfDays2Date.c
 test_adfDays2Date_CFLAGS = $(CHECK_CFLAGS)
 test_adfDays2Date_LDADD = $(ADFLIBS) $(CHECK_LIBS)
