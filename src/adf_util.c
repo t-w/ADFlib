@@ -264,13 +264,25 @@ char * strndup( const char * const  s,
 #endif
 
 
+
+
+
 #ifndef HAVE_STPNCPY
+
+static void * mempcpy( void * const        dest,
+                       const void * const  src,
+                       const size_t        sz )
+{
+    memcpy( dest, src, sz );
+    return (uint8_t *) dest + sz;
+}
+
 /* stpncpy() custom implementation (used only where missing) */
 char * stpncpy( char * const         dst,
                 const char * const   src,
                 const size_t         sz )
 {
     memset( dst, 0, sz );
-    return memcpy( dst, src, strnlen( src, sz ) );
+    return mempcpy( dst, src, strnlen( src, sz ) );
 }
 #endif
