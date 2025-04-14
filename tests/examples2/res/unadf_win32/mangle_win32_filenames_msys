@@ -61,7 +61,7 @@ x - tmp/unadf_win32/mangle_win32_filenames\forbidden-suffixes/
 x - tmp/unadf_win32/mangle_win32_filenames\forbidden-suffixes\test_______
 x - tmp/unadf_win32/mangle_win32_filenames\forbidden-suffixes\______
 x - tmp/unadf_win32/mangle_win32_filenames\forbidden-suffixes\R.E.M_
-x - tmp/unadf_win32/mangle_win32_filenames\forbidden-suffixes/   hello___
+x - tmp/unadf_win32/mangle_win32_filenames\forbidden-suffixes\   hello___
 x - tmp/unadf_win32/mangle_win32_filenames\forbidden-chars/
 x - tmp/unadf_win32/mangle_win32_filenames\forbidden-chars\test_test_test.txt
 x - tmp/unadf_win32/mangle_win32_filenames\forbidden-chars\test_test_test.txt
