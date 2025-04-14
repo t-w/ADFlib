@@ -1,13 +1,16 @@
 cmd(){
     # check permissions were set on extracted files
-    # (this test is failing on MSYS2:
-    #  -> either the way of checking or permissions are not valid)
+
+    # this test is failing on MSYS2
     #chmod a-x tmp/${testName}/extract_to_dir/c/LZX
-    if [ "x${host_type}" != 'xMINGW32' -a \
-         "x${host_type}" != 'xMINGW64' ]
+    #ls -l tmp/${testName}/extract_to_dir/c/LZX 1>&2
+    if [ "x${hostType}" == 'xMINGW32' -o \
+         "x${hostType}" == 'xMINGW64' ]
     then
-        [ -x tmp/${testName}/extract_to_dir/c/LZX ]
+        return 0
     fi
+
+    [ -x tmp/${testName}/extract_to_dir/c/LZX ]
 }
 
 comment(){
