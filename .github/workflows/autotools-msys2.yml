@@ -44,9 +44,11 @@ jobs:
       run: ./tests/examples/test_all_examples.sh /tmp/adflib/bin
     - name: test installed command-line utils (2)
       run: |
+        echo "'"$GITHUB_WORKSPACE"'"
+        export WORKSPACE_MSYS2=$(echo $GITHUB_WORKSPACE | sed -e 's/\\/\\\\/g')
         cat tests/config.sh.in_cmake | \
-          sed -e 's@\${PROJECT_BINARY_DIR}@'"$GITHUB_WORKSPACE"'@' \
-              -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
+          sed -e 's@\${PROJECT_BINARY_DIR}@.@' \
+              -e 's@\${PROJECT_SOURCE_DIR}@.@' \
           > tests/config.sh
         cat tests/config.sh
         ./tests/examples2/run_all_tests.sh /tmp/adflib/bin
