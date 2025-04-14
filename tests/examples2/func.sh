@@ -8,13 +8,13 @@
 # Returns "_msys" on MSYS2, empty string in other cases
 #
 get_os_postfix() {
-    local hostType=$(uname | sed 's/_.*//')
+    local host_type=$(uname | sed 's/_.*//')
     echo >&2 "Host type: '${host_type}'"
     if [ "x${host_type}" = 'xMINGW32' -o \
          "x${host_type}" = 'xMINGW64' ]
     then
 	echo "_msys"
-##elif [ "x${host_type}" = 'xCYGWIN' ]; then
+##elif [ "x${hostType}" = 'xCYGWIN' ]; then
     else
 	echo
     fi
