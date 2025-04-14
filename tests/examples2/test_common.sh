@@ -41,7 +41,8 @@ fi
 
 # global const
 #dumpsDir=${dumpsDir:-../data/Dumps}
-resultsOsPostfix=$(get_os_postfix)
-testExamples2Dir=${testsSrcDir}/examples2
-expectedDir=${testExamples2Dir}/res/$testName
+readonly hostType=$(uname | sed 's/_.*//')
+readonly resultsOsPostfix=$(get_os_postfix)
+readonly testExamples2Dir=${testsSrcDir}/examples2
+readonly expectedDir=${testExamples2Dir}/res/$testName
 status=tmp/${testName}/status
