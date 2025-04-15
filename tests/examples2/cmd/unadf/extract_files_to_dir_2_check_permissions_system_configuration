@@ -3,8 +3,8 @@ cmd(){
 
     # this test is failing on MSYS2
     #chmod a-x tmp/${testName}/extract_files_to_dir/devs/system-configuration
-    if [ "x${hostType}" == 'xMINGW32' -o \
-         "x${hostType}" == 'xMINGW64' ]
+    if [ "x${hostType}" = 'xMINGW32' -o \
+         "x${hostType}" = 'xMINGW64' ]
     then
         return 0
     fi
