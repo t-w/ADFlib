@@ -190,8 +190,8 @@ void show_dentry_metadata( struct AdfVolume * const  vol,
 
     // get entry
     struct AdfEntryBlock entry;
-    ADF_SECTNUM sectNum = adfGetEntryByName( vol, vol->curDirPtr,
-                                             entry_name, &entry );
+    ADF_SECTNUM sectNum = adfGetEntryBlock( vol, vol->curDirPtr,
+                                            entry_name, &entry );
     if ( sectNum == -1 ) {
         fprintf( stderr, "'%s' not found.\n", entry_name );
         goto show_entry_cleanup;

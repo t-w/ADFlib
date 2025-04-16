@@ -253,14 +253,36 @@ void adfFreeEntry( struct AdfEntry * const  entry )
     free( entry );
 }
 
+
 /*
- * adfGetEntryByName
+ * adfGetEntry
  *
  */
-ADF_SECTNUM adfGetEntryByName( struct AdfVolume * const      vol,
-                               const ADF_SECTNUM             dirPtr,
-                               const char * const            name,
-                               struct AdfEntryBlock * const  entry )
+ADF_RETCODE adfGetEntry( struct AdfVolume * const  vol,
+                         const ADF_SECTNUM         dirPtr,
+                         const char * const        name,
+                         struct AdfEntry * const   entry )
+{
+    struct AdfEntryBlock  entryBlock;
+    //printf ("%s: name '%s'\n", __func__, name );
+    if ( adfGetEntryBlock( vol, dirPtr, name, &entryBlock ) == -1 ||
+         adfEntBlock2Entry( &entryBlock, entry ) != ADF_RC_OK )
+    {
+        return ADF_RC_ERROR;
+    }
+
+    return ADF_RC_OK;
+}
+
+
+/*
+ * adfGetEntryBlock
+ *
+ */
+ADF_SECTNUM adfGetEntryBlock( struct AdfVolume * const      vol,
+                              const ADF_SECTNUM             dirPtr,
+                              const char * const            name,
+                              struct AdfEntryBlock * const  entryBlock )
 {
     // get parent
     struct AdfEntryBlock parent;
@@ -268,14 +290,27 @@ ADF_SECTNUM adfGetEntryByName( struct AdfVolume * const      vol,
     if ( rc != ADF_RC_OK ) {
         adfEnv.eFct( "%s: error reading parent entry "
                      "(block %d)\n", __func__, dirPtr );
-        return rc;
+        return -1;
     }
 
     // get entry
     ADF_SECTNUM nUpdSect;
     ADF_SECTNUM sectNum = adfNameToEntryBlk( vol, parent.hashTable, name,
-                                             entry, &nUpdSect );
+                                             entryBlock, &nUpdSect );
     return sectNum;
+}
+
+
+/*
+ * adfGetEntryBlockNum
+ *
+ */
+ADF_SECTNUM adfGetEntryBlockNum( struct AdfVolume * const  vol,
+                                 const ADF_SECTNUM         dirPtr,
+                                 const char * const        name )
+{
+    struct AdfEntryBlock entryBlock;
+    return adfGetEntryBlock( vol, dirPtr, name, &entryBlock );
 }
 
 

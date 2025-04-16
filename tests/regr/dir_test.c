@@ -153,8 +153,8 @@ int test_softlink_realname( struct AdfVolume *  vol,
     log_info("*** Test getting destination name for soft link %s\n", slink );
 
     struct AdfLinkBlock entry;
-    ADF_SECTNUM sectNum = adfGetEntryByName( vol, vol->curDirPtr, slink,
-                                             (struct AdfEntryBlock *) &entry );
+    ADF_SECTNUM sectNum = adfGetEntryBlock( vol, vol->curDirPtr, slink,
+                                            (struct AdfEntryBlock *) &entry );
     if ( sectNum == -1 ) {
         return 1;
     }
