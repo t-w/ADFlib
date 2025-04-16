@@ -71,15 +71,15 @@ ADF_PREFIX void adfFreeDirList( struct AdfList * const  list );
 ADF_PREFIX void adfFreeEntry( struct AdfEntry * const  entry );
 
 /* get entry by name */
-ADF_RETCODE adfGetEntry( struct AdfVolume * const  vol,
-                         const ADF_SECTNUM         dirPtr,
-                         const char * const        name,
-                         struct AdfEntry * const   entry );
+ADF_PREFIX ADF_RETCODE adfGetEntry( struct AdfVolume * const  vol,
+                                    const ADF_SECTNUM         dirPtr,
+                                    const char * const        name,
+                                    struct AdfEntry * const   entry );
 
 /* get entry block number by name */
-ADF_SECTNUM adfGetEntryBlockNum( struct AdfVolume * const      vol,
-                                 const ADF_SECTNUM             dirPtr,
-                                 const char * const            name );
+ADF_PREFIX ADF_SECTNUM adfGetEntryBlockNum( struct AdfVolume * const  vol,
+                                            const ADF_SECTNUM         dirPtr,
+                                            const char * const        name );
 
 /* get entry block by name */
 ADF_PREFIX ADF_SECTNUM adfGetEntryBlock( struct AdfVolume * const      vol,
