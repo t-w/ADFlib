@@ -436,6 +436,13 @@ void extract_filepath(struct AdfVolume *vol, char *filepath)
 
     /* extract the file using the final path element */
     if (*element) {
+        struct AdfEntry * const entry = malloc(sizeof(struct AdfEntry));
+        if (adfGetEntry(vol, vol->curDirPtr, element, entry) != ADF_RC_OK) {
+            fprintf(stderr, "%s: can't get file permissions for %s\n",
+                adf_file, filepath);
+            return;
+        }
+
         if (element == filepath) {
             /* no directory parts, just a filename */
             out = output_name("", element);
@@ -444,7 +451,9 @@ void extract_filepath(struct AdfVolume *vol, char *filepath)
             element[-1] = 0; /* split path and file */
             out = output_name(filepath, element);
         }
-        extract_file(vol, element, out, 0666); /* assume rw permissions */
+
+        extract_file(vol, element, out, permissions(entry));
+        adfFreeEntry(entry);
         free(out);
     }
 }
