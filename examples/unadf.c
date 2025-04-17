@@ -465,7 +465,7 @@ void extract_file(struct AdfVolume *vol, char *filename, char *out, mode_t perms
     uint8_t buf[EXTRACT_BUFFER_SIZE];
     int fd = 0;
 
-    if ( ( f = adfFileOpen ( vol, filename, ADF_FILE_MODE_READ ) ) == NULL )  {
+    if ((f = adfFileOpen(vol, filename, ADF_FILE_MODE_READ)) == NULL)  {
         fprintf(stderr, "%s: can't find file %s in volume\n", adf_file, filename);
         goto error_handler;
     }
@@ -484,11 +484,11 @@ void extract_file(struct AdfVolume *vol, char *filename, char *out, mode_t perms
     }
 
     /* copy from volume to local file until EOF */
-    while ( ! adfFileAtEOF(f) ) {
-        unsigned n = adfFileRead ( f, sizeof(buf), buf );
-        if ( n != sizeof(buf) && ! adfFileAtEOF(f) ) {
-            fprintf ( stderr, "%s: error reading %s at %u\n",
-                      adf_file, filename, adfFileGetPos(f) );
+    while (!adfFileAtEOF(f)) {
+        unsigned n = adfFileRead(f, sizeof(buf), buf);
+        if (n != sizeof(buf) && !adfFileAtEOF(f)) {
+            fprintf(stderr, "%s: error reading %s at %u\n",
+                adf_file, filename, adfFileGetPos(f));
             goto error_handler;
         }
 
