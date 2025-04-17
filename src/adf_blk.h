@@ -75,6 +75,16 @@ static inline bool adfDosFsHasDIRCACHE( const uint8_t c ) {
 #define ADF_ACCMASK_S	( 1 << 6 )
 #define ADF_ACCMASK_H	( 1 << 7 )
 
+#define ADF_ACCMASK_GD	( 1 << 8 )
+#define ADF_ACCMASK_GE	( 1 << 9 )
+#define ADF_ACCMASK_GW	( 1 << 10 )
+#define ADF_ACCMASK_GR	( 1 << 11 )
+
+#define ADF_ACCMASK_OD	( 1 << 12 )
+#define ADF_ACCMASK_OE	( 1 << 13 )
+#define ADF_ACCMASK_OW	( 1 << 14 )
+#define ADF_ACCMASK_OR	( 1 << 15 )
+
 static inline bool adfAccHasD( const int32_t c )  { return c & ADF_ACCMASK_D; }
 static inline bool adfAccHasE( const int32_t c )  { return c & ADF_ACCMASK_E; }
 static inline bool adfAccHasW( const int32_t c )  { return c & ADF_ACCMASK_W; }
@@ -83,6 +93,16 @@ static inline bool adfAccHasA( const int32_t c )  { return c & ADF_ACCMASK_A; }
 static inline bool adfAccHasP( const int32_t c )  { return c & ADF_ACCMASK_P; }
 static inline bool adfAccHasS( const int32_t c )  { return c & ADF_ACCMASK_S; }
 static inline bool adfAccHasH( const int32_t c )  { return c & ADF_ACCMASK_H; }
+
+static inline bool adfAccHasGD( const int32_t c )  { return c & ADF_ACCMASK_GD; }
+static inline bool adfAccHasGE( const int32_t c )  { return c & ADF_ACCMASK_GE; }
+static inline bool adfAccHasGW( const int32_t c )  { return c & ADF_ACCMASK_GW; }
+static inline bool adfAccHasGR( const int32_t c )  { return c & ADF_ACCMASK_GR; }
+
+static inline bool adfAccHasOD( const int32_t c )  { return c & ADF_ACCMASK_OD; }
+static inline bool adfAccHasOE( const int32_t c )  { return c & ADF_ACCMASK_OE; }
+static inline bool adfAccHasOW( const int32_t c )  { return c & ADF_ACCMASK_OW; }
+static inline bool adfAccHasOR( const int32_t c )  { return c & ADF_ACCMASK_OR; }
 
 
 /* ----- BLOCKS ----- */
