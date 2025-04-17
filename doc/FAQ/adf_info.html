@@ -1,13 +1,13 @@
 <!--
 <pre>
-From: lclevy@club-internet.fr
+From: lclevy@free.fr
 Newsgroups: comp.sys.amiga.misc,comp.answers,news.answers
 Followup-To: poster
 Subject: The Amiga filesystem explained (and .ADF files)
 
 Archive-name: amiga-filesystem
-URL: http://perso.club-internet.fr/lclevy/adflib/adf_info.html
-Maintainer: Laurent Clevy (lclevy@club-internet.fr)
+URL: http://lclevy.free.fr/adflib/adf_info.html
+Maintainer: Laurent Clevy (lclevy@free.fr)
 </pre>
 -->
 <HTML>
@@ -37,10 +37,10 @@ The .ADF (Amiga Disk File) format FAQ<BR>
 </H1>
 
 <H2>
-Laurent Cl&eacute;vy, <A HREF="mailto:lclevy@club-internet.fr@subject=[ADF_FAQ]">
-lclevy@club-internet.fr</A>
+Laurent Cl&eacute;vy, <img src="em.png">
+
 </H2>
-v1.11 - March 5th, 2005<BR>
+v1.14 - April 8th, 2017<BR>
 <HR>
 <EM>
 This document describes the .ADF file format. An Amiga Disk File is a sector per
@@ -112,6 +112,19 @@ A set of C routines (ADFlib) will be supplied to manage the ADF format.
 <H2>
 0. Changes <BR>
 </H2>
+
+Since 1.11 (August 14th, 2010)
+<ul>
+<li>Typo in 2.3 section. Type of MFM data at 0x40 and 0x240 are BYTE and not LONG, of course.<br>
+ Thanks to Bret McGee (http://www.bret-mcgee.me.uk).
+</ul>
+
+Since 1.11 (March 5th, 2005)
+<ul>
+<li>Labelling mistake was in MFM decoding description: odd and even bits was reversed. <br>
+ The algorithm was correct, but the associated comments were wrong. Sections 2.1 and 2.3 are now fixed.<br>
+ Thanks to Keith Monahan (keith@techtravels.org).
+</ul>
 
 Since 1.10 (November 27th, 2001)
 <ul>
@@ -285,7 +298,7 @@ C example :
 
 struct lcell {
 	char name[10];
-	/* contains next cell address, or NULL if this cell is the last */
+	/* contains next cell adress, or NULL if this cell is the last */
 	struct lcell *next_cell;
 	};
 </PRE>
@@ -333,6 +346,8 @@ send me corrections, suggestions and opinions about this document :
 <LI>Heiko Rath (hr@brewhr.swb.de) for some modifications.
 <LI>Jean Yves Peterschmitt (jypeter@lmce.saclay.cea.fr) for the review,
 <LI>Thomas Kessler (tkessler@ra.abo.fi) for the bootcode flag note.
+<li>Keith Monahan (keith@techtravels.org) for the odd / even bits correction.<br>
+  See his USB floppy controller project: <a href="http://www.techtravels.org/amiga/amiga.html">here</a>
 </UL>
 <BR>
 
@@ -359,7 +374,7 @@ Notes on the Amiga floppy disk controller :
 
 <P>
 The Amiga floppy disk controller (FDC) which is called 'Paula' is very flexible. It is
-capable of reading/writing Amiga/PC/Macintosh/AppleII/C64 3.5 inches
+capable of reading/writting Amiga/PC/Macintosh/AppleII/C64 3.5 inches
 and 5.25 inches floppy disks.
 <P>
 Paula can read a variable number of bytes from disk, the PC FDC can't. 
@@ -416,14 +431,14 @@ Here follows the MFM encoding scheme :
         0                   00 if following a 1 data bit
 </PRE>
 <P>
-User data long words are split in two parts, a part with even bits part first,
-followed by a part with odd bits. Once encoded, the amount of data stored
+User data long words are split in two parts, a part with odd bits part first,
+followed by a part with even bits. Once encoded, the amount of data stored
 doubles.<BR>
-The MFM decoding will transform magnetic fields into computer usable bits.
+The MFM decoding will transform magnetic fields into computer usuable bits.
 <P>
 The encoding process will take one long (user's data), and produces 
-two longs (MFM coded longs): one for the even bits of the user long,
-a second for the odd bits of the user long.<BR>
+two longs (MFM coded longs): one for the odd bits of the user long,
+a second for the even bits of the user long.<BR>
 Vice versa, the decoding process will take the half of two MFM longs to produce
 one user's long.
 <P>
@@ -465,8 +480,8 @@ From RKRM:
 Nulls written as a gap, then 11 or 22 sectors of data.
 No gaps written between sectors."
 
-There are brut data and encoded data.<BR>
-Brut data (also called MFM data) doesn't need to be decoded,
+There are raw data and encoded data.<BR>
+raw data (also called MFM data) doesn't need to be decoded,
 this is the synchronization data, the header checksum and data checksum.
 <P>
 The encoded parts are 'header' and 'data'.
@@ -484,8 +499,8 @@ Here it comes :
 06/0x06	word	1	MFM value 0x4489
 
 	HEADER
-08/0x08	long	1	info (even bits)
-12/0x0c	long	1	info (odd bits)
+08/0x08	long	1	info (odd bits)
+12/0x0c	long	1	info (even bits)
 			decoded long is : 0xFF TT SS SG
 				0xFF = Amiga v1.0 format
 				TT = track number ( 3 means cylinder 1, head 1)
@@ -513,8 +528,8 @@ Here it comes :
 
             Sector Label Area : OS recovery info, reserved for future use
 
-16/0x10	long	4	sector label (even)
-32/0x20	long	4	sector label (odd)
+16/0x10	long	4	sector label (odd)
+32/0x20	long	4	sector label (even)
                     decoded value is always 0
 
             This is operating system dependent data and relates to how AmigaDOS
@@ -525,19 +540,19 @@ Here it comes :
 
 	END OF HEADER
 
-48/0x30	long	1	header checksum (even)
-52/0x34	long	1	header checksum (odd)
+48/0x30	long	1	header checksum (odd)
+52/0x34	long	1	header checksum (even)
 			(computed on mfm longs,
 			longs between offsets 8 and 44 
 			== 2*(1+4) longs)
 
-56/0x38	long	1	data checksum (even)
-60/0x3c	long	1	data checksum (odd)
-			(from 64 to 1088 == 2*512 longs)
+56/0x38	long	1	data checksum (odd)
+60/0x3c	long	1	data checksum (even)
+			(from 64 to 1088 == 2*512 bytes)
 
 	DATA
-64/0x40	long	512	coded data (even)
-576/0x240 long	512	coded data (odd)
+64/0x40	  byte	512	coded data (odd)
+576/0x240 byte	512	coded data (even)
 1088/0x440
 	END OF DATA
 </PRE>
@@ -614,9 +629,9 @@ C algorithm :
 
 
 #define MASK 0x55555555	/* 01010101 ... 01010101 */
-unsigned long *p1;	/* MFM coded data buffer (size == 2*data_size) */
-unsigned long *q;	/* decoded data buffer (size == data_size) */
-unsigned long a,b;
+unsigned long *input;	/* MFM coded data buffer (size == 2*data_size) */
+unsigned long *output;	/* decoded data buffer (size == data_size) */
+unsigned long odd_bits, even_bits;
 unsigned long chksum;
 int data_size;		/* size in long, 1 for header's info, 4 for header's sector label */
 int count;
@@ -624,30 +639,30 @@ int count;
 chksum=0L;
 /* the decoding is made here long by long : with data_size/4 iterations */
 for (count=0; count&lt;data_size/4; count++) {
-	a = *p1;                /* longs with even bits */
-	b = *(p1+data_size);    /* longs with odd bits : located 'data_size' bytes farther */
-	chksum^=a;              /* eor */
-	chksum^=b;
+	odd_bits = *input;                /* longs with odd bits */
+	even_bits = *(input+data_size);    /* longs with even bits : located 'data_size' bytes farther */
+	chksum^=odd_bits;              /* eor */
+	chksum^=even_bits;
         /*
-         * MFM decoding, explained on one byte here (x and y will produce t) :
-         * the MFM bytes 'abcdefgh' == x and 'ijklmnop' == y will become
-         * y &amp; 0x55U = '0j0l0n0p'
-         * ( x &amp; 0x55U) &lt;&lt; 1 = 'b0d0f0h0'
+         * MFM decoding, explained on one byte here (o and e will produce t) :
+         * the MFM bytes 'abcdefgh' == o and 'ijklmnop' == e will become
+         * e &amp; 0x55U = '0j0l0n0p'
+         * ( o &amp; 0x55U) &lt;&lt; 1 = 'b0d0f0h0'
          * '0j0l0n0p' | 'b0d0f0h0' = 'bjdlfnhp' == t
          */ 
 	/* on one long here : */
-	*q = ( b &amp; MASK ) | ( ( a &amp; MASK ) &lt&lt 1 );
-	p1++;    /* next 'even bits' long and 'odd bits' long  */
-	q++;     /* next location of the future decoded long */
+	*output = ( even_bits &amp; MASK ) | ( ( odd_bits &amp; MASK ) &lt&lt 1 );
+	input++;    /* next 'odd' long and 'even bits' long  */
+	output++;     /* next location of the future decoded long */
 	}
 chksum&amp;=MASK;	/* must be 0 after decoding */
 </PRE>
 
 For example, to decode the DATA field of a MFM sector :<BR>
 <UL>
-<LI>data_size is equal to 512,
-<LI>p1 points to 64 bytes after the beginning of the MFM sector,
-<LI>q points to a 512 unsigned bytes array.
+<LI>'data_size' is equal to 512,
+<LI>'input' points to 64 bytes after the beginning of the MFM sector,
+<LI>'output' points to a 512 unsigned bytes array.
 </UL>
 
 <HR>
@@ -657,7 +672,7 @@ For example, to decode the DATA field of a MFM sector :<BR>
 3. What is the Amiga floppy disk geometry ?
 </H2>
 
-After MFM decoding, you have usable 'sectors' or 'blocks' into memory.<BR>
+After MFM decoding, you have usuable 'sectors' or 'blocks' into memory.<BR>
 <BR>
 
 Here we remind the disk geometries for Double Density disks (DD)
@@ -759,7 +774,7 @@ The main data types are a trees and linked lists.<BR>
 Prior to Kickstart 2.0 the bootblock was hardcoded to consist of the
 first two sectors of the floppy disks (sector #0 and #1). As of Kick
 2.0, booting via the boot-block could be done with any device driver
-and the number of blocks could be changed independently of the number
+and the number of blocks could be changed independantly of the number
 of reserved blocks by using BOOTBLOCKS in the DOS environment vector
 (DosEnvVec).
 
@@ -1010,7 +1025,7 @@ return(hash);
 
 The <B>toupper()</B> function is the one thing that distinguishes international
 from non-international filesystems. There was a bug in old AmigaDOS versions
-for this function applied to international characters (ASCII codes &gt; 128).
+for this function applied to international caracters (ASCII codes &gt; 128).
 A specific toupper() function (see section <A HREF="#p54">5.4</A>) was then 
 created available with the 'international mode'.
 <P>
@@ -1436,7 +1451,7 @@ soft like where terribly broken, so they removed support for them in
 AmigaDOS 3.0. Hard links are seen as files, and hard links to directories
 are allowed, which opens the way to endless recursion...
 <BR>
-In short, the whole implementation is a mess.
+In short, the whole implmentation is a mess.
 <BR>
 However, some shells (like Csh 5.37) support them, so I'm supplying the
 structure.
@@ -1818,7 +1833,7 @@ int intl_toupper(int c)
 </PRE>
 
 In the Amiga ASCII table, the international character codes are between
-192 and 254. Uppercase characters are between 192 and 222, the lowercase
+192 and 254. Uppercase caracters are between 192 and 222, the lowercase
 versions of them are between 224 and 254. The only exception are the codes 215 and
 247, which are respectively the multiply sign and the divide sign.
 <P>
@@ -1844,7 +1859,7 @@ partitions sizes and the filesystem bootcode.
 <P>
 The five kind of blocks are in a reserved area, at the beginning of the surface.
 The first of them, Rigid Disk block (RDSK), must be found within the
-first 16 blocks of BSIZE length. But it can be written inside the data
+first 16 blocks of BSIZE lenght. But it can be written inside the data
 area, which is dangerous.
 <P>
 
@@ -1873,8 +1888,8 @@ area, which is dangerous.
 					greater than this one on this SCSI bus
 				3 	Don't bother trying to perform
 					reselection when talking to this drive
-				4 	Disk identification valid
-				5 	Controller identification valid
+				4 	Disk indentification valid
+				5 	Controller indentification valid
 				6 	Drive supports SCSI synchronous mode
 					(can be dangerous if it doesn't)
 24/18 	ulong 	1 	Bad blockList 	block pointer (-1 means last block)
@@ -1885,7 +1900,7 @@ area, which is dangerous.
 					"C" stack and d0/a0/a1
 40/28 	ulong 	6 	RESERVED 	== -1
 
-	Physical drive characteristics
+	Physical drive caracteristics
 64/40	ulong 	1 	cylinders 	number of drive cylinder
 68/44 	ulong 	1 	sectors 	sectors per track
 72/48	ulong 	1 	heads 		number of drive heads
@@ -1898,7 +1913,7 @@ area, which is dangerous.
 104/68 	ulong 	1 	StepRate 	drive step rate
 108/6c 	ulong 	5 	RESERVED 	== 0
 
-	Logical drive characteristics
+	Logical drive caracteristics
 128/80 	ulong 	1 	RDB_BlockLo 	low block of range reserved for hardblk
 132/84 	ulong 	1 	RDB_BlockHi 	high block of range for this hardblocks
 136/88 	ulong 	1 	LoCylinder 	low cylinder of partitionable disk area
@@ -2116,7 +2131,7 @@ Don't rely only on the PART and FSHD 'DosType' field.<BR>
 -------------------------------------------------------------------------------
 </PRE>
 
-This block contains information on how to launch the task which will manage the 
+This block contains information on how to lauch the task which will manage the 
 filesystem. You don't need it to reach partitions.
 
 
@@ -2158,7 +2173,7 @@ A hardfile is a file which contains an Amiga volume.
 It is created with WinUAE 
 (<A HREF="http://www.winuae.net/">http://www.winuae.net/</A>),
  and not the Amiga and the AmigaDOS. WinUAE is able to 
-produce an empty file with random contents of a chosen size, often 
+produce an empty file with random contents of a choosen size, often 
 several megabytes long.<BR>
 Under WinUAE, a AmigaDOS device appears, associated with the uaehf.device 
 (UAE hardfile). You have to format it with the Workbench, and you obtain an
@@ -2311,12 +2326,12 @@ How to rename an entry ?
 <LI>Very good 'ded.doc' file including Hard Disk information :
 <A HREF="ftp://ftp.funet.fi/pub/amiga/utilities/disk/Ded-1.11.lha">
 	ftp://ftp.funet.fi/pub/amiga/utilities/disk/Ded-1.11.lha</a><BR>
-<LI>A clean track-loader which doesn't use AmigaDOS (by Patrik Lundquist) :
-<A HREF="ftp://ftp.wustl.edu/pub/aminet/dev/asm/t-loader.lha">
-	ftp://ftp.wustl.edu/pub/aminet/dev/asm/t-loader.lha</a><BR>
+<LI>A clean track-loader which doesn't use AmigaDOS (by Patrik Lundquist, newer version) :
+<A HREF="http://aminet.net/package/dev/src/trackldr1_43">
+	http://aminet.net/package/dev/src/trackldr1_43</a><BR>
 <LI>A replacement for 'trackdisk.device' :
-<A HREF="ftp://ftp.wustl.edu/pub/aminet/disk/misc/hackdisk202.lha">
-	ftp://ftp.wustl.edu/pub/aminet/disk/misc/hackdisk202.lha</a><BR>
+<A HREF="http://aminet.net/package/disk/misc/hackdisk202">
+	http://aminet.net/package/disk/misc/hackdisk202</a><BR>
 <LI>'amigadisk_hardware.doc'  (by Dave Edwards, Mark Meany, ... of ACC) :
 <A HREF="http://home.sol.no/svjohan/assem/refs/diskHW.lha">
 	http://home.sol.no/svjohan/assem/refs/diskHW.lha</a><BR>
@@ -2402,9 +2417,9 @@ CM_RUBRIQUE = "PagesPersos_abonnes";
 CM_CLIENT = "clubv3";
 CM_SECTION1 = "PagesPersos";
 // --></script>
-<!-- <script language="javascript" src="http://js.cybermonitor.com/clubv3.js">
+<script language="javascript" src="http://js.cybermonitor.com/clubv3.js">
 </script>
 <noscript>
 <img src="http://stat3.cybermonitor.com/clubv3_v?R=PagesPersos_abonnes&S=total;PagesPersos">
-</noscript> -->
+</noscript>
 <!-- FIN / Cybermonitor / END -->
