@@ -564,7 +564,7 @@ ADF_RETCODE adfRemoveEntry( struct AdfVolume * const  vol,
     }
     /* if it is a directory, is it empty ? */
     if ( entry.secType == ADF_ST_DIR &&
-         ! isDirEmpty ( (struct AdfDirBlock *) &entry ) )
+         ! adfIsDirEmpty ( (struct AdfDirBlock *) &entry ) )
     {
         adfEnv.wFct( "%s: directory '%s' not empty", __func__, name );
         return ADF_RC_ERROR;
@@ -887,10 +887,10 @@ ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
 
 
 /*
- * isDirEmpty
+ * adfIsDirEmpty
  *
  */
-bool isDirEmpty( const struct AdfDirBlock * const  dir )
+bool adfIsDirEmpty( const struct AdfDirBlock * const  dir )
 {
     for ( int i = 0 ; i < ADF_HT_SIZE ; i++ )
         if ( dir->hashTable[ i ] != 0 )

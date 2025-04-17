@@ -573,7 +573,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
         return rc;
     }
 
-    if ( ! isDirEmpty( (const struct AdfDirBlock * const) &rootDirBlock ) ) {
+    if ( ! adfIsDirEmpty( (const struct AdfDirBlock * const) &rootDirBlock ) ) {
         // note: for a large volume (a hard disk) getting all entries can become big
         // - it may need to be optimized
         struct AdfList * const entries = adfGetRDirEnt( vol, vol->rootBlock, true );

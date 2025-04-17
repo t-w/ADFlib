@@ -128,7 +128,7 @@ ADF_PREFIX ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
                                            const char * const        newCmt );
 
 /* get directory info/stats */
-bool isDirEmpty( const struct AdfDirBlock * const  dir );
+bool adfIsDirEmpty( const struct AdfDirBlock * const  dir );
 ADF_PREFIX int adfDirCountEntries( struct AdfVolume * const  vol,
                                    const ADF_SECTNUM         dirPtr );
 
