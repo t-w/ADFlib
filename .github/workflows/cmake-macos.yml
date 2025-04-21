@@ -39,7 +39,7 @@ jobs:
       run:
         tar czvf adflib-macos.tgz
             /usr/local/bin/*adf*
-            /usr/local/include/*adf*
+            /usr/local/include/adf/
             /usr/local/lib/*adf*
 #            /usr/local/share/man/man3/*adf*
     - uses: actions/upload-artifact@v4
@@ -51,7 +51,11 @@ jobs:
     - name: archive tests/examples
       run: |
         mkdir -v artifact-tests
-        tar cvzf artifact-tests/tests_examples.tgz tests/examples/ tests/data
+        tar cvzf artifact-tests/tests_examples.tgz \
+            tests/config* \
+            tests/examples/ \
+            tests/examples2/ \
+            tests/data
     - uses: actions/upload-artifact@v4
       with:
         name: adflib-macos-tests-examples
@@ -86,3 +90,19 @@ jobs:
     - name: test command-line utils
       run: |
         tests/examples/test_examples_basic.sh /usr/local/bin/
+        tests/examples/test_all_examples.sh /usr/local/bin/
+    - name: test installed command-line utils (2)
+      run: |
+        cat tests/config.sh.in_cmake | \
+          sed -e 's@\${PROJECT_BINARY_DIR}@'"$GITHUB_WORKSPACE"'@' \
+              -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
+          > tests/config.sh
+        cat tests/config.sh
+        ./tests/examples2/run_all_tests.sh /usr/local/bin
+    - name: store logs from failed tests
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cmake_macos_logs_failed_tests
+        path: |
+          cmake/shared/Testing/

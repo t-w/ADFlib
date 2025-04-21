@@ -81,7 +81,11 @@ jobs:
       shell: bash
       run: |
         mkdir -v artifact-tests
-        tar cvzf artifact-tests/tests_examples.tgz tests/examples/ tests/data
+        tar cvzf artifact-tests/tests_examples.tgz \
+            tests/config* \
+            tests/examples/ \
+            tests/examples2/ \
+            tests/data
     - uses: actions/upload-artifact@v4
       with:
         name: adflib-windows-tests-examples
@@ -118,3 +122,20 @@ jobs:
 # for just check if they execute at all instead
       run: |
         tests/examples/test_examples_basic.sh bin/
+        tests/examples/test_all_examples.sh bin
+    - name: test installed command-line utils (2)
+      shell: bash
+      run: |
+        cat tests/config.sh.in_cmake | \
+          sed -e 's@\${PROJECT_BINARY_DIR}@'"$GITHUB_WORKSPACE"'@' \
+              -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
+          > tests/config.sh
+        cat tests/config.sh
+        ./tests/examples2/run_all_tests.sh bin
+    - name: store logs from failed tests
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cmake_windows_logs_failed_tests
+        path: |
+          cmake/shared/Testing/
