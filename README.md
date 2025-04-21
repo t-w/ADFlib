@@ -282,3 +282,11 @@ in Python.
 - [adflib in Rust](https://github.com/vschwaberow/adflib)
 - [affs Linux kernel module](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/filesystems/affs.rst)
 - [amitools](https://amitools.readthedocs.io/) - a set of useful tools in Python
+
+
+### ADF in AmiNet
+- [All](https://aminet.net/search?type=advanced&name=adf)
+- in [disk/](https://aminet.net/search?type=advanced&name=adf&q_path=AND&path%5B%5D=disk)
+- in [doc/](https://aminet.net/search?type=advanced&name=adf&q_path=AND&path%5B%5D=doc)
+- in [util/](https://aminet.net/search?type=advanced&name=adf&q_path=AND&path%5B%5D=util)
+- [Empty ADF files](https://aminet.net/package/disk/misc/Empty_ADF_files)
