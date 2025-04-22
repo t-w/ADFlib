@@ -2,7 +2,10 @@ name: cmake-windows
 
 on:
   push:
-    branches: [ "master", "devel", "citest", "citest-cmake" ]
+    branches: [ "master", "devel",
+      "citest",
+      "citest-cmake",
+      "citest-cmake-windows" ]
     tags:
       - '**'
   pull_request:
@@ -127,8 +130,8 @@ jobs:
       shell: bash
       run: |
         cat tests/config.sh.in_cmake | \
-          sed -e 's@\${PROJECT_BINARY_DIR}@'"$GITHUB_WORKSPACE"'@' \
-              -e 's@\${PROJECT_SOURCE_DIR}@'"$GITHUB_WORKSPACE"'@' \
+          sed -e 's@\${PROJECT_BINARY_DIR}@'"."'@' \
+              -e 's@\${PROJECT_SOURCE_DIR}@'"."'@' \
           > tests/config.sh
         cat tests/config.sh
         ./tests/examples2/run_all_tests.sh bin
