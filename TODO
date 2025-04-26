@@ -1,7 +1,6 @@
 
 To do and/or consider (no particular order):
 
-
 * Optimize writing files
 
   Currently writing does a lot of updates of the file header block (with
@@ -45,16 +44,26 @@ To do and/or consider (no particular order):
     - consider moving undelete/salvage functionality from the library
       to utilities (not sure if this is necessary in the library...)
 
-* Test "native" (physical) devices
+* Better test "native" (physical) devices
 
-  This is a tricky one and must be done carefully. Probably not possible to do
-  automatically in CI, it rather should be done on a VM or some special box
-  dedicated for such purpose.
+  This is a tricky one and must be done carefully.
+
+  Tested briefly on Linux and Win32 - seem to work fine, but:
+  - more extensive testing would be good
+  - some automatic testing would be even better
+
+  To see if possible to test automatically in CI (it might be not possible in
+  GH actions, it may require eg. a VM (or some special box, dedicate for such
+  purpose).
 
 * Test dircache
 
-  So far, there are no "real" images available (only testffs.adf in ADFlib...)
-  and, hence, no real need for testing this. But should be done at some point.
+  So far, no "real" ADFs (real devices or dumps of such, so ie. not ones
+  created with the ADFlib) with dircache enabled were encountered (only
+  testffs.adf, one of the test images in ADFlib...). So, seemingly no real need
+  for testing this - but it should be done at some point.
+  Note also that dircache is most likely used on larger devices (hard disk
+  volumes), while majority of disk dumps are floppies (occasionally HDFs).
 
 * Review and update the API
 
