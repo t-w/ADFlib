@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-void adfPrintBacktrace ( void );
+void adfPrintBacktrace(void);
 
 void adfDumpBlock( const uint8_t * const  buf );
 
