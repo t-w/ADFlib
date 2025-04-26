@@ -43,8 +43,8 @@ libadf_la_SOURCES = \
     adf_util.h \
     adf_vector.c \
     adf_vol.c
-#    debug_util.h \
-#    debug_util.c
+#    adf_debug.h \
+#    adf_debug.c
 
 # ADFlib's private headers should be listed only in _SOURCES, not in _HEADERS.
 # More info:

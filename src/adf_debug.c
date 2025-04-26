@@ -1,5 +1,5 @@
 /*
- *  debug_util.c - utility functions for debugging
+ *  adf_debug.c - utility functions for debugging
  *
  *  Copyright (C) 2023-2025 Tomasz Wolak
  *
@@ -21,7 +21,7 @@
  *
  */
 
-#include "debug_util.h"
+#include "adf_debug.h"
 
 #include "adf_util.h"
 

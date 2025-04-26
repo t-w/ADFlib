@@ -1,5 +1,5 @@
 /*
- *  debug_util.h - utility functions for debugging
+ *  adf_debug.h - utility functions for debugging
  *
  *  Copyright (C) 2023-2025 Tomasz Wolak
  *
@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef ADF_DEBUG_UTIL_H
-#define ADF_DEBUG_UTIL_H
+#ifndef ADF_DEBUG_H
+#define ADF_DEBUG_H
 
 #include <stdint.h>
 
