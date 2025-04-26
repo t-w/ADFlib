@@ -1,16 +1,17 @@
 /*
- * adfinfo
+ *  adfinfo_volume - volume metadata code
  *
- * an utility for displaying Amiga disk images (ADF) metadata
+ *  Copyright (C) 2023-2025 Tomasz Wolak
  *
- *  This file is part of ADFLib.
+ *  This file is part of adfinfo, an utility program showing low-level
+ *  filesystem metadata of Amiga Disk Files (ADFs).
  *
- *  ADFLib is free software; you can redistribute it and/or modify
+ *  adfinfo is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  ADFLib is distributed in the hope that it will be useful,
+ *  adfinfo is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.

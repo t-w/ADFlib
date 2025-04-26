@@ -1,16 +1,14 @@
 /*
- * adfimgcreate
+ *  adfimgcreate - an utility for creating empty Amiga Disk Files (ADF or HDF)
  *
- * an utility for creating an empty Amiga disk images (ADF or HDF)
+ *  Copyright (C) 2023-2025 Tomasz Wolak
  *
- *  This file is part of ADFLib.
- *
- *  ADFLib is free software; you can redistribute it and/or modify
+ *  adfimgcreate is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  ADFLib is distributed in the hope that it will be useful,
+ *  adfimgcreate is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.

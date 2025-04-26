@@ -1,7 +1,8 @@
 /*
- * adf_nativ.h
+ *  adf_dev_driver_nativ.h - native device driver
  *
- * $ID$
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

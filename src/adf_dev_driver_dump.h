@@ -1,10 +1,9 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
+ *  adf_dev_driver_dump.h - dump file device driver
  *
- *  adf_dump.h
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
- *  $Id$
- *  
  *  This file is part of ADFLib.
  *
  *  ADFLib is free software; you can redistribute it and/or modify

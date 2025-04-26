@@ -1,11 +1,8 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
+ *  adf_file_block.h - Volume block-level code for files
  *
- *  adf_file_block.h
- *
- *  $Id$
- *
- *  Volume block-level code for files
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

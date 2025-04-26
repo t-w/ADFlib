@@ -1,11 +1,8 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
+ *  adf_vol.c - logical disk/volume code
  *
- *  adf_vol.c
- *
- *  $Id$
- *
- * logical disk/volume code
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *
@@ -24,7 +21,6 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
 
 #include "adf_vol.h"
 

@@ -1,11 +1,8 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
+ *  adf_cache.h - directory cache code
  *
- *  adf_cache.h
- *
- *  $Id$
- *
- *  directory cache code
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

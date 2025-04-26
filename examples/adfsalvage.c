@@ -1,16 +1,14 @@
 /*
- * adfsalvage
+ *  adfsalvage - show and restore deleted files on Amiga Disk Files (ADFs)
  *
- * show and restore deleted files on Amiga disk images (ADF)
+ *  Copyright (C) 2023-2025 Tomasz Wolak
  *
- *  This file is part of ADFLib.
- *
- *  ADFLib is free software; you can redistribute it and/or modify
+ *  adfsalvage is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  ADFLib is distributed in the hope that it will be useful,
+ *  adfsalvage is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -68,8 +66,6 @@ ADF_RETCODE undeleteFiles(
 
 ADF_RETCODE undeleteFile( struct AdfVolume * const  vol,
                           ADF_SECTNUM               block );
-
-
 
 
 void usage(void)

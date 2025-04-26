@@ -1,11 +1,8 @@
 /*
- * ADF Library
+ *  adf_env.c - library context and customization code
  *
- * adf_env.c
- *
- *  $Id$
- *
- * library context and customization code
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

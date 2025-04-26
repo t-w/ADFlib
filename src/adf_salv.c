@@ -1,11 +1,8 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
+ *  adf_salv.c - undelete and salvage code : EXPERIMENTAL !
  *
- *  adf_salv.c
- *
- *  $Id$
- *
- * undelete and salvage code : EXPERIMENTAL !
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *
@@ -24,7 +21,6 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
 
 #include "adf_salv.h"
 

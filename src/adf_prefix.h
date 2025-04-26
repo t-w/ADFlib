@@ -1,10 +1,9 @@
 /*
- * adf_prefix.h
+ * adf_prefix.h - adds symbol export directive under windows
+ *                (does nothing on other OSs)
  *
- *  $Id$
- *
- * adds symbol export directive under windows
- * does nothing under Linux
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

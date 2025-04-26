@@ -1,7 +1,9 @@
 /*
- * generic/adf_dev_driver_nativ.c
+ * generic/adf_dev_driver_nativ.c - native device driver template
+ *                                  (a "dummy" device)
  *
- * $Id$
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *
@@ -20,7 +22,6 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
 
 #include <stdlib.h>
 #include <string.h>

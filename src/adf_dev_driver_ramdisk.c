@@ -1,7 +1,8 @@
 /*
- * adf_dev_driver_ramdisk.c
+ *  adf_dev_driver_ramdisk.c - ramdisk device driver
  *
- * $Id$
+ *  Copyright (C) 2023      Stuart Caie
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

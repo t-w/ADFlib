@@ -1,12 +1,7 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
- *                   2023-2025 Tomasz Wolak
+ *  adf_vector.c - a custom vector implementation
  *
- *  adf_vector.h
- *
- *  $Id$
- *
- *  a custom vector implementation
+ *  Copyright (C) 2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

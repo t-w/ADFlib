@@ -1,7 +1,8 @@
 /*
- * linux/adf_dev_driver_nativ.c
+ * linux/adf_dev_driver_nativ.c - native device driver template
+ *                                (a "dummy" device)
  *
- * $Id$
+ *  Copyright (C) 2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

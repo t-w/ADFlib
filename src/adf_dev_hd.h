@@ -1,11 +1,8 @@
 /*
- *  ADF Library. (C) 1997-2002 Laurent Clevy
+ *  adf_dev_hd.h - device code / harddisk
  *
- *  adf_dev_hd.h
- *
- *  $Id$
- *
- *  Harddisk devices code
+ *  Copyright (C) 1997-2022 Laurent Clevy
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

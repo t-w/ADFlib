@@ -1,8 +1,10 @@
-/* nt4_dev.c - routines for direct drive access in Windows NT 4.0
+/*
+ *  nt4_dev.c - routines for direct drive access in Windows NT 4.0+
  *
- * Copyright 1999 by Dan Sutherland <dan@chromerhino.demon.co.uk>
+ *  These routines only currently work with drives <2GB and 512 bytes per sector
  *
- * These routines only currently work with drives <2GB and 512 bytes per sector
+ *  Copyright (C) 1999      Dan Sutherland
+ *                2023-2025 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *
