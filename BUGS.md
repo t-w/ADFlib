@@ -3,6 +3,22 @@
 - in dircache updates
 
 
+## Write support
+Recent issues:
+
+- Versions 0.9.0 and earlier - bug on file appending on OFS (not updated data
+  size in OFS data block header if written data chunk is bigger than space
+  remaining in the block)
+  - not the most common case and it does not cause any harm on reading/writing
+    with ADFlib only - but on systems where OFS data block header information
+	is used	(AmigaOS), it may lead to errors and loss of data
+
+- Versions 0.8.0 and ealier **do not check or rebuild the block allocation
+  bitmap for volumes where it is marked invalid**. This means that if
+  the bitmap is really incorrect, writing to such volume may lead to data
+  loss/corruption (blocks used by stored data might not be marked as such!).
+
+
 ## Past security bugs
 
 Please note that several security issues/bugs has been found in the older (0.7.x)
