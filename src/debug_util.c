@@ -23,6 +23,8 @@
 
 #include "debug_util.h"
 
+#include "adf_util.h"
+
 #if ( defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS )
 #include <execinfo.h>    /* required for backtrace() */
 #endif
@@ -72,5 +74,43 @@ void adfPrintBacktrace ( void )
 void adfPrintBacktrace ( void )
 {
     fprintf ( stderr, "Sorry, no backtrace without glibc...\n" );
+}
+#endif
+
+
+
+#ifdef ADF_DEBUG_BLOCKS
+
+/*
+ * adfDumpBlock
+ *
+ * debug function : to dump a block before writing the check its contents
+ *
+ */
+void adfDumpBlock( const uint8_t * const  buf )
+{
+    int i, j;
+
+    for ( i = 0; i < 32; i++ ) {
+        printf( "%5x ", i * 16 );
+        for ( j = 0; j < 4; j++ ) {
+            printf( "%08x ", swapUint32fromPtr( buf + j * 4 + i * 16 ) );
+        }
+        printf("    ");
+        for ( j = 0; j < 16; j++ )
+            if ( buf[ i * 16 + j ] < 32 ||
+                 buf[ i * 16 + j ] > 127 )
+            {
+                putchar('.');
+            } else {
+                putchar( buf[ i * 16 + j ] );
+            }
+        putchar('\n');
+    }
+}
+#else
+void adfDumpBlock( const uint8_t * const  buf )
+{
+    (void) buf;
 }
 #endif

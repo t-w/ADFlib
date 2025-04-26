@@ -130,9 +130,6 @@ void adfTime2AmigaTime( struct DateTime  dt,
 
 struct DateTime adfGiveCurrentTime(void);
 
-void dumpBlock( const uint8_t * const  buf );
-
-
 #ifndef HAVE_STRNLEN
 #pragma message "Using the custom strnlen()"
 ADF_PREFIX size_t strnlen( const char *  str,

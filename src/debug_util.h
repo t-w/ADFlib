@@ -21,9 +21,13 @@
  *
  */
 
-#ifndef __ADFLIB_DEBUG_UTIL__
-#define __ADFLIB_DEBUG_UTIL__
+#ifndef ADF_DEBUG_UTIL_H
+#define ADF_DEBUG_UTIL_H
+
+#include <stdint.h>
 
 void adfPrintBacktrace ( void );
+
+void adfDumpBlock( const uint8_t * const  buf );
 
 #endif
