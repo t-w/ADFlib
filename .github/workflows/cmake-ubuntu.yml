@@ -38,7 +38,7 @@ jobs:
             /usr/local/bin/*adf*
             /usr/local/include/adf/
             /usr/local/lib/*adf*
-#            /usr/local/share/man/man3/*adf*
+            /usr/local/share/man/man1/*adf*
     - uses: actions/upload-artifact@v4
       with:
 #        name: adflib-${{ env.ADFLIB_TAG }}-windows
