@@ -103,6 +103,6 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: cmake_ubuntu_logs_failed_tests
+        name: cmake_ubuntu_logs_failed_tests-${{ matrix.build_type }}
         path: |
           cmake/shared/Testing/

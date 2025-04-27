@@ -51,7 +51,7 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: ubuntu_autotools_logs_failed_tests
+        name: ubuntu_autotools_logs_failed_tests-${{ matrix.build_type }}
         path: |
           tests/*.log
           tests/examples/*.log
