@@ -25,16 +25,13 @@ To clean the build subdirectory use:
 
 (all have to be configured again for building).
 
-Native device type (generic(dummy) vs. real physical linux/win32 devices) can
-be selected by setting ADFLIB_ENABLE_NATIVE_DEV option (to ON or OFF).
-For instance:
+Native device driver type (generic/dummy device vs. real physical linux/win32
+devices) can be selected by setting ADFLIB_ENABLE_NATIVE_DEV option (to ON or
+OFF). For instance:
    $ util/cmake_shared_configure -DADFLIB_ENABLE_NATIVE_DEV:BOOL=ON
-would configure build with shared library and support for the real, physical
-devices.
-Currently, by default only cmake_debug_configure enables real, native devices.
 
-At this stage, if you are not testing (caution, real, physical storage/disk
-devices in use!) - use the default: generic (a safe dummy device).
+would configure build with shared library and support for the real, physical
+devices. Setting OFF would enforce using generic driver.
 
 Other options allow to build with or without tests:
 
