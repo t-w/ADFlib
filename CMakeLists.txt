@@ -159,7 +159,7 @@ endif()
 #
 # ADFlib config
 #
-option ( ADFLIB_ENABLE_NATIVE_DEV "Enable real native devices" OFF )
+option ( ADFLIB_ENABLE_NATIVE_DEV "Enable native devices" ON )
 
 option ( ADFLIB_ENABLE_SALVAGE_DIRCACHE
          "Allow file undelete on volumes with dircache (EXPERIMENTAL)" ON )
