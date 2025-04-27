@@ -61,7 +61,7 @@ jobs:
         mkdir artifacts/include
         cp -vR src/*.h artifacts/include
         cp -vR README.md \
-               COPYING \
+               COPYING* \
                AUTHORS \
                ChangeLog \
                doc \
