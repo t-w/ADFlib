@@ -193,6 +193,7 @@ else()
     message ( STATUS "Testing disabled" )
 endif()
 
+include( GNUInstallDirs )
 
 # install documentation
 install( FILES
@@ -202,4 +203,5 @@ install( FILES
     doc/adfinfo.1
     doc/adfsalvage.1
     doc/unadf.1
-    TYPE MAN )
+#    TYPE MAN   --> installs to /usr/local/share/man, not to .../man/man1
+    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
