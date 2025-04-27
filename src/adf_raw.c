@@ -221,7 +221,7 @@ ADF_RETCODE adfReadBootBlock( struct AdfVolume * const     vol,
 
     ADF_SECTNUM rootSectCalculated = adfVolCalcRootBlk( vol );
     if ( boot->rootBlock != rootSectCalculated ) {
-        adfEnv.wFct( " %s : non-standard rootBlock value: %u != expected %u.\n",
+        adfEnv.wFct( " %s : non-standard rootBlock value: %u != expected %u.",
                      __func__, boot->rootBlock, rootSectCalculated );
     }
 
