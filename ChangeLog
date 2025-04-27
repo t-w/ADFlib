@@ -1,3 +1,32 @@
+27APR2025
+ADFlib 0.10.0
+- api - not many changes (as in previous versions...), but some
+  breaking (like functions renamed)
+- devices
+  - operate on blocks, not bytes
+  - check size limits
+  - various internal changes improving partitioned device support
+- native devices: fixed and tested (briefly)
+  - major bugfix on Linux version (a device could never be opened)
+- added a set of predefined, standard device types (like floppies, A590 HD)
+- write support - one major bugfix:
+  - update dataSize in OFS data block when appending (discovered and patched
+    by Simon Tatham)
+- command-line utilities (examples)
+  - renamed (for better usage) and improved (extended and/or fixed features)
+    - eg. adf_show_metadata renamed to adfinfo, added showing hard disk blocks
+  - unadf
+    - minor changes in options (separate showing help, version and commands)
+    - bugfixes:
+      - fixed setting file permissions when extracting a single file
+      - fixed setting timestamp on directories
+  - enable use of native devices with read-only tools (adfinfo, unadf)
+- testing: added new and improved existing tests, major ones:
+  - testing a hard disk device (partitioned on Amiga)
+  - new "framework" for testing command-line programs (examples)
+  - regr. tests for discovered bugs
+- library repo url changed to: https://github.com/adflib/ADFlib
+
 15MAY2024
 ADFlib 0.9.0
 - license
