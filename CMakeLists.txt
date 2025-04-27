@@ -192,3 +192,7 @@ if ( ADFLIB_ENABLE_TESTS )
 else()
     message ( STATUS "Testing disabled" )
 endif()
+
+
+# install documentation
+install(FILES "doc/adfbitmap.1;doc/adfformat.1;doc/adfimgcreate.1;doc/adfinfo.1;doc/adfsalvage.1;doc/unadf.1" TYPE MAN)
