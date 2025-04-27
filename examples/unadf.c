@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include "adflib.h"
+#include "adf_dev_driver_nativ.h"
 
 
 #ifdef WIN32
@@ -98,6 +99,8 @@ int main(int argc, char *argv[]) {
 
     adfLibInit();
     parse_args(argc, argv);
+
+    adfAddDeviceDriver( &adfDeviceDriverNative );
 
     /* open device */
     if (!(dev = adfDevOpen(adf_file, ADF_ACCESS_MODE_READONLY))) {
