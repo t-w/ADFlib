@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Enable verbose output if VERBOSE=1 (see: ../Makefile.am )
 [ "$VERBOSE" = "1" ] && set -x
