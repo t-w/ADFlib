@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Generate configuration to build a shared library cross-compiling for Windows (with MinGW)
 #
