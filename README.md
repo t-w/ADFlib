@@ -265,7 +265,6 @@ to local filesystem).
 - main design and code : Laurent Clévy
 - main developer (Dec 2022-): Tomasz Wolak
 - unadf rewrite (in 2019) : Stuart Caie
-- Bug fixes and C++ wrapper : Bjarke Viksoe (adfwrapper.h)
 - WinNT native driver : Dan Sutherland and Gary Harris
 - See also: AUTHORS
 
