@@ -1,3 +1,7 @@
+29APR2025
+ADFlib 0.10.1
+- fix tests to work also on FreeBSD
+
 27APR2025
 ADFlib 0.10.0
 - api - not many changes (as in previous versions...), but some
