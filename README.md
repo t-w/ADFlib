@@ -17,7 +17,7 @@ was designed and developed by Laurent Clévy on his Amiga 1200 (with
 a big-endian CPU: MC68EC020 14MHz).
 
 Recent versions were built and tested in a CI system (GitHub Actions)
-on Linux (Debian, Ubuntu), Windows (MSVC, CygWin and MSYS2) and MacOs.
+on Linux (Debian, Ubuntu), Windows (MSVC, CygWin and MSYS2) and MacOS.
 
 It should be possible to build on (or cross-compile for) other systems.
 
@@ -27,13 +27,13 @@ The main purpose of the library is to allow read and write Amiga-formatted
 devices and files being byte-level copies of such devices, called disk images
 or dumps. In case of classic Amiga systems, such files are most often
 [ADFs](https://en.wikipedia.org/wiki/Amiga_Disk_File) or HDFs ("Hard Disk
-Files") contaning
+Files") containing
 [OFS](https://en.wikipedia.org/wiki/Amiga_Old_File_System) or
 [FFS](https://en.wikipedia.org/wiki/Amiga_Fast_File_System) (there are also
 other Amiga filesystems, for instance
 [PFS](https://en.wikipedia.org/wiki/Professional_File_System)).
 
-ADFlib allows accesing the aforementioned devices on 3 levels:
+ADFlib allows accessing the aforementioned devices on 3 levels:
 1. device level - access to blocks (storage units) of the whole device
 2. volume level - access to blocks of the logical parts of the device,
    which, in case of the Amiga ecosystem, are called volumes
@@ -49,7 +49,7 @@ Considering these 3 levels, the library supports:
 		    - limited testing (-> experimental)
             - only partial support for partitioning, writing Rigid Disk Block etc.
                - ie. due to lack of physical hardware info (parking zones etc.)
-               - disks should be partitioned on Amiga or with dedicated software
+               - hard disks should be partitioned on Amiga or with dedicated software
          - depending on OS: up to 2GB or 4GB (see limits)
    - device types (implemented with "drivers"):
       - dump files
@@ -66,7 +66,7 @@ Considering these 3 levels, the library supports:
    - file operations: read, write, truncate
    - directory operations: get contents, create, remove, rename, move files
      and directories
-   - use dir cache to get directory contents
+   - use dircache to get directory contents
    - use hard- and softlinks for accessing files and directories
    - rebuild block allocation bitmap
    - recover deleted files and directories (experimental)
@@ -206,15 +206,15 @@ void work_on_volume( struct AdfVolume * const vol )
 
 
 ## Command-line utilities
-The `examples/` directory contains few useful command-line utilities
+The `examples/` directory contains couple of useful command-line utilities
 (as well as examples of the library usage).
 
 Usage info is shown when they are executed without any parameters
-(see also man pages).
+(see also man pages in `doc/`).
 
 
-### unADF
-`unADF` is an unzip-like utility for `.ADF` files.
+### unadf
+`unadf` is an unzip-like utility for `.ADF` files.
 
 ```
 Usage:  unadf [-lrcsmpwV] [-v n] [-d extractdir] dumpname.adf [files-with-path]
@@ -246,9 +246,9 @@ Only devices with a single volume on the whole device, so only floppy disks
 (ADF) or unpartitioned hard disk file (HDF) devices can be formatted.
 
 ### adfinfo
-A low-level utility / diagnostic tool, showing metadata about a device / device
-image or a file/directory inside the Amiga filesystem. In particular, it shows
-contents of Amiga filesystem metadata blocks, it can help understand structure
+A low-level utility / diagnostic tool, showing metadata about an ADF device,
+volume or a file/directory inside the Amiga filesystem. In particular, it shows
+contents of Amiga filesystem metadata blocks, so it can help understand structure
 of Amiga filesystems (for anyone curious...).
 
 ### adfbitmap
@@ -258,7 +258,8 @@ the volume's flag says that the bitmap is valid).
 
 ### adfsalvage
 An utility allowing to list deleted entries (files, directories) on a volume
-and undelete them (in the future possibly also extract them to local filesystem).
+and, if possible, undelete them (in the future possibly also extract them
+to local filesystem).
 
 ## Credits:
 - main design and code : Laurent Clévy
@@ -272,7 +273,7 @@ and undelete them (in the future possibly also extract them to local filesystem)
 See BUGS.md
 
 ## Compilation and installation
-See INSTALL file.
+See INSTALL.
 
 
 ## Files
@@ -309,9 +310,9 @@ Main points:
 
 ### Write support
 The file read and write support are relatively well tested (except dir. cache,
-see below!), but still, writing is a new and potentially harmul feature
-so **do not experiment on a unique copy of an ADF image with your precious
-data**. Do it on a copy (and report any issues if encountered).
+see below!), but still, writing is still a relatively new and potentially harmul
+feature so **do not experiment on a unique copy of an ADF image with your
+precious data**. Do it on a copy (and report any issues if encountered).
 
 If you use the ADFlib for writing data, see BUGS file for information about
 the issues found. It is very strongly advised to **USE TO THE LATEST VERSION**,
@@ -341,8 +342,9 @@ like a VM).
 ### DirCache
 Dircache is an existing but somewhat exotic feature of the FFS.
 Until the time of writing this, I haven't encountered any existing disk image
-with this enabled. The only one dump file with dircache enabled on the volume
-is one of the test floppies for the ADFlib (testffs.adf)...
+(adf or hdf) with dircache enabled (the only one known dump file with dircache
+enabled is one of the test floppies for the ADFlib: testffs.adf).
+(This is most likely due to its use mainly on larger volumes, on hard disks).
 
 While dircache support is implemented in ADFlib (at least, to certain extent),
 so far, there are very few tests of dircache, only on simple dump image created
@@ -355,8 +357,8 @@ very careful writing volumes with dircache (always do it on a copy).
 ### Limits
 There are certain limits that comes from the design and the way devices are
 used. The main goal (so far) is portability, so the functions used are standard
-ones (ie. `stdio` for dump files). This however, can limit device sizes in some
-cases.
+ones (ie. `stdio` for dump files). This, however, can limit device sizes in
+some cases.
 
 This can be improved in the future (esp. if signals that it is needed appears),
 but it may have to be implemented specifically for each target OS.
@@ -369,13 +371,14 @@ _should_ support bigger dumps (but this was not tested! If anyone uses bigger
 dumps - feedback welcomed).
 
 #### Native device size limit
-This depends on the target operating system. On a 64-bit OS, devices larger than 4GiB
-should be available (on a 32-bit OS, possibly not).
+This depends on the target operating system. On a 64-bit OS, devices larger
+than 4GiB should be available (on a 32-bit OS, possibly not).
 
 #### Volume size limit
 Volumes must, obviously, fit the ADF device. Data in a volume is addressed with
 blocks of 512-bytes so theoretically can be quite large (2GiB * 512 = 1TiB).
-In practice, volumes should not be larger than what is supported by AmigaOS (4GiB).
+In practice, volumes should not be larger than what is supported by AmigaOS
+(4GiB).
 
 ## Documentation
 
@@ -388,8 +391,6 @@ have not changed) while for the details regarding functions check the header
 files, sources in `tests/` and `examples/` to see in details how the current
 API can be used.
 
-<!--Please report any bugs or mistakes in the documentation !-->
-
 ### Command-line programs (examples)
 See `doc/` (man pages).
 
@@ -398,8 +399,8 @@ See `doc/` (man pages).
   by [Laurent Clévy](http://lclevy.free.fr/) (also
   [here](https://adflib.github.io/FAQ/adf_info.html)) - a comprehensive study
   of the Amiga storage technology - from disk data encoding through disk
-  geometry to	filesystem structure (OFS/FFS)
-- [Wikipedia article](https://en.wikipedia.org/wiki/Amiga_Disk_File)
+  geometry to filesystem structure (OFS/FFS)
+- [Wikipedia article about ADF](https://en.wikipedia.org/wiki/Amiga_Disk_File)
 
 ### Misc.
 
@@ -409,14 +410,15 @@ devices are `adfinfo` and `unadf` (both are using the ADF devices in read-only
 mode).
 
 So far, native devices are supported on 2 operating systems: Windows and Linux.
-Native devices distinguish from regular dump files by special naming convensions,
-which, depending on the operating system, are as follows:
+Native devices are distinguished from regular dump files by special naming
+convensions, which, depending on the operating system, are as follows:
 - on Linux - any file specified as `/dev/....` (so any Linux device file) is
 opened as a native device
 - on Windows - device name specified as "|Hx", where '`x`' is the numerical id
 of the physical disk (equivalent of Windows pathname: `\\.\PhysicalDiskX`).
-is opened as a native device. Note that "|" is a special character for system pipe,
-so the device name must be given within "" (double quotes).
+is opened as a native device. Note that "|" is a special character for system
+pipe (sending data to another process), so the device name must be given within
+"" (double quotes).
 
 
 ## Contributing
@@ -446,7 +448,7 @@ and such, very likely release branch(es) will also appear).
 ### Projects using ADFlib
 - [adfExplorer](https://pepijn-devries.github.io/adfExplorer/) ([GitHub](https://github.com/pepijn-devries/adfExplorer)) - package providing access to ADFs in R
 - [DiskFlashBack](https://robsmithdev.co.uk/diskflashback) ([GitHub](https://github.com/RobSmithDev/DiskFlashback)) - Windows app for viewing and editing misc. disk formats (ADFs are among them).
-- [`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based Linux filesystem allowing
+- [`fuseadf`](https://gitlab.com/t-m/fuseadf) - FUSE-based filesystem allowing
 to mount and access ADF images in read/write mode.
 - [`patool`](https://pypi.org/project/patool/) - an archive file manager written
 in Python.
