@@ -453,6 +453,7 @@ to mount and access ADF images in read/write mode.
 in Python.
 
 #### Older projects (not sure if maintained)
+- [AmigaDX](https://github.com/pbakota/amigadx) - plugin for Total Commander for reading/writing Amiga disk dump files
 - [AdfView](https://www.viksoe.dk/code/adfview.htm) - Windows shell extension
 - [AdfOpus](https://adfopus.sourceforge.net/) - Windows file management tool for ADF files.
 - [CopyToAdf](https://www.pouet.net/prod_nfo.php?which=65625&font=4) - part of WinUAE Demo Toolchain 5
