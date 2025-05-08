@@ -119,6 +119,14 @@ include ( CheckFunctionExists )
 include ( CheckSymbolExists )
 
 
+# Check filesystem functions
+
+check_symbol_exists ( chmod "sys/stat.h" HAVE_CHMOD )
+if ( ${HAVE_CHMOD} )
+  add_compile_definitions ( HAVE_CHMOD=1 )
+endif()
+
+
 # Check backtrace
 
 check_function_exists ( backtrace HAVE_BACKTRACE )

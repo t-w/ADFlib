@@ -92,6 +92,7 @@ void set_file_date(char *out, struct AdfEntry *e);
 void mkdir_if_needed(char *path, mode_t perms);
 mode_t permissions(struct AdfEntry *e);
 void fix_win32_filename(char *name);
+void set_permissions(const char * const path, const mode_t perms);
 void print_error(const char *s);
 
 int main(int argc, char *argv[]) {
@@ -390,7 +391,8 @@ void extract_tree(struct AdfVolume *vol, struct AdfList *node, char *path)
         if (e->type == ADF_ST_DIR) {
             if (!pipe_mode) {
                 printf("x - %s/\n", out);
-                mkdir_if_needed(out, permissions(e));
+                mkdir_if_needed(out, 0777 ); // temp. permissionss
+                                             // ("w" is needed for extraction)
             }
         }
         else if (e->type == ADF_ST_FILE) {
@@ -414,6 +416,7 @@ void extract_tree(struct AdfVolume *vol, struct AdfList *node, char *path)
         // set timestamp
         if (!pipe_mode) {
             set_file_date(out, e);
+            set_permissions( out, permissions(e) ); // real permissions
         }
 
         free(out);
@@ -810,6 +813,26 @@ FILETIME getFileTime( time_t time )
     return fileTime;
 }
 
+#endif
+
+
+#ifdef HAVE_CHMOD
+#include <sys/stat.h>
+
+void set_permissions( const char * const path,
+                      const mode_t       perms )
+{
+    if ( chmod( path, perms ) != 0 )
+        perror( path );
+//    fprintf (stderr, "%s: real\n", __func__ );
+}
+#else
+void set_permissions( const char * const path,
+                      const mode_t       perms )
+{
+    (void) path, (void) perms;
+//    fprintf (stderr, "%s: fake\n", __func__ );
+}
 #endif
 
 
