@@ -33,6 +33,7 @@
 #include "adflib.h"
 #include "adf_dev_driver_nativ.h"
 
+//#define DEBUG_UNADF
 
 #ifdef WIN32
 
@@ -91,6 +92,7 @@ void set_file_date(char *out, struct AdfEntry *e);
 void mkdir_if_needed(char *path, mode_t perms);
 mode_t permissions(struct AdfEntry *e);
 void fix_win32_filename(char *name);
+void print_error(const char *s);
 
 int main(int argc, char *argv[]) {
     struct AdfDevice *dev = NULL;
@@ -373,11 +375,18 @@ void print_entry(struct AdfEntry *e, char *path) {
 /* extracts all files, recursing into directories */
 void extract_tree(struct AdfVolume *vol, struct AdfList *node, char *path)
 {
+#ifdef DEBUG_UNADF
+    fprintf( stderr, "%s: path '%s'\n", __func__, path );
+#endif
+
     for (; node; node = node->next) {
         struct AdfEntry *e = node->content;
 
         /* extract file or create directory */
         char *out = output_name(path, e->name);
+#ifdef DEBUG_UNADF
+        fprintf( stderr, "%s: out '%s'\n", __func__, out );
+#endif
         if (e->type == ADF_ST_DIR) {
             if (!pipe_mode) {
                 printf("x - %s/\n", out);
@@ -482,7 +491,7 @@ void extract_file(struct AdfVolume *vol, char *filename, char *out, mode_t perms
         printf("x - %s\n", out);
         fd = open(out, O_CREAT | O_WRONLY | O_TRUNC, perms);
         if (fd < 0) {
-            perror(out);
+            print_error(out);
             goto error_handler;
         }
     }
@@ -497,7 +506,7 @@ void extract_file(struct AdfVolume *vol, char *filename, char *out, mode_t perms
         }
 
         if (write(fd, buf, n) != n) {
-            perror(out);
+            print_error(out);
             goto error_handler;
         }
     }
@@ -511,7 +520,7 @@ error_handler:
 char *join_path(char *path, char *file) {
     char *newpath = malloc(strlen(path) + strlen(file) + 2);
     if (!newpath) {
-        perror(adf_file);
+        print_error(adf_file);
         exit(1);
     }
     sprintf(newpath, "%s%s%s", path, *path ? "/" : "", file);
@@ -524,7 +533,7 @@ char *output_name(char *path, char *name) {
     size_t dirlen = ( extract_dir ? strlen(extract_dir) + 1 : 0 );
     char *out = malloc(dirlen + strlen(path) + strlen(name) + 3), *s, *o;
     if (!out) {
-        perror(adf_file);
+        print_error(adf_file);
         exit(1);
     }
 
@@ -597,11 +606,11 @@ void set_file_date(char *out, struct AdfEntry *e) {
     // utime() does not work on directories on Windows,
     // need a custom implementation
     if (utimeWin32(out, &times) != 0) {
-        perror(out);
+        print_error(out);
     }
 #else
     if (utime(out, &times) != 0) {
-        perror(out);
+        print_error(out);
     }
 #endif
 
@@ -610,7 +619,7 @@ void set_file_date(char *out, struct AdfEntry *e) {
     times[0].tv_sec = times[1].tv_sec = time;
     times[0].tv_usec = times[1].tv_usec = 0;
     if (utimes(out, times) != 0) {
-        perror(out);
+        print_error(out);
     }
 #endif
 }
@@ -618,6 +627,11 @@ void set_file_date(char *out, struct AdfEntry *e) {
 /* OS-agnostic make directory function */
 static inline int makedir(char* path, mode_t perms)
 {
+#ifdef DEBUG_UNADF
+    fprintf (stderr, "%s: path '%s', perms 0x%08x\n",
+             __func__, path, (uint32_t) perms );
+#endif
+
 #if defined _MSC_VER
     (void) perms;
     return _mkdir(path);
@@ -637,7 +651,7 @@ void mkdir_if_needed(char *path, mode_t perms) {
     struct stat st;
     if (stat(path, &st) != 0 || !S_ISDIR(st.st_mode)) {
         if (makedir(path, perms) != 0) {
-            perror(path);
+            print_error(path);
         }
     }
 }
@@ -796,4 +810,43 @@ FILETIME getFileTime( time_t time )
     return fileTime;
 }
 
+#endif
+
+
+#ifdef DEBUG_UNADF
+void adfPrintBacktrace(void);
+#endif
+
+void print_error(const char *s)
+{
+#ifdef DEBUG_UNADF
+    adfPrintBacktrace();
+#endif
+
+    perror(s);
+}
+
+#ifdef DEBUG_UNADF
+#include <execinfo.h>    // for backtrace()
+
+void adfPrintBacktrace(void)
+{
+    const unsigned BUFSIZE = 100;
+    void *buffer[ BUFSIZE ];
+
+    int size = backtrace( buffer, (int) BUFSIZE );
+    const char * const * const strings =
+        ( const char * const* const ) backtrace_symbols( buffer, size );
+
+    if ( strings == NULL ) {
+        perror( "error getting symbols" );
+        return;
+    }
+
+    fprintf( stderr, "Obtained %d stack frames.\n", size );
+    for ( int i = 0 ; i < size ; i++ )
+        fprintf( stderr, "%s\n", strings[i] );
+
+    free( (void *) strings );
+}
 #endif
