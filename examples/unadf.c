@@ -65,7 +65,7 @@ int utimeWin32( const char * const            pathname,
 # define DIRSEP '/'
 #endif
 
-#define UNADF_VERSION "1.2"
+#define UNADF_VERSION       ADFLIB_VERSION
 #define EXTRACT_BUFFER_SIZE 8192
 
 /* command-line arguments */
@@ -244,8 +244,8 @@ void parse_args(int argc, char *argv[]) {
             case 'V':
                 /* knowing also the build version of ADFlib is useful, in case
                    of any issues and version discrepancy (build vs. runtime) */
-                printf("%s, with ADFlib: build   v%s (%s)\n"
-                       "                  runtime v%s (%s)\n",
+                printf("%s, powered by ADFlib: build   v%s (%s)\n"
+                       "                           runtime v%s (%s)\n",
                        UNADF_VERSION, ADFLIB_VERSION, ADFLIB_DATE,
                        adfGetVersionNumber(), adfGetVersionDate());
                 exit(0);
