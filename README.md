@@ -328,10 +328,10 @@ without them (with the `generic` (dummy) native device instead, see
 INSTALL for details).
 
 Enabling and using native devices remember that **a native device can be
-any physical storage device on your system(!)**. Please _know what you
-are doing_ (eg. do not open your `C:\` on Windows or `/dev/sda` on Linux
-and call a function for creating an Amiga filesystem on it... unless
-you really want to reinstall your system and restore your data
+any physical storage device on your system(!)** - so _know (and be certain)
+what you are doing_ (eg. do not open your `C:\` on Windows or `/dev/sda`
+on Linux and call a function for creating an Amiga filesystem on it...
+unless you _really_ want to reinstall your system and restore your data
 from a backup...).
 
 Since native devices are not much tested - consider them as
@@ -342,13 +342,12 @@ like a VM).
 Dircache is an existing but somewhat exotic feature of the FFS.
 Until the time of writing this, I haven't encountered any existing disk image
 (adf or hdf) with dircache enabled (the only one known dump file with dircache
-enabled is one of the test floppies for the ADFlib: testffs.adf).
-(This is most likely due to its use mainly on larger volumes, on hard disks).
+enabled is one of the test floppies for the ADFlib: `testffs.adf`).
 
-While dircache support is implemented in ADFlib (at least, to certain extent),
-so far, there are very few tests of dircache, only on simple dump image created
-for testing (no real cases). Assume that, as such, this feature is practically
-**not tested**.
+While dircache support is implemented in the ADFlib (at least, to certain
+extent), so far, there are very few tests of dircache, only on simple dump
+image created for testing (no real cases). Assume that, as such, this feature
+is practically **not tested**.
 While volumes with dircache can be used rather safely in read-only mode - be
 very careful writing volumes with dircache (always do it on a copy).
 
@@ -370,14 +369,15 @@ _should_ support bigger dumps (but this was not tested! If anyone uses bigger
 dumps - feedback welcomed).
 
 #### Native device size limit
-This depends on the target operating system. On a 64-bit OS, devices larger
-than 4GiB should be available (on a 32-bit OS, possibly not).
+This (also) depends on the target operating system (precisely on `off_t` type,
+used with `lseek`). On a 64-bit OS, devices larger than 4GiB _should_ be
+available (on a 32-bit OS, not so sure...).
 
 #### Volume size limit
 Volumes must, obviously, fit the ADF device. Data in a volume is addressed with
-blocks of 512-bytes so theoretically can be quite large (2GiB * 512 = 1TiB).
-In practice, volumes should not be larger than what is supported by AmigaOS
-(4GiB).
+blocks of 512-bytes, so, theoretically, can be quite large: 2GiB (signed int,
+32bit) * 512 = 1TiB. In practice, volumes should not be larger than what is
+supported by AmigaOS (4GiB).
 
 ## Documentation
 
