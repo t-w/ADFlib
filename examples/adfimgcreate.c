@@ -27,10 +27,7 @@
 
 #ifndef HAVE_GETOPT
 #include "getopt.h"      // use custom getopt
-#endif
-
-#ifndef WIN32
-//#include <libgen.h>
+#else
 #include <unistd.h>
 #endif
 

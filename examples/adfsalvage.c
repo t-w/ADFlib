@@ -28,11 +28,12 @@
 
 #ifndef HAVE_GETOPT
 #include "getopt.h"      // use custom getopt
+#else
+#include <unistd.h>
 #endif
 
 #ifndef WIN32
 #include <libgen.h>
-#include <unistd.h>
 #endif
 
 typedef struct CmdlineOptions {
