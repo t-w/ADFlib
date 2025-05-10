@@ -28,7 +28,7 @@ jobs:
     - name: autogen
       run: ./autogen.sh
     - name: configure
-      run: ./configure --prefix=/tmp/adflib
+      run: ./configure --prefix=/tmp/adflib --enable-native-win32
     - name: make
       run: make
     - name: make check
