@@ -26,9 +26,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef WIN32
-#include "getopt.h"
-#else
+#ifndef HAVE_GETOPT
+#include "getopt.h"      // use custom getopt
+#endif
+
+#ifndef WIN32
 #include <libgen.h>
 #include <unistd.h>
 #endif

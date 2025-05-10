@@ -126,6 +126,10 @@ if ( ${HAVE_CHMOD} )
   add_compile_definitions ( HAVE_CHMOD=1 )
 endif()
 
+check_symbol_exists ( getopt "unistd.h" HAVE_GETOPT )
+if ( ${HAVE_GETOPT} )
+  add_compile_definitions ( HAVE_GETOPT=1 )
+endif()
 
 # Check backtrace
 

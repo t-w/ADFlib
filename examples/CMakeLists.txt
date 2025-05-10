@@ -4,15 +4,19 @@ include_directories (
   ${PROJECT_BINARY_DIR}/src
 )
 
+#check_symbol_exists ( chmod "unistd.h" HAVE_GETOPT )
 
-if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
+#if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
+if ( ${HAVE_GETOPT} )
+  set ( ADFLIB_CUSTOM_GETOPT_SRC "")
+  message ( STATUS "Using system's getopt implementation." )
+else()
   set ( ADFLIB_CUSTOM_GETOPT_SRC
     getopt.c
     getopt.h )
-else()
-  set ( ADFLIB_CUSTOM_GETOPT_SRC "")
+  message ( STATUS "Using custom getopt implementation." )
+  #message ( STATUS "ADFLIB_CUSTOM_GETOPT_SRC: ${ADFLIB_CUSTOM_GETOPT_SRC}" )
 endif()
-
 
 add_executable ( adfbitmap adfbitmap.c )
 target_link_libraries ( adfbitmap adf )
