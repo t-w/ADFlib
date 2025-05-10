@@ -29,7 +29,7 @@ message ( STATUS "Compiler ID: ${CMAKE_C_COMPILER_ID}" )
 
 add_compile_options (
     -Wall
-    $<$<CONFIG:RELEASE>:-O3>
+    $<$<CONFIG:Release>:-O2>
 #    -DADFLIB_VERSION="${ADFLIB_VERSION}"
 #    -DADFLIB_DATE="${ADFLIB_DATE}"
 )
@@ -44,10 +44,10 @@ if ( NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
       -Werror-implicit-function-declaration
       -Werror=format-security
     #  -pedantic-errors
-    #  $<$<CONFIG:DEBUG>:-g3>
-    #  $<$<CONFIG:DEBUG>:-Og>
-      $<$<CONFIG:DEBUG>:-ggdb>
-    #  $<$<CONFIG:DEBUG>:-pg>
+    #  $<$<CONFIG:Debug>:-g3>
+    #  $<$<CONFIG:Debug>:-Og>
+      $<$<CONFIG:Debug>:-ggdb>
+    #  $<$<CONFIG:Debug>:-pg>
     )
 endif()
 
