@@ -174,9 +174,11 @@ Find produced DLL and EXE and copy wherever you want...
 Cross-compilation (an example)
 -------------------------------
 
+1. With CMake:
+
 Building for Windows can be done cross-compiling eg. on Linux with MinGW:
 
-  $ CC=i686-w64-mingw32-gcc util/cmake_shared_configure
+  $ CC=x86_64-w64-mingw32-gcc util/cmake_shared_configure
 
 or just use:
 
@@ -193,6 +195,14 @@ like Wine. The executables should work of course, but the testing suites will
 require eg. configuring Windows CMake or tinkering test configuration to use
 Wine for execution etc...
 It should rather be tested and used on the native target system.
+
+2. With autotools:
+
+  $ ./autogen.sh
+  $ mkdir build
+  $ cd build
+  $ ../configure --host=x86_64-w64-mingw32
+  $ make
 
 
 Links
