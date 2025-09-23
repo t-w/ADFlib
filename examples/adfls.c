@@ -89,7 +89,7 @@ int main( const int     argc,
           char * const argv[] )
 {
     if ( ! parse_args( &argc, argv, &options ) ) {
-        fprintf( stderr, "Usage info:  adfsalvage -h\n" );
+        fprintf( stderr, "Usage info:  adfls -h\n" );
         exit( EXIT_FAILURE );
     }
 
