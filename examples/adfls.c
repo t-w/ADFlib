@@ -73,7 +73,7 @@ void adfAccess2String( const int32_t  acc,
 
 void usage(void)
 {
-    printf( "\nUsage:  adfls  [-p volume] adf_device [path]...\n\n"
+    printf( "\nUsage:  adfls [options] adf_device [path]...\n\n"
             "List contents of directories of an ADF/HDF volume.\n\n"
             "Options:\n"
             "  -b         show size in blocks (total number of blocks used)\n"
