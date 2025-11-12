@@ -23,14 +23,14 @@ It should be possible to build on (or cross-compile for) other systems.
 
 
 ## Features
-The main purpose of the library is to allow read and write Amiga-formatted
-devices and files being byte-level copies of such devices, called disk images
-or dumps. In case of classic Amiga systems, such files are most often
+The main purpose of the library is to allow reading and writing Amiga-formatted
+devices and files being block-level copies of such devices, called disk images
+(or dumps). In case of classic Amiga systems, such files are most often
 [ADFs](https://en.wikipedia.org/wiki/Amiga_Disk_File) or HDFs ("Hard Disk
 Files") containing
 [OFS](https://en.wikipedia.org/wiki/Amiga_Old_File_System) or
-[FFS](https://en.wikipedia.org/wiki/Amiga_Fast_File_System) (there are also
-other Amiga filesystems, for instance
+[FFS](https://en.wikipedia.org/wiki/Amiga_Fast_File_System) (however,
+there are also other filesystems used on Amigas, for instance
 [PFS](https://en.wikipedia.org/wiki/Professional_File_System)).
 
 ADFlib allows accessing the aforementioned devices on 3 levels:
@@ -250,21 +250,25 @@ so ones without an RDSK block and the typical hard disk structure.
 Only devices with a single volume on the whole device, so only floppy disks
 (ADF) or unpartitioned hard disk file (HDF) devices can be formatted.
 
+### adfls
+Show contents of an ADF volume.
+
 ### adfinfo
-A low-level utility / diagnostic tool, showing metadata about an ADF device,
+A low-level utility / diagnostic tool, showing metadata of an ADF device,
 volume or a file/directory inside the Amiga filesystem. In particular, it shows
-contents of Amiga filesystem metadata blocks, so it can help understand structure
-of Amiga filesystems (for anyone curious...).
+contents of metadata blocks of Amiga filesystems, so it can help to understand
+the internal structure of Amiga filesystems (for anyone curious...).
 
 ### adfbitmap
 A low-level utility / diagnostic tool for block allocation bitmap of ADF volumes.
-It can display the bitmap or rebuild it (in fact, enforce rebuilding it, even if
-the volume's flag says that the bitmap is valid).
+It can be used to display the allocation bitmap (and its status) or to rebuild it
+(in fact, enforce rebuilding it, even if the volume's flag says that the bitmap
+is valid).
 
 ### adfsalvage
-An utility allowing to list deleted entries (files, directories) on a volume
-and, if possible, undelete them (in the future possibly also extract them
-to local filesystem).
+A utility allowing to list deleted entries (files, directories) on a volume
+and, if possible, recover (undelete) them (in the future, possibly also extract
+them to a local filesystem).
 
 ## Credits:
 - main design and code : Laurent Clévy
@@ -291,11 +295,11 @@ See INSTALL.
 - `src/linux/` : Linux native device driver
 - `src/generic/` : Native device driver template ("dummy" device)
 - `doc/` :	The library developer's documentation, man pages for utilities
-- `doc/FAQ/` : The Amiga Filesystem explained
-- `examples/` : Utilities: `unadf`, `adfimgcreate`, `adfformat`,
+- `doc/FAQ/` : The Amiga Filesystem explained (by Laurent Clévy)
+- `examples/` : Utilities: `unadf`, `adfls`, `adfimgcreate`, `adfformat`,
 `adfinfo`, `adfbitmap`, `adfsalvage`
 - `packaging/` : Packaging configurations (so far - deb only)
-- `tests/data/Boot/` : Bootblocks that might by used to put on floppy disks
+- `tests/data/Boot/` : Bootblocks that might be put on floppy disks
 - `tests/regs` : Regression tests
 - `tests/unit` : Unit and functional tests
 - `tests/examples` : Tests of command-line utilities
@@ -350,7 +354,7 @@ Until the time of writing this, I haven't encountered any existing disk image
 enabled is one of the test floppies for the ADFlib: `testffs.adf`).
 
 While dircache support is implemented in the ADFlib (at least, to certain
-extent), so far, there are very few tests of dircache, only on simple dump
+extent), so far, there are very few tests of dircache, only on a simple dump
 image created for testing (no real cases). Assume that, as such, this feature
 is practically **not tested**.
 While volumes with dircache can be used rather safely in read-only mode - be
@@ -363,12 +367,12 @@ used. The main goal (so far) is portability, so the functions used are standard
 ones (ie. `stdio` for dump files). This, however, can limit device sizes in
 some cases.
 
-This can be improved in the future (esp. if signals that it is needed appears),
+This can be improved in the future (esp. if signals that it is needed appear),
 but it may have to be implemented specifically for each target OS.
 
 #### Dump file size limit
-The library uses `stdio` for accessing dump files. This implies use of
-`long` type as offset in files. On 32-bit systems this might be a 32-bit
+The library uses `stdio` for accessing dump files. This implies the use of
+`long` type as offset in files. On 32-bit systems, this might be a 32-bit
 (signed) value. This limits the max. size of dump files to 2GiB. 64-bit systems
 _should_ support bigger dumps (but this was not tested! If anyone uses bigger
 dumps - feedback welcomed).
@@ -409,20 +413,21 @@ See `doc/` (man pages).
 ### Misc.
 
 #### Using native devices with command-line programs
-In the version 0.10.0, the only programs that has enabled support for native
-devices are `adfinfo` and `unadf` (both are using the ADF devices in read-only
-mode).
+In the version 0.10.0, only a few programs have the support for native
+devices enabled: `adfls`, `adfinfo` and `unadf` (all are using the ADF devices
+in read-only mode).
 
 So far, native devices are supported on 2 operating systems: Windows and Linux.
 Native devices are distinguished from regular dump files by special naming
-convensions, which, depending on the operating system, are as follows:
+conventions, which, depending on the operating system, are as follows:
 - on Linux - any file specified as `/dev/....` (so any Linux device file) is
 opened as a native device
 - on Windows - device name specified as `|Hx`, where '`x`' is the numerical id
 of the physical disk (equivalent of Windows pathname: `\\.\PhysicalDiskX`).
-is opened as a native device. Note that "`|`" is a special character for system
-pipe (sending data to another process), so the device name must be given within
-"" (double quotes).
+is opened as a native device. Note that "`|`" is a special character normally
+interpreted by as system pipe (sending standard output of a program to another
+program). Because of this, the device name must be given within "" (double
+quotes).
 
 
 ## Contributing
