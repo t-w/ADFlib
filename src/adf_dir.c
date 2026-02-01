@@ -193,8 +193,16 @@ struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
 				 
             if ( recurs && entry->type == ADF_ST_DIR )
                 cell->subdir = adfGetRDirEnt( vol, entry->sector, recurs );
-				 
-            sector = entryBlk.nextSameHash;
+
+            if ( sector != entryBlk.nextSameHash )
+                sector = entryBlk.nextSameHash;
+            else {
+                // prevent inf. loop on invalid disks (issue #99)
+                adfEnv.wFct( "%s:  directory: '%s': invalid nextSameHash value "
+                             "(the same as cur. dir. block): %d",
+                             __func__, parent.name, sector );
+                sector = 0;
+            }
         }
     }
 
