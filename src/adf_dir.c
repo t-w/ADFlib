@@ -97,7 +97,7 @@ ADF_RETCODE adfChangeDir( struct AdfVolume * const  vol,
  * adfParentDir
  *
  */
-ADF_SECTNUM adfParentDir( struct AdfVolume * const  vol )
+ADF_RETCODE adfParentDir( struct AdfVolume * const  vol )
 {
     if ( vol->curDirPtr != vol->rootBlock ) {
         struct AdfEntryBlock entry;
