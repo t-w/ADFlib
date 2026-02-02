@@ -355,7 +355,7 @@ cleanup:
     free( entryname_buf );
     free( dirpath_buf );
 
-    return true;
+    return status;
 }
 
 
