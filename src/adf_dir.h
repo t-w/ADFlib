@@ -170,4 +170,21 @@ ADF_SECTNUM adfNameToEntryBlk( struct AdfVolume * const      vol,
  */
 ADF_PREFIX char * adfEntryGetInfo( const struct AdfEntry * const  entry );
 
+
+/*
+ * adfDirCheck
+ *
+ * Checks consistency of a directory (or a directory tree)
+ *
+ * So far, the check is very basic:
+ * - checks if entries metadata (blocks) read properly
+ * - checks if the directories do not point to themselves (block number)
+ *   in the nextSameHash (see issue #99)
+ *
+ * Returns number of errors, 0 if success (no errors)
+ */
+unsigned adfDirCheck( const struct AdfVolume * const  vol,
+                      const ADF_SECTNUM               nSect,
+                      const bool                      recurs );
+
 #endif  /* ADF_DIR_H */

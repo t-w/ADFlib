@@ -1297,3 +1297,51 @@ char * adfEntryGetInfo( const struct AdfEntry * const  entry )
     assert( infoptr - info < ENTRYINFO_SIZE );
     return info;
 }
+
+
+/*
+ * adfDirCheck
+ *
+ */
+unsigned adfDirCheck( const struct AdfVolume * const  vol,
+                      const ADF_SECTNUM               nSect,
+                      const bool                      recurs )
+{
+    struct AdfEntryBlock parent, entryBlk;
+
+    if ( adfReadEntryBlock( vol, nSect, &parent ) != ADF_RC_OK )
+        return 1;
+
+    unsigned nErrors = 0;
+    for ( int i = 0 ; i < ADF_HT_SIZE ; i++ ) {
+        if ( parent.hashTable[ i ] == 0 )
+            continue;
+
+        ADF_SECTNUM sector = parent.hashTable[ i ];
+        while ( sector != 0 ) {
+            struct AdfEntry * const entry = malloc( sizeof(struct AdfEntry) );
+            if ( entry == NULL )
+                return nErrors + 1;
+
+            if ( adfEntryRead( vol, sector, entry, &entryBlk ) != ADF_RC_OK )
+                nErrors++;
+
+            if ( recurs && entry->type == ADF_ST_DIR )
+                nErrors += adfDirCheck( vol, entry->sector, true );
+
+            if ( sector != entryBlk.nextSameHash )
+                sector = entryBlk.nextSameHash;
+            else {
+                // prevent inf. loop on invalid disks (issue #99)
+                adfEnv.wFct( "%s:  directory: '%s': invalid nextSameHash value "
+                             "(the same as cur. dir. block): %d",
+                             __func__, parent.name, sector );
+                nErrors++;
+                sector = 0;
+            }
+            adfFreeEntry( entry );
+        }
+    }
+
+    return nErrors;
+}
