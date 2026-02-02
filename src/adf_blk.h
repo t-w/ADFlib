@@ -236,7 +236,7 @@ struct AdfFileHeaderBlock {
 /*1d4*/	int32_t   real;          /* unused == 0 */
 /*1d8*/	int32_t   nextLink;      /* link chain */
         int32_t   r5[ 5 ];
-/*1f0*/	int32_t   nextSameHash;  /* next entry with sane hash */
+/*1f0*/	int32_t   nextSameHash;  /* next entry with same hash */
 /*1f4*/	int32_t   parent;        /* parent directory */
 /*1f8*/	int32_t   extension;     /* pointer to extension block */
 /*1fc*/	int32_t   secType;       /* == -3 */
