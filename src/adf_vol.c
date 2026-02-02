@@ -27,6 +27,7 @@
 #include "adf_bitm.h"
 #include "adf_cache.h"
 #include "adf_dev.h"
+#include "adf_dir.h"
 #include "adf_env.h"
 #include "adf_raw.h"
 #include "adf_util.h"
@@ -45,6 +46,16 @@ uint32_t bitMask[ 32 ] = {
     0x100000, 0x200000, 0x400000, 0x800000,
     0x1000000, 0x2000000, 0x4000000, 0x8000000,
     0x10000000, 0x20000000, 0x40000000, 0x80000000 };
+
+
+/*
+ * adfVolCheckFilesystem
+ *
+ * Returns ADF_RC_OK if no errors found.
+ */
+static ADF_RETCODE adfVolCheckFilesystem( struct AdfVolume * const  vol );
+
+
 
 /*
  * adfVolCreate
@@ -183,14 +194,46 @@ printf("%3d %x, ",i,vol->bitmapTable[0]->map[i]);
     return vol;
 }
 
+
+static struct AdfVolume * adfVolMount_( struct AdfDevice * const  dev,
+                                        const int                 nPart,
+                                        const AdfAccessMode       mode );
+
+struct AdfVolume * adfVolMount( struct AdfDevice * const  dev,
+                                const int                 nPart,
+                                const AdfAccessMode       mode )
+{
+    // mount read-only
+    struct AdfVolume * vol = adfVolMount_( dev, nPart, ADF_ACCESS_MODE_READONLY );
+    if ( mode == ADF_ACCESS_MODE_READONLY )
+        return vol;
+
+    // if read-write requested - must check filesystem consistency first
+    // (to prevent possible damages caused by writing a dirty filesystem)
+    ADF_RETCODE rc = adfVolCheckFilesystem( vol );
+    if ( rc != ADF_RC_OK ) {
+        adfVolUnMount( vol );
+        return NULL;
+    }
+
+    rc = adfVolRemount( vol, mode );
+    if ( rc != ADF_RC_OK ) {
+        adfVolUnMount( vol );
+        return NULL;
+    }
+
+    return vol;
+}
+
+
 /*
  * adfVolMount
  *
  * 
  */
-struct AdfVolume * adfVolMount( struct AdfDevice * const  dev,
-                                const int                 nPart,
-                                const AdfAccessMode       mode )
+static struct AdfVolume * adfVolMount_( struct AdfDevice * const  dev,
+                                        const int                 nPart,
+                                        const AdfAccessMode       mode )
 {
     if ( dev == NULL ) {
         adfEnv.eFct( "%s: invalid device (NULL)", __func__ );
@@ -314,6 +357,15 @@ ADF_RETCODE adfVolRemount( struct AdfVolume *   vol,
                          "volume '%s' read-write", __func__, vol->volName );
             return ADF_RC_ERROR;
         }
+
+        // for read-write - must check filesystem consistency to prevent damage
+        //if ( adfVolCheckFilesystem( vol ) != ADF_RC_OK ) {
+        //    adfEnv.eFct( "%s: volume '%s': filesystem contains errors, "
+        //                 "cannot mount read-write, repair it first",
+        //                 __func__, vol->volName );
+        //    return ADF_RC_ERROR;
+        //}
+
         vol->readOnly = false;
     } else if ( mode == ADF_ACCESS_MODE_READONLY ) {
         vol->readOnly = true;
@@ -342,6 +394,20 @@ void adfVolUnMount( struct AdfVolume * const  vol )
 
     vol->mounted = false;
 }
+
+
+/*
+ * adfVolCheckFilesystem
+ *
+ */
+static ADF_RETCODE adfVolCheckFilesystem( struct AdfVolume * const  vol )
+{
+    unsigned nErrors = adfDirCheck( vol, vol->rootBlock, true )
+        + ( adfVolBitmapIsMarkedValid( vol ) ? 0 : 1 );
+
+    return ( nErrors == 0 ? ADF_RC_OK : ADF_RC_ERROR );
+}
+
 
 /*
  * adfVolInstallBootBlock
