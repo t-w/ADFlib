@@ -109,7 +109,7 @@ ADF_RETCODE adfMountFlop( struct AdfDevice * const  dev )
 
         if ( boot.rootBlock != vol->rootBlock ) {
             adfEnv.wFct( "%s: rootBlock sector set in bootblock %d, "
-                         "different that calculated %d, volume '%s'",
+                         "different than calculated %d, volume '%s'",
                          __func__, boot.rootBlock, vol->rootBlock, vol->volName );
         }
     } else { // if ( adfVolIsPFS ( vol ) ) {
