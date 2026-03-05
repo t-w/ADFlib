@@ -103,47 +103,49 @@ ADF_RETCODE adfCreateBitmap( struct AdfVolume * const  vol )
  */
 ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
 {
-    vol->bitmap.size = nBlock2bitmapSize(
+    struct AdfBitmap * const bitmap = &vol->bitmap;
+
+    bitmap->size = nBlock2bitmapSize(
         adfVolGetSizeInBlocksWithoutBootblock( vol ) );
 
-    vol->bitmap.table = (struct AdfBitmapBlock**)
-        malloc( sizeof(struct AdfBitmapBlock *) * vol->bitmap.size );
-    if ( vol->bitmap.table == NULL ) {
+    bitmap->table = (struct AdfBitmapBlock**)
+        malloc( sizeof(struct AdfBitmapBlock *) * bitmap->size );
+    if ( bitmap->table == NULL ) {
         adfEnv.eFct( "%s: malloc, vol->bitmapTable", __func__ );
         return ADF_RC_MALLOC;
     }
 
-    vol->bitmap.blocks = (ADF_SECTNUM *) malloc( sizeof(ADF_SECTNUM) * vol->bitmap.size );
-    if ( vol->bitmap.blocks == NULL ) {
-        free( vol->bitmap.table );
-        vol->bitmap.table = NULL;
+    bitmap->blocks = (ADF_SECTNUM *) malloc( sizeof(ADF_SECTNUM) * bitmap->size );
+    if ( bitmap->blocks == NULL ) {
+        free( bitmap->table );
+        bitmap->table = NULL;
         adfEnv.eFct( "%s: malloc, vol->bitmapBlocks", __func__ );
         return ADF_RC_MALLOC;
     }
 
-    vol->bitmap.blocksChg = (bool *) malloc( sizeof(bool) * vol->bitmap.size );
-    if ( vol->bitmap.blocksChg == NULL ) {
-        free( vol->bitmap.table );
-        vol->bitmap.table = NULL;
-        free( vol->bitmap.blocks );
-        vol->bitmap.blocks = NULL;
+    bitmap->blocksChg = (bool *) malloc( sizeof(bool) * bitmap->size );
+    if ( bitmap->blocksChg == NULL ) {
+        free( bitmap->table );
+        bitmap->table = NULL;
+        free( bitmap->blocks );
+        bitmap->blocks = NULL;
         adfEnv.eFct( "%s: malloc, vol->bitmapBlocksChg", __func__ );
         return ADF_RC_MALLOC;
     }
 
-    for ( unsigned i = 0 ; i < vol->bitmap.size ; i++ ) {
-        vol->bitmap.table[ i ] = (struct AdfBitmapBlock *)
+    for ( unsigned i = 0 ; i < bitmap->size ; i++ ) {
+        bitmap->table[ i ] = (struct AdfBitmapBlock *)
             malloc( sizeof(struct AdfBitmapBlock) );
 
-        if ( vol->bitmap.table[ i ] == NULL) {
-            free( vol->bitmap.blocksChg );
-            vol->bitmap.blocksChg = NULL;
-            free( vol->bitmap.blocks );
-            vol->bitmap.blocks = NULL;
+        if ( bitmap->table[ i ] == NULL) {
+            free( bitmap->blocksChg );
+            bitmap->blocksChg = NULL;
+            free( bitmap->blocks );
+            bitmap->blocks = NULL;
             for ( unsigned j = 0 ; j < i ; j++ )
-                free( vol->bitmap.table[ j ] );
-            free( vol->bitmap.table );
-            vol->bitmap.table = NULL;
+                free( bitmap->table[ j ] );
+            free( bitmap->table );
+            bitmap->table = NULL;
             adfEnv.eFct( "%s: malloc", __func__ );
             return ADF_RC_MALLOC;
         }
