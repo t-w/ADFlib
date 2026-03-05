@@ -412,21 +412,19 @@ static ADF_RETCODE adfVolCheckFilesystem( struct AdfVolume * const  vol )
 ADF_RETCODE adfVolInstallBootBlock( struct AdfVolume * const  vol,
                                     const uint8_t * const     code )
 {
-    int i;
-    struct AdfBootBlock boot;
-
     if ( vol->dev->class != ADF_DEVCLASS_FLOP )
         //&& vol->dev->ype != ADF_DEVTYPE_HDF )   also HDF????
     {
         return ADF_RC_ERROR;
     }
 
+    struct AdfBootBlock boot;
     ADF_RETCODE rc = adfReadBootBlock( vol, &boot );
     if ( rc != ADF_RC_OK )
         return rc;
 
     boot.rootBlock = 880;
-    for ( i = 0; i < 1024 - 12; i++ )         /* bootcode */
+    for ( int i = 0; i < 1024 - 12; i++ )         /* bootcode */
         boot.data[ i ] = code[ i + 12 ];
 
     rc = adfWriteBootBlock( vol, &boot );
