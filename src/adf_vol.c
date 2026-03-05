@@ -118,20 +118,14 @@ struct AdfVolume * adfVolCreate( struct AdfDevice * const  dev,
 /*printf("first=%d last=%d\n", vol->firstBlock, vol->lastBlock);
 printf("name=%s root=%d\n", vol->volName, vol->rootBlock);
 */
-    if ( adfWriteBootBlock( vol, &boot ) != ADF_RC_OK ) {
-        free( vol->volName );
-        free( vol );
-        return NULL;
-    }
+    if ( adfWriteBootBlock( vol, &boot ) != ADF_RC_OK )
+        goto volcreate_error;
 
     if ( adfEnv.useProgressBar )
         adfEnv.progressBar( 20 );
 
-    if ( adfCreateBitmap( vol ) != ADF_RC_OK ) {
-        free( vol->volName );
-        free( vol );
-        return NULL;
-    }
+    if ( adfCreateBitmap( vol ) != ADF_RC_OK )
+        goto volcreate_error;
 
     if ( adfEnv.useProgressBar )
         adfEnv.progressBar( 40 );
@@ -166,21 +160,18 @@ printf("%3d %x, ",i,vol->bitmapTable[0]->map[i]);
     if ( adfEnv.useProgressBar )
         adfEnv.progressBar( 60 );
 
-    if ( adfWriteRootBlock( vol, (uint32_t) blkList[ 0 ], &root ) != ADF_RC_OK ) {
-        free( vol->volName );
-        free( vol );
-        return NULL;
-    }
+    if ( adfWriteRootBlock( vol, (uint32_t) blkList[ 0 ], &root ) != ADF_RC_OK )
+        goto volcreate_error;
 
    /* fills root->bmPages[] and writes filled bitmapExtBlocks */
     if ( adfWriteNewBitmap( vol ) != ADF_RC_OK )
-        return NULL;
+        goto volcreate_error;
 
     if ( adfEnv.useProgressBar )
         adfEnv.progressBar( 80 );
 
     if ( adfUpdateBitmap( vol ) != ADF_RC_OK )
-        return NULL;
+        goto volcreate_error;
 
     if ( adfEnv.useProgressBar )
         adfEnv.progressBar( 100 );
@@ -192,6 +183,11 @@ printf("%3d %x, ",i,vol->bitmapTable[0]->map[i]);
     vol->mounted = false;
 
     return vol;
+
+volcreate_error:
+    free( vol->volName );
+    free( vol );
+    return NULL;
 }
 
 
