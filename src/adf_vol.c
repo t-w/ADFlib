@@ -579,8 +579,7 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
         vol->volName, // diskName ?
         vol->dev->class == ADF_DEVCLASS_FLOP     ? "Floppy disk" :
         vol->dev->class == ADF_DEVCLASS_HARDDISK ? "Hard disk partition" :
-        vol->dev->class == ADF_DEVCLASS_HARDFILE ? "HardFile" :
-        "Unknown!",
+        vol->dev->class == ADF_DEVCLASS_HARDFILE ? "HardFile" : "Unknown!",
         adfVolIsFFS( vol ) ? "FFS" : "OFS",
         adfVolHasINTL( vol ) ? "INTL " : "",
         adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
@@ -623,8 +622,7 @@ char * adfVolGetInfo( struct AdfVolume * const  vol )
         vol->volName, // diskName ?
         vol->dev->class == ADF_DEVCLASS_FLOP     ? "Floppy disk" :
         vol->dev->class == ADF_DEVCLASS_HARDDISK ? "Hard disk partition" :
-        vol->dev->class == ADF_DEVCLASS_HARDFILE ? "HardFile" :
-        "Unknown!",
+        vol->dev->class == ADF_DEVCLASS_HARDFILE ? "HardFile" : "Unknown!",
         adfVolIsFFS( vol ) ? "FFS" : "OFS",
         adfVolHasINTL( vol ) ? "INTL " : "",
         adfVolHasDIRCACHE( vol ) ? "DIRCACHE " : "",
