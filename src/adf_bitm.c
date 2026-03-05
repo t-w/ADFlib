@@ -119,6 +119,7 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
     if ( bitmap->blocks == NULL ) {
         free( bitmap->table );
         bitmap->table = NULL;
+
         adfEnv.eFct( "%s: malloc, vol->bitmapBlocks", __func__ );
         return ADF_RC_MALLOC;
     }
@@ -127,8 +128,10 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
     if ( bitmap->blocksChg == NULL ) {
         free( bitmap->table );
         bitmap->table = NULL;
+
         free( bitmap->blocks );
         bitmap->blocks = NULL;
+
         adfEnv.eFct( "%s: malloc, vol->bitmapBlocksChg", __func__ );
         return ADF_RC_MALLOC;
     }
@@ -140,12 +143,16 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
         if ( bitmap->table[ i ] == NULL) {
             free( bitmap->blocksChg );
             bitmap->blocksChg = NULL;
+
             free( bitmap->blocks );
             bitmap->blocks = NULL;
+
             for ( unsigned j = 0 ; j < i ; j++ )
                 free( bitmap->table[ j ] );
+
             free( bitmap->table );
             bitmap->table = NULL;
+
             adfEnv.eFct( "%s: malloc", __func__ );
             return ADF_RC_MALLOC;
         }
