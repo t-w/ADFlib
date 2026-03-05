@@ -167,18 +167,20 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
  */
 void adfFreeBitmap( struct AdfVolume * const  vol )
 {
-    for ( unsigned i = 0 ; i < vol->bitmap.size ; i++ )
-        free( vol->bitmap.table[ i ] );
-    vol->bitmap.size = 0;
+    struct AdfBitmap * const bitmap = &vol->bitmap;
 
-    free( vol->bitmap.table );
-    vol->bitmap.table = NULL;
+    for ( unsigned i = 0 ; i < bitmap->size ; i++ )
+        free( bitmap->table[ i ] );
+    bitmap->size = 0;
 
-    free( vol->bitmap.blocks );
-    vol->bitmap.blocks = NULL;
+    free( bitmap->table );
+    bitmap->table = NULL;
 
-    free( vol->bitmap.blocksChg );
-    vol->bitmap.blocksChg = NULL;
+    free( bitmap->blocks );
+    bitmap->blocks = NULL;
+
+    free( bitmap->blocksChg );
+    bitmap->blocksChg = NULL;
 }
 
 
