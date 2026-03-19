@@ -19,18 +19,17 @@ typedef struct test_data_s {
 } test_data_t;
 
 
-void setup ( test_data_t * const tdata );
-void teardown ( test_data_t * const tdata );
+void setup( test_data_t * const tdata );
+void teardown( test_data_t * const tdata );
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-START_TEST ( test_dev_open_nonexistent )
+START_TEST( test_dev_open_nonexistent )
 {
     test_data_t test_data[] = {
         {   .adfname = "nonexistent.adf",
@@ -50,21 +49,21 @@ START_TEST ( test_dev_open_nonexistent )
             .ignoreChecksumErrors = true
         }
     };
-    unsigned ntest_data = sizeof ( test_data ) / sizeof (  test_data_t );
+    unsigned ntest_data = sizeof( test_data ) / sizeof(  test_data_t );
     
     for ( unsigned i = 0 ; i < ntest_data ; i++ ) {
-        adfEnvSetProperty ( ADF_PR_IGNORE_CHECKSUM_ERRORS,
-                            test_data[i].ignoreChecksumErrors );
+        adfEnvSetProperty( ADF_PR_IGNORE_CHECKSUM_ERRORS,
+                           test_data[i].ignoreChecksumErrors );
 
-        struct AdfDevice * const dev = adfDevOpen ( test_data[i].adfname,
-                                                    test_data[i].openMode );
-        ck_assert_ptr_null ( dev );
+        struct AdfDevice * const dev = adfDevOpen( test_data[i].adfname,
+                                                   test_data[i].openMode );
+        ck_assert_ptr_null( dev );
     }
 }
 END_TEST
 
 
-START_TEST ( test_dev_open_existent )
+START_TEST( test_dev_open_existent )
 {
     test_data_t test_data[] = {
         {   .adfname = "test_dev_open_anexistent1.adf",
@@ -88,64 +87,63 @@ START_TEST ( test_dev_open_existent )
             .ignoreChecksumErrors = true
         }
     };
-    unsigned ntest_data = sizeof ( test_data ) / sizeof (  test_data_t );
+    unsigned ntest_data = sizeof( test_data ) / sizeof(  test_data_t );
 
     for ( unsigned i = 0 ; i < ntest_data ; i++ ) {
         test_data_t * const tdata = &test_data[i];
 
-        setup ( tdata );
+        setup( tdata );
 
-        //fprintf (stderr, "Testing: %u, open mode %d, ignore checksums %d\n",
+        //fprintf( stderr, "Testing: %u, open mode %d, ignore checksums %d\n",
         //         i, (int) tdata->openMode, tdata->ignoreChecksumErrors );
 
-        adfEnvSetProperty ( ADF_PR_IGNORE_CHECKSUM_ERRORS,
-                            tdata->ignoreChecksumErrors );
+        adfEnvSetProperty( ADF_PR_IGNORE_CHECKSUM_ERRORS,
+                           tdata->ignoreChecksumErrors );
 
-        struct AdfDevice * const dev = adfDevOpen ( tdata->adfname,
-                                                    tdata->openMode );
-        ck_assert_ptr_nonnull ( dev );
-        adfDevClose ( dev );
+        struct AdfDevice * const dev = adfDevOpen( tdata->adfname,
+                                                   tdata->openMode );
+        ck_assert_ptr_nonnull( dev );
+        adfDevClose( dev );
 
-        teardown ( tdata );
+        teardown( tdata );
     }
 }
 END_TEST
 
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * const s = suite_create ( "adflib" );
+    Suite * const suite = suite_create( "adflib" );
     
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create ( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib test_dev_open_nonexistent" );
-    tcase_add_test ( tc, test_dev_open_nonexistent );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib test_dev_open_nonexistent" );
+    tcase_add_test( tcase, test_dev_open_nonexistent );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib test_dev_open_existent" );
-    tcase_add_test ( tc, test_dev_open_existent );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib test_dev_open_existent" );
+    tcase_add_test( tcase, test_dev_open_existent );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * s = adflib_suite();
-    SRunner * sr = srunner_create ( s );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
     adfLibInit();
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
     adfLibCleanUp();
 
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    const int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
