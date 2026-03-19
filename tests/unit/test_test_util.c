@@ -4,87 +4,88 @@
 #include "test_util.h"
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-START_TEST ( test_filesize2datablocks )
+START_TEST( test_filesize2datablocks )
 {
     static const struct testdata_s {
-        unsigned fsize,
-            result488,
-            result512;
-    } testdata [] = {
-        { 0,      0,  0 },
-        { 1,      1,  1 },
-        { 487,    1,  1 },
-        { 488,    1,  1 },
-        { 489,    2,  1 },
-        { 512,    2,  1 },
-        { 513,    2,  2 },
-        { 976,    2,  2 },
-        { 977,    3,  2 },
-        { 1024,   3,  2 },
-        { 1025,   3,  3 },
+        unsigned  fsize,
+                  result488,
+                  result512;
+    } testdata[] = {
+        {     0,  0,  0 },
+        {     1,  1,  1 },
+        {   487,  1,  1 },
+        {   488,  1,  1 },
+        {   489,  2,  1 },
+        {   512,  2,  1 },
+        {   513,  2,  2 },
+        {   976,  2,  2 },
+        {   977,  3,  2 },
+        {  1024,  3,  2 },
+        {  1025,  3,  3 },
         { 35136, 72, 69 },
         { 35137, 73, 69 }
     };
-    static const unsigned ntests = sizeof ( testdata ) / sizeof ( struct testdata_s );
-    for ( unsigned i = 0 ; i < ntests ; ++i ) {
-        //ck_assert_int_eq ( filesize2datablocks ( testdata[i].fsize, 488 ),
-        //                   testdata[i].result488 );
-        unsigned dblocks = filesize2datablocks ( testdata[i].fsize, 488 );
-        ck_assert_msg ( dblocks == testdata[i].result488,
-                        "datablocks incorrect: %d, expected %d, blocksize %d",
-                        dblocks, testdata[i].result488, testdata[i].fsize );
+    static const unsigned ntests = sizeof( testdata ) / sizeof( struct testdata_s );
 
-        //ck_assert_int_eq ( filesize2datablocks ( testdata[i].fsize, 512 ),
-        //                   testdata[i].result512 );
-        dblocks = filesize2datablocks ( testdata[i].fsize, 512 );
-        ck_assert_msg ( dblocks == testdata[i].result512,
-                        "datablocks incorrect: %d, expected %d, blocksize %d",
-                        dblocks, testdata[i].result512, testdata[i].fsize );
+    for ( unsigned i = 0; i < ntests; ++i ) {
+        //ck_assert_int_eq( filesize2datablocks( testdata[i].fsize, 488 ),
+        //                  testdata[i].result488 );
+        unsigned  dblocks = filesize2datablocks( testdata[i].fsize, 488 );
+        ck_assert_msg( dblocks == testdata[i].result488,
+                       "datablocks incorrect: %d, expected %d, blocksize %d",
+                       dblocks, testdata[i].result488, testdata[i].fsize );
+
+        //ck_assert_int_eq( filesize2datablocks( testdata[i].fsize, 512 ),
+        //                  testdata[i].result512 );
+        dblocks = filesize2datablocks( testdata[i].fsize, 512 );
+        ck_assert_msg( dblocks == testdata[i].result512,
+                       "datablocks incorrect: %d, expected %d, blocksize %d",
+                       dblocks, testdata[i].result512, testdata[i].fsize );
     }
 }
 END_TEST
 
 
-START_TEST ( test_datablocks2extblocks )
+START_TEST( test_datablocks2extblocks )
 {
     static const struct testdata_s {
-        unsigned datablocks,
-                 result;
-    } testdata [] = {
-        { 0,    0 },
-        { 1,    0 },
-        { 72,   0 },
-        { 73,   1 },
+        unsigned  datablocks,
+                  result;
+    } testdata[] = {
+        {   0,  0 },
+        {   1,  0 },
+        {  72,  0 },
+        {  73,  1 },
         { 144,  1 },
         { 145,  2 },
         { 720,  9 },
         { 721, 10 }
     };
-    static const unsigned ntests = sizeof ( testdata ) / sizeof ( struct testdata_s );
-    for ( unsigned i = 0 ; i < ntests ; ++i ) {
-        unsigned extblocks = datablocks2extblocks ( testdata[i].datablocks );
-        ck_assert_msg ( extblocks == testdata[i].result,
-                        "ext. blocks incorrect: %d, expected %d, datablocks %d",
-                        extblocks, testdata[i].result, testdata[i].datablocks );
+    static const unsigned ntests = sizeof( testdata ) / sizeof( struct testdata_s );
+
+    for ( unsigned i = 0; i < ntests; ++i ) {
+        unsigned extblocks = datablocks2extblocks( testdata[i].datablocks );
+        ck_assert_msg( extblocks == testdata[i].result,
+                       "ext. blocks incorrect: %d, expected %d, datablocks %d",
+                       extblocks, testdata[i].result, testdata[i].datablocks );
     }
 }
 END_TEST
 
 
-START_TEST ( test_filesize2blocks )
+START_TEST( test_filesize2blocks )
 {
     static const struct testdata_s {
-        unsigned fsize,
-            result488,
-            result512;
-    } testdata [] = {
+        unsigned  fsize,
+                  result488,
+                  result512;
+    } testdata[] = {
         { 0,      1,  1 },
         { 1,      2,  2 },
         { 487,    2,  2 },
@@ -113,28 +114,29 @@ START_TEST ( test_filesize2blocks )
         { 73729, ( 72 * 2 + 8 ) + 2 + 1, ( 72 * 2 + 1 ) + 2 + 1 }  /* the 2nd ext block for 512
                                                                       (+1 data block, +1 ext block) */
     };
-    static const unsigned ntests = sizeof ( testdata ) / sizeof ( struct testdata_s );
-    for ( unsigned i = 0 ; i < ntests ; ++i ) {
-        unsigned nblocks = filesize2blocks ( testdata[i].fsize, 488 );
-        ck_assert_msg ( nblocks == testdata[i].result488,
-                        "blocks incorrect: %d, expected %d, blocksize %d",
-                        nblocks, testdata[i].result488, testdata[i].fsize );
+    static const unsigned ntests = sizeof( testdata ) / sizeof( struct testdata_s );
 
-        nblocks = filesize2blocks ( testdata[i].fsize, 512 );
-        ck_assert_msg ( nblocks == testdata[i].result512,
-                        "blocks incorrect: %d, expected %d, blocksize %d",
-                        nblocks, testdata[i].result512, testdata[i].fsize );
+    for ( unsigned i = 0; i < ntests; ++i ) {
+        unsigned nblocks = filesize2blocks( testdata[i].fsize, 488 );
+        ck_assert_msg( nblocks == testdata[i].result488,
+                       "blocks incorrect: %d, expected %d, blocksize %d",
+                       nblocks, testdata[i].result488, testdata[i].fsize );
+
+        nblocks = filesize2blocks( testdata[i].fsize, 512 );
+        ck_assert_msg( nblocks == testdata[i].result512,
+                       "blocks incorrect: %d, expected %d, blocksize %d",
+                       nblocks, testdata[i].result512, testdata[i].fsize );
     }
 }
 END_TEST
 
 
-START_TEST ( test_datablocks2posInExtBlk )
+START_TEST( test_datablocks2posInExtBlk )
 {
     static const struct testdata_s {
-        unsigned datablock_idx,
-                 result;
-    } testdata [] = {
+        unsigned  datablock_idx,
+                  result;
+    } testdata[] = {
         //{ 0,    -1 },
         //{ 1,    -1 },
         //{ 2,    -1 },
@@ -161,58 +163,58 @@ START_TEST ( test_datablocks2posInExtBlk )
         { 721,   1 },
         { 722,   2 }
     };
-    static const unsigned ntests = sizeof ( testdata ) / sizeof ( struct testdata_s );
-    for ( unsigned i = 0 ; i < ntests ; ++i ) {
-        unsigned posInExtBlk = datablock2posInExtBlk ( testdata[i].datablock_idx );
-        ck_assert_msg ( posInExtBlk == testdata[i].result,
-                        "pos in ext. block incorrect: %d, expected %d, datablocks %d",
-                        posInExtBlk, testdata[i].result, testdata[i].datablock_idx );
+    static const unsigned ntests = sizeof( testdata ) / sizeof( struct testdata_s );
+
+    for ( unsigned i = 0; i < ntests; ++i ) {
+        const unsigned posInExtBlk = datablock2posInExtBlk( testdata[i].datablock_idx );
+        ck_assert_msg( posInExtBlk == testdata[i].result,
+                       "pos in ext. block incorrect: %d, expected %d, datablocks %d",
+                       posInExtBlk, testdata[i].result, testdata[i].datablock_idx );
     }
 }
 END_TEST
 
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * s = suite_create ( "test_util" );
+    Suite * const suite = suite_create( "test_util" );
     
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "test_filesize2datablocks" );
-    //tcase_add_checked_fixture ( tc, setup_ffs, teardown_ffs );
-    tcase_add_test ( tc, test_filesize2datablocks );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "test_filesize2datablocks" );
+    //tcase_add_checked_fixture( tcase, setup_ffs, teardown_ffs );
+    tcase_add_test( tcase, test_filesize2datablocks );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "test_datablocks2extblocks" );
-    tcase_add_test ( tc, test_datablocks2extblocks );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "test_datablocks2extblocks" );
+    tcase_add_test( tcase, test_datablocks2extblocks );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "test_filesize2blocks" );
-    tcase_add_test ( tc, test_filesize2blocks );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "test_filesize2blocks" );
+    tcase_add_test( tcase, test_filesize2blocks );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "test_datablocks2posInExtBlk" );
-    tcase_add_test ( tc, test_datablocks2posInExtBlk );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "test_datablocks2posInExtBlk" );
+    tcase_add_test( tcase, test_datablocks2posInExtBlk );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * s = adflib_suite();
-    SRunner * sr = srunner_create ( s );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
     adfLibInit();
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
     adfLibCleanUp();
 
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    const int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
