@@ -40,11 +40,11 @@
 #define MAX_SWTYPE 11
 
 
-struct swapEl {
+struct SwapEl {
     int type, len;
 };
 
-static const struct swapEl swapTable [ MAX_SWTYPE + 1 ][ 7 ] = {
+static const struct SwapEl swapTable [ MAX_SWTYPE + 1 ][ 7 ] = {
     /* first bytes of boot */
     { { SW_CHAR,    4 },
       { SW_LONG,    2 },
@@ -139,13 +139,9 @@ static const struct swapEl swapTable [ MAX_SWTYPE + 1 ][ 7 ] = {
  *
  * magic :-) endian swap function (big -> little for read, little to big for write)
  */
-
 void adfSwapEndian( uint8_t * const  buf,
                     const int        type )
 {
-    int i = 0,
-        p = 0;
-
     assert( type >= 0 );
     assert( type <= MAX_SWTYPE );
     if ( type > MAX_SWTYPE || type < 0 ) {
@@ -154,9 +150,17 @@ void adfSwapEndian( uint8_t * const  buf,
         return;
     }
 
-    while ( swapTable[ type ][ i ].type != TOT_LEN ) {
-        for ( int j = 0 ; j < swapTable[ type ][ i ].len ; j++ )  {
-            switch ( swapTable[ type ][ i ].type ) {
+    int i = 0, p = 0;
+    for ( ; swapTable[ type ][ i ].type != TOT_LEN; i++ ) {
+        const struct SwapEl * const swapEl = &swapTable[ type ][ i ];
+
+        if ( swapEl->type == SW_CHAR ) {
+            p += swapEl->len;
+            continue;
+        }
+
+        for ( int j = 0; j < swapEl->len; j++ )  {
+            switch ( swapEl->type ) {
             case SW_LONG:
                 swapUint32AtPtr( buf + p );
                 p += 4;
@@ -165,14 +169,12 @@ void adfSwapEndian( uint8_t * const  buf,
                 swapUint16AtPtr( buf + p );
                 p += 2;
                 break;
-            case SW_CHAR:
-                p++;
-                break;
             default:
+                // this should never happen
+                adfEnv.eFct("%s: Error: invalid type %s", __func__, swapEl->type );
                 ;
             }
         }
-        i++;
     }
 
     if ( p != swapTable[ type ][ i ].len )
