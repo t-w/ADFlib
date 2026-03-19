@@ -67,6 +67,11 @@ add_executable( test_adf_vector
                 ${PROJECT_SOURCE_DIR}/src/adf_vector.c
                 ${PROJECT_SOURCE_DIR}/src/adf_vector.h )
 
+add_executable( test_adfSwapEndian
+                test_adfSwapEndian.c
+                test_util.c )
+#                ${PROJECT_SOURCE_DIR}/src/adf_raw.c
+#                ${PROJECT_SOURCE_DIR}/src/adf_raw.h )
 
 add_executable( test_dev_open
                 test_dev_open.c )
@@ -131,6 +136,7 @@ target_link_libraries( test_adfPos2DataBlock      PUBLIC adf ${CHECK_LIBRARIES} 
 target_link_libraries( test_adfDays2Date          PUBLIC     ${CHECK_LIBRARIES} )
 target_link_libraries( test_adf_vector            PUBLIC     ${CHECK_LIBRARIES} )
 
+target_link_libraries( test_adfSwapEndian         PUBLIC adf ${CHECK_LIBRARIES} )
 target_link_libraries( test_dev_open              PUBLIC adf ${CHECK_LIBRARIES} )
 target_link_libraries( test_dev_mount             PUBLIC adf ${CHECK_LIBRARIES} )
 target_link_libraries( test_adf_file_util         PUBLIC     ${CHECK_LIBRARIES} )
@@ -157,6 +163,7 @@ add_test( test_adfDays2Date     test_adfDays2Date )
 add_test( test_adf_vector       test_adf_vector )
 
 # library functions
+add_test( test_adfSwapEndian         test_adfSwapEndian )
 add_test( test_dev_open              test_dev_open )
 add_test( test_dev_mount             test_dev_mount )
 add_test( test_adf_file_util         test_adf_file_util )

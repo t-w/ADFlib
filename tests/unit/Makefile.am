@@ -12,6 +12,7 @@ check_PROGRAMS = \
     test_adfDays2Date \
     test_adfPos2DataBlock \
     test_adf_vector \
+    test_adfSwapEndian \
     test_dev_open \
     test_dev_mount\
     test_adf_file_util \
@@ -81,6 +82,11 @@ test_test_util_DEPENDENCIES = $(top_builddir)/src/libadf.la
 #
 # library functions
 #
+test_adfSwapEndian_SOURCES = test_adfSwapEndian.c test_util.c test_util.h
+test_adfSwapEndian_CFLAGS = $(CHECK_CFLAGS)
+test_adfSwapEndian_LDADD = $(ADFLIBS) $(CHECK_LIBS)
+test_adfSwapEndian_DEPENDENCIES = $(top_builddir)/src/libadf.la
+
 test_dev_open_SOURCES = test_dev_open.c
 test_dev_open_CFLAGS = $(CHECK_CFLAGS)
 test_dev_open_LDADD = $(ADFLIBS) $(CHECK_LIBS)
