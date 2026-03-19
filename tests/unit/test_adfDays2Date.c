@@ -6,16 +6,14 @@
 #include "adf_util.h"
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-START_TEST ( test_adfDays2Date  )
+START_TEST( test_adfDays2Date  )
 {
-
     typedef struct test_data_s {
       // input
         int32_t days;
@@ -36,51 +34,49 @@ START_TEST ( test_adfDays2Date  )
         { 16412, 2022, 12,  8 }
     };
 
-    const int NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
+    const int NTESTS = sizeof( test_data ) / sizeof( test_data_t );
 
     int yy, mm, dd;
     for ( int i = 0; i < NTESTS ; ++i ) {
-        adfDays2Date (
-            // input
-            test_data[i].days,
-            // output
-            &yy, &mm, &dd );
+        adfDays2Date( test_data[ i ].days,  // input
+                      &yy, &mm, &dd );      // output
 
-        printf ( "days 0x%x ( %d )\n", test_data[i].days,
-                                       test_data[i].days );
-        ck_assert_int_eq ( test_data[i].yy, yy );
-        ck_assert_int_eq ( test_data[i].mm, mm );
-        ck_assert_int_eq ( test_data[i].dd, dd );
+        printf( "days 0x%x ( %d )\n", test_data[ i ].days,
+                                      test_data[ i ].days );
+
+        ck_assert_int_eq( test_data[i].yy, yy );
+        ck_assert_int_eq( test_data[i].mm, mm );
+        ck_assert_int_eq( test_data[i].dd, dd );
     }
 
 }
 END_TEST
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * s = suite_create ( "adflib" );
+    Suite * const suite = suite_create( "adflib" );
     
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib adfDays2Date" );
-    tcase_add_test ( tc, test_adfDays2Date  );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib adfDays2Date" );
+    tcase_add_test( tcase, test_adfDays2Date  );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * s = adflib_suite();
-    SRunner * sr = srunner_create ( s );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
+
+    const int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
