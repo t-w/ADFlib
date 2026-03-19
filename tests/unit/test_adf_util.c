@@ -10,18 +10,17 @@
 #endif
 
 
-START_TEST ( test_check_framework )
-{
+START_TEST( test_check_framework ) {
     ck_assert( 1 );
 }
 END_TEST
 
 #ifndef HAVE_STPNCPY
 // test only custom implementation
-START_TEST(test_stpncpy)
+START_TEST( test_stpncpy )
 {
     const char input[] = "whatever";
-    char output[32];
+    char       output[ 32 ];
 
     // copy 0 chars
     memset( output, 0, 32 );
@@ -40,7 +39,7 @@ START_TEST(test_stpncpy)
         ck_assert( output[i] == 0 );
 
     // copy 4 chars
-    memset(output, 0, 32);
+    memset( output, 0, 32 );
     endp = stpncpy( output, input, 4 );
     ck_assert( endp == &output[4] );
     ck_assert( strncmp( input, output, 4 ) == 0 );
@@ -51,8 +50,8 @@ START_TEST(test_stpncpy)
     memset( output, 0, 32 );
     endp = stpncpy( output, input, 16 );
     ck_assert( endp == &output[8] );
-    ck_assert( strcmp(input, output) == 0 );
-    ck_assert( strncmp(input, output, 8) == 0 );
+    ck_assert( strcmp( input, output ) == 0 );
+    ck_assert( strncmp( input, output, 8 ) == 0 );
     for ( unsigned i = 8; i < 32; i++ )
         ck_assert( output[i] == 0 );
 }
@@ -80,13 +79,13 @@ Suite * adflib_suite(void)
 
 int main(void)
 {
-    Suite * const suite = adflib_suite();
+    Suite * const   suite   = adflib_suite();
     SRunner * const srunner = srunner_create( suite );
 
     srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
+
     const int nfailed = srunner_ntests_failed( srunner );
     srunner_free( srunner );
-    return ( nfailed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+
+    return ( nfailed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
