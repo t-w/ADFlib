@@ -44,7 +44,7 @@ struct SwapEl {
     int type, len;
 };
 
-static const struct SwapEl swapTable [ MAX_SWTYPE + 1 ][ 7 ] = {
+static const struct SwapEl swapTable[ MAX_SWTYPE + 1 ][ 7 ] = {
     /* first bytes of boot */
     { { SW_CHAR,    4 },
       { SW_LONG,    2 },
@@ -193,7 +193,7 @@ ADF_RETCODE adfReadRootBlock( struct AdfVolume * const     vol,
 {
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
 
-    ADF_RETCODE rc = adfVolReadBlock( vol, nSect, buf );
+    const ADF_RETCODE rc = adfVolReadBlock( vol, nSect, buf );
     if ( rc != ADF_RC_OK )
         return rc;
 
@@ -256,7 +256,7 @@ ADF_RETCODE adfWriteRootBlock( struct AdfVolume * const     vol,
 #ifdef LITT_ENDIAN
     adfSwapEndian( buf, ADF_SWBL_ROOT );
 #endif
-    uint32_t newSum = adfNormalSum( buf, 20, ADF_LOGICAL_BLOCK_SIZE );
+    const uint32_t newSum = adfNormalSum( buf, 20, ADF_LOGICAL_BLOCK_SIZE );
     swapUint32ToPtr( buf + 20, newSum );
 /*	*(uint32_t*)(buf+20) = swapUint32fromPtr((uint8_t*)&newSum);*/
 /* 	dumpBlock(buf);*/
@@ -296,7 +296,7 @@ ADF_RETCODE adfReadBootBlock( struct AdfVolume * const     vol,
         return ADF_RC_ERROR;
     }
 
-    ADF_SECTNUM rootSectCalculated = adfVolCalcRootBlk( vol );
+    const ADF_SECTNUM rootSectCalculated = adfVolCalcRootBlk( vol );
     if ( boot->rootBlock != rootSectCalculated ) {
         adfEnv.wFct( " %s : non-standard rootBlock value: %u != expected %u.",
                      __func__, boot->rootBlock, rootSectCalculated );
@@ -342,7 +342,7 @@ ADF_RETCODE adfWriteBootBlock( struct AdfVolume * const     vol,
 #endif
 
     if ( boot->rootBlock == 880 || boot->data[ 0 ] != 0 ) {
-        uint32_t newSum = adfBootSum( buf );
+        const uint32_t newSum = adfBootSum( buf );
 /*fprintf(stderr,"sum %x %x\n",newSum,adfBootSum2(buf));*/
         swapUint32ToPtr( buf + 4, newSum );
 /*        *(uint32_t*)(buf+4) = swapUint32fromPtr((uint8_t*)&newSum);*/
