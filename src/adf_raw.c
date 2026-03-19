@@ -373,8 +373,8 @@ ADF_RETCODE adfWriteBootBlock( struct AdfVolume * const     vol,
  * bufLen = buffer length (in bytes)
  */
 uint32_t adfNormalSum( const uint8_t * const  buf,
-                       const int              offset,
-                       const int              bufLen )
+                       const unsigned         offset,
+                       const unsigned         bufLen )
 {
     uint32_t newsum = 0L;
     for ( unsigned i = 0; i < bufLen / 4; i++ )

@@ -63,8 +63,8 @@ ADF_PREFIX ADF_RETCODE adfWriteBootBlock( struct AdfVolume * const     vol,
 ADF_PREFIX uint32_t adfBootSum( const uint8_t * const  buf );
 
 ADF_PREFIX uint32_t adfNormalSum( const uint8_t * const  buf,
-                                  const int              offset,
-                                  const int              bufLen );
+                                  const unsigned         offset,
+                                  const unsigned         bufLen );
 
 ADF_PREFIX void adfSwapEndian( uint8_t * const  buf,
                                const int        type );
