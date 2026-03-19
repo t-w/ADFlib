@@ -172,7 +172,6 @@ void adfSwapEndian( uint8_t * const  buf,
             default:
                 // this should never happen
                 adfEnv.eFct("%s: Error: invalid type %s", __func__, swapEl->type );
-                ;
             }
         }
     }
@@ -236,7 +235,6 @@ ADF_RETCODE adfWriteRootBlock( struct AdfVolume * const     vol,
                                const uint32_t               nSect,
                                struct AdfRootBlock * const  root )
 {
-/*printf("adfWriteRootBlock %ld\n",nSect);*/
     uint8_t buf[ ADF_LOGICAL_BLOCK_SIZE ];
 
     root->type          = ADF_T_HEADER;
@@ -273,12 +271,10 @@ ADF_RETCODE adfReadBootBlock( struct AdfVolume * const     vol,
                               struct AdfBootBlock * const  boot )
 {
     uint8_t buf[ 1024 ];
-	
-/*puts("22");*/
     ADF_RETCODE rc = adfVolReadBlock( vol, 0, buf );
     if ( rc != ADF_RC_OK )
         return rc;
-/*puts("11");*/
+
     rc = adfVolReadBlock( vol, 1, buf + ADF_LOGICAL_BLOCK_SIZE );
     if ( rc != ADF_RC_OK )
         return rc;
@@ -360,7 +356,6 @@ ADF_RETCODE adfWriteBootBlock( struct AdfVolume * const     vol,
     if (rc != ADF_RC_OK )
         return rc;
 
-/*puts("adfWriteBootBlock");*/
     return ADF_RC_OK;
 }
 
