@@ -58,15 +58,15 @@ START_TEST( test_swap_root )
     uint8_t * const blockBak = malloc( BUFSIZE );
     memcpy( blockBak, block, BUFSIZE );
 
-    const unsigned nlongs1 = 108;
-    const size_t nlongs1_size = nlongs1 * sizeof( uint32_t );
-    uint32_t * const longs1 = malloc( nlongs1_size );
+    const unsigned   nlongs1      = 108;
+    const size_t     nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1       = malloc( nlongs1_size );
     memcpy( longs1, block, nlongs1_size );
 
-    const unsigned nlongs2 = 10;
-    const size_t nlongs2_size = nlongs2 * sizeof( uint32_t );
-    uint32_t * const longs2 = malloc( nlongs2_size );
-    const size_t longs2_offset = nlongs1_size + 40;
+    const unsigned   nlongs2       = 10;
+    const size_t     nlongs2_size  = nlongs2 * sizeof( uint32_t );
+    uint32_t * const longs2        = malloc( nlongs2_size );
+    const size_t     longs2_offset = nlongs1_size + 40;
     memcpy( longs2, block + longs2_offset, nlongs2_size );
 
     adfSwapEndian( block, ADF_SWBL_ROOT );
@@ -108,9 +108,9 @@ START_TEST( test_swap_data )
     uint8_t * const blockBak = malloc( BUFSIZE );
     memcpy( blockBak, block, BUFSIZE );
 
-    const unsigned nlongs1 = 6;
-    const size_t nlongs1_size = nlongs1 * sizeof( uint32_t );
-    uint32_t * const longs1 = malloc( nlongs1_size );
+    const unsigned   nlongs1      = 6;
+    const size_t     nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1       = malloc( nlongs1_size );
     memcpy( longs1, block, nlongs1_size );
 
     adfSwapEndian( block, ADF_SWBL_DATA );
