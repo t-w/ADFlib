@@ -6,14 +6,13 @@
 #include "adf_file_util.h"
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-START_TEST ( test_adfFilePos2DataBlock )
+START_TEST( test_adfFilePos2DataBlock )
 {
     uint32_t
         dataBlockIndexInExtBlock,
@@ -73,7 +72,7 @@ START_TEST ( test_adfFilePos2DataBlock )
         { 0x2a716,          488, 68, 118, 356, 3 }
     };
 
-    const unsigned NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
+    const unsigned NTESTS = sizeof( test_data ) / sizeof( test_data_t );
     
     for ( unsigned i = 0; i < NTESTS ; ++i ) {
         extBlockNumber = adfFilePos2DataBlock(
@@ -85,52 +84,53 @@ START_TEST ( test_adfFilePos2DataBlock )
             &posInDataBlock,
             &dataBlockNumber );
 
-        printf ( "offset 0x%x ( %d )\n", test_data[i].offset, test_data[i].offset );
-        ck_assert_int_eq ( test_data[i].offset,
-                           test_data[i].offset );
+        printf( "offset 0x%x ( %d )\n", test_data[i].offset,
+                                        test_data[i].offset );
 
-        ck_assert_int_eq ( test_data[i].dataBlockIndexInExtBlock,
-                           dataBlockIndexInExtBlock );
+        ck_assert_int_eq( test_data[i].offset,
+                          test_data[i].offset );
 
-        ck_assert_int_eq ( test_data[i].posInDataBlock,
-                           posInDataBlock );
+        ck_assert_int_eq( test_data[i].dataBlockIndexInExtBlock,
+                          dataBlockIndexInExtBlock );
 
-        ck_assert_int_eq ( test_data[i].dataBlockNumber,
-                           dataBlockNumber );
+        ck_assert_int_eq( test_data[i].posInDataBlock,
+                          posInDataBlock );
 
-        ck_assert_int_eq ( test_data[i].extBlockNumber,
-                           extBlockNumber );
+        ck_assert_int_eq( test_data[i].dataBlockNumber,
+                          dataBlockNumber );
+
+        ck_assert_int_eq( test_data[i].extBlockNumber,
+                          extBlockNumber );
     }
-
 }
 END_TEST
 
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * s = suite_create ( "adflib" );
+    Suite * const suite = suite_create( "adflib" );
     
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib adfFilePos2DataBlock" );
-    tcase_add_test ( tc, test_adfFilePos2DataBlock );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib adfFilePos2DataBlock" );
+    tcase_add_test( tcase, test_adfFilePos2DataBlock );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * s = adflib_suite();
-    SRunner * sr = srunner_create ( s );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
+
+    int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
