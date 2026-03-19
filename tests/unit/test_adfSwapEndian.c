@@ -99,6 +99,45 @@ START_TEST( test_swap_root )
 END_TEST
 
 
+START_TEST( test_swap_data )
+{
+#define BUFSIZE 512
+    uint8_t * const block = malloc( BUFSIZE );
+    pattern_random( block, BUFSIZE );
+
+    uint8_t * const blockBak = malloc( BUFSIZE );
+    memcpy( blockBak, block, BUFSIZE );
+
+    const unsigned nlongs1 = 6;
+    const size_t nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1 = malloc( nlongs1_size );
+    memcpy( longs1, block, nlongs1_size );
+
+    adfSwapEndian( block, ADF_SWBL_DATA );
+
+    // check swapped things are correct
+    for ( unsigned i = 0; i < nlongs1; i++ )
+        ck_assert_uint_eq( longs1[ i ],
+                           swapUint32( ( (uint32_t *) block )[ i ] ) );    
+
+    // check nothing else was changed
+    ck_assert_int_eq( 0, memcmp( block + nlongs1_size,
+                                 blockBak + nlongs1_size, 488 ) );
+
+    // swap back
+    adfSwapEndian( block, ADF_SWBL_DATA );
+
+    // check all the same
+    ck_assert_int_eq( 0, memcmp( block, blockBak, BUFSIZE ) );
+
+#undef BUFSIZE
+    free( longs1 );
+    free( blockBak );
+    free( block );
+}
+END_TEST
+
+
 Suite * adflib_suite( void )
 {
     Suite * const suite = suite_create( "adfSwapEndian" );
@@ -113,6 +152,10 @@ Suite * adflib_suite( void )
 
     tcase = tcase_create( "adflib test_swap_root" );
     tcase_add_test( tcase, test_swap_root );
+    suite_add_tcase( suite, tcase );
+
+    tcase = tcase_create( "adflib test_swap_data" );
+    tcase_add_test( tcase, test_swap_data );
     suite_add_tcase( suite, tcase );
 
     return suite;
