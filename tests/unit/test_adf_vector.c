@@ -5,8 +5,7 @@
 //#include "adflib.h"
 #include "adf_vector.h"
 
-START_TEST( test_check_framework )
-{
+START_TEST( test_check_framework ) {
     ck_assert( 1 );
 }
 END_TEST
@@ -62,10 +61,7 @@ int main(void)
     srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
 
     const int nfailed = srunner_ntests_failed( srunner );
-
     srunner_free( srunner );
 
-    return ( nfailed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    return ( nfailed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
