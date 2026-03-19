@@ -66,7 +66,7 @@ START_TEST( test_swap_root )
     const unsigned nlongs2 = 10;
     const size_t nlongs2_size = nlongs2 * sizeof( uint32_t );
     uint32_t * const longs2 = malloc( nlongs2_size );
-    const size_t longs2_offset = nlongs1 * sizeof( uint32_t ) + 40;
+    const size_t longs2_offset = nlongs1_size + 40;
     memcpy( longs2, block + longs2_offset, nlongs2_size );
 
     adfSwapEndian( block, ADF_SWBL_ROOT );
@@ -137,6 +137,213 @@ START_TEST( test_swap_data )
 }
 END_TEST
 
+START_TEST( test_swap_entry )
+{
+#define BUFSIZE 512
+    uint8_t * const block = malloc( BUFSIZE );
+    pattern_random( block, BUFSIZE );
+
+    uint8_t * const blockBak = malloc( BUFSIZE );
+    memcpy( blockBak, block, BUFSIZE );
+
+    const unsigned   nlongs1      = 82;
+    const size_t     nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1       = malloc( nlongs1_size );
+    memcpy( longs1, block, nlongs1_size );
+
+    const unsigned   nlongs2       = 3;
+    const size_t     nlongs2_size  = nlongs2 * sizeof( uint32_t );
+    uint32_t * const longs2        = malloc( nlongs2_size );
+    const size_t     longs2_offset = nlongs1_size + 92;
+    memcpy( longs2, block + longs2_offset, nlongs2_size );
+
+    const unsigned   nlongs3       = 11;
+    const size_t     nlongs3_size  = nlongs3 * sizeof( uint32_t );
+    uint32_t * const longs3        = malloc( nlongs3_size );
+    const size_t     longs3_offset = longs2_offset + nlongs2_size + 36;
+    memcpy( longs3, block + longs3_offset, nlongs3_size );
+
+    adfSwapEndian( block, ADF_SWBL_ENTRY );
+
+    // check swapped things are correct
+    for ( unsigned i = 0; i < nlongs1; i++ )
+        ck_assert_uint_eq( longs1[ i ],
+                           swapUint32( ( (uint32_t *) block )[ i ] ) );
+
+    for ( unsigned i = 0; i < nlongs2; i++ )
+        ck_assert_uint_eq( longs2[ i ],
+                           swapUint32( ( (uint32_t *)( block + longs2_offset ) )[ i ] ) );
+
+    for ( unsigned i = 0; i < nlongs3; i++ )
+        ck_assert_uint_eq( longs3[ i ],
+                           swapUint32( ( (uint32_t *)( block + longs3_offset ) )[ i ] ) );
+
+    // check nothing else was changed
+    ck_assert_int_eq( 0, memcmp( block    + nlongs1_size,
+                                 blockBak + nlongs1_size,
+                                 92 ) );
+
+    ck_assert_int_eq( 0, memcmp( block    + longs2_offset + nlongs2_size,
+                                 blockBak + longs2_offset + nlongs2_size,
+                                 36 ) );
+
+    // swap back
+    adfSwapEndian( block, ADF_SWBL_ENTRY );
+
+    // check all the same
+    ck_assert_int_eq( 0, memcmp( block, blockBak, BUFSIZE ) );
+
+#undef BUFSIZE
+    free( longs3 );
+    free( longs2 );
+    free( longs1 );
+    free( blockBak );
+    free( block );
+}
+END_TEST
+
+START_TEST( test_swap_cache )
+{
+#define BUFSIZE 512
+    uint8_t * const block = malloc( BUFSIZE );
+    pattern_random( block, BUFSIZE );
+
+    uint8_t * const blockBak = malloc( BUFSIZE );
+    memcpy( blockBak, block, BUFSIZE );
+
+    const unsigned nlongs1 = 6;
+    const size_t nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1 = malloc( nlongs1_size );
+    memcpy( longs1, block, nlongs1_size );
+
+    adfSwapEndian( block, ADF_SWBL_CACHE );
+
+    // check swapped things are correct
+    for ( unsigned i = 0; i < nlongs1; i++ )
+        ck_assert_uint_eq( longs1[ i ],
+                           swapUint32( ( (uint32_t *) block )[ i ] ) );
+
+    // check nothing else was changed
+    ck_assert_int_eq( 0, memcmp( block + nlongs1_size,
+                                 blockBak + nlongs1_size, BUFSIZE - nlongs1_size ) );
+
+    // swap back
+    adfSwapEndian( block, ADF_SWBL_CACHE );
+
+    // check all the same
+    ck_assert_int_eq( 0, memcmp( block, blockBak, BUFSIZE ) );
+
+#undef BUFSIZE
+    free( longs1 );
+    free( blockBak );
+    free( block );
+}
+END_TEST
+
+START_TEST( test_swap_bitmap_fext )
+{
+#define BUFSIZE 512
+    uint8_t * const block = malloc( BUFSIZE );
+    pattern_random( block, BUFSIZE );
+
+    uint8_t * const blockBak = malloc( BUFSIZE );
+    memcpy( blockBak, block, BUFSIZE );
+
+    const unsigned   nlongs1      = 128;
+    const size_t     nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1       = malloc( nlongs1_size );
+    memcpy( longs1, block, nlongs1_size );
+
+    adfSwapEndian( block, ADF_SWBL_BITMAP );
+
+    // check swapped things are correct
+    for ( unsigned i = 0; i < nlongs1; i++ )
+        ck_assert_uint_eq( longs1[ i ],
+                           swapUint32( ( (uint32_t *) block )[ i ] ) );
+
+    // check nothing else was changed
+    ck_assert_int_eq( 0, memcmp( block + nlongs1_size,
+                                 blockBak + nlongs1_size, BUFSIZE - nlongs1_size ) );
+
+    // swap back
+    adfSwapEndian( block, ADF_SWBL_FEXT );
+
+    // check all the same
+    ck_assert_int_eq( 0, memcmp( block, blockBak, BUFSIZE ) );
+
+#undef BUFSIZE
+    free( longs1 );
+    free( blockBak );
+    free( block );
+}
+END_TEST
+
+
+START_TEST( test_swap_link )
+{
+#define BUFSIZE 512
+    uint8_t * const block = malloc( BUFSIZE );
+    pattern_random( block, BUFSIZE );
+
+    uint8_t * const blockBak = malloc( BUFSIZE );
+    memcpy( blockBak, block, BUFSIZE );
+
+    const unsigned   nlongs1      = 6;
+    const size_t     nlongs1_size = nlongs1 * sizeof( uint32_t );
+    uint32_t * const longs1       = malloc( nlongs1_size );
+    memcpy( longs1, block, nlongs1_size );
+
+    const unsigned   nlongs2       = 86;
+    const size_t     nlongs2_size  = nlongs2 * sizeof( uint32_t );
+    uint32_t * const longs2        = malloc( nlongs2_size );
+    const size_t     longs2_offset = nlongs1_size + 64;
+    memcpy( longs2, block + longs2_offset, nlongs2_size );
+
+    const unsigned   nlongs3       = 12;
+    const size_t     nlongs3_size  = nlongs3 * sizeof( uint32_t );
+    uint32_t * const longs3        = malloc( nlongs3_size );
+    const size_t     longs3_offset = longs2_offset + nlongs2_size + 32;
+    memcpy( longs3, block + longs3_offset, nlongs3_size );
+
+    adfSwapEndian( block, ADF_SWBL_LINK );
+
+    // check swapped things are correct
+    for ( unsigned i = 0; i < nlongs1; i++ )
+        ck_assert_uint_eq( longs1[ i ],
+                           swapUint32( ( (uint32_t *) block )[ i ] ) );
+
+    for ( unsigned i = 0; i < nlongs2; i++ )
+        ck_assert_uint_eq( longs2[ i ],
+                           swapUint32( ( (uint32_t *)( block + longs2_offset ) )[ i ] ) );
+
+    for ( unsigned i = 0; i < nlongs3; i++ )
+        ck_assert_uint_eq( longs3[ i ],
+                           swapUint32( ( (uint32_t *)( block + longs3_offset ) )[ i ] ) );
+
+    // check nothing else was changed
+    ck_assert_int_eq( 0, memcmp( block    + nlongs1_size,
+                                 blockBak + nlongs1_size,
+                                 64 ) );
+
+    ck_assert_int_eq( 0, memcmp( block    + longs2_offset + nlongs2_size,
+                                 blockBak + longs2_offset + nlongs2_size,
+                                 32 ) );
+
+    // swap back
+    adfSwapEndian( block, ADF_SWBL_LINK );
+
+    // check all the same
+    ck_assert_int_eq( 0, memcmp( block, blockBak, BUFSIZE ) );
+
+#undef BUFSIZE
+    free( longs3 );
+    free( longs2 );
+    free( longs1 );
+    free( blockBak );
+    free( block );
+}
+END_TEST
+
 
 Suite * adflib_suite( void )
 {
@@ -156,6 +363,22 @@ Suite * adflib_suite( void )
 
     tcase = tcase_create( "adflib test_swap_data" );
     tcase_add_test( tcase, test_swap_data );
+    suite_add_tcase( suite, tcase );
+
+    tcase = tcase_create( "adflib test_swap_entry" );
+    tcase_add_test( tcase, test_swap_entry );
+    suite_add_tcase( suite, tcase );
+
+    tcase = tcase_create( "adflib test_swap_cache" );
+    tcase_add_test( tcase, test_swap_cache );
+    suite_add_tcase( suite, tcase );
+
+    tcase = tcase_create( "adflib test_swap_bitmap_fext" );
+    tcase_add_test( tcase, test_swap_bitmap_fext );
+    suite_add_tcase( suite, tcase );
+
+    tcase = tcase_create( "adflib test_swap_link" );
+    tcase_add_test( tcase, test_swap_link );
     suite_add_tcase( suite, tcase );
 
     return suite;
