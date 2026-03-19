@@ -26,21 +26,20 @@ typedef struct test_data_s {
 } test_data_t;
 
 
-void setup ( test_data_t * const tdata );
-void teardown ( test_data_t * const tdata );
+void setup( test_data_t * const tdata );
+void teardown( test_data_t * const tdata );
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-void test_adfFileTruncateGetBlocksToRemove ( test_data_t * const tdata )
+void test_adfFileTruncateGetBlocksToRemove( test_data_t * const tdata )
 {
     struct AdfDevice * const device = tdata->device;
-    ck_assert_ptr_nonnull ( device );
+    ck_assert_ptr_nonnull( device );
 
 
     ///
@@ -49,14 +48,14 @@ void test_adfFileTruncateGetBlocksToRemove ( test_data_t * const tdata )
 
     // mount the test volume
     struct AdfVolume * vol = // tdata->vol =
-        adfVolMount ( device, 0, ADF_ACCESS_MODE_READWRITE );
-    ck_assert_ptr_nonnull ( vol );
+        adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
+    ck_assert_ptr_nonnull( vol );
 
     // check it is an empty floppy disk
-    unsigned free_blocks_before = adfCountFreeBlocks ( vol );
-    ck_assert_int_eq ( tdata->nVolumeBlocks, free_blocks_before );
-    int nentries = adfDirCountEntries ( vol, vol->curDirPtr );
-    ck_assert_int_eq ( 0, nentries ); 
+    const unsigned free_blocks_before = adfCountFreeBlocks( vol );
+    ck_assert_int_eq( tdata->nVolumeBlocks, free_blocks_before );
+    const int nentries = adfDirCountEntries( vol, vol->curDirPtr );
+    ck_assert_int_eq( 0, nentries );
 
 
     ///
@@ -64,52 +63,52 @@ void test_adfFileTruncateGetBlocksToRemove ( test_data_t * const tdata )
     ///
 
     char filename[] = "testfile.tmp";
-    struct AdfFile * file = adfFileOpen ( vol, filename, tdata->openMode );
-    ck_assert_ptr_nonnull ( file );
-    adfFileClose ( file );
+    struct AdfFile * file = adfFileOpen( vol, filename, tdata->openMode );
+    ck_assert_ptr_nonnull( file );
+    adfFileClose( file );
 
     // reset volume state (remount)
-    adfVolUnMount ( vol );
+    adfVolUnMount( vol );
     vol = // tdata->vol =
-        adfVolMount ( device, 0, ADF_ACCESS_MODE_READWRITE );
+        adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
 
     // verify free blocks
     const unsigned file_blocks_used_by_empty_file = 1;
-    ck_assert_int_eq ( free_blocks_before - file_blocks_used_by_empty_file,
-                       adfCountFreeBlocks ( vol ) );
+    ck_assert_int_eq( free_blocks_before - file_blocks_used_by_empty_file,
+                      adfCountFreeBlocks( vol ) );
 
     // verify the number of entries
-    ck_assert_int_eq ( 1, adfDirCountEntries ( vol, vol->curDirPtr ) );
+    ck_assert_int_eq( 1, adfDirCountEntries( vol, vol->curDirPtr ) );
 
     // verify file information (meta-data)
-    file = adfFileOpen ( vol, filename, ADF_FILE_MODE_READ );
-    ck_assert_uint_eq ( 0, file->fileHdr->byteSize );
-    ck_assert_uint_eq ( 0, file->pos );
-    ck_assert_int_eq ( 0, file->posInExtBlk );
-    //ck_assert_int_eq ( 0, file->posInDataBlk );
-    ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
-    adfFileClose ( file );
+    file = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
+    ck_assert_uint_eq( 0, file->fileHdr->byteSize );
+    ck_assert_uint_eq( 0, file->pos );
+    ck_assert_int_eq( 0, file->posInExtBlk );
+    //ck_assert_int_eq( 0, file->posInDataBlk );
+    ck_assert_int_eq( 0, file->nDataBlock );
+    ck_assert_int_eq( adfFileAtEOF( file ), true );
+    adfFileClose( file );
 
     // the same when open for appending
-/*    file = adfFileOpen ( vol, filename, "a" );
-    ck_assert_uint_eq ( 0, file->fileHdr->byteSize );
-    ck_assert_uint_eq ( 0, file->pos );
-    ck_assert_int_eq ( 0, file->posInExtBlk );
-    //ck_assert_int_eq ( 0, file->posInDataBlk );
-    ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
-    adfFileClose ( file );
+/*    file = adfFileOpen( vol, filename, "a" );
+    ck_assert_uint_eq( 0, file->fileHdr->byteSize );
+    ck_assert_uint_eq( 0, file->pos );
+    ck_assert_int_eq( 0, file->posInExtBlk );
+    //ck_assert_int_eq( 0, file->posInDataBlk );
+    ck_assert_int_eq( 0, file->nDataBlock );
+    ck_assert_int_eq( adfFileAtEOF( file ), true );
+    adfFileClose( file );
 */
     // the same when open for writing
-    file = adfFileOpen ( vol, filename, ADF_FILE_MODE_WRITE );
-    ck_assert_uint_eq ( 0, file->fileHdr->byteSize );
-    ck_assert_uint_eq ( 0, file->pos );
-    ck_assert_int_eq ( 0, file->posInExtBlk );
-    //ck_assert_int_eq ( 0, file->posInDataBlk );
-    ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
-    adfFileClose ( file );
+    file = adfFileOpen( vol, filename, ADF_FILE_MODE_WRITE );
+    ck_assert_uint_eq( 0, file->fileHdr->byteSize );
+    ck_assert_uint_eq( 0, file->pos );
+    ck_assert_int_eq( 0, file->posInExtBlk );
+    //ck_assert_int_eq( 0, file->posInDataBlk );
+    ck_assert_int_eq( 0, file->nDataBlock );
+    ck_assert_int_eq( adfFileAtEOF( file ), true );
+    adfFileClose( file );
 
 
     ///
@@ -117,79 +116,79 @@ void test_adfFileTruncateGetBlocksToRemove ( test_data_t * const tdata )
     ///
     
     // open for writing
-    file = adfFileOpen ( vol, filename, ADF_FILE_MODE_WRITE );
-    ck_assert_uint_eq ( 0, file->fileHdr->byteSize );
-    ck_assert_int_eq ( file->fileHdr->firstData, 0 );
-    ck_assert_uint_eq ( 0, file->pos );
-    ck_assert_int_eq ( 0, file->posInExtBlk );
-    //ck_assert_int_eq ( 0, file->posInDataBlk );
-    ck_assert_int_eq ( 0, file->nDataBlock );
-    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
+    file = adfFileOpen( vol, filename, ADF_FILE_MODE_WRITE );
+    ck_assert_uint_eq( 0, file->fileHdr->byteSize );
+    ck_assert_int_eq( file->fileHdr->firstData, 0 );
+    ck_assert_uint_eq( 0, file->pos );
+    ck_assert_int_eq( 0, file->posInExtBlk );
+    //ck_assert_int_eq( 0, file->posInDataBlk );
+    ck_assert_int_eq( 0, file->nDataBlock );
+    ck_assert_int_eq( adfFileAtEOF( file ), true );
 
     // write data buffer to the file
-    const unsigned bufsize = tdata->bufsize;
-    const unsigned char * const buffer = tdata->buffer;
-    unsigned bytes_written = adfFileWrite ( file, bufsize, buffer );
-    ck_assert_int_eq ( bufsize, bytes_written );
-    ck_assert_uint_eq ( bufsize, file->fileHdr->byteSize );
-    ck_assert_int_gt ( file->fileHdr->firstData, 0 );
-    ck_assert_uint_eq ( bufsize, file->pos );
-    //ck_assert_int_eq ( 0, file->posInExtBlk );
-    //ck_assert_int_eq ( datablock2posInExtBlk (
-    //                       filesize2datablocks ( bufsize, vol->datablockSize ) ),
-    //                   file->posInExtBlk );
-    unsigned expected_posInExtBlk = datablock2posInExtBlk (
-        filesize2datablocks ( bufsize, vol->datablockSize ) );
-    //int expected_posInExtBlk = datablock2posInExtBlk (
-    //    pos2datablockIndex ( bufsize, vol->datablockSize ) );
-    ck_assert_msg ( expected_posInExtBlk == file->posInExtBlk ||
-                    ( file->posInExtBlk == 72 && expected_posInExtBlk == 0 ),
-                    "file->posInExtBlk %d != %d, bufsize %u",
-                    file->posInExtBlk, expected_posInExtBlk, tdata->bufsize );
-    //ck_assert_int_eq ( 1, file->posInDataBlk );
-    ck_assert_int_eq ( ( ( bufsize - 1 ) / vol->datablockSize ) + 1, file->nDataBlock );
-    ck_assert_int_eq ( adfFileAtEOF ( file ), true );
-    adfFileClose ( file );
+    const unsigned              bufsize       = tdata->bufsize;
+    const unsigned char * const buffer        = tdata->buffer;
+    const unsigned              bytes_written = adfFileWrite( file, bufsize, buffer );
+    ck_assert_int_eq( bufsize, bytes_written );
+    ck_assert_uint_eq( bufsize, file->fileHdr->byteSize );
+    ck_assert_int_gt( file->fileHdr->firstData, 0 );
+    ck_assert_uint_eq( bufsize, file->pos );
+    //ck_assert_int_eq( 0, file->posInExtBlk );
+    //ck_assert_int_eq( datablock2posInExtBlk (
+    //                      filesize2datablocks( bufsize, vol->datablockSize ) ),
+    //                  file->posInExtBlk );
+    unsigned expected_posInExtBlk = datablock2posInExtBlk(
+        filesize2datablocks( bufsize, vol->datablockSize ) );
+    //int expected_posInExtBlk = datablock2posInExtBlk(
+    //    pos2datablockIndex( bufsize, vol->datablockSize ) );
+    ck_assert_msg( expected_posInExtBlk == file->posInExtBlk ||
+                   ( file->posInExtBlk == 72 && expected_posInExtBlk == 0 ),
+                   "file->posInExtBlk %d != %d, bufsize %u",
+                   file->posInExtBlk, expected_posInExtBlk, tdata->bufsize );
+    //ck_assert_int_eq( 1, file->posInDataBlk );
+    ck_assert_int_eq( ( ( bufsize - 1 ) / vol->datablockSize ) + 1, file->nDataBlock );
+    ck_assert_int_eq( adfFileAtEOF( file ), true );
+    adfFileClose( file );
 
 
     // reset volume state (remount)
-    adfVolUnMount ( vol );
+    adfVolUnMount( vol );
     vol = //tdata->vol =
-        adfVolMount ( device, 0, ADF_ACCESS_MODE_READWRITE );
+        adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
 
-    file = adfFileOpen ( vol, filename, ADF_FILE_MODE_READ );
-    ck_assert_ptr_nonnull ( file );
+    file = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
+    ck_assert_ptr_nonnull( file );
 
     const unsigned truncsize = tdata->truncsize;
-    //printf ( "testing with: bufsize %u, truncsize %u\n",
-    //         bufsize, truncsize );
-    //fflush(stdout);
+    //printf( "testing with: bufsize %u, truncsize %u\n",
+    //        bufsize, truncsize );
+    //fflush( stdou t);
 
-    struct AdfVectorSectors blocks_to_remove = adfVectorSectorsCreate(0);
-    ADF_RETCODE rc = adfFileTruncateGetBlocksToRemove ( file, truncsize, &blocks_to_remove );
-    //printf ( "testing 2 with : bufsize %u, truncsize %u\n",
+    struct AdfVectorSectors blocks_to_remove = adfVectorSectorsCreate( 0 );
+    ADF_RETCODE rc = adfFileTruncateGetBlocksToRemove( file, truncsize, &blocks_to_remove );
+    //printf( "testing 2 with : bufsize %u, truncsize %u\n",
     //         bufsize, truncsize );
-    //fflush(stdout);
-    ck_assert_int_eq ( rc, ADF_RC_OK );
+    //fflush( stdout );
+    ck_assert_int_eq( rc, ADF_RC_OK );
 
-    adfFileClose ( file );
+    adfFileClose( file );
 
     //const unsigned free_blocks_file_truncated_expected =
-    //    free_blocks_before - filesize2blocks ( truncsize, vol->datablockSize );
+    //    free_blocks_before - filesize2blocks( truncsize, vol->datablockSize );
     const unsigned n_blocks_to_remove_expected =
-        adfFileSize2Blocks ( bufsize, vol->datablockSize ) -
-        adfFileSize2Blocks ( truncsize, vol->datablockSize );
+        adfFileSize2Blocks( bufsize, vol->datablockSize ) -
+        adfFileSize2Blocks( truncsize, vol->datablockSize );
     
     //ck_assert_uint_eq ( n_blocks_to_remove_expected, blocks_to_remove.len );
-    ck_assert_msg ( n_blocks_to_remove_expected == blocks_to_remove.nItems,
-                    "n_blocks_to_remove_expected %d == blocks_to_remove.len %d, "
-                    "bufsize %u, truncsize %u",
-                    n_blocks_to_remove_expected, blocks_to_remove.nItems,
-                    bufsize, truncsize );
+    ck_assert_msg( n_blocks_to_remove_expected == blocks_to_remove.nItems,
+                   "n_blocks_to_remove_expected %d == blocks_to_remove.len %d, "
+                   "bufsize %u, truncsize %u",
+                   n_blocks_to_remove_expected, blocks_to_remove.nItems,
+                   bufsize, truncsize );
     blocks_to_remove.destroy( &blocks_to_remove );
 
     // umount volume
-    adfVolUnMount ( vol );
+    adfVolUnMount( vol );
 }
 
 static const unsigned buflen[] = {
@@ -211,7 +210,7 @@ static const unsigned buflen[] = {
     100000, 200000, 512000,
     800000
 };
-static const unsigned buflensize = sizeof ( buflen ) / sizeof ( unsigned );
+static const unsigned buflensize = sizeof( buflen ) / sizeof( unsigned );
 
 
 static const unsigned truncsizes[] = {
@@ -233,133 +232,130 @@ static const unsigned truncsizes[] = {
     100000, 200000, 512000,
     800000, 820000
 };
-static const unsigned ntruncsizes = sizeof ( truncsizes ) / sizeof ( unsigned );
+static const unsigned ntruncsizes = sizeof( truncsizes ) / sizeof( unsigned );
 
 
-//static const unsigned trunc
-
-
-START_TEST ( test_file_truncate2_ofs )
+START_TEST( test_file_truncate2_ofs )
 {
     test_data_t test_data = {
-        .adfname = "test_file_truncate2_ofs.adf",
-        .volname = "Test_file_truncate2_ofs",
-        .fstype  = 0,          // OFS
-        .openMode = ADF_FILE_MODE_WRITE,
+        .adfname       = "test_file_truncate2_ofs.adf",
+        .volname       = "Test_file_truncate2_ofs",
+        .fstype        = 0,          // OFS
+        .openMode      = ADF_FILE_MODE_WRITE,
         .nVolumeBlocks = 1756
     };
-    for ( unsigned i = 0 ; i < buflensize ; ++i ) {
+
+    for ( unsigned i = 0; i < buflensize; ++i ) {
         test_data.bufsize = buflen[i];
-        for ( unsigned j = 0 ; j < ntruncsizes ; ++j ) {
+        for ( unsigned j = 0; j < ntruncsizes; ++j ) {
             test_data.truncsize = truncsizes[j];
             if ( test_data.bufsize < test_data.truncsize )
                 continue;
-            setup ( &test_data );
-            test_adfFileTruncateGetBlocksToRemove ( &test_data );
-            teardown ( &test_data );
+            setup( &test_data );
+            test_adfFileTruncateGetBlocksToRemove( &test_data );
+            teardown( &test_data );
         }
     }
 }
 END_TEST
 
 
-START_TEST ( test_file_truncate2_ffs )
+START_TEST( test_file_truncate2_ffs )
 {
     test_data_t test_data = {
-        .adfname = "test_file_truncate2_ffs.adf",
-        .volname = "Test_file_truncate2_ffs",
-        .fstype  = 1,          // FFS
-        .openMode = ADF_FILE_MODE_WRITE,
+        .adfname       = "test_file_truncate2_ffs.adf",
+        .volname       = "Test_file_truncate2_ffs",
+        .fstype        = 1,          // FFS
+        .openMode      = ADF_FILE_MODE_WRITE,
         .nVolumeBlocks = 1756
     };
-    for ( unsigned i = 0 ; i < buflensize ; ++i ) {
+    for ( unsigned i = 0; i < buflensize; ++i ) {
         test_data.bufsize = buflen[i];
-        for ( unsigned j = 0 ; j < ntruncsizes ; ++j ) {
+        for ( unsigned j = 0; j < ntruncsizes; ++j ) {
             test_data.truncsize = truncsizes[j];
             if ( test_data.bufsize < test_data.truncsize )
                 continue;
-            setup ( &test_data );
-            test_adfFileTruncateGetBlocksToRemove ( &test_data );
-            teardown ( &test_data );
+            setup( &test_data );
+            test_adfFileTruncateGetBlocksToRemove( &test_data );
+            teardown( &test_data );
         }
     }
 }
 END_TEST
 
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * s = suite_create ( "adflib" );
+    Suite * const suite = suite_create( "adflib" );
     
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib test_file_truncate2_ofs" );
-    tcase_add_test ( tc, test_file_truncate2_ofs );
-    tcase_set_timeout ( tc, 60 );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib test_file_truncate2_ofs" );
+    tcase_add_test( tcase, test_file_truncate2_ofs );
+    tcase_set_timeout( tcase, 60 );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib test_file_truncate2_ffs" );
+    tcase = tcase_create( "adflib test_file_truncate2_ffs" );
     //tcase_add_checked_fixture ( tc, setup_ffs, teardown_ffs );
-    tcase_add_test ( tc, test_file_truncate2_ffs );
-    tcase_set_timeout ( tc, 60 );
-    suite_add_tcase ( s, tc );
+    tcase_add_test( tcase, test_file_truncate2_ffs );
+    tcase_set_timeout( tcase, 60 );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * s = adflib_suite();
-    SRunner * sr = srunner_create ( s );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
     adfLibInit();
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
     adfLibCleanUp();
 
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    const int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
-void setup ( test_data_t * const tdata )
+void setup( test_data_t * const tdata )
 {
-    tdata->device = adfDevCreate ( "ramdisk", tdata->adfname, 80, 2, 11 );
-    if ( ! tdata->device ) {       
+    tdata->device = adfDevCreate( "ramdisk", tdata->adfname, 80, 2, 11 );
+    if ( ! tdata->device ) {
         //return;
-        exit(1);
+        exit( 1 );
     }
-    if ( adfCreateFlop ( tdata->device, tdata->volname, tdata->fstype ) != ADF_RC_OK ) {
-        fprintf ( stderr, "adfCreateFlop error creating volume: %s\n",
-                  tdata->volname );
-        exit(1);
+    if ( adfCreateFlop( tdata->device, tdata->volname, tdata->fstype ) != ADF_RC_OK ) {
+        fprintf( stderr, "adfCreateFlop error creating volume: %s\n",
+                 tdata->volname );
+        exit( 1 );
     }
 
-    //tdata->vol = adfVolMount ( tdata->device, 0, ADF_ACCESS_MODE_READWRITE );
+    //tdata->vol = adfVolMount( tdata->device, 0, ADF_ACCESS_MODE_READWRITE );
     //if ( ! tdata->vol )
     //    return;
-    //    exit(1);
-    tdata->buffer = malloc ( tdata->bufsize );
+    //    exit( 1 );
+    tdata->buffer = malloc( tdata->bufsize );
     if ( ! tdata->buffer )
-        exit(1);
-    //pattern_AMIGAMIG ( tdata->buffer, tdata->bufsize );
-    pattern_random ( tdata->buffer, tdata->bufsize );
+        exit( 1 );
+    //pattern_AMIGAMIG( tdata->buffer, tdata->bufsize );
+    pattern_random( tdata->buffer, tdata->bufsize );
 }
 
 
-void teardown ( test_data_t * const tdata )
+void teardown( test_data_t * const tdata )
 {
-    free ( tdata->buffer );
+    free( tdata->buffer );
     tdata->buffer = NULL;
 
-    //adfVolUnMount ( tdata->vol );
-    adfDevUnMount ( tdata->device );
-    adfDevClose ( tdata->device );
-    //if ( unlink ( tdata->adfname ) != 0 )
-    //    perror("error deleting the image");
+    //adfVolUnMount( tdata->vol );
+    adfDevUnMount( tdata->device );
+    adfDevClose( tdata->device );
+    //if ( unlink( tdata->adfname ) != 0 )
+    //    perror( "error deleting the image" );
 }
