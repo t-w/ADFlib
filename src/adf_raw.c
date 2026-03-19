@@ -376,11 +376,8 @@ uint32_t adfNormalSum( const uint8_t * const  buf,
                        const int              offset,
                        const int              bufLen )
 {
-    uint32_t newsum;
-    int i;
-
-    newsum = 0L;
-    for ( i = 0; i < bufLen / 4; i++ )
+    uint32_t newsum = 0L;
+    for ( unsigned i = 0; i < bufLen / 4; i++ )
         if ( i != offset / 4 )       /* old chksum */
             newsum += swapUint32fromPtr( buf + i * 4 );
     newsum = (uint32_t) ( - (int32_t) newsum );	/* WARNING */
@@ -394,11 +391,8 @@ uint32_t adfNormalSum( const uint8_t * const  buf,
  */
 uint32_t adfBitmapSum( const uint8_t * const  buf )
 {
-    uint32_t newSum;
-    int i;
-	
-    newSum = 0L;
-    for ( i = 1; i < 128; i++ )
+    uint32_t newSum = 0L;
+    for ( unsigned i = 1; i < 128; i++ )
         newSum -= swapUint32fromPtr( buf + i * 4 );
     return newSum;
 }
@@ -410,11 +404,8 @@ uint32_t adfBitmapSum( const uint8_t * const  buf )
  */
 uint32_t adfBootSum( const uint8_t * const  buf )
 {
-    uint32_t d, newSum;
-    int i;
-	
-    newSum = 0L;
-    for ( i = 0; i < 256; i++ ) {
+    uint32_t d, newSum = 0L;
+    for ( unsigned i = 0; i < 256; i++ ) {
         if ( i != 1 ) {
             d = swapUint32fromPtr( buf + i * 4 );
             if ( ( 0xffffffffU - newSum ) < d )
@@ -429,10 +420,8 @@ uint32_t adfBootSum( const uint8_t * const  buf )
 
 uint32_t adfBootSum2( const uint8_t * const  buf )
 {
-    uint32_t prevsum, newSum;
-
-    newSum = 0L;
-    for ( unsigned i = 0; i < 1024 / sizeof(uint32_t) ; i++ ) {
+    uint32_t prevsum, newSum = 0L;
+    for ( unsigned i = 0; i < 1024 / sizeof( uint32_t ) ; i++ ) {
         if ( i != 1 ) {
             prevsum = newSum;
             newSum += swapUint32fromPtr( buf + i * 4 );
