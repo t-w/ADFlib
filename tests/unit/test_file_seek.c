@@ -23,23 +23,22 @@ typedef struct test_data_s {
 } test_data_t;
 
 
-void setup ( test_data_t * const tdata );
-void teardown ( test_data_t * const tdata );
+void setup( test_data_t * const tdata );
+void teardown( test_data_t * const tdata );
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-void test_file_seek_eof ( test_data_t * const tdata )
+void test_file_seek_eof( test_data_t * const tdata )
 {
     struct AdfDevice * const device = tdata->device;
-    ck_assert_ptr_nonnull ( device );
-    unsigned char * const buffer = tdata->buffer;
-    const unsigned bufsize = tdata->bufsize;
+    ck_assert_ptr_nonnull( device );
+    unsigned char * const buffer  = tdata->buffer;
+    const unsigned        bufsize = tdata->bufsize;
 
     ///
     /// mount the test volume
@@ -47,38 +46,38 @@ void test_file_seek_eof ( test_data_t * const tdata )
 
     // mount the test volume
     struct AdfVolume * vol = // tdata->vol =
-        adfVolMount ( device, 0, ADF_ACCESS_MODE_READWRITE );
-    ck_assert_ptr_nonnull ( vol );
+        adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
+    ck_assert_ptr_nonnull( vol );
 
     // check it is an empty floppy disk
-    unsigned free_blocks_before = adfCountFreeBlocks ( vol );
-    ck_assert_int_eq ( tdata->nVolumeBlocks, free_blocks_before );
-    int nentries = adfDirCountEntries ( vol, vol->curDirPtr );
-    ck_assert_int_eq ( 0, nentries ); 
+    unsigned free_blocks_before = adfCountFreeBlocks( vol );
+    ck_assert_int_eq( tdata->nVolumeBlocks, free_blocks_before );
+    int nentries = adfDirCountEntries( vol, vol->curDirPtr );
+    ck_assert_int_eq( 0, nentries );
 
     // put random data in the buffer
-    pattern_random ( buffer, bufsize );
+    pattern_random( buffer, bufsize );
 
     ///
     /// write the data to the file
     ///
 
     const char filename[] = "testfile.tmp";
-    struct AdfFile * file = adfFileOpen ( vol, filename, tdata->openMode );
-    ck_assert_ptr_nonnull ( file );
-    unsigned bytes_written = (unsigned) adfFileWrite ( file, bufsize, buffer );
-    ck_assert_uint_eq ( bufsize, bytes_written );
-    adfFileClose ( file );
+    struct AdfFile * file = adfFileOpen( vol, filename, tdata->openMode );
+    ck_assert_ptr_nonnull( file );
+    unsigned bytes_written = (unsigned) adfFileWrite( file, bufsize, buffer );
+    ck_assert_uint_eq( bufsize, bytes_written );
+    adfFileClose( file );
 
     // reset volume state (remount)
-    adfVolUnMount ( vol );
+    adfVolUnMount( vol );
     vol = // tdata->vol =
-        adfVolMount ( device, 0, ADF_ACCESS_MODE_READWRITE );
+        adfVolMount( device, 0, ADF_ACCESS_MODE_READWRITE );
     
     // reopen the file
-    file = adfFileOpen ( vol, filename, ADF_FILE_MODE_READ );
-    ck_assert_ptr_nonnull ( file );
-    ck_assert_uint_eq ( file->fileHdr->byteSize, bufsize );
+    file = adfFileOpen( vol, filename, ADF_FILE_MODE_READ );
+    ck_assert_ptr_nonnull( file );
+    ck_assert_uint_eq( file->fileHdr->byteSize, bufsize );
 
     const unsigned seek_offsets_from_eof[] = {
         0, 1, 2, 3, 4,
@@ -102,38 +101,39 @@ void test_file_seek_eof ( test_data_t * const tdata )
         100000, 200000,
         512000, 800000
     };
-    const unsigned n_seek_offsets_from_eof = sizeof(seek_offsets_from_eof) / sizeof(unsigned);
+    const unsigned n_seek_offsets_from_eof =
+        sizeof( seek_offsets_from_eof ) / sizeof( unsigned );
 
-    for ( unsigned i = 0 ; i < n_seek_offsets_from_eof ; ++i ) {
+    for ( unsigned i = 0; i < n_seek_offsets_from_eof; ++i ) {
 
         // checking: eof pos. - offset
         unsigned offset = file->fileHdr->byteSize >= seek_offsets_from_eof[i] ?
             file->fileHdr->byteSize - seek_offsets_from_eof[i] : 0;
-        ck_assert_int_eq ( adfFileSeek ( file, offset ), ADF_RC_OK );
-        ck_assert_uint_eq ( file->fileHdr->byteSize, bufsize );
-        ck_assert_uint_eq ( file->pos, offset );
+        ck_assert_int_eq( adfFileSeek( file, offset ), ADF_RC_OK );
+        ck_assert_uint_eq( file->fileHdr->byteSize, bufsize );
+        ck_assert_uint_eq( file->pos, offset );
 
         // checking: eof pos. + offset
         offset = file->fileHdr->byteSize + seek_offsets_from_eof[i];
-        ck_assert_int_eq ( adfFileSeek ( file, offset ), ADF_RC_OK );
-        ck_assert_uint_eq ( file->fileHdr->byteSize, bufsize );
-        ck_assert_uint_eq ( file->pos, file->fileHdr->byteSize );
+        ck_assert_int_eq( adfFileSeek( file, offset ), ADF_RC_OK );
+        ck_assert_uint_eq( file->fileHdr->byteSize, bufsize );
+        ck_assert_uint_eq( file->pos, file->fileHdr->byteSize );
     }
-    ck_assert_uint_eq ( file->fileHdr->byteSize, bufsize );
-    adfFileClose ( file );
+    ck_assert_uint_eq( file->fileHdr->byteSize, bufsize );
+    adfFileClose( file );
 
     // verify file data
     const bool data_valid =
-        ( verify_file_data ( vol, filename, buffer, bufsize, 10 ) == 0 );
-    ck_assert_msg ( data_valid,
-                    "Data verification failed: "
-                    "bufsize %u, vol type %s, dblock size %u\n",
-                    bufsize,
-                    ( tdata->fstype & 1 ) == 0 ? "OFS" : "FFS",
-                    vol->datablockSize );
+        ( verify_file_data( vol, filename, buffer, bufsize, 10 ) == 0 );
+    ck_assert_msg( data_valid,
+                   "Data verification failed: "
+                   "bufsize %u, vol type %s, dblock size %u\n",
+                   bufsize,
+                   ( tdata->fstype & 1 ) == 0 ? "OFS" : "FFS",
+                   vol->datablockSize );
 
     // umount volume
-    adfVolUnMount ( vol );
+    adfVolUnMount( vol );
 }
 
 
@@ -160,110 +160,111 @@ static const unsigned buflen[] = {
     //100000, 200000,
     512000, 800000
 };
-static const unsigned buflensize = sizeof ( buflen ) / sizeof (unsigned);
+static const unsigned buflensize = sizeof( buflen ) / sizeof( unsigned );
 
 
-START_TEST ( test_file_seek_eof_ofs )
+START_TEST( test_file_seek_eof_ofs )
 {
     test_data_t test_data = {
-        .adfname = "test_file_seek_eof_ofs.adf",
-        .volname = "Test_file_seek_eof_ofs",
-        .fstype  = 0,          // OFS
-        .openMode = ADF_FILE_MODE_WRITE,
+        .adfname       = "test_file_seek_eof_ofs.adf",
+        .volname       = "Test_file_seek_eof_ofs",
+        .fstype        = 0,          // OFS
+        .openMode      = ADF_FILE_MODE_WRITE,
         .nVolumeBlocks = 1756
     };
-    for ( unsigned i = 0 ; i < buflensize ; ++i )  {
+
+    for ( unsigned i = 0; i < buflensize; ++i )  {
         test_data.bufsize = buflen[i];
-        setup ( &test_data );
-        test_file_seek_eof ( &test_data );
-        teardown ( &test_data );
+        setup( &test_data );
+        test_file_seek_eof( &test_data );
+        teardown( &test_data );
     }
 }
 END_TEST
 
 
-START_TEST ( test_file_seek_eof_ffs )
+START_TEST( test_file_seek_eof_ffs )
 {
     test_data_t test_data = {
-        .adfname = "test_file_seek_eof_ffs.adf",
-        .volname = "Test_file_seek_eof_ffs",
-        .fstype  = 1,          // FFS
-        .openMode = ADF_FILE_MODE_WRITE,
+        .adfname       = "test_file_seek_eof_ffs.adf",
+        .volname       = "Test_file_seek_eof_ffs",
+        .fstype        = 1,          // FFS
+        .openMode      = ADF_FILE_MODE_WRITE,
         .nVolumeBlocks = 1756
     };
-    for ( unsigned i = 0 ; i < buflensize ; ++i )  {
+
+    for ( unsigned i = 0; i < buflensize; ++i )  {
         test_data.bufsize = buflen[i];
-        setup ( &test_data );
-        test_file_seek_eof ( &test_data );
-        teardown ( &test_data );
+        setup( &test_data );
+        test_file_seek_eof( &test_data );
+        teardown( &test_data );
     }
 }
 END_TEST
 
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * s = suite_create ( "adflib" );
+    Suite * const suite = suite_create( "adflib" );
 
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    tcase_set_timeout ( tc, 30 );    
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    tcase_set_timeout( tcase, 30 );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib test_file_seek_eof_ofs" );
-    tcase_add_test ( tc, test_file_seek_eof_ofs );
-    tcase_set_timeout ( tc, 30 );    
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib test_file_seek_eof_ofs" );
+    tcase_add_test( tcase, test_file_seek_eof_ofs );
+    tcase_set_timeout( tcase, 30 );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib test_file_seek_eof_ffs" );
+    tcase = tcase_create( "adflib test_file_seek_eof_ffs" );
     //tcase_add_checked_fixture ( tc, setup_ffs, teardown_ffs );
-    tcase_add_test ( tc, test_file_seek_eof_ffs );
-    tcase_set_timeout ( tc, 30 );    
-    suite_add_tcase ( s, tc );
+    tcase_add_test( tcase, test_file_seek_eof_ffs );
+    tcase_set_timeout( tcase, 30 );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * s = adflib_suite();
-    SRunner * sr = srunner_create ( s );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
     adfLibInit();
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
     adfLibCleanUp();
 
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    const int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
-void setup ( test_data_t * const tdata )
+void setup( test_data_t * const tdata )
 {
-    tdata->device = adfDevCreate ( "dump", tdata->adfname, 80, 2, 11 );
+    tdata->device = adfDevCreate( "dump", tdata->adfname, 80, 2, 11 );
     if ( tdata->device == NULL ) {
         //return;
-        exit(1);
+        exit( 1 );
     }
-    if ( adfCreateFlop ( tdata->device, tdata->volname, tdata->fstype ) != ADF_RC_OK ) {
-        fprintf ( stderr, "adfCreateFlop error creating volume: %s\n",
-                  tdata->volname );
-        exit(1);
+    if ( adfCreateFlop( tdata->device, tdata->volname, tdata->fstype ) != ADF_RC_OK ) {
+        fprintf( stderr, "adfCreateFlop error creating volume: %s\n",
+                 tdata->volname );
+        exit( 1 );
     }
 
-    //tdata->vol = adfVolMount ( tdata->device, 0, ADF_ACCESS_MODE_READWRITE );
+    //tdata->vol = adfVolMount( tdata->device, 0, ADF_ACCESS_MODE_READWRITE );
     //if ( ! tdata->vol )
     //    return;
-    //    exit(1);
-    tdata->buffer = malloc ( tdata->bufsize );
+    //    exit( 1 );
+    tdata->buffer = malloc( tdata->bufsize );
     if ( tdata->buffer == NULL )
-        exit(1);
-    //pattern_AMIGAMIG ( tdata->buffer, tdata->bufsize );
-    //pattern_random ( tdata->buffer, tdata->bufsize );
+        exit( 1 );
+    //pattern_AMIGAMIG( tdata->buffer, tdata->bufsize );
+    //pattern_random( tdata->buffer, tdata->bufsize );
 }
 
 
