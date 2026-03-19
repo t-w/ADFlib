@@ -35,26 +35,103 @@
 #define SW_LONG  4
 #define SW_SHORT 2
 #define SW_CHAR  1
+#define TOT_LEN  0
 
 #define MAX_SWTYPE 11
 
-static const int swapTable [ MAX_SWTYPE + 1 ][ 15 ] = {
-    {   4, SW_CHAR,   2, SW_LONG, 1012, SW_CHAR, 0, 1024 },    /* first bytes of boot */
-    { 108, SW_LONG,  40, SW_CHAR,   10, SW_LONG, 0, 512 },     /* root */
-    {   6, SW_LONG, 488, SW_CHAR,    0, 512 },                 /* data */
-                                                               /* file, dir, entry */
-    {  82, SW_LONG, 92, SW_CHAR, 3, SW_LONG, 36, SW_CHAR, 11, SW_LONG, 0, 512 },
-    {   6, SW_LONG,  0,      24 },                             /* cache */
-    { 128, SW_LONG,  0,     512 },                             /* bitmap, fext */
-		                                               /* link */
-    {  6, SW_LONG,  64, SW_CHAR,  86, SW_LONG, 32, SW_CHAR, 12, SW_LONG, 0, 512 },
-    {  4, SW_CHAR,  39, SW_LONG,  56, SW_CHAR, 10, SW_LONG,  0,     256 },  /* RDSK */
-    {  4, SW_CHAR, 127, SW_LONG,   0,     512 },                            /* BADB */
-    {  4, SW_CHAR,   8, SW_LONG,  32, SW_CHAR, 31, SW_LONG,  4, SW_CHAR,    /* PART */
-      15, SW_LONG,   0, 256 },
-    {  4, SW_CHAR,   7, SW_LONG,   4, SW_CHAR, 55, SW_LONG,  0,     256 },  /* FSHD */
-    {  4, SW_CHAR,   4, SW_LONG, 492, SW_CHAR,  0,     512 }                /* LSEG */
-    };
+
+struct swapEl {
+    int type, len;
+};
+
+static const struct swapEl swapTable [ MAX_SWTYPE + 1 ][ 7 ] = {
+    /* first bytes of boot */
+    { { SW_CHAR,    4 },
+      { SW_LONG,    2 },
+      { SW_CHAR, 1012 },
+      { TOT_LEN, 1024 }     // total len. (control)
+    },
+
+    /* root */
+    { { SW_LONG, 108 },
+      { SW_CHAR,  40 },
+      { SW_LONG,  10 },
+      { TOT_LEN, 512 }
+    },
+
+    /* data */
+    { { SW_LONG,   6 },
+      { SW_CHAR, 488 },
+      { TOT_LEN, 512 }
+    },
+
+    /* file, dir, entry */
+    { { SW_LONG,  82 },
+      { SW_CHAR,  92 },
+      { SW_LONG,   3 },
+      { SW_CHAR,  36 },
+      { SW_LONG,  11 },
+      { TOT_LEN, 512 }
+    },
+
+    /* cache */
+    { { SW_LONG, 6 },
+      { TOT_LEN, 24 }
+    },
+
+    /* bitmap, fext */
+    { { SW_LONG, 128 },
+      { TOT_LEN, 512 }
+    },
+
+    /* link */
+    { { SW_LONG,   6 },
+      { SW_CHAR,  64 },
+      { SW_LONG,  86 },
+      { SW_CHAR,  32 },
+      { SW_LONG,  12 },
+      { TOT_LEN, 512 }
+    },
+
+    /* RDSK */
+    { { SW_CHAR,   4 },
+      { SW_LONG,  39 },
+      { SW_CHAR,  56 },
+      { SW_LONG,  10 },
+      { TOT_LEN, 256 }
+    },
+
+    /* BADB */
+    { { SW_CHAR,   4 },
+      { SW_LONG, 127 },
+      { TOT_LEN, 512 }
+    },
+
+    /* PART */
+    { { SW_CHAR,   4 },
+      { SW_LONG,   8 },
+      { SW_CHAR,  32 },
+      { SW_LONG,  31 },
+      { SW_CHAR,   4 },
+      { SW_LONG,  15 },
+      { TOT_LEN, 256 }
+    },
+
+    /* FSHD */
+    { { SW_CHAR,   4 },
+      { SW_LONG,   7 },
+      { SW_CHAR,   4 },
+      { SW_LONG,  55 },
+      { TOT_LEN, 256 }
+    },
+
+    /* LSEG */
+    { { SW_CHAR,   4 },
+      { SW_LONG,   4 },
+      { SW_CHAR, 492 },
+      { TOT_LEN, 512 }
+    }
+};
 
 
 /*
@@ -77,9 +154,9 @@ void adfSwapEndian( uint8_t * const  buf,
         return;
     }
 
-    while ( swapTable[ type ][ i ] != 0 ) {
-        for ( int j = 0 ; j < swapTable[ type ][ i ] ; j++ )  {
-            switch ( swapTable[ type ][ i + 1 ] ) {
+    while ( swapTable[ type ][ i ].type != TOT_LEN ) {
+        for ( int j = 0 ; j < swapTable[ type ][ i ].len ; j++ )  {
+            switch ( swapTable[ type ][ i ].type ) {
             case SW_LONG:
                 swapUint32AtPtr( buf + p );
                 p += 4;
@@ -95,14 +172,12 @@ void adfSwapEndian( uint8_t * const  buf,
                 ;
             }
         }
-        i += 2;
+        i++;
     }
-    if ( p != swapTable[ type ][ i + 1 ] )
+
+    if ( p != swapTable[ type ][ i ].len )
         adfEnv.wFct("%s: Warning: Endian Swapping length", __func__ );	/* BV */
 }
-
-
-
 
 
 /*
