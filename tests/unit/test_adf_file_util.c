@@ -6,14 +6,13 @@
 #include "adf_file_util.h"
 
 
-START_TEST ( test_check_framework )
-{
-    ck_assert ( 1 );
+START_TEST( test_check_framework ) {
+    ck_assert( 1 );
 }
 END_TEST
 
 
-START_TEST ( test_adfFilePos2datablockIndex )
+START_TEST( test_adfFilePos2datablockIndex )
 {
     typedef struct test_data_s {
       // input
@@ -34,18 +33,18 @@ START_TEST ( test_adfFilePos2datablockIndex )
         { 1023, 488, 2 }, { 1023, 512, 1 },
         { 1024, 488, 2 }, { 1024, 512, 2 }
     };
-    const unsigned NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
+    const unsigned NTESTS = sizeof( test_data ) / sizeof( test_data_t );
 
     for ( unsigned i = 0; i < NTESTS ; ++i ) {
-        unsigned dblock_i = adfFilePos2datablockIndex ( test_data[i].pos,
-                                                        test_data[i].blocksize );
-        ck_assert_uint_eq ( test_data[i].datablock_index, dblock_i );
+        unsigned dblock_i = adfFilePos2datablockIndex( test_data[i].pos,
+                                                       test_data[i].blocksize );
+        ck_assert_uint_eq( test_data[i].datablock_index, dblock_i );
     }
 }
 END_TEST
 
 
-START_TEST ( test_adfFileSize2Datablocks )
+START_TEST( test_adfFileSize2Datablocks )
 {
     typedef struct test_data_s {
       // input
@@ -71,23 +70,23 @@ START_TEST ( test_adfFileSize2Datablocks )
         { 1024, 488, 3 }, { 1024, 512, 2 },
         { 1025, 488, 3 }, { 1025, 512, 3 }
     };
-    const unsigned NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
+    const unsigned NTESTS = sizeof( test_data ) / sizeof( test_data_t );
 
     for ( unsigned i = 0; i < NTESTS ; ++i ) {
-        unsigned ndblocks = adfFileSize2Datablocks ( test_data[i].fsize,
-                                                     test_data[i].blocksize );
+        unsigned ndblocks = adfFileSize2Datablocks( test_data[i].fsize,
+                                                    test_data[i].blocksize );
         //ck_assert_uint_eq ( test_data[i].ndatablocks, ndblocks );
-        ck_assert_msg ( test_data[i].ndatablocks == ndblocks,
-                        "test_data[i].ndatablocks %u != ndblocks %u, fsize %u, blocksize %u",
-                        test_data[i].ndatablocks, ndblocks,
-                        test_data[i].fsize,
-                        test_data[i].blocksize );
+        ck_assert_msg( test_data[i].ndatablocks == ndblocks,
+                       "test_data[i].ndatablocks %u != ndblocks %u, fsize %u, blocksize %u",
+                       test_data[i].ndatablocks, ndblocks,
+                       test_data[i].fsize,
+                       test_data[i].blocksize );
     }
 }
 END_TEST
 
 
-START_TEST ( test_adfFileDatablocks2Extblocks )
+START_TEST( test_adfFileDatablocks2Extblocks )
 {
     typedef struct test_data_s {
       // input
@@ -107,21 +106,21 @@ START_TEST ( test_adfFileDatablocks2Extblocks )
         { 216, 2 },
         { 217, 3 }
     };
-    const unsigned NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
+    const unsigned NTESTS = sizeof( test_data ) / sizeof( test_data_t );
 
     for ( unsigned i = 0; i < NTESTS ; ++i ) {
-        unsigned nExtBlocks = adfFileDatablocks2Extblocks ( test_data[i].ndatablocks );
+        unsigned nExtBlocks = adfFileDatablocks2Extblocks( test_data[i].ndatablocks );
         //ck_assert_uint_eq ( test_data[i].ndatablocks, ndblocks );
-        ck_assert_msg ( test_data[i].nextblocks == nExtBlocks,
-                        "test_data[i].nextblocks %u != nExtBlocks %u, ndatablocks %u",
-                        test_data[i].nextblocks, nExtBlocks,
-                        test_data[i].ndatablocks );
+        ck_assert_msg( test_data[i].nextblocks == nExtBlocks,
+                       "test_data[i].nextblocks %u != nExtBlocks %u, ndatablocks %u",
+                       test_data[i].nextblocks, nExtBlocks,
+                       test_data[i].ndatablocks );
     }
 }
 END_TEST
 
 
-START_TEST ( test_adfFileSize2Blocks )
+START_TEST( test_adfFileSize2Blocks )
 {
     typedef struct test_data_s {
       // input
@@ -158,59 +157,59 @@ START_TEST ( test_adfFileSize2Blocks )
          *                       the 2nd ext block for 512 (+1 data block, +1 ext block)
          */
     };
-    const unsigned NTESTS = sizeof ( test_data ) / sizeof ( test_data_t );
+    const unsigned NTESTS = sizeof( test_data ) / sizeof( test_data_t );
 
     for ( unsigned i = 0; i < NTESTS ; ++i ) {
-        unsigned nblocks = adfFileSize2Blocks ( test_data[i].fsize,
-                                                test_data[i].blocksize );
+        unsigned nblocks = adfFileSize2Blocks( test_data[i].fsize,
+                                               test_data[i].blocksize );
         //ck_assert_uint_eq ( test_data[i].ndatablocks, ndblocks );
-        ck_assert_msg ( test_data[i].nblocks == nblocks,
-                        "test_data[i].nblocks %u != nblocks %u, fsize %u, blocksize %u",
-                        test_data[i].nblocks, nblocks,
-                        test_data[i].fsize,
-                        test_data[i].blocksize );
+        ck_assert_msg( test_data[i].nblocks == nblocks,
+                       "test_data[i].nblocks %u != nblocks %u, fsize %u, blocksize %u",
+                       test_data[i].nblocks, nblocks,
+                       test_data[i].fsize,
+                       test_data[i].blocksize );
     }
 }
 END_TEST
 
 
-Suite * adflib_suite ( void )
+Suite * adflib_suite( void )
 {
-    Suite * s = suite_create ( "adf file util" );
+    Suite * const suite = suite_create( "adf file util" );
     
-    TCase * tc = tcase_create ( "check framework" );
-    tcase_add_test ( tc, test_check_framework );
-    suite_add_tcase ( s, tc );
+    TCase * tcase = tcase_create( "check framework" );
+    tcase_add_test( tcase, test_check_framework );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib adfFilePos2datablockIndex" );
-    tcase_add_test ( tc, test_adfFilePos2datablockIndex );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create ( "adflib adfFilePos2datablockIndex" );
+    tcase_add_test( tcase, test_adfFilePos2datablockIndex );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib adfFileSize2Datablocks" );
-    tcase_add_test ( tc, test_adfFileSize2Datablocks );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib adfFileSize2Datablocks" );
+    tcase_add_test( tcase, test_adfFileSize2Datablocks );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib adfFileDatablocks2Extblocks" );
-    tcase_add_test ( tc, test_adfFileDatablocks2Extblocks );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib adfFileDatablocks2Extblocks" );
+    tcase_add_test( tcase, test_adfFileDatablocks2Extblocks );
+    suite_add_tcase( suite, tcase );
 
-    tc = tcase_create ( "adflib adfFileSize2Blocks" );
-    tcase_add_test ( tc, test_adfFileSize2Blocks );
-    suite_add_tcase ( s, tc );
+    tcase = tcase_create( "adflib adfFileSize2Blocks" );
+    tcase_add_test( tcase, test_adfFileSize2Blocks );
+    suite_add_tcase( suite, tcase );
 
-    return s;
+    return suite;
 }
 
 
-int main ( void )
+int main( void )
 {
-    Suite * suite = adflib_suite();
-    SRunner * sr = srunner_create ( suite );
+    Suite * const   suite   = adflib_suite();
+    SRunner * const srunner = srunner_create( suite );
 
-    srunner_run_all ( sr, CK_VERBOSE ); //CK_NORMAL );
-    int number_failed = srunner_ntests_failed ( sr );
-    srunner_free ( sr );
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
+
+    const int number_failed = srunner_ntests_failed( srunner );
+    srunner_free( srunner );
+
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
