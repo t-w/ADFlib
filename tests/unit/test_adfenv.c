@@ -4,8 +4,7 @@
 
 #include "adflib.h"
 
-START_TEST( test_check_framework )
-{
+START_TEST( test_check_framework ) {
     ck_assert( 1 );
 }
 END_TEST
@@ -72,10 +71,7 @@ int main(void)
     srunner_run_all( srunner, CK_VERBOSE ); //CK_NORMAL );
 
     int number_failed = srunner_ntests_failed ( srunner );
-
     srunner_free( srunner );
 
-    return ( number_failed == 0 ) ?
-        EXIT_SUCCESS :
-        EXIT_FAILURE;
+    return ( number_failed == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
