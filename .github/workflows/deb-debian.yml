@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [11, stable]
+        image: [12, stable]
     container:
       image: debian:${{ matrix.image }}
     steps:
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [11, stable]
+        image: [12, stable]
     container:
       image: debian:${{ matrix.image }}
     steps:
