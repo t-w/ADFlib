@@ -1,3 +1,10 @@
+20MAR2026
+ADFlib 0.10.6
+- prevent inf. loop on invalid directories, #99
+- adfls: minor fixes (usage info), add man page.
+- adfVolCreate: fixed (rare) memory leaks (on errors).
+- some internal improvements (ie. refactoring, more tests).
+
 22SEP2025
 ADFlib 0.10.5
 - fixed opening small (smaller than floppies) HDF files.
@@ -136,9 +143,9 @@ to use the current directory structure
 20JAN07
 ADFlib 0.7.11a
 - Minor Makefile fixes. Works under Fedora Core 5, gcc 4.1.0.
-- Inclusing of Bjarke Viksoe C++ wrapper (adfwrapper.h). Windows specific for the moment, 
+- Inclusing of Bjarke Viksoe C++ wrapper (adfwrapper.h). Windows specific for the moment,
   but good example of C++ wrapper on top of ADFlib.
-- Inclusion of GPL license and text inside every code source file 
+- Inclusion of GPL license and text inside every code source file
   (requested by Gürkan Sengün to build a Debian package for unadf)
 
 31MAR06
@@ -152,13 +159,13 @@ ADFlib 0.7.9d by Gary Harris
 - marked all Bjarke changes by the /* BV */ comment
 
 22JAN01
-ADFlib 0.7.9c by Bjarke Viksoe 
+ADFlib 0.7.9c by Bjarke Viksoe
 - changes : Win32/nt4_dev.c
 	.return RC_ERROR instead of FALSE
 	.return TRUE when input parameter of NT4CloseDrive is NULL
 - changes : Win32/defendian.h
 	changes printf and putchar into -empty string- for Win32 GUI applications
-- fix : in adf_hd.c, in adfMountDev(), dumpfiledevice was assumed sometimes, but it could be native. 
+- fix : in adf_hd.c, in adfMountDev(), dumpfiledevice was assumed sometimes, but it could be native.
 	"if (dev->isNativeDev)" when needed
 - fix : in adf_hd.c, in adfMountDev(), some memory release was forgotten in case of error
 - change : adf_hd.c, line 36, floppy dump files with 83 sectors are now valid (request by users)
@@ -197,7 +204,7 @@ ADFlib 0.7.9c by Bjarke Viksoe
 06MAY99
 - adfGetVersionNumber() and adfGetVersionDate() added
 01MAY99
-- many date and time fields filled 
+- many date and time fields filled
 - bug fix in adfCreateDir()
 - adfRenameEntry() already worked with two differents dirs, but it's verified now
 29APR

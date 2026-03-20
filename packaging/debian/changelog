@@ -1,3 +1,13 @@
+adflib (0.10.6-1) unstable; urgency=medium
+
+  * prevent inf. loop on invalid directories, #99
+  * adfls: minor fixes (usage info), add man page.
+  * adfVolCreate: fixed (rare) memory leaks (on errors).
+  * some internal improvements (ie. refactoring, more tests).
+
+ -- Tomasz Wolak <tomas.wolak@gmail.com>  Fri, 20 Mar 2026 21:35:25 +0100
+
+
 adflib (0.10.5-1) unstable; urgency=medium
 
   * fixed opening small (smaller than floppies) HDF files.
