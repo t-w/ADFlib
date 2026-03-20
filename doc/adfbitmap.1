@@ -12,6 +12,10 @@ Commands available:
 .TP
 .B show
 display block allocation bitmap of a volume
+
+Note that the information stored in the bitmap is about all blocks counting
+from the 3rd block of a volume(!), omitting 2 blocks always considered allocated
+for the volume's bootblock.
 .TP
 .B rebuild
 enforce rebuilding block allocation bitmap of a volume (even if it is
