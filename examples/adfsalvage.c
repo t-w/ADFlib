@@ -1,7 +1,7 @@
 /*
  *  adfsalvage - show and restore deleted files on Amiga Disk Files (ADFs)
  *
- *  Copyright (C) 2023-2025 Tomasz Wolak
+ *  Copyright (C) 2023-2026 Tomasz Wolak
  *
  *  adfsalvage is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

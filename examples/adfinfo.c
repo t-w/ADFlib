@@ -1,7 +1,7 @@
 /*
  *  adfinfo - an utility for displaying Amiga disk images (ADF) metadata
  *
- *  Copyright (C) 2023-2025 Tomasz Wolak
+ *  Copyright (C) 2023-2026 Tomasz Wolak
  *
  *  This file is part of adfinfo, an utility program showing low-level
  *  filesystem metadata of Amiga Disk Files (ADFs).

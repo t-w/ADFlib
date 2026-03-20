@@ -1,7 +1,7 @@
 /*
  * linux/adf_dev_driver_nativ.c - native device driver for Linux
  *
- *  Copyright (C) 2023-2025 Tomasz Wolak
+ *  Copyright (C) 2023-2026 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

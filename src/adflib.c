@@ -1,6 +1,6 @@
 /*
  *  ADF Library. (C) 1997-2022 Laurent Clevy
- *               (C) 2023-2025 Tomasz Wolak
+ *               (C) 2023-2026 Tomasz Wolak
  *
  * adflib.c
  *

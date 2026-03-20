@@ -2,7 +2,7 @@
  *  Win32/adf_dev_driver_nativ.c - Win32 specific drive-access routines for ADFLib
  *
  *  Copyright (C) 1999      Dan Sutherland <dan@chromerhino.demon.co.uk>
- *                2023-2025 Tomasz Wolak
+ *                2023-2026 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

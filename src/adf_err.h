@@ -2,7 +2,7 @@
  *  adf_err.h - error codes
  *
  *  Copyright (C) 1997-2022 Laurent Clevy
- *                2023-2025 Tomasz Wolak
+ *                2023-2026 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

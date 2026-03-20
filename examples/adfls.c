@@ -1,7 +1,7 @@
 /*
  *  adfls - show contents of directories on ADF volumes
  *
- *  Copyright (C) 2025 Tomasz Wolak
+ *  Copyright (C) 2026 Tomasz Wolak
  *
  *  adfls is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

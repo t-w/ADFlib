@@ -1,7 +1,7 @@
 /*
  *  adfinfo_volume - volume metadata code
  *
- *  Copyright (C) 2023-2025 Tomasz Wolak
+ *  Copyright (C) 2023-2026 Tomasz Wolak
  *
  *  This file is part of adfinfo, an utility program showing low-level
  *  filesystem metadata of Amiga Disk Files (ADFs).

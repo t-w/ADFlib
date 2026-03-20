@@ -4,7 +4,7 @@
  *  These routines only currently work with drives <2GB and 512 bytes per sector
  *
  *  Copyright (C) 1999      Dan Sutherland
- *                2023-2025 Tomasz Wolak
+ *                2023-2026 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

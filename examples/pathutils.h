@@ -1,7 +1,7 @@
 /*
  *  pathutils - common path utilities
  *
- *  Copyright (C) 2023-2025 Tomasz Wolak
+ *  Copyright (C) 2023-2026 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *

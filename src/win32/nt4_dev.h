@@ -2,7 +2,7 @@
  *  nt4_dev.h - prototypes for NT4 direct drive access functions
  *
  *  Copyright (C) 1999      Dan Sutherland
- *                2023-2025 Tomasz Wolak
+ *                2023-2026 Tomasz Wolak
  *
  *  This file is part of ADFLib.
  *
