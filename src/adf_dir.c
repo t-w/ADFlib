@@ -1355,7 +1355,9 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
 {
     struct AdfEntryBlock parent, entryBlk;
 
-    if ( adfReadEntryBlock( vol, nSect, &parent ) != ADF_RC_OK )
+    if ( adfReadEntryBlock( vol, nSect, &parent ) != ADF_RC_OK ||
+         ( parent.type != ADF_ST_ROOT &&
+           parent.type != ADF_ST_DIR ) )
         return 1;
 
     unsigned nErrors = 0;
