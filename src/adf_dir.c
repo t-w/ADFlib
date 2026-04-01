@@ -1359,6 +1359,7 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
         return 1;
 
     unsigned nErrors = 0;
+
     for ( int i = 0 ; i < ADF_HT_SIZE ; i++ ) {
         if ( parent.hashTable[ i ] == 0 )
             continue;
@@ -1375,19 +1376,72 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
             if ( recurs && entry->type == ADF_ST_DIR )
                 nErrors += adfDirCheck( vol, entry->sector, true );
 
-            if ( sector != entryBlk.nextSameHash )
-                sector = entryBlk.nextSameHash;
-            else {
-                // prevent inf. loop on invalid disks (issue #99)
-                adfEnv.wFct( "%s:  directory: '%s': invalid nextSameHash value "
-                             "(the same as cur. dir. block): %d",
-                             __func__, parent.name, sector );
-                nErrors++;
-                sector = 0;
+            if ( entryBlk.nextSameHash == 0 ) {
+                adfFreeEntry( entry );
+                break;
             }
+
+            //
+            // Check sanity of the nextSameHash value (see issue #99)
+            //
+            // In rare cases, these values links back either to the directory
+            // itself or to another entry in the main table. This causes
+            // an infinite loop in the code reading the directory (it locks
+            // AmigaOS). It must have been a simple way to prevent people
+            // from looking at disk / directory contents (at the cost of
+            // crashing the user's system...).
+            //
+            // The checks below were added to detect such cases.
+            //
+            // Note that such disk should not be written before reparing since
+            // it may unexpectedly overwrite/corrupt existing contents. The disk
+            // should be fixed with proper tools.
+            //
+
+            // check if the entry.nextSameHash links to back to the itself
+            // (to the very same entry)
+            if ( sector == entryBlk.nextSameHash ) {
+                // prevent inf. loop on invalid disks (issue #99)
+                adfEnv.wFct( "%s:  directory '%s': invalid nextSameHash value "
+                             "(the same as current entry block): %d",
+                             __func__, parent.name, sector );
+                adfEnv.wFct( "%s:  repair the filesystem on the volume '%s' "
+                             "before writing anything on it!",
+                             __func__, vol->volName );
+                nErrors++;
+                adfFreeEntry( entry );
+                break;
+            }
+
+            // check if the entry links to any other entry in the main hashTable array
+            bool invalidNextSameHash = false;
+            for ( int j = 0; j < ADF_HT_SIZE; j++ )
+                if ( parent.hashTable[ j ] == entryBlk.nextSameHash ) {
+                    // prevent inf. loop on invalid entries (issue #99)
+                    adfEnv.wFct( "%s:  '%s'/'%s': invalid nextSameHash value, "
+                                 "the same as the %d entry in the main hash table: "
+                                 "sector %d, entryBlk.nextSameHash %d",
+                                 __func__, parent.name, entryBlk.name, j,
+                                 sector, entryBlk.nextSameHash );
+                    adfEnv.wFct( "%s:  repair the filesystem on the volume '%s' "
+                                 "before writing anything on it!",
+                                 __func__,  vol->volName );
+                    invalidNextSameHash = true;
+                    nErrors++;
+                    break;
+                }
+            if ( invalidNextSameHash ) {
+                adfFreeEntry( entry );
+                break;
+            }
+
+            // Linking to the next (entryBlk.nextSameHash) OK., so go on, check next
+            sector = entryBlk.nextSameHash;
+
             adfFreeEntry( entry );
         }
     }
+
 
     return nErrors;
 }
