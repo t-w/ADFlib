@@ -1360,7 +1360,7 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
 
     unsigned nErrors = 0;
 
-    for ( int i = 0 ; i < ADF_HT_SIZE ; i++ ) {
+    for ( int i = 0; i < ADF_HT_SIZE; i++ ) {
         if ( parent.hashTable[ i ] == 0 )
             continue;
 
@@ -1441,7 +1441,6 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
             adfFreeEntry( entry );
         }
     }
-
 
     return nErrors;
 }
