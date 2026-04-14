@@ -1368,13 +1368,22 @@ char * adfEntryGetInfo( const struct AdfEntry * const  entry )
 
 
 /*
- * adfDirCheck
+ * adfDirCheckLimited
  *
  */
-unsigned adfDirCheck( const struct AdfVolume * const  vol,
-                      const ADF_SECTNUM               nSect,
-                      const bool                      recurs )
+static unsigned adfDirCheckLimited( const struct AdfVolume * const  vol,
+                                    const ADF_SECTNUM               nSect,
+                                    const bool                      recurs,
+                                    const unsigned                  level )
 {
+    if ( level > ADF_DIR_MAX_LEVELS ) {
+        adfEnv.eFct( "%s: Too many levels (>%u), check the volume's filesystem for "
+                     "errors (possible invalid linking between internal data structures). "
+                     "This also means 'path too long' on AmigaOS (max. 256 characters!).",
+                     __func__, ADF_DIR_MAX_LEVELS );
+        return 1;
+    }
+
     struct AdfEntryBlock parent, entryBlk;
 
     if ( adfReadEntryBlock( vol, nSect, &parent ) != ADF_RC_OK ||
@@ -1398,7 +1407,8 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
                 nErrors++;
 
             if ( recurs && entry->type == ADF_ST_DIR )
-                nErrors += adfDirCheck( vol, entry->sector, true );
+                nErrors += adfDirCheckLimited( vol, entry->sector, true,
+                                               level + 1 );
 
             if ( entryBlk.nextSameHash == 0 ) {
                 adfFreeEntry( entry );
@@ -1467,4 +1477,16 @@ unsigned adfDirCheck( const struct AdfVolume * const  vol,
     }
 
     return nErrors;
+}
+
+
+/*
+ * adfDirCheck
+ *
+ */
+unsigned adfDirCheck( const struct AdfVolume * const  vol,
+                      const ADF_SECTNUM               nSect,
+                      const bool                      recurs )
+{
+    return adfDirCheckLimited( vol, nSect, recurs, 0 );
 }
