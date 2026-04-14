@@ -39,6 +39,8 @@
 #include <string.h>
 
 
+#define ADF_DIR_MAX_LEVELS 512u
+
 static void adfStrToUpper( uint8_t * const        nstr,
                            const uint8_t * const  ostr,
                            const unsigned         nlen,
@@ -145,13 +147,22 @@ struct AdfList * adfGetDirEnt( const struct AdfVolume * const  vol,
 }
 
 /*
- * adfGetRDirEnt
+ * adfGetRDirEntLimited
  *
  */
-struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
-                                const ADF_SECTNUM               nSect,
-                                const bool                      recurs )
+static struct AdfList * adfGetRDirEntLimited( const struct AdfVolume * const  vol,
+                                              const ADF_SECTNUM               nSect,
+                                              const bool                      recurs,
+                                              const unsigned                  level )
 {
+    if ( level > ADF_DIR_MAX_LEVELS ) {
+        adfEnv.eFct( "%s: Too many levels (>%u), check the volume's filesystem for "
+                     "errors (possible invalid linking between internal data structures). "
+                     "This also means 'path too long' on AmigaOS (max. 256 characters!).",
+                     __func__, ADF_DIR_MAX_LEVELS );
+        return NULL;
+    }
+
     struct AdfList *cell, *head;
     struct AdfEntry * entry;
     struct AdfEntryBlock parent, entryBlk;
@@ -192,8 +203,8 @@ struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
             }
 
             if ( recurs && entry->type == ADF_ST_DIR )
-                cell->subdir = adfGetRDirEnt( vol, entry->sector, recurs );
-
+                cell->subdir = adfGetRDirEntLimited( vol, entry->sector, recurs,
+                                                     level + 1 );
             if ( entryBlk.nextSameHash == 0 )
                 break;
 
@@ -256,6 +267,17 @@ struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
         adfReadDirCache(vol,parent.extension);
 */
     return head;
+}
+
+/*
+ * adfGetRDirEnt
+ *
+ */
+struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
+                                const ADF_SECTNUM               nSect,
+                                const bool                      recurs )
+{
+    return adfGetRDirEntLimited( vol, nSect, recurs, 0 );
 }
 
 /*
