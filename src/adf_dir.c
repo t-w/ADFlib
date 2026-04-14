@@ -163,7 +163,7 @@ struct AdfList * adfGetRDirEnt( const struct AdfVolume * const  vol,
         return NULL;
 
     cell = head = NULL;
-    for ( int i = 0 ; i < ADF_HT_SIZE ; i++ ) {
+    for ( int i = 0; i < ADF_HT_SIZE; i++ ) {
         if ( parent.hashTable[ i ] == 0 )
             continue;
 
