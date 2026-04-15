@@ -150,7 +150,7 @@ struct AdfFile * adfFileOpen( struct AdfVolume * const  vol,
         }
     }
 
-    struct AdfFile * file = (struct AdfFile *) malloc( sizeof(struct AdfFile) );
+    struct AdfFile * const file = (struct AdfFile *) malloc( sizeof(struct AdfFile) );
     if ( file == NULL ) {
         adfEnv.eFct( "%s: malloc", __func__ );
         return NULL;
