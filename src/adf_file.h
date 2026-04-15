@@ -32,16 +32,10 @@
 /* ----- FILE ----- */
 
 struct AdfFile {
-    struct AdfVolume *
-                 volume;
-
-    struct AdfFileHeaderBlock *
-                 fileHdr;
-
-    void *       currentData;
-
-    struct AdfFileExtBlock *
-                 currentExt;
+    struct AdfVolume          *volume;
+    struct AdfFileHeaderBlock *fileHdr;
+    void                      *currentData;
+    struct AdfFileExtBlock    *currentExt;
 
     unsigned     nDataBlock;  /* current data block number */
     ADF_SECTNUM  curDataPtr;  /* sector number of current data block;
