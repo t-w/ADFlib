@@ -629,7 +629,7 @@ ADF_RETCODE adfRemoveEntry( struct AdfVolume * const  vol,
     }
     /* if it is a directory, is it empty ? */
     if ( entry.secType == ADF_ST_DIR &&
-         ! adfIsDirEmpty ( (struct AdfDirBlock *) &entry ) )
+         ! adfIsDirEmpty( (struct AdfDirBlock *) &entry ) )
     {
         adfEnv.wFct( "%s: directory '%s' not empty", __func__, name );
         return ADF_RC_ERROR;
@@ -932,7 +932,7 @@ ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
     }
 
     entry.commLen = (uint8_t) min( (unsigned) ADF_MAX_COMMENT_LEN,
-                                   strlen ( newCmt ) );
+                                   strlen( newCmt ) );
     memcpy( entry.comment, newCmt, entry.commLen );
 
     if ( entry.secType == ADF_ST_DIR ) {
@@ -963,7 +963,7 @@ ADF_RETCODE adfSetEntryComment( struct AdfVolume * const  vol,
  */
 bool adfIsDirEmpty( const struct AdfDirBlock * const  dir )
 {
-    for ( int i = 0 ; i < ADF_HT_SIZE ; i++ )
+    for ( int i = 0; i < ADF_HT_SIZE; i++ )
         if ( dir->hashTable[ i ] != 0 )
            return false;
     return true;
@@ -1262,15 +1262,14 @@ static void adfAccess2String( int32_t  acc,
  * adfIntlToUpper
  *
  */
-static inline uint8_t adfIntlToUpper( const uint8_t  c )
+static inline uint8_t adfIntlToUpper( const uint8_t c )
 {
     return ( ( c >= 'a' && c <= 'z' ) ||
-             ( c >= 224 && c <= 254 && c != 247 ) ) ? c - ('a'-'A') : c ;
+             ( c >= 224 && c <= 254 && c != 247 ) ) ? c - ('a'-'A') : c;
 }
 
-static inline uint8_t adfToUpper( const uint8_t  c )
-{
-    return ( c >= 'a' && c <= 'z' ) ? c - ( 'a' - 'A' ) : c ;
+static inline uint8_t adfToUpper( const uint8_t c ) {
+    return ( c >= 'a' && c <= 'z' ) ? c - ( 'a' - 'A' ) : c;
 }
 
 /*
@@ -1283,10 +1282,10 @@ void adfStrToUpper( uint8_t * const        nstr,
                     const bool             intl )
 {
     if ( intl )
-        for ( unsigned i = 0 ; i < nlen ; i++ )
+        for ( unsigned i = 0; i < nlen; i++ )
             nstr[ i ] = adfIntlToUpper( ostr[ i ] );
     else
-        for ( unsigned i = 0 ; i < nlen ; i++ )
+        for ( unsigned i = 0; i < nlen; i++ )
             nstr[ i ] = adfToUpper( ostr[ i ] );
     nstr[ nlen ] = '\0';
 }
