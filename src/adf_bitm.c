@@ -143,7 +143,7 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
         return ADF_RC_MALLOC;
     }
 
-    for ( unsigned i = 0 ; i < bitmap->size ; i++ ) {
+    for ( unsigned i = 0; i < bitmap->size; i++ ) {
         bitmap->table[ i ] = (struct AdfBitmapBlock *)
             malloc( sizeof(struct AdfBitmapBlock) );
 
@@ -154,7 +154,7 @@ ADF_RETCODE adfBitmapAllocate( struct AdfVolume * const  vol )
             free( bitmap->blocks );
             bitmap->blocks = NULL;
 
-            for ( unsigned j = 0 ; j < i ; j++ )
+            for ( unsigned j = 0; j < i; j++ )
                 free( bitmap->table[ j ] );
 
             free( bitmap->table );
@@ -176,7 +176,7 @@ void adfFreeBitmap( struct AdfVolume * const  vol )
 {
     struct AdfBitmap * const bitmap = &vol->bitmap;
 
-    for ( unsigned i = 0 ; i < bitmap->size ; i++ )
+    for ( unsigned i = 0; i < bitmap->size; i++ )
         free( bitmap->table[ i ] );
     bitmap->size = 0;
 
@@ -200,7 +200,7 @@ ADF_RETCODE adfReadBitmap( struct AdfVolume * const           vol,
 {
     ADF_RETCODE rc = ADF_RC_OK;
 
-    for ( unsigned i = 0 ; i < vol->bitmap.size ; i++ ) {
+    for ( unsigned i = 0; i < vol->bitmap.size; i++ ) {
         vol->bitmap.blocksChg[ i ] = false;
     }
 
@@ -335,7 +335,7 @@ ADF_RETCODE adfUpdateBitmap( struct AdfVolume * const  vol )
     if ( rc != ADF_RC_OK )
         return rc;
 
-    for ( unsigned i = 0 ; i < vol->bitmap.size ; i++ )
+    for ( unsigned i = 0; i < vol->bitmap.size; i++ )
         if ( vol->bitmap.blocksChg[ i ] ) {
             rc = adfWriteBitmapBlock( vol, vol->bitmap.blocks[ i ],
                                       vol->bitmap.table[ i ] );
@@ -378,7 +378,7 @@ ADF_RETCODE adfWriteNewBitmap( struct AdfVolume * const  vol )
     }
 
     const unsigned n = min( vol->bitmap.size, (uint32_t) ADF_BM_PAGES_ROOT_SIZE );
-    for ( unsigned i = 0 ; i < n ; i++ ) {
+    for ( unsigned i = 0; i < n; i++ ) {
         root.bmPages[ i ] = vol->bitmap.blocks[ i ] = sectList[ i ];
     }
     unsigned nBlock = n;
@@ -446,7 +446,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
     ADF_RETCODE rc = ADF_RC_OK;
 
     // all bitmap blocks are to update (to improve/optimize, ie. compare with existing)
-    for ( unsigned i = 0 ; i < vol->bitmap.size ; i++ ) {
+    for ( unsigned i = 0; i < vol->bitmap.size; i++ ) {
         vol->bitmap.blocksChg[ i ] = true;
     }
 
@@ -559,8 +559,8 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
     }
 
     // initially - set all free
-    for ( int32_t i = 2 ;
-          i < vol->lastBlock - vol->firstBlock ;   // CHECK UPPER COND
+    for ( int32_t i = 2;
+          i < vol->lastBlock - vol->firstBlock;   // CHECK UPPER COND
           i++ )
     {
         adfSetBlockFree( vol, i );
@@ -572,7 +572,7 @@ ADF_RETCODE adfReconstructBitmap( struct AdfVolume * const           vol,
     adfSetBlockUsed( vol, vol->rootBlock );
 
     // mark bitmap blocks (all - from rootblock and bitmap ext. blocks)
-    for ( uint32_t i = 0 ; i < vol->bitmap.size ; i++ ) {
+    for ( uint32_t i = 0; i < vol->bitmap.size; i++ ) {
         //if ( vol->bitmapBlocks[i] > 0 )  -- this should always be TRUE
         adfSetBlockUsed( vol, vol->bitmap.blocks[ i ] );
     }
@@ -957,7 +957,7 @@ static ADF_RETCODE adfBitmapFileBlocksSetUsed (
     ADF_RETCODE rc = ADF_RC_OK;
 
     // mark blocks from the header
-    for ( uint32_t block = 0 ; block < ADF_MAX_DATABLK ; block++ ) {
+    for ( uint32_t block = 0; block < ADF_MAX_DATABLK; block++ ) {
         if ( fhBlock->dataBlocks[ block ] > 1 )
             adfSetBlockUsed( vol, fhBlock->dataBlocks[ block ] );
     }
@@ -976,7 +976,7 @@ static ADF_RETCODE adfBitmapFileBlocksSetUsed (
                          __func__, extBlockPtr, fhBlock->fileName );
             break;
         }
-        for ( uint32_t block = 0 ; block < ADF_MAX_DATABLK ; block++ ) {
+        for ( uint32_t block = 0; block < ADF_MAX_DATABLK; block++ ) {
             if ( fext.dataBlocks[ block ] > 1 )
                 adfSetBlockUsed( vol, fext.dataBlocks[ block ] );
         }
