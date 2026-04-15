@@ -1,3 +1,11 @@
+15APR2026
+ADFlib 0.10.7
+- prevent inf. loop on invalid directories, #99 (cont.)
+  - detect and override another case of invalid linking between
+    entries of a single directory
+  - preventing OOM in other cases (between directories) by limiting
+    max. depth level when traversing directories
+
 20MAR2026
 ADFlib 0.10.6
 - prevent inf. loop on invalid directories, #99
