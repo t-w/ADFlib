@@ -429,11 +429,35 @@ interpreted by as system pipe (sending standard output of a program to another
 program). Because of this, the device name must be given within "" (double
 quotes).
 
+#### Volumes with an invalid filesystem
+First, note that the library itself does not perform any enhanced filesystem
+validation by itself (except checking a processed block or a data structure,
+but usually without relations to other data on the volume, what would be
+an equivalent of a "check disk" type utility). Therefore, in general, it is
+strongly advised to make filesystem checks (and repairs, if necessary) with
+proper utilities before performing any **write**(!) operations on a volume
+(of course, unless sure that it is valid or, for instance, just formatted).
+
+Following the issue #99, some (very) basic checking of the filesystem
+validity was added. The check is detecting loops in the linking between
+records in the same directory, what lead to out-of-memory crashes, because
+the algorithm getting all the entries of a directory was not expecting that
+(it is not a valid filesystem state). Note, that accessing such a directory
+on the AmigaOS results in a system crash, making it impossible to read
+directory's contents (at least, using regular system tools like Workbench or
+`dir` program). Also, writing on such a volume would have unpredictible
+results, very likely leading to data loss/corruption.
+
+If such case is detected, the library refuses to mount the volume in read-write
+mode, returns and issues an error. The invalid volume can be, however, mounted
+in read-only mode, and then also, eventually, remounted (using `adfVolRemount`
+function) read-write. That is necessary, for instance, to perform repair
+activities by an utility using the ADFlib to access the volume.
 
 ## Contributing
-If you encountered a problem, please review
-[the existing issues](https://github.com/adflib/ADFlib/issues) and,
-if the problem you have is not already there, open a new one.
+If you encountered a problem, let know by opening
+[an issue](https://github.com/adflib/ADFlib/issues) (unless clearly the problem
+is among opened issues, in such case please add info about your case there).
 
 For bugfixes and/or new things - please open a _Pull Request_ to the `devel`
 branch (not the `master`).
