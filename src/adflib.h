@@ -67,9 +67,6 @@ ADF_PREFIX void adfLibCleanUp(void);
 /* env */
 #include "adf_env.h"
 
-/* link */
-//#include "adf_link.h"
-
 /* salv */
 #include "adf_salv.h"
 

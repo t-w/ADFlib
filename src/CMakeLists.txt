@@ -81,8 +81,6 @@ add_library ( adf
   adf_file_util.c
   adf_file_util.h
   adf_limits.h
-  adf_link.c
-  adf_link.h
   adf_prefix.h
   adf_raw.c
   adf_raw.h
@@ -106,7 +104,7 @@ add_library ( adf
 set_target_properties ( adf PROPERTIES
     #PUBLIC_HEADER "adflib.h"
     PUBLIC_HEADER "adflib.h;adf_bitm.h;adf_blk.h;adf_blk_hd.h;adf_cache.h;adf_dev_driver_dump.h;adf_dev_driver_nativ.h;adf_dev_driver_ramdisk.h;adf_dev_flop.h;adf_dev.h;adf_dev_hd.h;adf_dev_hdfile.h;adf_dev_type.h;adf_dir.h;adf_env.h;adf_err.h;adf_file_block.h;adf_file.h;adf_file_util.h;adf_limits.h;adf_prefix.h;adf_raw.h;adf_salv.h;adf_str.h;adf_types.h;adf_vector.h;adf_version.h;adf_vol.h"
-    PRIVATE_HEADER "adf_byteorder.h;adf_debug.h;adf_link.h;adf_util.h"
+    PRIVATE_HEADER "adf_byteorder.h;adf_debug.h;adf_util.h"
     VERSION ${CMAKE_PROJECT_VERSION}
 #    SOVERSION ${PROJECT_VERSION_MAJOR}
     SOVERSION 1

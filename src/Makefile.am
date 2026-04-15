@@ -34,8 +34,6 @@ libadf_la_SOURCES = \
     adf_file.c \
     adf_file_util.c \
     adf_limits.h \
-    adf_link.c \
-    adf_link.h \
     adf_raw.c \
     adf_salv.c \
     adf_str.c \
